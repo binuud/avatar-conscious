@@ -1,0 +1,67 @@
+/// Please use the following editor setup for this file:
+
+// Tab size=4; Tabs as spaces; Clean up trailing whitepsace
+// 'make proto' will run clang-format to fix formatiing
+syntax = "proto3";
+option go_package = "github.com/binuud/conscious/gen/go/v1/brain";
+
+import "google/protobuf/timestamp.proto";
+
+message Request {
+
+  string uuid = 1; // UUID for tracking each request
+
+  string name = 3;
+  string description = 4;
+
+  // name of the ai model to use
+  string prompt = 11;
+
+  // each element of the form as a corresponding Display Element
+  // this is to save the state of form elements that have to be displayed on
+  // google.protobuf.Any body = 13;
+  string bodyText = 21;
+  bytes bodyBytes = 22;
+  bytes vision = 23;
+  bytes audio = 24;
+  bytes text = 25;
+  string data = 26;
+}
+
+message Response {
+
+  string uuid = 1; // UUID for tracking each request
+
+  string name = 3;
+  string description = 4;
+  string response = 6;
+  // name of the ai model to use
+  string prompt = 11;
+
+  // each element of the form as a corresponding Display Element
+  // this is to save the state of form elements that have to be displayed on
+  // google.protobuf.Any body = 13;
+  string bodyText = 21;
+  bytes bodyBytes = 22;
+  bytes vision = 23;
+  bytes audio = 24;
+  bytes text = 25;
+  string data = 26;
+}
+
+// For tracking purpose a uuid is sent in the request
+message HealthRequest { string uuid = 1; }
+
+message HealthResponse {
+  enum HealthStatus {
+    HealthIgnore = 0;
+    Active = 1;
+    Waiting = 2;
+    Down = 3;
+  }
+  google.protobuf.Timestamp createdAt = 1;
+  string uuid = 2;
+  HealthStatus status = 3;
+  string statusMessage = 6;
+  string errorMessage = 7;
+}
