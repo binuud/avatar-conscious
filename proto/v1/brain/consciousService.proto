@@ -16,7 +16,7 @@ service Conscious {
   // This is an asynchronous call
   rpc In(Request) returns (Response) {
     option (google.api.http) = {
-      post : "/v1/brainRunner/run"
+      post : "/v1/conscious/in"
       body : "*"
     };
   }

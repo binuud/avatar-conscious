@@ -4,6 +4,10 @@
     "title": "",
     "version": ""
   },
+  "servers": [{
+    "url": "http://localhost:9080/",
+    "description": "Testing Server"
+  }],
   "paths": {
     "/health": {
       "get": {
@@ -31,7 +35,7 @@
         }
       }
     },
-    "/v1/brainRunner/run": {
+    "/v1/conscious/in": {
       "post": {
         "operationId": "in",
         "requestBody": {

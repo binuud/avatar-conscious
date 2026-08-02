@@ -18,7 +18,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HealthResponse'
-  /v1/brainRunner/run:
+  /v1/conscious/in:
     post:
       operationId: in
       requestBody:
