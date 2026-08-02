@@ -3,8 +3,10 @@ module github.com/binuud/conscious
 go 1.25.0
 
 require (
+	github.com/google/uuid v1.6.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.29.0
 	github.com/openai/openai-go v1.12.0
+	github.com/rs/cors v1.11.1
 	github.com/sirupsen/logrus v1.9.4
 	google.golang.org/genproto/googleapis/api v0.0.0-20260729162451-8efbd57d26e0
 	google.golang.org/grpc v1.83.0

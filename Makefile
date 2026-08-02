@@ -84,12 +84,12 @@ errcheck:
 
 ### the ordering of sub targets is very important
 ### do not change
-protos: protos-brain ## run all protos
+protos: protos-conscious ## run all protos
 
 
 ## protos
-protos-brain: ## Build Go and Web Proto
-# ****** Brain AiModule 
+protos-conscious: ## Build Go and Web Proto
+# ****** Conscious AiModule 
 	$(PROTOC) -I=./proto/.  \
 	--go_out=./gen/go/ \
 	--go_opt paths=source_relative \
@@ -101,10 +101,10 @@ protos-brain: ## Build Go and Web Proto
 	--grpc-gateway-ts_out=./gen/go/ \
 	--grpc-gateway-ts_opt paths=source_relative \
 	--grpc-gateway-ts_opt generate_unbound_methods=true \
-	--oas_out ./gen/go/v1/brain/ \
+	--openapiv3_out=./gen/go/v1/brain/ \
 	proto/v1/brain/brain.proto proto/v1/brain/consciousService.proto
 	yq eval ./gen/go/v1/brain/openapi.yaml -o=json -P > ./gen/go/v1/brain/openapi.json
-
+# 	--oas_out ./gen/go/v1/brain/ \
 ##
 ## Test Code
 ##

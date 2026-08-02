@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/google/uuid"
+
 	protoV1 "github.com/binuud/conscious/gen/go/v1/brain"
 	"github.com/openai/openai-go"
 	"github.com/openai/openai-go/option"
@@ -35,6 +37,18 @@ func (s *grpcConsciousServer) In(ctx context.Context, in *protoV1.Request) (*pro
 		Response: response,
 	}, nil
 
+}
+
+func (s *grpcConsciousServer) Health(ctx context.Context, in *protoV1.HealthRequest) (*protoV1.HealthResponse, error) {
+
+	health := &protoV1.HealthResponse{}
+	health.Uuid = uuid.New().String()
+	// check if the rag vector is populated
+
+	health.Status = protoV1.HealthResponse_Active
+	health.StatusMessage = "Need to integrate with api TODO"
+
+	return health, nil
 }
 
 func MakeLLMRequest(prompt string) (string, error) {
