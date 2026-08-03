@@ -4,13 +4,16 @@
 * This file is a generated Typescript file for GRPC Gateway, DO NOT MODIFY
 */
 
-import * as GoogleProtobufTimestamp from "../../google/protobuf/timestamp.pb"
-
 export enum HealthResponseHealthStatus {
   HealthIgnore = "HealthIgnore",
   Active = "Active",
   Waiting = "Waiting",
   Down = "Down",
+}
+
+export type Timestamp = {
+  seconds?: string
+  nanos?: number
 }
 
 export type InRequest = {
@@ -45,7 +48,7 @@ export type HealthRequest = {
 }
 
 export type HealthResponse = {
-  createdAt?: GoogleProtobufTimestamp.Timestamp
+  createdAt?: Timestamp
   uuid?: string
   status?: HealthResponseHealthStatus
   statusMessage?: string
