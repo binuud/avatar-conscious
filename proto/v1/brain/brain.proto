@@ -7,7 +7,7 @@ option go_package = "github.com/binuud/conscious/gen/go/v1/brain";
 
 import "google/protobuf/timestamp.proto";
 
-message Request {
+message InRequest {
 
   string uuid = 1; // UUID for tracking each request
 
@@ -28,7 +28,7 @@ message Request {
   string data = 26;
 }
 
-message Response {
+message InResponse {
 
   string uuid = 1; // UUID for tracking each request
 

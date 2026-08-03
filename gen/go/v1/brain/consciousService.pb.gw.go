@@ -37,7 +37,7 @@ var (
 
 func request_Conscious_In_0(ctx context.Context, marshaler runtime.Marshaler, client ConsciousClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
-		protoReq Request
+		protoReq InRequest
 		metadata runtime.ServerMetadata
 	)
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && !errors.Is(err, io.EOF) {
@@ -49,7 +49,7 @@ func request_Conscious_In_0(ctx context.Context, marshaler runtime.Marshaler, cl
 
 func local_request_Conscious_In_0(ctx context.Context, marshaler runtime.Marshaler, server ConsciousServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
-		protoReq Request
+		protoReq InRequest
 		metadata runtime.ServerMetadata
 	)
 	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && !errors.Is(err, io.EOF) {

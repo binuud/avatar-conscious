@@ -4,7 +4,7 @@
     "title": "",
     "version": ""
   },
-  "servers": [{
+    "servers": [{
     "url": "http://localhost:9080/",
     "description": "Testing Server"
   }],

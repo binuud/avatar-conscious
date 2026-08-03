@@ -14,7 +14,7 @@ service Conscious {
   // initially can only run one pipe or flow at a time
   // This returns a run state, using which clients can follow the status
   // This is an asynchronous call
-  rpc In(Request) returns (Response) {
+  rpc In(InRequest) returns (InResponse) {
     option (google.api.http) = {
       post : "/v1/conscious/in"
       body : "*"

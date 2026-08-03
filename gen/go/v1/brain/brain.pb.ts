@@ -13,7 +13,7 @@ export enum HealthResponseHealthStatus {
   Down = "Down",
 }
 
-export type Request = {
+export type InRequest = {
   uuid?: string
   name?: string
   description?: string
@@ -26,7 +26,7 @@ export type Request = {
   data?: string
 }
 
-export type Response = {
+export type InResponse = {
   uuid?: string
   name?: string
   description?: string

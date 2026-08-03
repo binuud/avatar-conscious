@@ -63,7 +63,7 @@ func runHtppServer() {
 		Handler: corsHandler,
 	}
 
-	logrus.Info("HTTP and websocket server started")
+	logrus.Infof("HTTP and websocket server starting  :(%d)", *server_http_port)
 	// Start HTTP server (and proxy calls to gRPC server endpoint)
 	log.Fatalln(gwServer.ListenAndServe())
 }
@@ -83,7 +83,7 @@ func runGRPCServer() {
 	// Register reflection service on gRPC server.
 	reflection.Register(insecureServer)
 
-	logrus.Info("GRPC server starting...")
+	logrus.Infof("GRPC server starting  :(%d)", *server_grpc_port)
 	logrus.Fatalln(insecureServer.Serve(insecureConn))
 
 }
