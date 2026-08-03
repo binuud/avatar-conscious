@@ -101,7 +101,7 @@ protos-conscious: ## Build Go and Web Proto
 	--grpc-gateway-ts_out=./gen/go/ \
 	--grpc-gateway-ts_opt paths=source_relative \
 	--grpc-gateway-ts_opt generate_unbound_methods=true \
-	--openapiv3_out=./gen/go/v1/brain/ \
+	--openapiv2_out=./gen/go/v1/brain/ \
 	proto/v1/brain/brain.proto proto/v1/brain/consciousService.proto
 	yq eval ./gen/go/v1/brain/openapi.yaml -o=json -P > ./gen/go/v1/brain/openapi.json
 # 	--oas_out ./gen/go/v1/brain/ \

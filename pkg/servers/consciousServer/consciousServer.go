@@ -23,7 +23,7 @@ func NewGrpcConsciousServer() *grpcConsciousServer {
 
 }
 
-func (s *grpcConsciousServer) In(ctx context.Context, in *protoV1.Request) (*protoV1.Response, error) {
+func (s *grpcConsciousServer) In(ctx context.Context, in *protoV1.InRequest) (*protoV1.InResponse, error) {
 
 	response, err := MakeLLMRequest(in.Prompt)
 	if err != nil {
@@ -31,7 +31,7 @@ func (s *grpcConsciousServer) In(ctx context.Context, in *protoV1.Request) (*pro
 		return nil, err
 	}
 
-	return &protoV1.Response{
+	return &protoV1.InResponse{
 		Uuid:     in.Uuid,
 		Prompt:   in.Prompt,
 		Response: response,
@@ -63,7 +63,7 @@ func MakeLLMRequest(prompt string) (string, error) {
 	ctx := context.Background()
 
 	messages := []openai.ChatCompletionMessageParamUnion{
-		openai.SystemMessage("You are a useful AI agent expert with TV series."),
+		openai.SystemMessage("You are a very helpful assistant. Very polite, friendly with children. Do not use curse words. Do not use bad words. Reply briefly, in less than 20 words as far as possible. Do not return smiley, icons or images."),
 		openai.UserMessage(prompt),
 	}
 
