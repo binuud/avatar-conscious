@@ -4,10 +4,6 @@
     "title": "",
     "version": ""
   },
-    "servers": [{
-    "url": "http://localhost:9080/",
-    "description": "Testing Server"
-  }],
   "paths": {
     "/health": {
       "get": {
