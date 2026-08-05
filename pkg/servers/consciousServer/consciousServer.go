@@ -3,29 +3,42 @@ package consciousServer
 import (
 	"context"
 	"fmt"
-	"os"
 
 	"github.com/google/uuid"
 
 	protoV1 "github.com/binuud/conscious/gen/go/v1/brain"
 	"github.com/openai/openai-go"
-	"github.com/openai/openai-go/option"
 	"github.com/sirupsen/logrus"
 )
 
 type grpcConsciousServer struct {
 	protoV1.UnimplementedConsciousServer
+	model        string
+	systemPrompt string
+	temperature  float64
+	messages     []openai.ChatCompletionMessageParamUnion
 }
 
 func NewGrpcConsciousServer() *grpcConsciousServer {
 
-	return &grpcConsciousServer{}
+	systemPrompt := "You are a very helpful assistant. Very polite, friendly with children. Do not use curse words. Do not use bad words. Reply briefly, in less than 20 words as far as possible. Do not return smiley, icons or images."
+
+	messages := []openai.ChatCompletionMessageParamUnion{
+		openai.SystemMessage(systemPrompt),
+	}
+
+	return &grpcConsciousServer{
+		model:        "gemma3",
+		systemPrompt: systemPrompt,
+		temperature:  0.8,
+		messages:     messages,
+	}
 
 }
 
 func (s *grpcConsciousServer) In(ctx context.Context, in *protoV1.InRequest) (*protoV1.InResponse, error) {
 
-	response, err := MakeLLMRequest(in.Prompt)
+	response, err := s.MakeLLMChatRequest(in.Prompt)
 	if err != nil {
 		logrus.Errorf("LLM Error %v", err)
 		return nil, err
@@ -51,36 +64,19 @@ func (s *grpcConsciousServer) Health(ctx context.Context, in *protoV1.HealthRequ
 	return health, nil
 }
 
-func MakeLLMRequest(prompt string) (string, error) {
-	llmURL := os.Getenv("LLM_ENDPOINT") + "/engines/llama.cpp/v1/"
-	model := "gemma3"
+func (s *grpcConsciousServer) MakeLLMChatRequest(prompt string) (string, error) {
 
-	client := openai.NewClient(
-		option.WithBaseURL(llmURL),
-		option.WithAPIKey(""), // No API key needed for Model Runner
-	)
-
-	ctx := context.Background()
-
-	messages := []openai.ChatCompletionMessageParamUnion{
-		openai.SystemMessage("You are a very helpful assistant. Very polite, friendly with children. Do not use curse words. Do not use bad words. Reply briefly, in less than 20 words as far as possible. Do not return smiley, icons or images."),
-		openai.UserMessage(prompt),
-	}
-
-	param := openai.ChatCompletionNewParams{
-		Messages:    messages,
-		Model:       model,
-		Temperature: openai.Opt(0.8),
-	}
-
-	completion, err := client.Chat.Completions.New(ctx, param)
-
+	s.messages = append(s.messages, openai.UserMessage(prompt))
+	completions, err := MakeLLMChatRequest(prompt, s.messages, s.model, s.temperature)
 	if err != nil {
 		return "", err
 	}
 
-	var response = completion.Choices[0].Message.Content
+	// add response to chat
+	aiMsg := completions.Choices[0].Message.Content
+	fmt.Println("AI:", aiMsg)
+	s.messages = append(s.messages, openai.AssistantMessage(aiMsg))
 
-	fmt.Println(response)
-	return response, nil
+	return aiMsg, nil
+
 }
