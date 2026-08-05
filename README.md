@@ -14,6 +14,5 @@ Once the proto files are created, and the OpenAPI json file is created, add the 
   }],
 ```
 
-#### External Projects
+#### External Working Projects
 
-* https://github.com/PierrunoYT/Kokoro-TTS-Local/tree/master Kokorro Docker Image (Not working on mac)
