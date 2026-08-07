@@ -1,3 +1,11 @@
+// consciousServer implements the ConsciousServer for the service from conscious proto file
+
+// This server, listens on In endpoint, for user prompts, then makes a connection with backend AI,
+// gets the response and returns same.
+// When it gets a response from ai model, it publishes same to MQTT broker, so tts and other services, can listen to response events
+// and respond for same
+// States are saved, so each time the server is started, the old chat is maintained
+
 package consciousServer
 
 import (
@@ -12,12 +20,17 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+type memory struct {
+	Name         string
+	Model        string
+	SystemPrompt string
+	Temperature  float64
+	Messages     []openai.ChatCompletionMessageParamUnion
+}
+
 type grpcConsciousServer struct {
 	protoV1.UnimplementedConsciousServer
-	model        string
-	systemPrompt string
-	temperature  float64
-	messages     []openai.ChatCompletionMessageParamUnion
+	memory *memory
 }
 
 func NewGrpcConsciousServer() *grpcConsciousServer {
@@ -28,14 +41,23 @@ func NewGrpcConsciousServer() *grpcConsciousServer {
 		openai.SystemMessage(systemPrompt),
 	}
 
-	// InitMQTT()
-
-	return &grpcConsciousServer{
-		model:        "gemma3",
-		systemPrompt: systemPrompt,
-		temperature:  0.8,
-		messages:     messages,
+	memory := &memory{
+		Name:         "Default",
+		Model:        "gemma3",
+		SystemPrompt: systemPrompt,
+		Temperature:  0.8,
+		Messages:     messages,
 	}
+
+	err := memory.Load("default")
+	memory.DumpMemory()
+	if err != nil {
+		logrus.Infof("No Default memory found")
+	} else {
+		logrus.Infof("Default memory found and loaded")
+	}
+
+	return &grpcConsciousServer{memory: memory}
 
 }
 
@@ -47,6 +69,11 @@ func (s *grpcConsciousServer) In(ctx context.Context, in *protoV1.InRequest) (*p
 		return nil, err
 	}
 	mqttServer.SendOnTTS(response)
+
+	err = s.memory.Save("default")
+	if err != nil {
+		logrus.Panicf("Cannot save conscious memory %v", err)
+	}
 
 	return &protoV1.InResponse{
 		Uuid:     in.Uuid,
@@ -70,8 +97,8 @@ func (s *grpcConsciousServer) Health(ctx context.Context, in *aiModuleProto.Heal
 
 func (s *grpcConsciousServer) MakeLLMChatRequest(prompt string) (string, error) {
 
-	s.messages = append(s.messages, openai.UserMessage(prompt))
-	completions, err := MakeLLMChatRequest(prompt, s.messages, s.model, s.temperature)
+	s.memory.Messages = append(s.memory.Messages, openai.UserMessage(prompt))
+	completions, err := MakeLLMChatRequest(prompt, s.memory.Messages, s.memory.Model, s.memory.Temperature)
 	if err != nil {
 		return "", err
 	}
@@ -79,7 +106,7 @@ func (s *grpcConsciousServer) MakeLLMChatRequest(prompt string) (string, error) 
 	// add response to chat
 	aiMsg := completions.Choices[0].Message.Content
 	fmt.Println("AI:", aiMsg)
-	s.messages = append(s.messages, openai.AssistantMessage(aiMsg))
+	s.memory.Messages = append(s.memory.Messages, openai.AssistantMessage(aiMsg))
 
 	return aiMsg, nil
 
