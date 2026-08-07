@@ -3,10 +3,9 @@ module github.com/binuud/conscious
 go 1.25.0
 
 require (
-	github.com/dronasys-com/brain-nodes v0.0.0-20250916121703-f9c00c349c7d
+	github.com/dronasys-com/brain-nodes v0.0.0-20260807071833-4f7e7799e045
 	github.com/eclipse/paho.mqtt.golang v1.5.1
 	github.com/google/uuid v1.6.0
-	github.com/gorilla/websocket v1.5.3
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.29.0
 	github.com/openai/openai-go v1.12.0
 	github.com/rs/cors v1.11.1
@@ -17,6 +16,7 @@ require (
 )
 
 require (
+	github.com/gorilla/websocket v1.5.3 // indirect
 	github.com/tidwall/gjson v1.14.4 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
