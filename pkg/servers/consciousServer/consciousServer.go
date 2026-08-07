@@ -3,37 +3,14 @@ package consciousServer
 import (
 	"context"
 	"fmt"
-	"os"
 
 	protoV1 "github.com/binuud/conscious/gen/go/v1/brain"
 	aiModuleProto "github.com/dronasys-com/brain-nodes/gen/go/v1/aiModule"
 	mqttServer "github.com/dronasys-com/brain-nodes/pkg/servers/mqttBridge"
-	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/google/uuid"
 	"github.com/openai/openai-go"
 	"github.com/sirupsen/logrus"
 )
-
-var mqttClient mqtt.Client
-
-func InitMQTT() {
-
-	// MQTT_HOST Mqtt Server with port
-	MQTT_HOST := os.Getenv("MQTT_HOST")
-	if MQTT_HOST == "" {
-		logrus.Panic("env MQTT_HOST not set")
-	}
-
-	opts := mqtt.NewClientOptions()
-
-	opts.AddBroker(MQTT_HOST) // Set your MQTT broker
-	opts.SetClientID("go-websocket-mqtt-client")
-
-	mqttClient = mqtt.NewClient(opts)
-	if token := mqttClient.Connect(); token.Wait() && token.Error() != nil {
-		logrus.Fatalf("MQTT connect error: %v", token.Error())
-	}
-}
 
 type grpcConsciousServer struct {
 	protoV1.UnimplementedConsciousServer
