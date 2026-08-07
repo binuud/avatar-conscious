@@ -5,11 +5,11 @@ import (
 	"fmt"
 	"os"
 
-	mqtt "github.com/eclipse/paho.mqtt.golang"
-	"github.com/google/uuid"
-
 	protoV1 "github.com/binuud/conscious/gen/go/v1/brain"
 	aiModuleProto "github.com/dronasys-com/brain-nodes/gen/go/v1/aiModule"
+	mqttServer "github.com/dronasys-com/brain-nodes/pkg/servers/mqttBridge"
+	mqtt "github.com/eclipse/paho.mqtt.golang"
+	"github.com/google/uuid"
 	"github.com/openai/openai-go"
 	"github.com/sirupsen/logrus"
 )
@@ -45,7 +45,7 @@ type grpcConsciousServer struct {
 
 func NewGrpcConsciousServer() *grpcConsciousServer {
 
-	systemPrompt := "You are a very helpful assistant. Very polite, friendly with children. Do not use curse words. Do not use bad words. Reply briefly, in less than 20 words as far as possible. Do not return smiley, icons or images."
+	systemPrompt := "You are a very helpful assistant. Very polite, friendly with children. Do not use curse words. Do not use bad words. Reply briefly, in less than 20 words as far as possible. Do not use any smilies, emojis, or symbols in your responses from now on."
 
 	messages := []openai.ChatCompletionMessageParamUnion{
 		openai.SystemMessage(systemPrompt),
@@ -69,7 +69,7 @@ func (s *grpcConsciousServer) In(ctx context.Context, in *protoV1.InRequest) (*p
 		logrus.Errorf("LLM Error %v", err)
 		return nil, err
 	}
-	MQTTPubTts(response)
+	mqttServer.SendOnTTS(response)
 
 	return &protoV1.InResponse{
 		Uuid:     in.Uuid,

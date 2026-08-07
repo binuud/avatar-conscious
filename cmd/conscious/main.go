@@ -12,6 +12,7 @@ import (
 
 	gw "github.com/binuud/conscious/gen/go/v1/brain"
 	"github.com/binuud/conscious/pkg/servers/consciousServer"
+	mqttServer "github.com/dronasys-com/brain-nodes/pkg/servers/mqttBridge"
 	fileServer "github.com/dronasys-com/brain-nodes/pkg/servers/staticFileServer"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/rs/cors"
@@ -73,7 +74,7 @@ func runHtppServer() {
 
 	gwMux := runtime.NewServeMux()
 
-	consciousServer.InitMQTT()
+	mqttServer.InitMQTT()
 
 	// AppStore
 	err = gw.RegisterConsciousHandler(ctx, gwMux, conn)
@@ -82,7 +83,7 @@ func runHtppServer() {
 	}
 
 	httpMux := serveStaticPaths()
-	httpMux.HandleFunc("/ws", consciousServer.WebsocketHandler)
+	httpMux.HandleFunc("/ws", mqttServer.WebsocketHandler)
 
 	// link the concious gateway server to httpmux
 	httpMux.Handle("/api/", http.StripPrefix("/api", gwMux))
