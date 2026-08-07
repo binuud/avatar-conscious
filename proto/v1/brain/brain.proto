@@ -55,18 +55,18 @@ message InResponse {
 }
 
 // For tracking purpose a uuid is sent in the request
-message HealthRequest { string uuid = 1; }
+// message HealthRequest { string uuid = 1; }
 
-message HealthResponse {
-  enum HealthStatus {
-    HealthIgnore = 0;
-    Active = 1;
-    Waiting = 2;
-    Down = 3;
-  }
-  Timestamp createdAt = 1;
-  string uuid = 2;
-  HealthStatus status = 3;
-  string statusMessage = 6;
-  string errorMessage = 7;
-}
+// message HealthResponse {
+//   enum HealthStatus {
+//     HealthIgnore = 0;
+//     Active = 1;
+//     Waiting = 2;
+//     Down = 3;
+//   }
+//   Timestamp createdAt = 1;
+//   string uuid = 2;
+//   HealthStatus status = 3;
+//   string statusMessage = 6;
+//   string errorMessage = 7;
+// }

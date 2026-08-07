@@ -3,8 +3,10 @@
 // Tab size=4; Tabs as spaces; Clean up trailing whitepsace
 // 'make proto' will run clang-format to fix formatiing
 syntax = "proto3";
+package conscious;
 option go_package = "github.com/binuud/conscious/gen/go/v1/brain";
 
+import "v1/aiModule/aiModuleService.proto";
 import "google/api/annotations.proto";
 import "v1/brain/brain.proto";
 
@@ -22,7 +24,7 @@ service Conscious {
   }
 
   // Get the current Health Status of the AI Module
-  rpc Health(HealthRequest) returns (HealthResponse) {
+  rpc Health(aiModule.HealthRequest) returns (aiModule.HealthResponse) {
     option (google.api.http) = {
       get : "/health"
     };
