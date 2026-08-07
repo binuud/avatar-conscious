@@ -9,7 +9,7 @@ Once the proto files are created, and the OpenAPI json file is created, add the 
 
 ```
   "servers": [{
-    "url": "http://localhost:9080/",
+    "url": "http://localhost:9080/api",
     "description": "Testing Server"
   }],
 ```

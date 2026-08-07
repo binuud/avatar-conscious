@@ -3,13 +3,37 @@ package consciousServer
 import (
 	"context"
 	"fmt"
+	"os"
 
+	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/google/uuid"
 
 	protoV1 "github.com/binuud/conscious/gen/go/v1/brain"
+	aiModuleProto "github.com/dronasys-com/brain-nodes/gen/go/v1/aiModule"
 	"github.com/openai/openai-go"
 	"github.com/sirupsen/logrus"
 )
+
+var mqttClient mqtt.Client
+
+func InitMQTT() {
+
+	// MQTT_HOST Mqtt Server with port
+	MQTT_HOST := os.Getenv("MQTT_HOST")
+	if MQTT_HOST == "" {
+		logrus.Panic("env MQTT_HOST not set")
+	}
+
+	opts := mqtt.NewClientOptions()
+
+	opts.AddBroker(MQTT_HOST) // Set your MQTT broker
+	opts.SetClientID("go-websocket-mqtt-client")
+
+	mqttClient = mqtt.NewClient(opts)
+	if token := mqttClient.Connect(); token.Wait() && token.Error() != nil {
+		logrus.Fatalf("MQTT connect error: %v", token.Error())
+	}
+}
 
 type grpcConsciousServer struct {
 	protoV1.UnimplementedConsciousServer
@@ -27,6 +51,8 @@ func NewGrpcConsciousServer() *grpcConsciousServer {
 		openai.SystemMessage(systemPrompt),
 	}
 
+	// InitMQTT()
+
 	return &grpcConsciousServer{
 		model:        "gemma3",
 		systemPrompt: systemPrompt,
@@ -43,6 +69,7 @@ func (s *grpcConsciousServer) In(ctx context.Context, in *protoV1.InRequest) (*p
 		logrus.Errorf("LLM Error %v", err)
 		return nil, err
 	}
+	MQTTPubTts(response)
 
 	return &protoV1.InResponse{
 		Uuid:     in.Uuid,
@@ -52,13 +79,13 @@ func (s *grpcConsciousServer) In(ctx context.Context, in *protoV1.InRequest) (*p
 
 }
 
-func (s *grpcConsciousServer) Health(ctx context.Context, in *protoV1.HealthRequest) (*protoV1.HealthResponse, error) {
+func (s *grpcConsciousServer) Health(ctx context.Context, in *aiModuleProto.HealthRequest) (*aiModuleProto.HealthResponse, error) {
 
-	health := &protoV1.HealthResponse{}
+	health := &aiModuleProto.HealthResponse{}
 	health.Uuid = uuid.New().String()
 	// check if the rag vector is populated
 
-	health.Status = protoV1.HealthResponse_Active
+	health.Status = aiModuleProto.HealthResponse_Active
 	health.StatusMessage = "Need to integrate with api TODO"
 
 	return health, nil

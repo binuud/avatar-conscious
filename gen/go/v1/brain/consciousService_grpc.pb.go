@@ -13,6 +13,7 @@ package brain
 
 import (
 	context "context"
+	aiModule "github.com/dronasys-com/brain-nodes/gen/go/v1/aiModule"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -24,8 +25,8 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Conscious_In_FullMethodName     = "/Conscious/In"
-	Conscious_Health_FullMethodName = "/Conscious/Health"
+	Conscious_In_FullMethodName     = "/conscious.Conscious/In"
+	Conscious_Health_FullMethodName = "/conscious.Conscious/Health"
 )
 
 // ConsciousClient is the client API for Conscious service.
@@ -40,7 +41,7 @@ type ConsciousClient interface {
 	// This is an asynchronous call
 	In(ctx context.Context, in *InRequest, opts ...grpc.CallOption) (*InResponse, error)
 	// Get the current Health Status of the AI Module
-	Health(ctx context.Context, in *HealthRequest, opts ...grpc.CallOption) (*HealthResponse, error)
+	Health(ctx context.Context, in *aiModule.HealthRequest, opts ...grpc.CallOption) (*aiModule.HealthResponse, error)
 }
 
 type consciousClient struct {
@@ -61,9 +62,9 @@ func (c *consciousClient) In(ctx context.Context, in *InRequest, opts ...grpc.Ca
 	return out, nil
 }
 
-func (c *consciousClient) Health(ctx context.Context, in *HealthRequest, opts ...grpc.CallOption) (*HealthResponse, error) {
+func (c *consciousClient) Health(ctx context.Context, in *aiModule.HealthRequest, opts ...grpc.CallOption) (*aiModule.HealthResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(HealthResponse)
+	out := new(aiModule.HealthResponse)
 	err := c.cc.Invoke(ctx, Conscious_Health_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -83,7 +84,7 @@ type ConsciousServer interface {
 	// This is an asynchronous call
 	In(context.Context, *InRequest) (*InResponse, error)
 	// Get the current Health Status of the AI Module
-	Health(context.Context, *HealthRequest) (*HealthResponse, error)
+	Health(context.Context, *aiModule.HealthRequest) (*aiModule.HealthResponse, error)
 	mustEmbedUnimplementedConsciousServer()
 }
 
@@ -97,7 +98,7 @@ type UnimplementedConsciousServer struct{}
 func (UnimplementedConsciousServer) In(context.Context, *InRequest) (*InResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method In not implemented")
 }
-func (UnimplementedConsciousServer) Health(context.Context, *HealthRequest) (*HealthResponse, error) {
+func (UnimplementedConsciousServer) Health(context.Context, *aiModule.HealthRequest) (*aiModule.HealthResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Health not implemented")
 }
 func (UnimplementedConsciousServer) mustEmbedUnimplementedConsciousServer() {}
@@ -140,7 +141,7 @@ func _Conscious_In_Handler(srv interface{}, ctx context.Context, dec func(interf
 }
 
 func _Conscious_Health_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(HealthRequest)
+	in := new(aiModule.HealthRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -152,7 +153,7 @@ func _Conscious_Health_Handler(srv interface{}, ctx context.Context, dec func(in
 		FullMethod: Conscious_Health_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ConsciousServer).Health(ctx, req.(*HealthRequest))
+		return srv.(ConsciousServer).Health(ctx, req.(*aiModule.HealthRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -161,7 +162,7 @@ func _Conscious_Health_Handler(srv interface{}, ctx context.Context, dec func(in
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var Conscious_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "Conscious",
+	ServiceName: "conscious.Conscious",
 	HandlerType: (*ConsciousServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

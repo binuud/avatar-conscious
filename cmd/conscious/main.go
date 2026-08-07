@@ -8,9 +8,11 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"strings"
 
 	gw "github.com/binuud/conscious/gen/go/v1/brain"
 	"github.com/binuud/conscious/pkg/servers/consciousServer"
+	fileServer "github.com/dronasys-com/brain-nodes/pkg/servers/staticFileServer"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/rs/cors"
 	"github.com/sirupsen/logrus"
@@ -23,6 +25,35 @@ var (
 	server_grpc_port = flag.Int("grpc_port", 9090, "The Brain Backend Server GRPC port, no token required unsecured")
 	server_http_port = flag.Int("http_port", 9080, "The Brain Backend Server HTTP port, no token required unsecured")
 )
+
+func serveStaticPaths() *http.ServeMux {
+
+	httpMux := http.NewServeMux()
+
+	// OPEN_API_FILES_PATH is the folder where the swagger files for apps are stored
+	SERVABLE_DIRECTORY := os.Getenv("SERVABLE_DIRECTORY")
+	if SERVABLE_DIRECTORY == "" {
+		SERVABLE_DIRECTORY = "/dataVolume/generatedAiFiles"
+	}
+
+	if !strings.Contains(SERVABLE_DIRECTORY, "/dataVolume/generatedAiFiles") {
+		logrus.Panic("Protection fail, only directory having /dataVolume/generatedAiFiles can be served")
+	}
+
+	SERVABLE_UI_DIRECTORY := os.Getenv("SERVABLE_UI_DIRECTORY")
+	if SERVABLE_UI_DIRECTORY == "" {
+		SERVABLE_UI_DIRECTORY = "/ui"
+	}
+
+	if !strings.Contains(SERVABLE_UI_DIRECTORY, "/ui") {
+		logrus.Panic("Protection fail, only directory having /ui can be served")
+	}
+
+	fileServer.StaticServeAiPath(httpMux, "/static/", SERVABLE_DIRECTORY)
+	fileServer.SPAStaticServePath(httpMux, "/", SERVABLE_UI_DIRECTORY)
+
+	return httpMux
+}
 
 func runHtppServer() {
 
@@ -42,11 +73,20 @@ func runHtppServer() {
 
 	gwMux := runtime.NewServeMux()
 
+	consciousServer.InitMQTT()
+
 	// AppStore
 	err = gw.RegisterConsciousHandler(ctx, gwMux, conn)
 	if err != nil {
 		log.Fatalln(err)
 	}
+
+	httpMux := serveStaticPaths()
+	httpMux.HandleFunc("/ws", consciousServer.WebsocketHandler)
+
+	// link the concious gateway server to httpmux
+	httpMux.Handle("/api/", http.StripPrefix("/api", gwMux))
+	logrus.Infof("Server directory %s -> %s", "/api/", "consciousServer")
 
 	// Configure CORS options as needed
 	corsEnabledMux := cors.New(cors.Options{
@@ -56,7 +96,7 @@ func runHtppServer() {
 		AllowCredentials: true,
 	})
 
-	corsHandler := corsEnabledMux.Handler(gwMux)
+	corsHandler := corsEnabledMux.Handler(httpMux)
 
 	gwServer := &http.Server{
 		Addr:    fmt.Sprintf("0.0.0.0:%d", *server_http_port),

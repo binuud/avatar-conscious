@@ -14,6 +14,7 @@ import (
 	"io"
 	"net/http"
 
+	"github.com/dronasys-com/brain-nodes/gen/go/v1/aiModule"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/utilities"
 	"google.golang.org/grpc"
@@ -63,7 +64,7 @@ var filter_Conscious_Health_0 = &utilities.DoubleArray{Encoding: map[string]int{
 
 func request_Conscious_Health_0(ctx context.Context, marshaler runtime.Marshaler, client ConsciousClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
-		protoReq HealthRequest
+		protoReq aiModule.HealthRequest
 		metadata runtime.ServerMetadata
 	)
 	if err := req.ParseForm(); err != nil {
@@ -78,7 +79,7 @@ func request_Conscious_Health_0(ctx context.Context, marshaler runtime.Marshaler
 
 func local_request_Conscious_Health_0(ctx context.Context, marshaler runtime.Marshaler, server ConsciousServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
-		protoReq HealthRequest
+		protoReq aiModule.HealthRequest
 		metadata runtime.ServerMetadata
 	)
 	if err := req.ParseForm(); err != nil {
@@ -103,7 +104,7 @@ func RegisterConsciousHandlerServer(ctx context.Context, mux *runtime.ServeMux, 
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/.Conscious/In", runtime.WithHTTPPathPattern("/v1/conscious/in"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/conscious.Conscious/In", runtime.WithHTTPPathPattern("/v1/conscious/in"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -123,7 +124,7 @@ func RegisterConsciousHandlerServer(ctx context.Context, mux *runtime.ServeMux, 
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/.Conscious/Health", runtime.WithHTTPPathPattern("/health"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/conscious.Conscious/Health", runtime.WithHTTPPathPattern("/health"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -181,7 +182,7 @@ func RegisterConsciousHandlerClient(ctx context.Context, mux *runtime.ServeMux, 
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/.Conscious/In", runtime.WithHTTPPathPattern("/v1/conscious/in"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/conscious.Conscious/In", runtime.WithHTTPPathPattern("/v1/conscious/in"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -198,7 +199,7 @@ func RegisterConsciousHandlerClient(ctx context.Context, mux *runtime.ServeMux, 
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/.Conscious/Health", runtime.WithHTTPPathPattern("/health"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/conscious.Conscious/Health", runtime.WithHTTPPathPattern("/health"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
