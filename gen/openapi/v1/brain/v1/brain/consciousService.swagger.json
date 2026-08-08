@@ -1,0 +1,232 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "v1/brain/consciousService.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "Conscious"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/health": {
+      "get": {
+        "summary": "Get the current Health Status of the AI Module",
+        "operationId": "Conscious_Health",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/aiModuleHealthResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "Conscious"
+        ]
+      }
+    },
+    "/v1/conscious/in": {
+      "post": {
+        "summary": "initially can only run one pipe or flow at a time\nThis returns a run state, using which clients can follow the status\nThis is an asynchronous call",
+        "operationId": "Conscious_In",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/InResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/InRequest"
+            }
+          }
+        ],
+        "tags": [
+          "Conscious"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "HealthResponseHealthStatus": {
+      "type": "string",
+      "enum": [
+        "HealthIgnore",
+        "Active",
+        "Waiting",
+        "Down"
+      ],
+      "default": "HealthIgnore"
+    },
+    "InRequest": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "title": "UUID for tracking each request"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "prompt": {
+          "type": "string",
+          "title": "name of the ai model to use"
+        },
+        "bodyText": {
+          "type": "string",
+          "title": "each element of the form as a corresponding Display Element\nthis is to save the state of form elements that have to be displayed on\ngoogle.protobuf.Any body = 13;"
+        },
+        "bodyBytes": {
+          "type": "string",
+          "format": "byte"
+        },
+        "vision": {
+          "type": "string",
+          "format": "byte"
+        },
+        "audio": {
+          "type": "string",
+          "format": "byte"
+        },
+        "text": {
+          "type": "string",
+          "format": "byte"
+        },
+        "data": {
+          "type": "string"
+        }
+      }
+    },
+    "InResponse": {
+      "type": "object",
+      "properties": {
+        "uuid": {
+          "type": "string",
+          "title": "UUID for tracking each request"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "response": {
+          "type": "string"
+        },
+        "prompt": {
+          "type": "string",
+          "title": "name of the ai model to use"
+        },
+        "bodyText": {
+          "type": "string",
+          "title": "each element of the form as a corresponding Display Element\nthis is to save the state of form elements that have to be displayed on\ngoogle.protobuf.Any body = 13;"
+        },
+        "bodyBytes": {
+          "type": "string",
+          "format": "byte"
+        },
+        "vision": {
+          "type": "string",
+          "format": "byte"
+        },
+        "audio": {
+          "type": "string",
+          "format": "byte"
+        },
+        "text": {
+          "type": "string",
+          "format": "byte"
+        },
+        "data": {
+          "type": "string"
+        }
+      }
+    },
+    "aiModuleHealthResponse": {
+      "type": "object",
+      "properties": {
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "uuid": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/definitions/HealthResponseHealthStatus"
+        },
+        "statusMessage": {
+          "type": "string"
+        },
+        "errorMessage": {
+          "type": "string"
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  }
+}
