@@ -95,14 +95,15 @@ protos-conscious: ## Build Go and Web Proto
 	--go_opt paths=source_relative \
 	--go-grpc_out=./gen/go/ \
 	--go-grpc_opt paths=source_relative \
-	--grpc-gateway_out=./gen/go/ \
+	--grpc-gateway_out=./gen/ts/ \
 	--grpc-gateway_opt paths=source_relative \
 	--grpc-gateway_opt generate_unbound_methods=true \
-	--grpc-gateway-ts_out=./gen/go/ \
+	--grpc-gateway-ts_out=./gen/ts/ \
 	--grpc-gateway-ts_opt paths=source_relative \
 	--grpc-gateway-ts_opt generate_unbound_methods=true \
-	--openapiv2_out=./gen/go/v1/brain/ \
-	proto/v1/brain/brain.proto proto/v1/brain/consciousService.proto
+	--openapiv2_out=./gen/openapi/v1/brain/ \
+	proto/v1/brain/brain.proto proto/v1/brain/consciousService.proto \
+	proto//google/protobuf/timestamp.proto
 	yq eval ./gen/go/v1/brain/openapi.yaml -o=json -P > ./gen/go/v1/brain/openapi.json
 # 	--oas_out ./gen/go/v1/brain/ \
 ##
