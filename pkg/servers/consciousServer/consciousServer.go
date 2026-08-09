@@ -11,6 +11,7 @@ package consciousServer
 import (
 	"context"
 	"fmt"
+	"os"
 
 	protoV1 "github.com/binuud/conscious/gen/go/v1/brain"
 	aiModuleProto "github.com/dronasys-com/brain-nodes/gen/go/v1/aiModule"
@@ -41,9 +42,14 @@ func NewGrpcConsciousServer() *grpcConsciousServer {
 		openai.SystemMessage(systemPrompt),
 	}
 
+	LLM_MODEL := os.Getenv("LLM_MODEL")
+	if LLM_MODEL == "" {
+		LLM_MODEL = "gemma3"
+	}
+
 	memory := &memory{
 		Name:         "Default",
-		Model:        "gemma3",
+		Model:        LLM_MODEL,
 		SystemPrompt: systemPrompt,
 		Temperature:  0.8,
 		Messages:     messages,
@@ -56,7 +62,7 @@ func NewGrpcConsciousServer() *grpcConsciousServer {
 	} else {
 		logrus.Infof("Default memory found and loaded")
 	}
-
+	logrus.Infof("Starting Conscious with %s model", LLM_MODEL)
 	return &grpcConsciousServer{memory: memory}
 
 }
