@@ -44,6 +44,19 @@ func TestConsciousServer_LLMChat(t *testing.T) {
 
 }
 
+func TestConsciousServer_LLMImageProcess(t *testing.T) {
+	// does not work
+	// image describe request does not work
+	memory := createMemoryObject()
+	response, err := MakeImageDescribeRequest("What's in this image? ", memory.Model)
+	if err != nil {
+		t.Errorf("client: error llm chat request: %v \n", err)
+	} else {
+		t.Logf("Response %s", response.OutputText())
+	}
+
+}
+
 // func TestConsciousServer_LLMImageProcess(t *testing.T) {
 
 // 	fileStore := os.Getenv("FILE_STORE_PATH")
