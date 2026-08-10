@@ -110,8 +110,9 @@ protos-conscious: ## Build Go and Web Proto
 ## Test Code
 ##
 
-testCoverage: ## Run test coverage
-	go test ./pkg/... -coverprofile=coverage.out
+test: ## Run test 
+	./scripts/runTest.sh
+
 
 
 run: ## combine all services for single user case
