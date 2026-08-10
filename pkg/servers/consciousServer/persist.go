@@ -71,7 +71,13 @@ func (m *memory) Save(fileName string) error {
 	enc := gob.NewEncoder(f)
 
 	// save the file and return error if present
+
+	// we need not save tool chain
+	tools := m.Tools
+	m.Tools = nil
 	err = enc.Encode(m)
+	m.Tools = tools
+
 	if err != nil {
 		logrus.Errorf("Cannot save file %s %v", fullFileName, err)
 		return err
