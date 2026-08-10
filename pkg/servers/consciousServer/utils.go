@@ -9,7 +9,7 @@ import (
 	"github.com/openai/openai-go/option"
 )
 
-func MakeLLMChatRequest(prompt string, messages []openai.ChatCompletionMessageParamUnion, model string, temperature float64) (*openai.ChatCompletion, error) {
+func MakeLLMChatRequest(prompt string, messages []openai.ChatCompletionMessageParamUnion, tools []openai.ChatCompletionToolParam, model string, temperature float64) (*openai.ChatCompletion, error) {
 
 	llmURL := os.Getenv("LLM_ENDPOINT") + "/engines/llama.cpp/v1/"
 
@@ -24,6 +24,7 @@ func MakeLLMChatRequest(prompt string, messages []openai.ChatCompletionMessagePa
 		Messages:    messages,
 		Model:       model,
 		Temperature: openai.Opt(temperature),
+		Tools:       tools,
 	}
 
 	completion, err := client.Chat.Completions.New(ctx, param)

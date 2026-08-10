@@ -10,6 +10,7 @@ package consciousServer
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"os"
 
@@ -27,6 +28,7 @@ type memory struct {
 	SystemPrompt string
 	Temperature  float64
 	Messages     []openai.ChatCompletionMessageParamUnion
+	Tools        []openai.ChatCompletionToolParam
 }
 
 type grpcConsciousServer struct {
@@ -36,7 +38,7 @@ type grpcConsciousServer struct {
 
 func NewGrpcConsciousServer() *grpcConsciousServer {
 
-	systemPrompt := "You are a very helpful assistant. Very polite, friendly with children. Do not use curse words. Do not use bad words. Reply briefly, in less than 20 words as far as possible. Do not use any smilies, emojis, or symbols in your responses from now on."
+	systemPrompt := "You are a helpful weather assistant. You must use the tools provided to answer questions. Very polite, friendly with children. Do not use curse words. Do not use bad words. Reply briefly, in less than 20 words as far as possible. Do not use any smilies, emojis, or symbols in your responses from now on."
 
 	messages := []openai.ChatCompletionMessageParamUnion{
 		openai.SystemMessage(systemPrompt),
@@ -47,15 +49,40 @@ func NewGrpcConsciousServer() *grpcConsciousServer {
 		LLM_MODEL = "gemma3"
 	}
 
+	tools := []openai.ChatCompletionToolParam{
+		{
+			Type: "function",
+			Function: openai.FunctionDefinitionParam{
+				Name:        "get_weather",
+				Description: openai.String("Get the current weather for a given city or place"),
+				Parameters: openai.FunctionParameters{
+					"type": "object",
+					"properties": map[string]any{
+						"location": map[string]any{
+							"type":        "string",
+							"description": "The city or place, e.g. Tokyo",
+						},
+					},
+					"required":             []string{"location"},
+					"additionalProperties": false,
+				},
+			},
+		},
+	}
+
 	memory := &memory{
 		Name:         "Default",
 		Model:        LLM_MODEL,
 		SystemPrompt: systemPrompt,
 		Temperature:  0.8,
 		Messages:     messages,
+		Tools:        tools,
 	}
 
 	err := memory.Load("default")
+
+	// do not save tools because of issue with saving hash map
+	memory.Tools = tools
 	memory.DumpMemory()
 	if err != nil {
 		logrus.Infof("No Default memory found")
@@ -69,22 +96,59 @@ func NewGrpcConsciousServer() *grpcConsciousServer {
 
 func (s *grpcConsciousServer) In(ctx context.Context, in *protoV1.InRequest) (*protoV1.InResponse, error) {
 
-	response, err := s.MakeLLMChatRequest(in.Prompt)
+	logrus.Infof("Sending prompt: %s", in.Prompt)
+	completions, err := s.MakeLLMChatRequest(in.Prompt)
 	if err != nil {
 		logrus.Errorf("LLM Error %v", err)
 		return nil, err
 	}
-	mqttServer.SendOnTTS(response)
 
-	err = s.memory.Save("default")
-	if err != nil {
-		logrus.Panicf("Cannot save conscious memory %v", err)
+	msg := completions.Choices[0].Message
+	assistantMsgContent := completions.Choices[0].Message.Content
+
+	if len(msg.ToolCalls) > 0 {
+
+		// The model wants to call a tool!
+		toolCall := msg.ToolCalls[0]
+		fmt.Printf("Model invoked tool: %s with arguments: %s\n", toolCall.Function.Name, toolCall.Function.Arguments)
+
+		// Parse arguments and run your local go function logic here
+		if toolCall.Function.Name == "get_weather" {
+			var args struct {
+				Location string `json:"location"`
+			}
+			json.Unmarshal([]byte(toolCall.Function.Arguments), &args)
+
+			// Mock result execution
+			//assistantMsgContent := fmt.Sprintf(`{"location": "%s", "temp": "35C", "condition": "Sunny"}`, args.Location)
+			assistantMsgContent = fmt.Sprintf("Weather in %s, is Sunny, and the temperature is 35C", args.Location)
+			logrus.Infof("Tools args %v", args)
+			logrus.Println("Tool execution result:", assistantMsgContent)
+			s.memory.Messages = append(s.memory.Messages, openai.AssistantMessage(assistantMsgContent))
+		}
+
+	} else {
+
+		// add prompt and response to memory
+		// provided response is not a tool call and a direct assistant response
+		logrus.Println("Model direct response:", assistantMsgContent)
+		// add response to memory
+		s.memory.Messages = append(s.memory.Messages, openai.AssistantMessage(assistantMsgContent))
+
+		// send to tts, for it to generate voice over of the text
+		mqttServer.SendOnTTS(assistantMsgContent)
+
 	}
+
+	// err = s.memory.Save("default")
+	// if err != nil {
+	// 	logrus.Panicf("Cannot save conscious memory %v", err)
+	// }
 
 	return &protoV1.InResponse{
 		Uuid:     in.Uuid,
 		Prompt:   in.Prompt,
-		Response: response,
+		Response: assistantMsgContent,
 	}, nil
 
 }
@@ -101,19 +165,14 @@ func (s *grpcConsciousServer) Health(ctx context.Context, in *aiModuleProto.Heal
 	return health, nil
 }
 
-func (s *grpcConsciousServer) MakeLLMChatRequest(prompt string) (string, error) {
+func (s *grpcConsciousServer) MakeLLMChatRequest(prompt string) (*openai.ChatCompletion, error) {
 
 	s.memory.Messages = append(s.memory.Messages, openai.UserMessage(prompt))
-	completions, err := MakeLLMChatRequest(prompt, s.memory.Messages, s.memory.Model, s.memory.Temperature)
+	completions, err := MakeLLMChatRequest(prompt, s.memory.Messages, s.memory.Tools, s.memory.Model, s.memory.Temperature)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	// add response to chat
-	aiMsg := completions.Choices[0].Message.Content
-	fmt.Println("AI:", aiMsg)
-	s.memory.Messages = append(s.memory.Messages, openai.AssistantMessage(aiMsg))
-
-	return aiMsg, nil
+	return completions, nil
 
 }
