@@ -76,7 +76,6 @@ func NewGrpcConsciousServer() *grpcConsciousServer {
 		SystemPrompt: systemPrompt,
 		Temperature:  0.8,
 		Messages:     messages,
-		Tools:        tools,
 	}
 
 	err := memory.Load("default")
@@ -140,10 +139,10 @@ func (s *grpcConsciousServer) In(ctx context.Context, in *protoV1.InRequest) (*p
 
 	}
 
-	// err = s.memory.Save("default")
-	// if err != nil {
-	// 	logrus.Panicf("Cannot save conscious memory %v", err)
-	// }
+	err = s.memory.Save("default")
+	if err != nil {
+		logrus.Panicf("Cannot save conscious memory %v", err)
+	}
 
 	return &protoV1.InResponse{
 		Uuid:     in.Uuid,
