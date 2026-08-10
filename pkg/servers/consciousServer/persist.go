@@ -10,7 +10,7 @@ import (
 
 func (m *memory) DumpMemory() {
 	logrus.Info("-----------------------------------------------------------------")
-	logrus.Infof("Name: %s, Model: %s, Temp: %d", m.Name, m.Model, m.Temperature)
+	logrus.Infof("Name: %s, Model: %s, Temp: %f", m.Name, m.Model, m.Temperature)
 	logrus.Infof("System Prompt: %s", m.SystemPrompt)
 	for _, msg := range m.Messages {
 		var role string
