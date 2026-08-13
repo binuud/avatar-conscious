@@ -5,29 +5,30 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/openai/openai-go"
-	"github.com/openai/openai-go/option"
-	"github.com/openai/openai-go/responses"
+	"github.com/openai/openai-go/v3"
+	"github.com/openai/openai-go/v3/option"
+	"github.com/openai/openai-go/v3/responses"
+	"github.com/sirupsen/logrus"
 )
 
-func MakeImageDescribeRequest(prompt string, model string) (*responses.Response, error) {
+func MakeImageDescribeRequest(prompt string, model string, imageDataUrl string) (*responses.Response, error) {
 
-	llmURL := os.Getenv("LLM_ENDPOINT") + "/engines/llama.cpp/v1/"
+	llmURL := os.Getenv("LLM_ENDPOINT") + "/v1/"
 	client := openai.NewClient(
 		option.WithBaseURL(llmURL),
 		option.WithAPIKey(""), // No API key needed for Model Runner
 	)
 
 	response, err := client.Responses.New(context.Background(), responses.ResponseNewParams{
-		Model: model,
+		Model: "ai/gemma3:4B-Q4_K_M",
 		Input: responses.ResponseNewParamsInputUnion{
 			OfInputItemList: responses.ResponseInputParam{
 				responses.ResponseInputItemParamOfMessage(
 					responses.ResponseInputMessageContentListParam{
-						responses.ResponseInputContentParamOfInputText(prompt),
+						responses.ResponseInputContentParamOfInputText("What's in this image?"),
 						{OfInputImage: &responses.ResponseInputImageParam{
 							Detail:   responses.ResponseInputImageDetailAuto,
-							ImageURL: openai.String("https://api.nga.gov/iiif/a2e6da57-3cd1-4235-b20e-95dcaefed6c8/full/!800,800/0/default.jpg"),
+							ImageURL: openai.String(imageDataUrl),
 						}},
 					},
 					responses.EasyInputMessageRoleUser,
@@ -36,16 +37,17 @@ func MakeImageDescribeRequest(prompt string, model string) (*responses.Response,
 		},
 	})
 	if err != nil {
-		return nil, err
+		logrus.Errorf("panic MakeImageDescribeRequest %s", err)
+		panic(err)
 	}
+
 	fmt.Println(response.OutputText())
 	return response, nil
-
 }
 
-func MakeLLMChatRequest(prompt string, messages []openai.ChatCompletionMessageParamUnion, tools []openai.ChatCompletionToolParam, model string, temperature float64) (*openai.ChatCompletion, error) {
+func MakeLLMChatRequest(prompt string, messages []openai.ChatCompletionMessageParamUnion, tools []openai.ChatCompletionToolUnionParam, model string, temperature float64) (*openai.ChatCompletion, error) {
 
-	llmURL := os.Getenv("LLM_ENDPOINT") + "/engines/llama.cpp/v1/"
+	llmURL := os.Getenv("LLM_ENDPOINT") + "/v1/"
 
 	client := openai.NewClient(
 		option.WithBaseURL(llmURL),
@@ -73,7 +75,7 @@ func MakeLLMChatRequest(prompt string, messages []openai.ChatCompletionMessagePa
 
 func MakeLLMSingleRequest(prompt string, systemPrompt string, model string, temperature float64) (string, error) {
 
-	llmURL := os.Getenv("LLM_ENDPOINT") + "/engines/llama.cpp/v1/"
+	llmURL := os.Getenv("LLM_ENDPOINT") + "/v1/"
 
 	client := openai.NewClient(
 		option.WithBaseURL(llmURL),
