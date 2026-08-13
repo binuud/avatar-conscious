@@ -1,11 +1,15 @@
 package consciousServer
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"log"
+	"net/http"
+	"os"
 	"testing"
 
-	"github.com/openai/openai-go"
+	"github.com/openai/openai-go/v3"
 )
 
 func createMemoryObject() *memory {
@@ -48,11 +52,30 @@ func TestConsciousServer_LLMImageProcess(t *testing.T) {
 	// does not work
 	// image describe request does not work
 	memory := createMemoryObject()
-	response, err := MakeImageDescribeRequest("What's in this image? ", memory.Model)
+	memory.Model = "ai/gemma3:4B-Q4_K_M"
+
+	fileStore := os.Getenv("FILE_STORE_PATH")
+	if fileStore == "" {
+		t.Fatal("fatal error: FILE_STORE_PATH env not set")
+	}
+
+	imagePath := fileStore + "sampleImages/elephantWithBall.jpg" // Replace with your image file path
+	imageBytes, err := os.ReadFile(imagePath)
 	if err != nil {
-		t.Errorf("client: error llm chat request: %v \n", err)
+		log.Fatalf("Failed to read image file: %v", err)
+	}
+	// 4. Encode image bytes to a Base64 string
+	base64Image := base64.StdEncoding.EncodeToString(imageBytes)
+	mimeType := http.DetectContentType(imageBytes)
+	// 5. Construct the data URL format required by OpenAI
+	imageDataURL := fmt.Sprintf("data:%s;base64,%s", mimeType, base64Image)
+	// t.Logf("Response image request %s", imageDataURL)
+
+	response, err := MakeImageDescribeRequest("What's in this image? ", memory.Model, imageDataURL)
+	if err != nil {
+		t.Errorf("client: error llm image request: %v \n", err)
 	} else {
-		t.Logf("Response %s", response.OutputText())
+		t.Logf("Response image request %s", response.OutputText())
 	}
 
 }
@@ -102,27 +125,24 @@ func TestConsciousServer_LLMImageProcess(t *testing.T) {
 func TestConsciousServer_LLMToolFunction(t *testing.T) {
 
 	memory := createMemoryObject()
+
 	// test case for checking tools,
 	// test with a sample weather function
-	tools := []openai.ChatCompletionToolParam{
-		{
-			Type: "function",
-			Function: openai.FunctionDefinitionParam{
-				Name:        "get_weather",
-				Description: openai.String("Get the current weather for a given city or place"),
-				Parameters: openai.FunctionParameters{
-					"type": "object",
-					"properties": map[string]any{
-						"location": map[string]any{
-							"type":        "string",
-							"description": "The city or place, e.g. Tokyo",
-						},
+	tools := []openai.ChatCompletionToolUnionParam{
+		openai.ChatCompletionFunctionTool(openai.FunctionDefinitionParam{
+			Name:        "get_weather",
+			Description: openai.String("Get the current weather for a given city or place"),
+			Parameters: openai.FunctionParameters{
+				"type": "object",
+				"properties": map[string]any{
+					"location": map[string]string{
+						"type":        "string",
+						"description": "The city or place, e.g. Tokyo",
 					},
-					"required":             []string{"location"},
-					"additionalProperties": false,
 				},
+				"required": []string{"location"},
 			},
-		},
+		}),
 	}
 	memory.Tools = tools
 

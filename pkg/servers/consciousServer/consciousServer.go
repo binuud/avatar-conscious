@@ -18,7 +18,9 @@ import (
 	aiModuleProto "github.com/dronasys-com/brain-nodes/gen/go/v1/aiModule"
 	mqttServer "github.com/dronasys-com/brain-nodes/pkg/servers/mqttBridge"
 	"github.com/google/uuid"
-	"github.com/openai/openai-go"
+
+	"github.com/openai/openai-go/v3"
+
 	"github.com/sirupsen/logrus"
 )
 
@@ -28,7 +30,7 @@ type memory struct {
 	SystemPrompt string
 	Temperature  float64
 	Messages     []openai.ChatCompletionMessageParamUnion
-	Tools        []openai.ChatCompletionToolParam
+	Tools        []openai.ChatCompletionToolUnionParam
 }
 
 type grpcConsciousServer struct {
@@ -48,26 +50,21 @@ func NewGrpcConsciousServer() *grpcConsciousServer {
 	if LLM_MODEL == "" {
 		LLM_MODEL = "gemma3"
 	}
-
-	tools := []openai.ChatCompletionToolParam{
-		{
-			Type: "function",
-			Function: openai.FunctionDefinitionParam{
-				Name:        "get_weather",
-				Description: openai.String("Get the current weather for a given city or place"),
-				Parameters: openai.FunctionParameters{
-					"type": "object",
-					"properties": map[string]any{
-						"location": map[string]any{
-							"type":        "string",
-							"description": "The city or place, e.g. Tokyo",
-						},
+	tools := []openai.ChatCompletionToolUnionParam{
+		openai.ChatCompletionFunctionTool(openai.FunctionDefinitionParam{
+			Name:        "get_weather",
+			Description: openai.String("Get the current weather for a given city or place"),
+			Parameters: openai.FunctionParameters{
+				"type": "object",
+				"properties": map[string]any{
+					"location": map[string]string{
+						"type":        "string",
+						"description": "The city or place, e.g. Tokyo",
 					},
-					"required":             []string{"location"},
-					"additionalProperties": false,
 				},
+				"required": []string{"location"},
 			},
-		},
+		}),
 	}
 
 	memory := &memory{
