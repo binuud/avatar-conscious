@@ -11,16 +11,19 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+func GetLLMEndpoint() string {
+	return os.Getenv("LLM_HOST") + "/v1/"
+}
+
 func MakeImageDescribeRequest(prompt string, model string, imageDataUrl string) (*responses.Response, error) {
 
-	llmURL := os.Getenv("LLM_ENDPOINT") + "/v1/"
 	client := openai.NewClient(
-		option.WithBaseURL(llmURL),
+		option.WithBaseURL(GetLLMEndpoint()),
 		option.WithAPIKey(""), // No API key needed for Model Runner
 	)
 
 	response, err := client.Responses.New(context.Background(), responses.ResponseNewParams{
-		Model: "ai/gemma3:4B-Q4_K_M",
+		Model: model,
 		Input: responses.ResponseNewParamsInputUnion{
 			OfInputItemList: responses.ResponseInputParam{
 				responses.ResponseInputItemParamOfMessage(
@@ -36,6 +39,7 @@ func MakeImageDescribeRequest(prompt string, model string, imageDataUrl string) 
 			},
 		},
 	})
+
 	if err != nil {
 		logrus.Errorf("panic MakeImageDescribeRequest %s", err)
 		panic(err)
@@ -47,10 +51,8 @@ func MakeImageDescribeRequest(prompt string, model string, imageDataUrl string) 
 
 func MakeLLMChatRequest(prompt string, messages []openai.ChatCompletionMessageParamUnion, tools []openai.ChatCompletionToolUnionParam, model string, temperature float64) (*openai.ChatCompletion, error) {
 
-	llmURL := os.Getenv("LLM_ENDPOINT") + "/v1/"
-
 	client := openai.NewClient(
-		option.WithBaseURL(llmURL),
+		option.WithBaseURL(GetLLMEndpoint()),
 		option.WithAPIKey(""), // No API key needed for Model Runner
 	)
 
@@ -75,10 +77,8 @@ func MakeLLMChatRequest(prompt string, messages []openai.ChatCompletionMessagePa
 
 func MakeLLMSingleRequest(prompt string, systemPrompt string, model string, temperature float64) (string, error) {
 
-	llmURL := os.Getenv("LLM_ENDPOINT") + "/v1/"
-
 	client := openai.NewClient(
-		option.WithBaseURL(llmURL),
+		option.WithBaseURL(GetLLMEndpoint()),
 		option.WithAPIKey(""), // No API key needed for Model Runner
 	)
 

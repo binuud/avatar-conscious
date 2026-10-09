@@ -12,6 +12,7 @@ import (
 
 	gw "github.com/binuud/conscious/gen/go/v1/brain"
 	"github.com/binuud/conscious/pkg/servers/consciousServer"
+	llmProxyServer "github.com/binuud/conscious/pkg/servers/llmProxyServer"
 	mqttServer "github.com/dronasys-com/brain-nodes/pkg/servers/mqttBridge"
 	fileServer "github.com/dronasys-com/brain-nodes/pkg/servers/staticFileServer"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -85,6 +86,10 @@ func runHtppServer() {
 	httpMux := serveStaticPaths()
 	httpMux.HandleFunc("/ws", mqttServer.WebsocketHandler)
 
+	// handle llm proxt on path /llmHandler
+	httpMux.Handle("/llmHandler/", http.StripPrefix("/llmHandler", llmProxyServer.GetLlmProxyHandler()))
+	logrus.Infof("Server directory %s -> %s", "/llmHandler/", "llm proxy")
+
 	// link the concious gateway server to httpmux
 	httpMux.Handle("/api/", http.StripPrefix("/api", gwMux))
 	logrus.Infof("Server directory %s -> %s", "/api/", "consciousServer")
@@ -93,15 +98,16 @@ func runHtppServer() {
 	corsEnabledMux := cors.New(cors.Options{
 		AllowedOrigins:   []string{"*"}, // Replace "*" with specific origin(s) for production
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowedHeaders:   []string{"*"}, // []string{"Authorization", "Content-Type", "Accept"},
+		AllowedHeaders:   []string{"Authorization", "Content-Type"}, // []string{"Authorization", "Content-Type", "Accept"},
 		AllowCredentials: true,
+		Debug:            true, // Set to true to trace CORS errors in console
 	})
 
-	corsHandler := corsEnabledMux.Handler(httpMux)
+	corsEnabledHandler := corsEnabledMux.Handler(httpMux)
 
 	gwServer := &http.Server{
 		Addr:    fmt.Sprintf("0.0.0.0:%d", *server_http_port),
-		Handler: corsHandler,
+		Handler: corsEnabledHandler,
 	}
 
 	logrus.Infof("HTTP and websocket server starting  :(%d)", *server_http_port)
@@ -132,12 +138,12 @@ func runGRPCServer() {
 func main() {
 	logrus.Println("Welcome to life")
 
-	LLM_ENDPOINT := os.Getenv("LLM_ENDPOINT")
-	if LLM_ENDPOINT == "" {
-		LLM_ENDPOINT = "localhost:12434"
+	LLM_HOST := os.Getenv("LLM_HOST")
+	if LLM_HOST == "" {
+		LLM_HOST = "http://localhost:12434"
 	}
 
-	logrus.Printf("LLM Endpoint %v", LLM_ENDPOINT)
+	logrus.Printf("LLM Endpoint %v", LLM_HOST)
 	go func() {
 		runGRPCServer()
 	}()

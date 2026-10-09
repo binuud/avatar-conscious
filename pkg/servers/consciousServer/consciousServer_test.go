@@ -5,10 +5,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"net/http"
 	"os"
+	"strings"
 	"testing"
 
+	"github.com/binuud/conscious/pkg/utils"
 	"github.com/openai/openai-go/v3"
 )
 
@@ -20,9 +21,11 @@ func createMemoryObject() *memory {
 		openai.SystemMessage(systemPrompt),
 	}
 
+	model := utils.GetEnv("LLM_MODEL", "gemma4:latest")
+
 	memory := &memory{
 		Name:         "Default",
-		Model:        "gemma4",
+		Model:        model,
 		SystemPrompt: systemPrompt,
 		Temperature:  0.8,
 		Messages:     messages,
@@ -52,7 +55,8 @@ func TestConsciousServer_LLMImageProcess(t *testing.T) {
 	// does not work
 	// image describe request does not work
 	memory := createMemoryObject()
-	memory.Model = "ai/gemma3:4B-Q4_K_M"
+
+	// // memory.Model = "ai/gemma3:4B-Q4_K_M"
 
 	fileStore := os.Getenv("FILE_STORE_PATH")
 	if fileStore == "" {
@@ -60,23 +64,30 @@ func TestConsciousServer_LLMImageProcess(t *testing.T) {
 	}
 
 	imagePath := fileStore + "sampleImages/elephantWithBall.jpg" // Replace with your image file path
-	imageBytes, err := os.ReadFile(imagePath)
+	t.Logf("Image file for testing %s", imagePath)
+	image, err := os.ReadFile(imagePath)
 	if err != nil {
 		log.Fatalf("Failed to read image file: %v", err)
 	}
-	// 4. Encode image bytes to a Base64 string
-	base64Image := base64.StdEncoding.EncodeToString(imageBytes)
-	mimeType := http.DetectContentType(imageBytes)
-	// 5. Construct the data URL format required by OpenAI
-	imageDataURL := fmt.Sprintf("data:%s;base64,%s", mimeType, base64Image)
-	// t.Logf("Response image request %s", imageDataURL)
+	imageDataURL := "data:image/png;base64," + base64.StdEncoding.EncodeToString(image)
 
 	response, err := MakeImageDescribeRequest("What's in this image? ", memory.Model, imageDataURL)
 	if err != nil {
 		t.Errorf("client: error llm image request: %v \n", err)
 	} else {
+		expectedSubstring := "elephant"
 		t.Logf("Response image request %s", response.OutputText())
+		if !strings.Contains(response.OutputText(), expectedSubstring) {
+			t.Errorf("expected output to contain %q", expectedSubstring)
+		}
+
 	}
+
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(response.OutputText())
 
 }
 
