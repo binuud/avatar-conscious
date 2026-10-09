@@ -8,8 +8,9 @@ CONSCIOUS_APP_NAME= conscious
 DEBUG_IMAGE= debug-golang
 
 BUILD_VER= a1.0.0
-
 DOCKER_HUB_TAG= a1.0.0
+
+GOLANG_IMAGE=golang:1.27.1
 
 TAGGED_NAME = $(REPO)/$(APP_NAME)
 
