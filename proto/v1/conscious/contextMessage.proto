@@ -86,6 +86,10 @@ message contextMesssage {
   string statusMessage = 32;
   string errorMessage = 33;
 
-  Timestamp createdAt = 41;
+  string response = 41;
+  string responseImage = 42;
+  string reasoning = 43;
+  string thinking = 44;
+  Timestamp createdAt = 45;
   
 }

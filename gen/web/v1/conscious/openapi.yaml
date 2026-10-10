@@ -37,6 +37,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/contextMesssage'
+  /v1/conscious/models:
+    post:
+      operationId: getModels
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ModelRequest'
+        required: true
+      responses:
+        "200":
+          description: conscious.Conscious.getModels response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ModelResponse'
   /v1/health:
     get:
       operationId: health
@@ -66,7 +82,8 @@ components:
         errorMessage:
           type: string
         createdAt:
-          $ref: '#/components/schemas/Timestamp'
+          type: integer
+          format: int64
     HealthResponse.HealthStatus:
       type: string
       enum:
@@ -74,6 +91,27 @@ components:
         - "Active"
         - "Waiting"
         - "Down"
+    Model:
+      type: object
+      properties:
+        uuid:
+          type: string
+        id:
+          type: string
+        created:
+          type: integer
+          format: int64
+        ownedBy:
+          type: string
+    ModelRequest:
+      type: object
+    ModelResponse:
+      type: object
+      properties:
+        models:
+          type: array
+          items:
+            $ref: '#/components/schemas/Model'
     Timestamp:
       type: object
       properties:
@@ -125,6 +163,14 @@ components:
         statusMessage:
           type: string
         errorMessage:
+          type: string
+        response:
+          type: string
+        responseImage:
+          type: string
+        reasoning:
+          type: string
+        thinking:
           type: string
         createdAt:
           $ref: '#/components/schemas/Timestamp'

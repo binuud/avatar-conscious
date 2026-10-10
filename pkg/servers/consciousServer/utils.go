@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	protoV1 "github.com/binuud/conscious/gen/go/v1/conscious"
 	"github.com/openai/openai-go/v3"
 	"github.com/openai/openai-go/v3/option"
 	"github.com/openai/openai-go/v3/responses"
@@ -105,5 +106,37 @@ func MakeLLMSingleRequest(prompt string, systemPrompt string, model string, temp
 
 	fmt.Println(response)
 	return response, nil
+
+}
+
+func MakeLLMGetModels() ([]*protoV1.Model, error) {
+
+	client := openai.NewClient(
+		option.WithBaseURL(GetLLMEndpoint()),
+		option.WithAPIKey(""), // No API key needed for Model Runner
+	)
+
+	// var models []protoV1.Model
+	models := make([]*protoV1.Model, 0)
+
+	page, err := client.Models.List(context.TODO())
+	if err != nil {
+		panic(err.Error())
+	}
+
+	fmt.Println("Available Models:")
+	// Loop through the results automatically handled by the SDK iterator
+	for _, item := range page.Data {
+		model := &protoV1.Model{
+			Id:      item.ID,
+			Uuid:    "",
+			Created: item.Created,
+			OwnedBy: item.OwnedBy,
+		}
+		fmt.Printf("- %s (Owned by: %s)\n", model.Id, model.OwnedBy)
+		models = append(models, model)
+	}
+
+	return models, nil
 
 }

@@ -48,5 +48,9 @@ export type contextMesssage = {
   status?: contextMesssageContextStatus
   statusMessage?: string
   errorMessage?: string
+  response?: string
+  responseImage?: string
+  reasoning?: string
+  thinking?: string
   createdAt?: Common.Timestamp
 }

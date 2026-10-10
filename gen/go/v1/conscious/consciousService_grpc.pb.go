@@ -24,9 +24,10 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Conscious_In_FullMethodName       = "/conscious.Conscious/In"
-	Conscious_InStream_FullMethodName = "/conscious.Conscious/InStream"
-	Conscious_Health_FullMethodName   = "/conscious.Conscious/Health"
+	Conscious_In_FullMethodName        = "/conscious.Conscious/In"
+	Conscious_InStream_FullMethodName  = "/conscious.Conscious/InStream"
+	Conscious_GetModels_FullMethodName = "/conscious.Conscious/getModels"
+	Conscious_Health_FullMethodName    = "/conscious.Conscious/Health"
 )
 
 // ConsciousClient is the client API for Conscious service.
@@ -41,6 +42,7 @@ type ConsciousClient interface {
 	// This is an asynchronous call
 	In(ctx context.Context, in *ContextMesssage, opts ...grpc.CallOption) (*ContextMesssage, error)
 	InStream(ctx context.Context, in *ContextMesssage, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ContextMesssage], error)
+	GetModels(ctx context.Context, in *ModelRequest, opts ...grpc.CallOption) (*ModelResponse, error)
 	// Get the current Health Status of the AI Module
 	Health(ctx context.Context, in *HealthRequest, opts ...grpc.CallOption) (*HealthResponse, error)
 }
@@ -82,6 +84,16 @@ func (c *consciousClient) InStream(ctx context.Context, in *ContextMesssage, opt
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type Conscious_InStreamClient = grpc.ServerStreamingClient[ContextMesssage]
 
+func (c *consciousClient) GetModels(ctx context.Context, in *ModelRequest, opts ...grpc.CallOption) (*ModelResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ModelResponse)
+	err := c.cc.Invoke(ctx, Conscious_GetModels_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *consciousClient) Health(ctx context.Context, in *HealthRequest, opts ...grpc.CallOption) (*HealthResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(HealthResponse)
@@ -104,6 +116,7 @@ type ConsciousServer interface {
 	// This is an asynchronous call
 	In(context.Context, *ContextMesssage) (*ContextMesssage, error)
 	InStream(*ContextMesssage, grpc.ServerStreamingServer[ContextMesssage]) error
+	GetModels(context.Context, *ModelRequest) (*ModelResponse, error)
 	// Get the current Health Status of the AI Module
 	Health(context.Context, *HealthRequest) (*HealthResponse, error)
 	mustEmbedUnimplementedConsciousServer()
@@ -121,6 +134,9 @@ func (UnimplementedConsciousServer) In(context.Context, *ContextMesssage) (*Cont
 }
 func (UnimplementedConsciousServer) InStream(*ContextMesssage, grpc.ServerStreamingServer[ContextMesssage]) error {
 	return status.Error(codes.Unimplemented, "method InStream not implemented")
+}
+func (UnimplementedConsciousServer) GetModels(context.Context, *ModelRequest) (*ModelResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetModels not implemented")
 }
 func (UnimplementedConsciousServer) Health(context.Context, *HealthRequest) (*HealthResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Health not implemented")
@@ -175,6 +191,24 @@ func _Conscious_InStream_Handler(srv interface{}, stream grpc.ServerStream) erro
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type Conscious_InStreamServer = grpc.ServerStreamingServer[ContextMesssage]
 
+func _Conscious_GetModels_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ModelRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConsciousServer).GetModels(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Conscious_GetModels_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConsciousServer).GetModels(ctx, req.(*ModelRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Conscious_Health_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(HealthRequest)
 	if err := dec(in); err != nil {
@@ -203,6 +237,10 @@ var Conscious_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "In",
 			Handler:    _Conscious_In_Handler,
+		},
+		{
+			MethodName: "getModels",
+			Handler:    _Conscious_GetModels_Handler,
 		},
 		{
 			MethodName: "Health",
