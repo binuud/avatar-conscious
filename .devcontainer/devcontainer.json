@@ -2,7 +2,7 @@
   "name": "Go Docker Dev Environment with GoPls",
   "image": "dronasys-com/golang:1.27.1",
   "runArgs": [
-    "--name", "golang-dev-vscode",
+    "--name", "conscious",
     "-p", "9080:9080",
     "-p", "9090:9090"
   ],

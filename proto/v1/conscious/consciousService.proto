@@ -1,0 +1,40 @@
+/// Please use the following editor setup for this file:
+
+// Tab size=4; Tabs as spaces; Clean up trailing whitepsace
+// 'make proto' will run clang-format to fix formatiing
+syntax = "proto3";
+package conscious;
+option go_package = "github.com/binuud/conscious/gen/go/v1/conscious";
+
+import "v1/conscious/common.proto";
+import "v1/conscious/contextMessage.proto";
+import "google/api/annotations.proto";
+
+
+// BrainRepository
+// Service for running brain pipes and flows
+service Conscious {
+  // initially can only run one pipe or flow at a time
+  // This returns a run state, using which clients can follow the status
+  // This is an asynchronous call
+  rpc In(contextMesssage) returns (contextMesssage) {
+    option (google.api.http) = {
+      post : "/v1/conscious/in"
+      body : "*"
+    };
+  }
+
+  rpc InStream(contextMesssage) returns (stream contextMesssage) {
+    option (google.api.http) = {
+      post : "/v1/conscious/inStream"
+      body : "*"
+    };
+  }
+
+  // Get the current Health Status of the AI Module
+  rpc Health(HealthRequest) returns (HealthResponse) {
+    option (google.api.http) = {
+      get : "/v1/health"
+    };
+  }
+}
