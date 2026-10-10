@@ -77,3 +77,15 @@ get models
 ```
 curl http://localhost:9080/llmHandler/v1/models
 ```
+
+Stream request test
+```
+curl -N -X POST http://localhost:9080/api/v1/conscious/inStream \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer ollama" \
+  -d '{
+    "model": "gemma4:latest",
+    "prompt": "how are you",
+    "stream": true
+  }'
+```

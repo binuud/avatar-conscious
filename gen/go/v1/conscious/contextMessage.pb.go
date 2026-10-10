@@ -227,7 +227,11 @@ type ContextMesssage struct {
 	Status        ContextMesssage_ContextStatus `protobuf:"varint,31,opt,name=status,proto3,enum=ContextMesssage_ContextStatus" json:"status,omitempty"`
 	StatusMessage string                        `protobuf:"bytes,32,opt,name=statusMessage,proto3" json:"statusMessage,omitempty"`
 	ErrorMessage  string                        `protobuf:"bytes,33,opt,name=errorMessage,proto3" json:"errorMessage,omitempty"`
-	CreatedAt     *Timestamp                    `protobuf:"bytes,41,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
+	Response      string                        `protobuf:"bytes,41,opt,name=response,proto3" json:"response,omitempty"`
+	ResponseImage string                        `protobuf:"bytes,42,opt,name=responseImage,proto3" json:"responseImage,omitempty"`
+	Reasoning     string                        `protobuf:"bytes,43,opt,name=reasoning,proto3" json:"reasoning,omitempty"`
+	Thinking      string                        `protobuf:"bytes,44,opt,name=thinking,proto3" json:"thinking,omitempty"`
+	CreatedAt     *Timestamp                    `protobuf:"bytes,45,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -388,6 +392,34 @@ func (x *ContextMesssage) GetErrorMessage() string {
 	return ""
 }
 
+func (x *ContextMesssage) GetResponse() string {
+	if x != nil {
+		return x.Response
+	}
+	return ""
+}
+
+func (x *ContextMesssage) GetResponseImage() string {
+	if x != nil {
+		return x.ResponseImage
+	}
+	return ""
+}
+
+func (x *ContextMesssage) GetReasoning() string {
+	if x != nil {
+		return x.Reasoning
+	}
+	return ""
+}
+
+func (x *ContextMesssage) GetThinking() string {
+	if x != nil {
+		return x.Thinking
+	}
+	return ""
+}
+
 func (x *ContextMesssage) GetCreatedAt() *Timestamp {
 	if x != nil {
 		return x.CreatedAt
@@ -399,7 +431,7 @@ var File_v1_conscious_contextMessage_proto protoreflect.FileDescriptor
 
 const file_v1_conscious_contextMessage_proto_rawDesc = "" +
 	"\n" +
-	"!v1/conscious/contextMessage.proto\x1a\x19v1/conscious/common.proto\"\xe6\x06\n" +
+	"!v1/conscious/contextMessage.proto\x1a\x19v1/conscious/common.proto\"\xe2\a\n" +
 	"\x0fcontextMesssage\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
@@ -418,8 +450,12 @@ const file_v1_conscious_contextMessage_proto_rawDesc = "" +
 	"\x04text\x18\x1a \x01(\fR\x04text\x126\n" +
 	"\x06status\x18\x1f \x01(\x0e2\x1e.contextMesssage.ContextStatusR\x06status\x12$\n" +
 	"\rstatusMessage\x18  \x01(\tR\rstatusMessage\x12\"\n" +
-	"\ferrorMessage\x18! \x01(\tR\ferrorMessage\x12(\n" +
-	"\tcreatedAt\x18) \x01(\v2\n" +
+	"\ferrorMessage\x18! \x01(\tR\ferrorMessage\x12\x1a\n" +
+	"\bresponse\x18) \x01(\tR\bresponse\x12$\n" +
+	"\rresponseImage\x18* \x01(\tR\rresponseImage\x12\x1c\n" +
+	"\treasoning\x18+ \x01(\tR\treasoning\x12\x1a\n" +
+	"\bthinking\x18, \x01(\tR\bthinking\x12(\n" +
+	"\tcreatedAt\x18- \x01(\v2\n" +
 	".TimestampR\tcreatedAt\"i\n" +
 	"\vContextType\x12\x16\n" +
 	"\x12COTEXT_TYPE_IGNORE\x10\x00\x12\r\n" +

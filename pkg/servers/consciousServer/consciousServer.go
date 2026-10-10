@@ -13,14 +13,17 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"time"
 
 	protoV1 "github.com/binuud/conscious/gen/go/v1/conscious"
-	"github.com/binuud/conscious/pkg/utils"
+	grpc "google.golang.org/grpc"
 
 	// mqttServer "github.com/dronasys-com/brain-nodes/pkg/servers/mqttBridge"
 	"github.com/google/uuid"
 
 	"github.com/openai/openai-go/v3"
+	"github.com/openai/openai-go/v3/option"
+	"github.com/openai/openai-go/v3/responses"
 
 	"github.com/sirupsen/logrus"
 )
@@ -91,6 +94,19 @@ func NewGrpcConsciousServer() *grpcConsciousServer {
 
 }
 
+func (s *grpcConsciousServer) GetModels(ctx context.Context, in *protoV1.ModelRequest) (*protoV1.ModelResponse, error) {
+
+	models, err := MakeLLMGetModels()
+	if err != nil {
+		logrus.Errorf("Cannot get models %v", err)
+		return nil, err
+	}
+	return &protoV1.ModelResponse{
+		Models: models,
+	}, nil
+
+}
+
 func (s *grpcConsciousServer) In(ctx context.Context, in *protoV1.ContextMesssage) (*protoV1.ContextMesssage, error) {
 
 	logrus.Infof("Sending prompt: %s", in.Prompt)
@@ -150,13 +166,70 @@ func (s *grpcConsciousServer) In(ctx context.Context, in *protoV1.ContextMesssag
 
 }
 
+// Removed the 'ctx context.Context' parameter and fixed the stream interface type
+func (s *grpcConsciousServer) InStream(in *protoV1.ContextMesssage, stream grpc.ServerStreamingServer[protoV1.ContextMesssage]) error {
+
+	client := openai.NewClient(
+		option.WithBaseURL(GetLLMEndpoint()),
+		option.WithAPIKey(""), // No API key needed for Model Runner
+	)
+
+	// logrus.Infof("Send data to llm server %s", params.User.Value)
+
+	params := responses.ResponseNewParams{
+		Model: in.Model,
+		Input: responses.ResponseNewParamsInputUnion{
+			OfInputItemList: responses.ResponseInputParam{
+				responses.ResponseInputItemParamOfMessage(
+					responses.ResponseInputMessageContentListParam{
+						responses.ResponseInputContentParamOfInputText(in.Prompt),
+					},
+					responses.EasyInputMessageRoleUser,
+				),
+			},
+		},
+	}
+
+	llmStream := client.Responses.NewStreaming(context.Background(), params)
+	defer func() {
+		_ = llmStream.Close()
+	}()
+
+	logrus.Info("\n\n\n Starting streaming")
+
+	// Iterate over incoming chunks as they arrive from the API
+	for llmStream.Next() {
+
+		if err := stream.Context().Err(); err != nil {
+			logrus.Errorf("Client disconnected prematurely. %v", err)
+			return err
+		}
+
+		data := llmStream.Current()
+		// fmt.Printf("Type %s, data %s \n", data.Type, data.Delta)
+		resp := &protoV1.ContextMesssage{
+			Response: data.Delta,
+		}
+		if err := stream.Send(resp); err != nil {
+			return err
+		}
+		if data.JSON.Text.Valid() {
+
+			logrus.Infof("Finished Content %s \n\n", data.Type)
+			// completeText = data.Text
+			// break
+		}
+	}
+	return nil
+}
+
 func (s *grpcConsciousServer) Health(ctx context.Context, in *protoV1.HealthRequest) (*protoV1.HealthResponse, error) {
 
 	health := &protoV1.HealthResponse{
 		Uuid:          uuid.New().String(),
 		Status:        protoV1.HealthResponse_Active,
 		StatusMessage: "Need to integrate with api TODO",
-		CreatedAt:     utils.GetTimeStamp(),
+		CreatedAt:     time.Now().Unix(),
 	}
 
 	return health, nil

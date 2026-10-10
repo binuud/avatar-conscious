@@ -16,6 +16,13 @@ export type Timestamp = {
   nanos?: number
 }
 
+export type Model = {
+  uuid?: string
+  id?: string
+  created?: string
+  ownedBy?: string
+}
+
 export type HealthRequest = {
   uuid?: string
 }
@@ -25,5 +32,12 @@ export type HealthResponse = {
   status?: HealthResponseHealthStatus
   statusMessage?: string
   errorMessage?: string
-  createdAt?: Timestamp
+  createdAt?: string
+}
+
+export type ModelRequest = {
+}
+
+export type ModelResponse = {
+  models?: Model[]
 }

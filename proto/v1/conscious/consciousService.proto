@@ -11,6 +11,7 @@ import "v1/conscious/contextMessage.proto";
 import "google/api/annotations.proto";
 
 
+
 // BrainRepository
 // Service for running brain pipes and flows
 service Conscious {
@@ -27,6 +28,13 @@ service Conscious {
   rpc InStream(contextMesssage) returns (stream contextMesssage) {
     option (google.api.http) = {
       post : "/v1/conscious/inStream"
+      body : "*"
+    };
+  }
+
+  rpc getModels(ModelRequest) returns (ModelResponse) {
+    option (google.api.http) = {
+      post : "/v1/conscious/models"
       body : "*"
     };
   }
