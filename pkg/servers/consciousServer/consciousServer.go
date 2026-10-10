@@ -14,9 +14,10 @@ import (
 	"fmt"
 	"os"
 
-	protoV1 "github.com/binuud/conscious/gen/go/v1/brain"
-	aiModuleProto "github.com/dronasys-com/brain-nodes/gen/go/v1/aiModule"
-	mqttServer "github.com/dronasys-com/brain-nodes/pkg/servers/mqttBridge"
+	protoV1 "github.com/binuud/conscious/gen/go/v1/conscious"
+	"github.com/binuud/conscious/pkg/utils"
+
+	// mqttServer "github.com/dronasys-com/brain-nodes/pkg/servers/mqttBridge"
 	"github.com/google/uuid"
 
 	"github.com/openai/openai-go/v3"
@@ -90,7 +91,7 @@ func NewGrpcConsciousServer() *grpcConsciousServer {
 
 }
 
-func (s *grpcConsciousServer) In(ctx context.Context, in *protoV1.InRequest) (*protoV1.InResponse, error) {
+func (s *grpcConsciousServer) In(ctx context.Context, in *protoV1.ContextMesssage) (*protoV1.ContextMesssage, error) {
 
 	logrus.Infof("Sending prompt: %s", in.Prompt)
 	completions, err := s.MakeLLMChatRequest(in.Prompt)
@@ -132,7 +133,7 @@ func (s *grpcConsciousServer) In(ctx context.Context, in *protoV1.InRequest) (*p
 		s.memory.Messages = append(s.memory.Messages, openai.AssistantMessage(assistantMsgContent))
 
 		// send to tts, for it to generate voice over of the text
-		mqttServer.SendOnTTS(assistantMsgContent)
+		// mqttServer.SendOnTTS(assistantMsgContent)
 
 	}
 
@@ -141,22 +142,22 @@ func (s *grpcConsciousServer) In(ctx context.Context, in *protoV1.InRequest) (*p
 		logrus.Panicf("Cannot save conscious memory %v", err)
 	}
 
-	return &protoV1.InResponse{
-		Uuid:     in.Uuid,
-		Prompt:   in.Prompt,
-		Response: assistantMsgContent,
+	return &protoV1.ContextMesssage{
+		Uuid:   in.Uuid,
+		Prompt: in.Prompt,
+		Data:   assistantMsgContent,
 	}, nil
 
 }
 
-func (s *grpcConsciousServer) Health(ctx context.Context, in *aiModuleProto.HealthRequest) (*aiModuleProto.HealthResponse, error) {
+func (s *grpcConsciousServer) Health(ctx context.Context, in *protoV1.HealthRequest) (*protoV1.HealthResponse, error) {
 
-	health := &aiModuleProto.HealthResponse{}
-	health.Uuid = uuid.New().String()
-	// check if the rag vector is populated
-
-	health.Status = aiModuleProto.HealthResponse_Active
-	health.StatusMessage = "Need to integrate with api TODO"
+	health := &protoV1.HealthResponse{
+		Uuid:          uuid.New().String(),
+		Status:        protoV1.HealthResponse_Active,
+		StatusMessage: "Need to integrate with api TODO",
+		CreatedAt:     utils.GetTimeStamp(),
+	}
 
 	return health, nil
 }

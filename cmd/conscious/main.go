@@ -10,11 +10,13 @@ import (
 	"os"
 	"strings"
 
-	gw "github.com/binuud/conscious/gen/go/v1/brain"
+	protoV1 "github.com/binuud/conscious/gen/go/v1/conscious"
 	"github.com/binuud/conscious/pkg/servers/consciousServer"
 	llmProxyServer "github.com/binuud/conscious/pkg/servers/llmProxyServer"
-	mqttServer "github.com/dronasys-com/brain-nodes/pkg/servers/mqttBridge"
-	fileServer "github.com/dronasys-com/brain-nodes/pkg/servers/staticFileServer"
+	"github.com/binuud/conscious/pkg/utils"
+
+	// mqttServer "github.com/dronasys-com/brain-nodes/pkg/servers/mqttBridge"
+	// fileServer "github.com/dronasys-com/brain-nodes/pkg/servers/staticFileServer"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/rs/cors"
 	"github.com/sirupsen/logrus"
@@ -35,11 +37,11 @@ func serveStaticPaths() *http.ServeMux {
 	// OPEN_API_FILES_PATH is the folder where the swagger files for apps are stored
 	SERVABLE_DIRECTORY := os.Getenv("SERVABLE_DIRECTORY")
 	if SERVABLE_DIRECTORY == "" {
-		SERVABLE_DIRECTORY = "/dataVolume/generatedAiFiles"
+		SERVABLE_DIRECTORY = "/dataVolume/gen"
 	}
 
-	if !strings.Contains(SERVABLE_DIRECTORY, "/dataVolume/generatedAiFiles") {
-		logrus.Panic("Protection fail, only directory having /dataVolume/generatedAiFiles can be served")
+	if !strings.Contains(SERVABLE_DIRECTORY, "/dataVolume/gen") {
+		logrus.Panic("Protection fail, only directory having /dataVolume/gen can be served")
 	}
 
 	SERVABLE_UI_DIRECTORY := os.Getenv("SERVABLE_UI_DIRECTORY")
@@ -51,8 +53,8 @@ func serveStaticPaths() *http.ServeMux {
 		logrus.Panic("Protection fail, only directory having /ui can be served")
 	}
 
-	fileServer.StaticServeAiPath(httpMux, "/static/", SERVABLE_DIRECTORY)
-	fileServer.SPAStaticServePath(httpMux, "/", SERVABLE_UI_DIRECTORY)
+	// fileServer.StaticServeAiPath(httpMux, "/static/", SERVABLE_DIRECTORY)
+	// fileServer.SPAStaticServePath(httpMux, "/", SERVABLE_UI_DIRECTORY)
 
 	return httpMux
 }
@@ -75,16 +77,16 @@ func runHtppServer() {
 
 	gwMux := runtime.NewServeMux()
 
-	mqttServer.InitMQTT()
-
-	// AppStore
-	err = gw.RegisterConsciousHandler(ctx, gwMux, conn)
+	// consciousServer
+	err = protoV1.RegisterConsciousHandler(ctx, gwMux, conn)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
 	httpMux := serveStaticPaths()
-	httpMux.HandleFunc("/ws", mqttServer.WebsocketHandler)
+
+	// mqttServer.InitMQTT()
+	// httpMux.HandleFunc("/ws", mqttServer.WebsocketHandler)
 
 	// handle llm proxt on path /llmHandler
 	httpMux.Handle("/llmHandler/", http.StripPrefix("/llmHandler", llmProxyServer.GetLlmProxyHandler()))
@@ -125,7 +127,7 @@ func runGRPCServer() {
 	insecureServer := grpc.NewServer()
 
 	// GRPC App Store Server
-	gw.RegisterConsciousServer(insecureServer, consciousServer.NewGrpcConsciousServer())
+	protoV1.RegisterConsciousServer(insecureServer, consciousServer.NewGrpcConsciousServer())
 
 	// Register reflection service on gRPC server.
 	reflection.Register(insecureServer)
@@ -138,10 +140,7 @@ func runGRPCServer() {
 func main() {
 	logrus.Println("Welcome to life")
 
-	LLM_HOST := os.Getenv("LLM_HOST")
-	if LLM_HOST == "" {
-		LLM_HOST = "http://localhost:12434"
-	}
+	LLM_HOST := utils.GetEnv("LLM_HOST", "http://localhost:12434")
 
 	logrus.Printf("LLM Endpoint %v", LLM_HOST)
 	go func() {

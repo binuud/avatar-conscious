@@ -1,6 +1,11 @@
 package utils
 
-import "os"
+import (
+	"os"
+	"time"
+
+	"github.com/binuud/conscious/gen/go/v1/conscious"
+)
 
 // getEnv retrieves an environment variable or returns a fallback default value
 func GetEnv(key, fallback string) string {
@@ -8,4 +13,13 @@ func GetEnv(key, fallback string) string {
 		return value
 	}
 	return fallback
+}
+
+func GetTimeStamp() *conscious.Timestamp {
+
+	return &conscious.Timestamp{
+		Seconds: time.Now().UnixMilli(),
+		Nanos:   0,
+	}
+
 }

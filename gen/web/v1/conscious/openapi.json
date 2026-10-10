@@ -1,0 +1,234 @@
+{
+  "openapi": "3.1.0",
+  "servers": [{
+    "url": "http://localhost:9080/api",
+    "description": "Testing Server"
+  }],
+  "info": {
+    "title": "",
+    "version": ""
+  },
+  "paths": {
+    "/v1/conscious/in": {
+      "post": {
+        "operationId": "in",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/contextMesssage"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "conscious.Conscious.In response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/contextMesssage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/conscious/inStream": {
+      "post": {
+        "operationId": "inStream",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/contextMesssage"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "conscious.Conscious.InStream response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/contextMesssage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/health": {
+      "get": {
+        "operationId": "health",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "conscious.Conscious.Health response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "HealthResponse": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/components/schemas/HealthResponse.HealthStatus"
+          },
+          "statusMessage": {
+            "type": "string"
+          },
+          "errorMessage": {
+            "type": "string"
+          },
+          "createdAt": {
+            "$ref": "#/components/schemas/Timestamp"
+          }
+        }
+      },
+      "HealthResponse.HealthStatus": {
+        "type": "string",
+        "enum": [
+          "HealthIgnore",
+          "Active",
+          "Waiting",
+          "Down"
+        ]
+      },
+      "Timestamp": {
+        "type": "object",
+        "properties": {
+          "seconds": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "nanos": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "contextMesssage": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/contextMesssage.ContextType"
+          },
+          "role": {
+            "$ref": "#/components/schemas/contextMesssage.ContextRole"
+          },
+          "stream": {
+            "type": "boolean"
+          },
+          "prompt": {
+            "type": "string"
+          },
+          "systemPrompt": {
+            "type": "string"
+          },
+          "data": {
+            "type": "string"
+          },
+          "bodyText": {
+            "type": "string"
+          },
+          "bodyBytes": {
+            "type": "string",
+            "format": "base64"
+          },
+          "vision": {
+            "type": "string",
+            "format": "base64"
+          },
+          "audio": {
+            "type": "string",
+            "format": "base64"
+          },
+          "text": {
+            "type": "string",
+            "format": "base64"
+          },
+          "status": {
+            "$ref": "#/components/schemas/contextMesssage.ContextStatus"
+          },
+          "statusMessage": {
+            "type": "string"
+          },
+          "errorMessage": {
+            "type": "string"
+          },
+          "createdAt": {
+            "$ref": "#/components/schemas/Timestamp"
+          }
+        }
+      },
+      "contextMesssage.ContextRole": {
+        "type": "string",
+        "enum": [
+          "ROLE_IGNORE",
+          "USER",
+          "ASSISTANT",
+          "SYSTEM",
+          "AGENT"
+        ]
+      },
+      "contextMesssage.ContextStatus": {
+        "type": "string",
+        "enum": [
+          "STATUS_IGNORE",
+          "SUCCESS",
+          "FAIL",
+          "FATAL"
+        ]
+      },
+      "contextMesssage.ContextType": {
+        "type": "string",
+        "enum": [
+          "COTEXT_TYPE_IGNORE",
+          "LLM_QUERY",
+          "LLM_STREAM_QUERY",
+          "IMAGE_GENERATION",
+          "TTS"
+        ]
+      }
+    }
+  }
+}

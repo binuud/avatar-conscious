@@ -69,7 +69,7 @@ func TestConsciousServer_LLMImageProcess(t *testing.T) {
 	if err != nil {
 		log.Fatalf("Failed to read image file: %v", err)
 	}
-	imageDataURL := "data:image/png;base64," + base64.StdEncoding.EncodeToString(image)
+	imageDataURL := "data:image/jpeg;base64," + base64.StdEncoding.EncodeToString(image)
 
 	response, err := MakeImageDescribeRequest("What's in this image? ", memory.Model, imageDataURL)
 	if err != nil {

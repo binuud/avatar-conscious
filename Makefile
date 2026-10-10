@@ -90,23 +90,25 @@ protos: protos-conscious ## run all protos
 
 ## protos
 protos-conscious: ## Build Go and Web Proto
+	mkdir -p gen/go gen/web/v1/conscious
 # ****** Conscious AiModule 
 	$(PROTOC) -I=./proto/.  \
 	--go_out=./gen/go/ \
 	--go_opt paths=source_relative \
 	--go-grpc_out=./gen/go/ \
 	--go-grpc_opt paths=source_relative \
-	--grpc-gateway_out=./gen/ts/ \
+	--grpc-gateway_out=./gen/go/ \
 	--grpc-gateway_opt paths=source_relative \
 	--grpc-gateway_opt generate_unbound_methods=true \
-	--grpc-gateway-ts_out=./gen/ts/ \
+	--grpc-gateway-ts_out=./gen/web/ \
 	--grpc-gateway-ts_opt paths=source_relative \
 	--grpc-gateway-ts_opt generate_unbound_methods=true \
-	--openapiv2_out=./gen/openapi/v1/brain/ \
-	proto/v1/brain/brain.proto proto/v1/brain/consciousService.proto \
-	proto//google/protobuf/timestamp.proto
-	yq eval ./gen/go/v1/brain/openapi.yaml -o=json -P > ./gen/go/v1/brain/openapi.json
-# 	--oas_out ./gen/go/v1/brain/ \
+	--oas_out ./gen/web/v1/conscious/ \
+	proto/v1/conscious/common.proto \
+	proto/v1/conscious/contextMessage.proto \
+	proto/v1/conscious/consciousService.proto 
+	yq eval ./gen/web/v1/conscious/openapi.yaml -o=json -P > ./gen/web/v1/conscious/openapi.json
+
 ##
 ## Test Code
 ##
@@ -114,7 +116,14 @@ protos-conscious: ## Build Go and Web Proto
 test: ## Run test 
 	./scripts/runTest.sh
 
+start-dev-container: ## start golang container
+	docker run --rm -it --name $(CONSCIOUS_APP_NAME) -p 9080:9080 -p 9090:9090 -v .:/app -w /app dronasys-com/golang:1.27.1
 
+connect-dev-container: ## connect to dev container
+	docker exec -it $(CONSCIOUS_APP_NAME) bash
 
 run: ## combine all services for single user case
 	./scripts/runConscious.sh
+
+run-scratch: ## run scratch folder, temp staging go files
+	./scripts/runScratch.sh

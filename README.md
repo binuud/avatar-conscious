@@ -26,6 +26,8 @@ Once the proto files are created, and the OpenAPI json file is created, add the 
 ## Useful Commands
 
 Check vision model
+* ollama version atleast 0.40
+* mlx version atleast 0.32.3
 ```
  ollama run gemma4:latest  ~/Code/avatar/conscious/dataVolume/sampleImages/elephantWithBall.jpg "what is in this image? Answer in 10 words"
 ```

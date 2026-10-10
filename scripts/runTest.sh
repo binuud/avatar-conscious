@@ -9,7 +9,7 @@ export LLM_MODEL="gemma4:latest"
 export IMAGE_QUERY_MODEL="gemma4:latest"
 export MQTT_HOST="tcp://host.docker.internal:1883"
 export FILE_STORE_PATH=/app/dataVolume/
-export SERVABLE_DIRECTORY=${HOME}/Code/ai/aiOutData/dataVolume/generatedAiFiles/
+export SERVABLE_DIRECTORY=${HOME}/Code/ai/aiOutData/dataVolume/gen/
 
 go test ./pkg/... -v
 
