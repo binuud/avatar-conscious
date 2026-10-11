@@ -10,8 +10,6 @@ package consciousServer
 
 import (
 	"context"
-	"encoding/json"
-	"fmt"
 	"os"
 	"time"
 
@@ -109,48 +107,12 @@ func (s *grpcConsciousServer) GetModels(ctx context.Context, in *protoV1.ModelRe
 
 func (s *grpcConsciousServer) In(ctx context.Context, in *protoV1.ContextMesssage) (*protoV1.ContextMesssage, error) {
 
-	logrus.Infof("Sending prompt: %s", in.Prompt)
-	completions, err := s.MakeLLMChatRequest(in.Prompt)
+	logrus.Infof("In Received -> Request: %s, %s", in.Type, in.Prompt)
+
+	out, err := s.RouteRequest(in)
 	if err != nil {
 		logrus.Errorf("LLM Error %v", err)
 		return nil, err
-	}
-
-	msg := completions.Choices[0].Message
-	assistantMsgContent := completions.Choices[0].Message.Content
-
-	if len(msg.ToolCalls) > 0 {
-
-		// The model wants to call a tool!
-		toolCall := msg.ToolCalls[0]
-		fmt.Printf("Model invoked tool: %s with arguments: %s\n", toolCall.Function.Name, toolCall.Function.Arguments)
-
-		// Parse arguments and run your local go function logic here
-		if toolCall.Function.Name == "get_weather" {
-			var args struct {
-				Location string `json:"location"`
-			}
-			json.Unmarshal([]byte(toolCall.Function.Arguments), &args)
-
-			// Mock result execution
-			//assistantMsgContent := fmt.Sprintf(`{"location": "%s", "temp": "35C", "condition": "Sunny"}`, args.Location)
-			assistantMsgContent = fmt.Sprintf("Weather in %s, is Sunny, and the temperature is 35C", args.Location)
-			logrus.Infof("Tools args %v", args)
-			logrus.Println("Tool execution result:", assistantMsgContent)
-			s.memory.Messages = append(s.memory.Messages, openai.AssistantMessage(assistantMsgContent))
-		}
-
-	} else {
-
-		// add prompt and response to memory
-		// provided response is not a tool call and a direct assistant response
-		logrus.Println("Model direct response:", assistantMsgContent)
-		// add response to memory
-		s.memory.Messages = append(s.memory.Messages, openai.AssistantMessage(assistantMsgContent))
-
-		// send to tts, for it to generate voice over of the text
-		// mqttServer.SendOnTTS(assistantMsgContent)
-
 	}
 
 	err = s.memory.Save("default")
@@ -158,17 +120,14 @@ func (s *grpcConsciousServer) In(ctx context.Context, in *protoV1.ContextMesssag
 		logrus.Panicf("Cannot save conscious memory %v", err)
 	}
 
-	return &protoV1.ContextMesssage{
-		Uuid:   in.Uuid,
-		Prompt: in.Prompt,
-		Data:   assistantMsgContent,
-	}, nil
+	return out, nil
 
 }
 
 // Removed the 'ctx context.Context' parameter and fixed the stream interface type
 func (s *grpcConsciousServer) InStream(in *protoV1.ContextMesssage, stream grpc.ServerStreamingServer[protoV1.ContextMesssage]) error {
 
+	logrus.Infof("InStream Received -> Request: %s, %s", in.Type, in.Prompt)
 	client := openai.NewClient(
 		option.WithBaseURL(GetLLMEndpoint()),
 		option.WithAPIKey(""), // No API key needed for Model Runner
@@ -215,9 +174,10 @@ func (s *grpcConsciousServer) InStream(in *protoV1.ContextMesssage, stream grpc.
 		}
 		if data.JSON.Text.Valid() {
 
+			// when reasoning, thinking is enabled, we might see this twice.
+			// once for reasoning, and once for actualy response
 			logrus.Infof("Finished Content %s \n\n", data.Type)
 			// completeText = data.Text
-			// break
 		}
 	}
 	return nil
