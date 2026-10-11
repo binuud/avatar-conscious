@@ -119,7 +119,7 @@ func (s *grpcConsciousServer) In(ctx context.Context, in *protoV1.ContextMesssag
 	if err != nil {
 		logrus.Panicf("Cannot save conscious memory %v", err)
 	}
-
+	logrus.Infof("In Received -> Response: %s", out)
 	return out, nil
 
 }

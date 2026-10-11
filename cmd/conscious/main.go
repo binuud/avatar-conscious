@@ -13,10 +13,11 @@ import (
 	protoV1 "github.com/binuud/conscious/gen/go/v1/conscious"
 	"github.com/binuud/conscious/pkg/servers/consciousServer"
 	llmProxyServer "github.com/binuud/conscious/pkg/servers/llmProxyServer"
+	"github.com/binuud/conscious/pkg/servers/staticFileServer"
 	"github.com/binuud/conscious/pkg/utils"
 
 	// mqttServer "github.com/dronasys-com/brain-nodes/pkg/servers/mqttBridge"
-	// fileServer "github.com/dronasys-com/brain-nodes/pkg/servers/staticFileServer"
+
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/rs/cors"
 	"github.com/sirupsen/logrus"
@@ -35,10 +36,7 @@ func serveStaticPaths() *http.ServeMux {
 	httpMux := http.NewServeMux()
 
 	// OPEN_API_FILES_PATH is the folder where the swagger files for apps are stored
-	SERVABLE_DIRECTORY := os.Getenv("SERVABLE_DIRECTORY")
-	if SERVABLE_DIRECTORY == "" {
-		SERVABLE_DIRECTORY = "/dataVolume/gen"
-	}
+	SERVABLE_DIRECTORY := utils.GetEnv("SERVABLE_DIRECTORY", "/dataVolume/gen")
 
 	if !strings.Contains(SERVABLE_DIRECTORY, "/dataVolume/gen") {
 		logrus.Panic("Protection fail, only directory having /dataVolume/gen can be served")
@@ -53,8 +51,8 @@ func serveStaticPaths() *http.ServeMux {
 		logrus.Panic("Protection fail, only directory having /ui can be served")
 	}
 
-	// fileServer.StaticServeAiPath(httpMux, "/static/", SERVABLE_DIRECTORY)
-	// fileServer.SPAStaticServePath(httpMux, "/", SERVABLE_UI_DIRECTORY)
+	staticFileServer.StaticServeAiPath(httpMux, "/static/", SERVABLE_DIRECTORY)
+	// staticFileServer.SPAStaticServePath(httpMux, "/", SERVABLE_UI_DIRECTORY)
 
 	return httpMux
 }

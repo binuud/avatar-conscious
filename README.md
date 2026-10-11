@@ -89,3 +89,8 @@ curl -N -X POST http://localhost:9080/api/v1/conscious/inStream \
     "stream": true
   }'
 ```
+
+
+```
+go install github.com/cespare/reflex@latest
+```
