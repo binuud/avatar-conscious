@@ -3,12 +3,15 @@ package consciousServer
 import (
 	"context"
 	"fmt"
+	"io"
 	"os"
 
 	protoV1 "github.com/binuud/conscious/gen/go/v1/conscious"
 	"github.com/openai/openai-go/v3"
 	"github.com/openai/openai-go/v3/option"
 	"github.com/openai/openai-go/v3/responses"
+	"github.com/seasonjs/hf-hub/api"
+	sd "github.com/seasonjs/stable-diffusion"
 	"github.com/sirupsen/logrus"
 )
 
@@ -141,7 +144,7 @@ func MakeLLMSingleRequest(prompt string, systemPrompt string, model string, temp
 
 }
 
-func MakeLLMImageGenerationRequest(prompt string, model string) (*openai.ImagesResponse, error) {
+func MakeOpenAiImageGenerationRequest(prompt string, model string) (*openai.ImagesResponse, error) {
 
 	client := openai.NewClient(
 		option.WithBaseURL(GetLLMEndpoint()),
@@ -156,4 +159,49 @@ func MakeLLMImageGenerationRequest(prompt string, model string) (*openai.ImagesR
 		Size:           openai.ImageGenerateParamsSize256x256,
 	})
 
+}
+
+func MakeImageGenerationRequest(prompt string, model string, fileName string) error {
+
+	options := sd.DefaultOptions
+
+	imageModel, err := sd.NewAutoModel(options)
+	if err != nil {
+		print(err.Error())
+		return err
+	}
+	defer imageModel.Close()
+
+	hapi, err := api.NewApi()
+	if err != nil {
+		return err
+	}
+
+	modelPath, err := hapi.Model("justinpinkney/miniSD").Get("miniSD.ckpt")
+	if err != nil {
+		return err
+	}
+
+	err = imageModel.LoadFromFile(modelPath)
+	if err != nil {
+		return err
+	}
+	var writers []io.Writer
+	filenames := []string{
+		fileName,
+	}
+	for _, filename := range filenames {
+		file, err := os.Create(filename)
+		if err != nil {
+			return err
+		}
+		defer file.Close()
+		writers = append(writers, file)
+	}
+
+	err = imageModel.Predict(prompt, sd.DefaultFullParams, writers)
+	if err != nil {
+		return err
+	}
+	return nil
 }
