@@ -1,5 +1,7 @@
 package main
 
+// looks promising, but tough to change models
+
 import (
 	"io"
 	"os"
@@ -29,6 +31,12 @@ func main() {
 		print(err.Error())
 		return
 	}
+
+	// modelPath, err := hapi.Model("black-forest-labs/FLUX.2-klein-base-4B").Get("flux-2-klein-4b-int8.safetensors")
+	// if err != nil {
+	// 	print(err.Error())
+	// 	return
+	// }
 
 	err = model.LoadFromFile(modelPath)
 	if err != nil {
