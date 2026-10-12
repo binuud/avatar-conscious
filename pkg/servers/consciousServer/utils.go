@@ -156,7 +156,7 @@ func MakeOpenAiImageGenerationRequest(prompt string, model string) (*openai.Imag
 		Prompt:         prompt,
 		N:              openai.Int(1),
 		ResponseFormat: openai.ImageGenerateParamsResponseFormatB64JSON,
-		Size:           openai.ImageGenerateParamsSize256x256,
+		Size:           openai.ImageGenerateParamsSize1024x1024,
 	})
 
 }
@@ -182,6 +182,7 @@ func MakeImageGenerationRequest(prompt string, model string, fileName string) er
 		return err
 	}
 
+	logrus.Infof("MakeImageGenerationRequest -> loadfile %s", modelPath)
 	err = imageModel.LoadFromFile(modelPath)
 	if err != nil {
 		return err
@@ -198,7 +199,7 @@ func MakeImageGenerationRequest(prompt string, model string, fileName string) er
 		defer file.Close()
 		writers = append(writers, file)
 	}
-
+	logrus.Info("MakeImageGenerationRequest -> start inference")
 	err = imageModel.Predict(prompt, sd.DefaultFullParams, writers)
 	if err != nil {
 		return err

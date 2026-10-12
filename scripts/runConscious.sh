@@ -3,7 +3,7 @@
 # export LLM_HOST="http://host.docker.internal:11434"
 # export MQTT_HOST="tcp://host.docker.internal:1883"
 
-export LLM_HOST="http://localhost:11434"
+export LLM_HOST="http://localhost:11234"
 export MQTT_HOST="tcp://localhost:1883"
 
 export LLM_MODEL="gemma4:latest"

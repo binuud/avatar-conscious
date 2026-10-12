@@ -1,0 +1,38 @@
+// Please use the following editor setup for this file:
+
+// Tab size=4; Tabs as spaces; Clean up trailing whitepsace
+// 'make proto' will run clang-format to fix formatiing
+syntax = "proto3";
+package conscious;
+option go_package = "github.com/binuud/conscious/gen/go/v1/conscious";
+
+// SystemMetrics tracks the resource usage of a node
+message SystemMetrics {
+
+  // UUID of the node reporting the metrics
+  string uuid = 1;
+
+  // cpu usage as a percentage (0-100)
+  double cpuUsage = 2;
+
+  // total installed ram in bytes
+  uint64 totalRamBytes = 3;
+
+  // used ram in bytes
+  uint64 usedRamBytes = 4;
+
+  // ram usage as a percentage (0-100)
+  double ramUsage = 5;
+
+  // gpu usage as a percentage (0-100)
+  double gpuUsagecon = 6;
+
+  // total disk in bytes
+  uint64 totalDiskBytes = 7;
+
+  // used disk in bytes
+  uint64 usedDiskBytes = 8;
+
+  // unix timestamp of when the metrics were sampled
+  int64 createdAt = 9;
+}

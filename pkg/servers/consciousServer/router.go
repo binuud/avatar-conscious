@@ -20,8 +20,8 @@ func (s *grpcConsciousServer) RouteRequest(in *protoV1.ContextMesssage) (*protoV
 		return s.RouteLLMChatRequest(in)
 	case protoV1.ContextMesssage_IMAGE_GENERATION:
 		// use open AI API supporting generation
-		// return s.RouteOpenAiImageGenerationRequest(in)
-		return s.RouteImageCreateRequest(in)
+		return s.RouteOpenAiImageGenerationRequest(in)
+		// return s.RouteImageCreateRequest(in)
 	default:
 		return nil, nil
 	}
@@ -90,18 +90,25 @@ func (s *grpcConsciousServer) RouteOpenAiImageGenerationRequest(in *protoV1.Cont
 		return nil, err
 	}
 
-	logrus.Infof("RouteOpenAiImageGenerationRequest -> decoding image %v", result)
+	logrus.Infof("RouteOpenAiImageGenerationRequest -> decoding image")
 	image, err := base64.StdEncoding.DecodeString(result.Data[0].B64JSON)
 	if err != nil {
 		panic(err)
 	}
-	if err := os.WriteFile("/app/"+in.Uuid+".png", image, 0o600); err != nil {
+
+	FILE_STORE_PATH := utils.GetEnv("FILE_STORE_PATH", "./dataVolume")
+	// servable file path from static server
+	servableFile := in.Uuid + ".png"
+	imageFileName := FILE_STORE_PATH + "/gen/" + servableFile
+
+	logrus.Infof("RouteImageCreateRequest -> %s, %s, %s", in.Model, in.Prompt, imageFileName)
+	if err := os.WriteFile(imageFileName, image, 0o600); err != nil {
 		panic(err)
 	}
 
 	return &protoV1.ContextMesssage{
 		Uuid:          in.Uuid,
-		ResponseImage: "otter.png",
+		ResponseImage: servableFile,
 	}, nil
 
 }
