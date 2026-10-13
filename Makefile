@@ -104,6 +104,7 @@ protos-conscious: ## Build Go and Web Proto
 	--grpc-gateway-ts_opt paths=source_relative \
 	--grpc-gateway-ts_opt generate_unbound_methods=true \
 	--oas_out ./gen/web/v1/conscious/ \
+	proto/v1/conscious/metrics.proto \
 	proto/v1/conscious/common.proto \
 	proto/v1/conscious/contextMessage.proto \
 	proto/v1/conscious/consciousService.proto 

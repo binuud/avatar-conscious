@@ -14,6 +14,7 @@ import (
 	"github.com/binuud/conscious/pkg/servers/consciousServer"
 	llmProxyServer "github.com/binuud/conscious/pkg/servers/llmProxyServer"
 	"github.com/binuud/conscious/pkg/servers/staticFileServer"
+	"github.com/binuud/conscious/pkg/servers/systemMetricsServer"
 	"github.com/binuud/conscious/pkg/utils"
 
 	// mqttServer "github.com/dronasys-com/brain-nodes/pkg/servers/mqttBridge"
@@ -81,6 +82,12 @@ func runHtppServer() {
 		log.Fatalln(err)
 	}
 
+	// systemMetricsServer
+	err = protoV1.RegisterMetricsHandler(ctx, gwMux, conn)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 	httpMux := serveStaticPaths()
 
 	// mqttServer.InitMQTT()
@@ -92,7 +99,8 @@ func runHtppServer() {
 
 	// link the concious gateway server to httpmux
 	httpMux.Handle("/api/", http.StripPrefix("/api", gwMux))
-	logrus.Infof("Server directory %s -> %s", "/api/", "consciousServer")
+	logrus.Infof("Server directory %s -> %s", "/api/", "conscious server")
+	logrus.Infof("Server directory %s -> %s", "/api/", "metrics server")
 
 	// Configure CORS options as needed
 	corsEnabledMux := cors.New(cors.Options{
@@ -124,8 +132,11 @@ func runGRPCServer() {
 
 	insecureServer := grpc.NewServer()
 
-	// GRPC App Store Server
+	// GRPC Conscious Server
 	protoV1.RegisterConsciousServer(insecureServer, consciousServer.NewGrpcConsciousServer())
+
+	// GRPC SystemMetrics Server
+	protoV1.RegisterMetricsServer(insecureServer, systemMetricsServer.NewGrpcSystemMetricsServer())
 
 	// Register reflection service on gRPC server.
 	reflection.Register(insecureServer)

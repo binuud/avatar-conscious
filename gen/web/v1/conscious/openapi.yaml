@@ -53,6 +53,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ModelResponse'
+  /v1/consciousMetrics/getSystemMetrics:
+    post:
+      operationId: getSystemMetrics
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GetSystemMetricsRequest'
+        required: true
+      responses:
+        "200":
+          description: conscious.Metrics.GetSystemMetrics response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SystemMetrics'
   /v1/health:
     get:
       operationId: health
@@ -70,6 +86,12 @@ paths:
                 $ref: '#/components/schemas/HealthResponse'
 components:
   schemas:
+    GetSystemMetricsRequest:
+      type: object
+      properties:
+        intervalSeconds:
+          type: integer
+          format: uint32
     HealthResponse:
       type: object
       properties:
@@ -112,6 +134,35 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Model'
+    SystemMetrics:
+      type: object
+      properties:
+        uuid:
+          type: string
+        cpuUsage:
+          type: number
+          format: double
+        totalRamBytes:
+          type: integer
+          format: uint64
+        usedRamBytes:
+          type: integer
+          format: uint64
+        ramUsage:
+          type: number
+          format: double
+        gpuUsage:
+          type: number
+          format: double
+        totalDiskBytes:
+          type: integer
+          format: uint64
+        usedDiskBytes:
+          type: integer
+          format: uint64
+        createdAt:
+          type: integer
+          format: int64
     Timestamp:
       type: object
       properties:
