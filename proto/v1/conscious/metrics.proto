@@ -6,6 +6,8 @@ syntax = "proto3";
 package conscious;
 option go_package = "github.com/binuud/conscious/gen/go/v1/conscious";
 
+import "google/api/annotations.proto";
+
 // SystemMetrics tracks the resource usage of a node
 message SystemMetrics {
 
@@ -25,7 +27,7 @@ message SystemMetrics {
   double ramUsage = 5;
 
   // gpu usage as a percentage (0-100)
-  double gpuUsagecon = 6;
+  double gpuUsage = 6;
 
   // total disk in bytes
   uint64 totalDiskBytes = 7;
@@ -35,4 +37,19 @@ message SystemMetrics {
 
   // unix timestamp of when the metrics were sampled
   int64 createdAt = 9;
+}
+
+service Metrics {
+    rpc GetSystemMetrics(GetSystemMetricsRequest) returns (stream SystemMetrics) {
+    option (google.api.http) = {
+      post : "/v1/consciousMetrics/getSystemMetrics"
+      body : "*"
+    };
+  }
+}
+
+
+message GetSystemMetricsRequest {
+  // Optional sampling interval in seconds for Watch (0 = server default).
+  uint32 intervalSeconds = 1;
 }

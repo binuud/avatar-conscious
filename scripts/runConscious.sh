@@ -10,4 +10,5 @@ export LLM_MODEL="gemma4:latest"
 export FILE_STORE_PATH=$HOME/Code/avatar/conscious/dataVolume
 export SERVABLE_DIRECTORY=$HOME/Code/avatar/conscious/dataVolume/gen
 
-reflex $(cat .reflex) -- go run cmd/conscious/main.go
+# reflex $(cat .reflex) -- go run cmd/conscious/main.go
+go run cmd/conscious/main.go

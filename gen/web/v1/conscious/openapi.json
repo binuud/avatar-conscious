@@ -86,6 +86,33 @@
         }
       }
     },
+    "/v1/consciousMetrics/getSystemMetrics": {
+      "post": {
+        "operationId": "getSystemMetrics",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetSystemMetricsRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "conscious.Metrics.GetSystemMetrics response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemMetrics"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/health": {
       "get": {
         "operationId": "health",
@@ -115,6 +142,15 @@
   },
   "components": {
     "schemas": {
+      "GetSystemMetricsRequest": {
+        "type": "object",
+        "properties": {
+          "intervalSeconds": {
+            "type": "integer",
+            "format": "uint32"
+          }
+        }
+      },
       "HealthResponse": {
         "type": "object",
         "properties": {
@@ -174,6 +210,46 @@
             "items": {
               "$ref": "#/components/schemas/Model"
             }
+          }
+        }
+      },
+      "SystemMetrics": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string"
+          },
+          "cpuUsage": {
+            "type": "number",
+            "format": "double"
+          },
+          "totalRamBytes": {
+            "type": "integer",
+            "format": "uint64"
+          },
+          "usedRamBytes": {
+            "type": "integer",
+            "format": "uint64"
+          },
+          "ramUsage": {
+            "type": "number",
+            "format": "double"
+          },
+          "gpuUsage": {
+            "type": "number",
+            "format": "double"
+          },
+          "totalDiskBytes": {
+            "type": "integer",
+            "format": "uint64"
+          },
+          "usedDiskBytes": {
+            "type": "integer",
+            "format": "uint64"
+          },
+          "createdAt": {
+            "type": "integer",
+            "format": "int64"
           }
         }
       },
