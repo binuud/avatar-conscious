@@ -30,6 +30,8 @@ func NewSystemMetrics() (*pb.SystemMetrics, error) {
 
 	ramUsage := (float64(vm.Used) / float64(vm.Total) * 100)
 
+	// gpu info built from project
+	// https://github.com/andersrennermalm/gpuinfo.git
 	cmd := exec.Command("./gpuinfo", "-p")
 	cmdOut, err := cmd.Output()
 	gpuUsage := 0.0
