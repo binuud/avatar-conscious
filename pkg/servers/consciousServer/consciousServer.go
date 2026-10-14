@@ -13,7 +13,7 @@ import (
 	"os"
 	"time"
 
-	protoV1 "github.com/binuud/conscious/gen/go/v1/conscious"
+	pb "github.com/binuud/conscious/gen/go/v1/conscious"
 	grpc "google.golang.org/grpc"
 
 	// mqttServer "github.com/dronasys-com/brain-nodes/pkg/servers/mqttBridge"
@@ -36,7 +36,7 @@ type memory struct {
 }
 
 type grpcConsciousServer struct {
-	protoV1.UnimplementedConsciousServer
+	pb.UnimplementedConsciousServer
 	memory *memory
 }
 
@@ -92,20 +92,20 @@ func NewGrpcConsciousServer() *grpcConsciousServer {
 
 }
 
-func (s *grpcConsciousServer) GetModels(ctx context.Context, in *protoV1.ModelRequest) (*protoV1.ModelResponse, error) {
+func (s *grpcConsciousServer) GetModels(ctx context.Context, in *pb.ModelRequest) (*pb.ModelResponse, error) {
 
 	models, err := MakeLLMGetModels()
 	if err != nil {
 		logrus.Errorf("Cannot get models %v", err)
 		return nil, err
 	}
-	return &protoV1.ModelResponse{
+	return &pb.ModelResponse{
 		Models: models,
 	}, nil
 
 }
 
-func (s *grpcConsciousServer) In(ctx context.Context, in *protoV1.ContextMesssage) (*protoV1.ContextMesssage, error) {
+func (s *grpcConsciousServer) In(ctx context.Context, in *pb.ContextMesssage) (*pb.ContextMesssage, error) {
 
 	logrus.Infof("In Received -> Request: %s, %s", in.Type, in.Prompt)
 
@@ -125,7 +125,7 @@ func (s *grpcConsciousServer) In(ctx context.Context, in *protoV1.ContextMesssag
 }
 
 // Removed the 'ctx context.Context' parameter and fixed the stream interface type
-func (s *grpcConsciousServer) InStream(in *protoV1.ContextMesssage, stream grpc.ServerStreamingServer[protoV1.ContextMesssage]) error {
+func (s *grpcConsciousServer) InStream(in *pb.ContextMesssage, stream grpc.ServerStreamingServer[pb.ContextMesssage]) error {
 
 	logrus.Infof("InStream Received -> Request: %s, %s", in.Type, in.Prompt)
 	client := openai.NewClient(
@@ -166,7 +166,7 @@ func (s *grpcConsciousServer) InStream(in *protoV1.ContextMesssage, stream grpc.
 
 		data := llmStream.Current()
 		// fmt.Printf("Type %s, data %s \n", data.Type, data.Delta)
-		resp := &protoV1.ContextMesssage{
+		resp := &pb.ContextMesssage{
 			Response: data.Delta,
 		}
 		if err := stream.Send(resp); err != nil {
@@ -183,11 +183,11 @@ func (s *grpcConsciousServer) InStream(in *protoV1.ContextMesssage, stream grpc.
 	return nil
 }
 
-func (s *grpcConsciousServer) Health(ctx context.Context, in *protoV1.HealthRequest) (*protoV1.HealthResponse, error) {
+func (s *grpcConsciousServer) Health(ctx context.Context, in *pb.HealthRequest) (*pb.HealthResponse, error) {
 
-	health := &protoV1.HealthResponse{
+	health := &pb.HealthResponse{
 		Uuid:          uuid.New().String(),
-		Status:        protoV1.HealthResponse_Active,
+		Status:        pb.HealthResponse_Active,
 		StatusMessage: "Need to integrate with api TODO",
 		CreatedAt:     time.Now().Unix(),
 	}

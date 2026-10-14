@@ -18,6 +18,8 @@ func (s *grpcConsciousServer) RouteRequest(in *protoV1.ContextMesssage) (*protoV
 	switch in.Type {
 	case protoV1.ContextMesssage_LLM_QUERY:
 		return s.RouteLLMChatRequest(in)
+	case protoV1.ContextMesssage_LLM_IMAGE_DESCRIBE:
+		return s.RouteLLMImageDescribeRequest(in)
 	case protoV1.ContextMesssage_IMAGE_GENERATION:
 		// use open AI API supporting generation
 		return s.RouteOpenAiImageGenerationRequest(in)
@@ -75,6 +77,20 @@ func (s *grpcConsciousServer) RouteLLMChatRequest(in *protoV1.ContextMesssage) (
 
 	return &protoV1.ContextMesssage{
 		Data: completions.Choices[0].Message.Content,
+	}, nil
+
+}
+
+func (s *grpcConsciousServer) RouteLLMImageDescribeRequest(in *protoV1.ContextMesssage) (*protoV1.ContextMesssage, error) {
+
+	s.memory.Messages = append(s.memory.Messages, openai.UserMessage(in.Prompt))
+	result, err := MakeImageDescribeRequest(in.Prompt, in.SystemPrompt, in.Model, in.BodyText)
+	if err != nil {
+		return nil, err
+	}
+
+	return &protoV1.ContextMesssage{
+		Response: result.OutputText(),
 	}, nil
 
 }

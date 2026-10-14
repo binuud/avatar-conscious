@@ -51,7 +51,7 @@ func MakeLLMGetModels() ([]*protoV1.Model, error) {
 
 }
 
-func MakeImageDescribeRequest(prompt string, model string, imageDataUrl string) (*responses.Response, error) {
+func MakeImageDescribeRequest(prompt string, systemPrompt string, model string, imageDataUrl string) (*responses.Response, error) {
 
 	client := openai.NewClient(
 		option.WithBaseURL(GetLLMEndpoint()),
@@ -64,7 +64,7 @@ func MakeImageDescribeRequest(prompt string, model string, imageDataUrl string) 
 			OfInputItemList: responses.ResponseInputParam{
 				responses.ResponseInputItemParamOfMessage(
 					responses.ResponseInputMessageContentListParam{
-						responses.ResponseInputContentParamOfInputText("What's in this image?"),
+						responses.ResponseInputContentParamOfInputText(prompt),
 						{OfInputImage: &responses.ResponseInputImageParam{
 							Detail:   responses.ResponseInputImageDetailAuto,
 							ImageURL: openai.String(imageDataUrl),

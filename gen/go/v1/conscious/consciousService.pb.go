@@ -30,11 +30,11 @@ var File_v1_conscious_consciousService_proto protoreflect.FileDescriptor
 
 const file_v1_conscious_consciousService_proto_rawDesc = "" +
 	"\n" +
-	"#v1/conscious/consciousService.proto\x12\tconscious\x1a\x19v1/conscious/common.proto\x1a!v1/conscious/contextMessage.proto\x1a\x1cgoogle/api/annotations.proto2\xb3\x02\n" +
+	"#v1/conscious/consciousService.proto\x12\tconscious\x1a\x19v1/conscious/common.proto\x1a!v1/conscious/contextMessage.proto\x1a\x1cgoogle/api/annotations.proto2\xb0\x02\n" +
 	"\tConscious\x12E\n" +
 	"\x02In\x12\x10.contextMesssage\x1a\x10.contextMesssage\"\x1b\x82\xd3\xe4\x93\x02\x15:\x01*\"\x10/v1/conscious/in\x12S\n" +
-	"\bInStream\x12\x10.contextMesssage\x1a\x10.contextMesssage\"!\x82\xd3\xe4\x93\x02\x1b:\x01*\"\x16/v1/conscious/inStream0\x01\x12K\n" +
-	"\tgetModels\x12\r.ModelRequest\x1a\x0e.ModelResponse\"\x1f\x82\xd3\xe4\x93\x02\x19:\x01*\"\x14/v1/conscious/models\x12=\n" +
+	"\bInStream\x12\x10.contextMesssage\x1a\x10.contextMesssage\"!\x82\xd3\xe4\x93\x02\x1b:\x01*\"\x16/v1/conscious/inStream0\x01\x12H\n" +
+	"\tgetModels\x12\r.ModelRequest\x1a\x0e.ModelResponse\"\x1c\x82\xd3\xe4\x93\x02\x16\x12\x14/v1/conscious/models\x12=\n" +
 	"\x06Health\x12\x0e.HealthRequest\x1a\x0f.HealthResponse\"\x12\x82\xd3\xe4\x93\x02\f\x12\n" +
 	"/v1/healthB1Z/github.com/binuud/conscious/gen/go/v1/consciousb\x06proto3"
 
