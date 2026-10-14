@@ -34,3 +34,4 @@ go.work.sum
 
 outdir/*
 dataVolume/gen/*
+dataVolume/uploads/*

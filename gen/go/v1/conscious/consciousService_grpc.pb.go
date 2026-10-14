@@ -24,10 +24,11 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Conscious_In_FullMethodName        = "/conscious.Conscious/In"
-	Conscious_InStream_FullMethodName  = "/conscious.Conscious/InStream"
-	Conscious_GetModels_FullMethodName = "/conscious.Conscious/getModels"
-	Conscious_Health_FullMethodName    = "/conscious.Conscious/Health"
+	Conscious_In_FullMethodName         = "/conscious.Conscious/In"
+	Conscious_InStream_FullMethodName   = "/conscious.Conscious/InStream"
+	Conscious_GetModels_FullMethodName  = "/conscious.Conscious/GetModels"
+	Conscious_FileUpload_FullMethodName = "/conscious.Conscious/FileUpload"
+	Conscious_Health_FullMethodName     = "/conscious.Conscious/Health"
 )
 
 // ConsciousClient is the client API for Conscious service.
@@ -43,6 +44,7 @@ type ConsciousClient interface {
 	In(ctx context.Context, in *ContextMesssage, opts ...grpc.CallOption) (*ContextMesssage, error)
 	InStream(ctx context.Context, in *ContextMesssage, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ContextMesssage], error)
 	GetModels(ctx context.Context, in *ModelRequest, opts ...grpc.CallOption) (*ModelResponse, error)
+	FileUpload(ctx context.Context, in *UploadRequest, opts ...grpc.CallOption) (*UploadResponse, error)
 	// Get the current Health Status of the AI Module
 	Health(ctx context.Context, in *HealthRequest, opts ...grpc.CallOption) (*HealthResponse, error)
 }
@@ -94,6 +96,16 @@ func (c *consciousClient) GetModels(ctx context.Context, in *ModelRequest, opts 
 	return out, nil
 }
 
+func (c *consciousClient) FileUpload(ctx context.Context, in *UploadRequest, opts ...grpc.CallOption) (*UploadResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(UploadResponse)
+	err := c.cc.Invoke(ctx, Conscious_FileUpload_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *consciousClient) Health(ctx context.Context, in *HealthRequest, opts ...grpc.CallOption) (*HealthResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(HealthResponse)
@@ -117,6 +129,7 @@ type ConsciousServer interface {
 	In(context.Context, *ContextMesssage) (*ContextMesssage, error)
 	InStream(*ContextMesssage, grpc.ServerStreamingServer[ContextMesssage]) error
 	GetModels(context.Context, *ModelRequest) (*ModelResponse, error)
+	FileUpload(context.Context, *UploadRequest) (*UploadResponse, error)
 	// Get the current Health Status of the AI Module
 	Health(context.Context, *HealthRequest) (*HealthResponse, error)
 	mustEmbedUnimplementedConsciousServer()
@@ -137,6 +150,9 @@ func (UnimplementedConsciousServer) InStream(*ContextMesssage, grpc.ServerStream
 }
 func (UnimplementedConsciousServer) GetModels(context.Context, *ModelRequest) (*ModelResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetModels not implemented")
+}
+func (UnimplementedConsciousServer) FileUpload(context.Context, *UploadRequest) (*UploadResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method FileUpload not implemented")
 }
 func (UnimplementedConsciousServer) Health(context.Context, *HealthRequest) (*HealthResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Health not implemented")
@@ -209,6 +225,24 @@ func _Conscious_GetModels_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Conscious_FileUpload_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UploadRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConsciousServer).FileUpload(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Conscious_FileUpload_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConsciousServer).FileUpload(ctx, req.(*UploadRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Conscious_Health_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(HealthRequest)
 	if err := dec(in); err != nil {
@@ -239,8 +273,12 @@ var Conscious_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Conscious_In_Handler,
 		},
 		{
-			MethodName: "getModels",
+			MethodName: "GetModels",
 			Handler:    _Conscious_GetModels_Handler,
+		},
+		{
+			MethodName: "FileUpload",
+			Handler:    _Conscious_FileUpload_Handler,
 		},
 		{
 			MethodName: "Health",

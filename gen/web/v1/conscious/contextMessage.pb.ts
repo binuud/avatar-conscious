@@ -30,6 +30,18 @@ export enum contextMesssageContextStatus {
   FATAL = "FATAL",
 }
 
+export type UploadRequest = {
+  fileName?: string
+  fileData?: string
+  contentType?: string
+}
+
+export type UploadResponse = {
+  uploadId?: string
+  status?: string
+  errorMessage?: string
+}
+
 export type contextMesssage = {
   uuid?: string
   name?: string

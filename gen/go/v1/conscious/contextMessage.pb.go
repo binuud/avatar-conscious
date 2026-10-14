@@ -88,7 +88,7 @@ func (x ContextMesssage_ContextType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ContextMesssage_ContextType.Descriptor instead.
 func (ContextMesssage_ContextType) EnumDescriptor() ([]byte, []int) {
-	return file_v1_conscious_contextMessage_proto_rawDescGZIP(), []int{0, 0}
+	return file_v1_conscious_contextMessage_proto_rawDescGZIP(), []int{2, 0}
 }
 
 // role of the entity generating the message
@@ -148,7 +148,7 @@ func (x ContextMesssage_ContextRole) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ContextMesssage_ContextRole.Descriptor instead.
 func (ContextMesssage_ContextRole) EnumDescriptor() ([]byte, []int) {
-	return file_v1_conscious_contextMessage_proto_rawDescGZIP(), []int{0, 1}
+	return file_v1_conscious_contextMessage_proto_rawDescGZIP(), []int{2, 1}
 }
 
 type ContextMesssage_ContextStatus int32
@@ -201,7 +201,129 @@ func (x ContextMesssage_ContextStatus) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use ContextMesssage_ContextStatus.Descriptor instead.
 func (ContextMesssage_ContextStatus) EnumDescriptor() ([]byte, []int) {
-	return file_v1_conscious_contextMessage_proto_rawDescGZIP(), []int{0, 2}
+	return file_v1_conscious_contextMessage_proto_rawDescGZIP(), []int{2, 2}
+}
+
+// Represents the file being uploaded
+type UploadRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	FileName      string                 `protobuf:"bytes,1,opt,name=file_name,json=fileName,proto3" json:"file_name,omitempty"`
+	FileData      string                 `protobuf:"bytes,2,opt,name=file_data,json=fileData,proto3" json:"file_data,omitempty"` // Base64 encoded binary data
+	ContentType   string                 `protobuf:"bytes,3,opt,name=content_type,json=contentType,proto3" json:"content_type,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UploadRequest) Reset() {
+	*x = UploadRequest{}
+	mi := &file_v1_conscious_contextMessage_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UploadRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UploadRequest) ProtoMessage() {}
+
+func (x *UploadRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_conscious_contextMessage_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UploadRequest.ProtoReflect.Descriptor instead.
+func (*UploadRequest) Descriptor() ([]byte, []int) {
+	return file_v1_conscious_contextMessage_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *UploadRequest) GetFileName() string {
+	if x != nil {
+		return x.FileName
+	}
+	return ""
+}
+
+func (x *UploadRequest) GetFileData() string {
+	if x != nil {
+		return x.FileData
+	}
+	return ""
+}
+
+func (x *UploadRequest) GetContentType() string {
+	if x != nil {
+		return x.ContentType
+	}
+	return ""
+}
+
+// Response confirming the upload
+type UploadResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	UploadId      string                 `protobuf:"bytes,1,opt,name=upload_id,json=uploadId,proto3" json:"upload_id,omitempty"`
+	Status        string                 `protobuf:"bytes,2,opt,name=status,proto3" json:"status,omitempty"` // "success" or "error"
+	ErrorMessage  string                 `protobuf:"bytes,3,opt,name=error_message,json=errorMessage,proto3" json:"error_message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UploadResponse) Reset() {
+	*x = UploadResponse{}
+	mi := &file_v1_conscious_contextMessage_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UploadResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UploadResponse) ProtoMessage() {}
+
+func (x *UploadResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_conscious_contextMessage_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UploadResponse.ProtoReflect.Descriptor instead.
+func (*UploadResponse) Descriptor() ([]byte, []int) {
+	return file_v1_conscious_contextMessage_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *UploadResponse) GetUploadId() string {
+	if x != nil {
+		return x.UploadId
+	}
+	return ""
+}
+
+func (x *UploadResponse) GetStatus() string {
+	if x != nil {
+		return x.Status
+	}
+	return ""
+}
+
+func (x *UploadResponse) GetErrorMessage() string {
+	if x != nil {
+		return x.ErrorMessage
+	}
+	return ""
 }
 
 type ContextMesssage struct {
@@ -242,7 +364,7 @@ type ContextMesssage struct {
 
 func (x *ContextMesssage) Reset() {
 	*x = ContextMesssage{}
-	mi := &file_v1_conscious_contextMessage_proto_msgTypes[0]
+	mi := &file_v1_conscious_contextMessage_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -254,7 +376,7 @@ func (x *ContextMesssage) String() string {
 func (*ContextMesssage) ProtoMessage() {}
 
 func (x *ContextMesssage) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_conscious_contextMessage_proto_msgTypes[0]
+	mi := &file_v1_conscious_contextMessage_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -267,7 +389,7 @@ func (x *ContextMesssage) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ContextMesssage.ProtoReflect.Descriptor instead.
 func (*ContextMesssage) Descriptor() ([]byte, []int) {
-	return file_v1_conscious_contextMessage_proto_rawDescGZIP(), []int{0}
+	return file_v1_conscious_contextMessage_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *ContextMesssage) GetUuid() string {
@@ -435,7 +557,15 @@ var File_v1_conscious_contextMessage_proto protoreflect.FileDescriptor
 
 const file_v1_conscious_contextMessage_proto_rawDesc = "" +
 	"\n" +
-	"!v1/conscious/contextMessage.proto\x1a\x19v1/conscious/common.proto\"\xfb\a\n" +
+	"!v1/conscious/contextMessage.proto\x1a\x19v1/conscious/common.proto\"l\n" +
+	"\rUploadRequest\x12\x1b\n" +
+	"\tfile_name\x18\x01 \x01(\tR\bfileName\x12\x1b\n" +
+	"\tfile_data\x18\x02 \x01(\tR\bfileData\x12!\n" +
+	"\fcontent_type\x18\x03 \x01(\tR\vcontentType\"j\n" +
+	"\x0eUploadResponse\x12\x1b\n" +
+	"\tupload_id\x18\x01 \x01(\tR\buploadId\x12\x16\n" +
+	"\x06status\x18\x02 \x01(\tR\x06status\x12#\n" +
+	"\rerror_message\x18\x03 \x01(\tR\ferrorMessage\"\xfb\a\n" +
 	"\x0fcontextMesssage\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
@@ -494,19 +624,21 @@ func file_v1_conscious_contextMessage_proto_rawDescGZIP() []byte {
 }
 
 var file_v1_conscious_contextMessage_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
-var file_v1_conscious_contextMessage_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_v1_conscious_contextMessage_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_v1_conscious_contextMessage_proto_goTypes = []any{
 	(ContextMesssage_ContextType)(0),   // 0: contextMesssage.ContextType
 	(ContextMesssage_ContextRole)(0),   // 1: contextMesssage.ContextRole
 	(ContextMesssage_ContextStatus)(0), // 2: contextMesssage.ContextStatus
-	(*ContextMesssage)(nil),            // 3: contextMesssage
-	(*Timestamp)(nil),                  // 4: Timestamp
+	(*UploadRequest)(nil),              // 3: UploadRequest
+	(*UploadResponse)(nil),             // 4: UploadResponse
+	(*ContextMesssage)(nil),            // 5: contextMesssage
+	(*Timestamp)(nil),                  // 6: Timestamp
 }
 var file_v1_conscious_contextMessage_proto_depIdxs = []int32{
 	0, // 0: contextMesssage.type:type_name -> contextMesssage.ContextType
 	1, // 1: contextMesssage.role:type_name -> contextMesssage.ContextRole
 	2, // 2: contextMesssage.status:type_name -> contextMesssage.ContextStatus
-	4, // 3: contextMesssage.createdAt:type_name -> Timestamp
+	6, // 3: contextMesssage.createdAt:type_name -> Timestamp
 	4, // [4:4] is the sub-list for method output_type
 	4, // [4:4] is the sub-list for method input_type
 	4, // [4:4] is the sub-list for extension type_name
@@ -526,7 +658,7 @@ func file_v1_conscious_contextMessage_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_v1_conscious_contextMessage_proto_rawDesc), len(file_v1_conscious_contextMessage_proto_rawDesc)),
 			NumEnums:      3,
-			NumMessages:   1,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

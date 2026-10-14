@@ -5,6 +5,33 @@
     "version": ""
   },
   "paths": {
+    "/v1/conscious/fileUpload": {
+      "post": {
+        "operationId": "fileUpload",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UploadRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "conscious.Conscious.FileUpload response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/conscious/in": {
       "post": {
         "operationId": "in",
@@ -64,7 +91,7 @@
         "operationId": "getModels",
         "responses": {
           "200": {
-            "description": "conscious.Conscious.getModels response",
+            "description": "conscious.Conscious.GetModels response",
             "content": {
               "application/json": {
                 "schema": {
@@ -250,6 +277,36 @@
           "nanos": {
             "type": "integer",
             "format": "int32"
+          }
+        }
+      },
+      "UploadRequest": {
+        "type": "object",
+        "properties": {
+          "fileName": {
+            "type": "string"
+          },
+          "fileData": {
+            "description": "Base64 encoded binary data",
+            "type": "string"
+          },
+          "contentType": {
+            "type": "string"
+          }
+        }
+      },
+      "UploadResponse": {
+        "type": "object",
+        "properties": {
+          "uploadId": {
+            "type": "string"
+          },
+          "status": {
+            "description": "\"success\" or \"error\"",
+            "type": "string"
+          },
+          "errorMessage": {
+            "type": "string"
           }
         }
       },

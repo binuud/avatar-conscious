@@ -32,11 +32,19 @@ service Conscious {
     };
   }
 
-  rpc getModels(ModelRequest) returns (ModelResponse) {
+  rpc GetModels(ModelRequest) returns (ModelResponse) {
     option (google.api.http) = {
       get : "/v1/conscious/models"
     };
   }
+
+  rpc FileUpload(UploadRequest) returns (UploadResponse) {
+    option (google.api.http) = {
+      post : "/v1/conscious/fileUpload"
+      body : "*"
+    };
+  }
+
 
   // Get the current Health Status of the AI Module
   rpc Health(HealthRequest) returns (HealthResponse) {
