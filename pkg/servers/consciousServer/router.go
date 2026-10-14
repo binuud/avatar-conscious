@@ -4,6 +4,7 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 
 	protoV1 "github.com/binuud/conscious/gen/go/v1/conscious"
@@ -84,6 +85,18 @@ func (s *grpcConsciousServer) RouteLLMChatRequest(in *protoV1.ContextMesssage) (
 func (s *grpcConsciousServer) RouteLLMImageDescribeRequest(in *protoV1.ContextMesssage) (*protoV1.ContextMesssage, error) {
 
 	s.memory.Messages = append(s.memory.Messages, openai.UserMessage(in.Prompt))
+
+	// load the image if BodyText is emtpy and data is present
+	// then upload file is passed in data field
+	if in.BodyText == "" && in.Data != "" {
+		imageFileName := utils.GetUploadsFolder() + in.Data
+		image, err := os.ReadFile(imageFileName)
+		if err != nil {
+			log.Fatalf("Failed to read image file: %v", err)
+		}
+		in.BodyText = "data:image/jpeg;base64," + base64.StdEncoding.EncodeToString(image)
+	}
+
 	result, err := MakeImageDescribeRequest(in.Prompt, in.SystemPrompt, in.Model, in.BodyText)
 	if err != nil {
 		return nil, err

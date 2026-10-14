@@ -7,6 +7,20 @@ option go_package = "github.com/binuud/conscious/gen/go/v1/conscious";
 
 import "v1/conscious/common.proto";
 
+// Represents the file being uploaded
+message UploadRequest {
+  string file_name = 1;
+  string file_data = 2; // Base64 encoded binary data
+  string content_type = 3;
+}
+
+// Response confirming the upload
+message UploadResponse {
+  string upload_id = 1;
+  string status = 2; // "success" or "error"
+  string error_message = 3;
+}
+
 message contextMesssage {
 
   // UUID for tracking each request

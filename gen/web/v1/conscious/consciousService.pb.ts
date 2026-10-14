@@ -14,8 +14,11 @@ export class Conscious {
   static InStream(req: ContextMessage.contextMesssage, entityNotifier?: fm.NotifyStreamEntityArrival<ContextMessage.contextMesssage>, initReq?: fm.InitReq): Promise<void> {
     return fm.fetchStreamingRequest<ContextMessage.contextMesssage, ContextMessage.contextMesssage>(`/v1/conscious/inStream`, entityNotifier, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
   }
-  static getModels(req: Common.ModelRequest, initReq?: fm.InitReq): Promise<Common.ModelResponse> {
+  static GetModels(req: Common.ModelRequest, initReq?: fm.InitReq): Promise<Common.ModelResponse> {
     return fm.fetchReq<Common.ModelRequest, Common.ModelResponse>(`/v1/conscious/models?${fm.renderURLSearchParams(req, [])}`, {...initReq, method: "GET"})
+  }
+  static FileUpload(req: ContextMessage.UploadRequest, initReq?: fm.InitReq): Promise<ContextMessage.UploadResponse> {
+    return fm.fetchReq<ContextMessage.UploadRequest, ContextMessage.UploadResponse>(`/v1/conscious/fileUpload`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
   }
   static Health(req: Common.HealthRequest, initReq?: fm.InitReq): Promise<Common.HealthResponse> {
     return fm.fetchReq<Common.HealthRequest, Common.HealthResponse>(`/v1/health?${fm.renderURLSearchParams(req, [])}`, {...initReq, method: "GET"})
