@@ -32,31 +32,35 @@ type ContextMesssage_ContextType int32
 
 const (
 	ContextMesssage_COTEXT_TYPE_IGNORE ContextMesssage_ContextType = 0
-	// this is sent to LLM model for inference
-	ContextMesssage_LLM_QUERY ContextMesssage_ContextType = 1
 	// the message is sent to LLM model but expects stream as response
-	ContextMesssage_LLM_STREAM_QUERY ContextMesssage_ContextType = 2
+	ContextMesssage_LLM_STREAM_QUERY ContextMesssage_ContextType = 1
+	// this is sent to LLM model for inference
+	ContextMesssage_LLM_QUERY ContextMesssage_ContextType = 2
+	// analyse the given image
+	ContextMesssage_LLM_IMAGE_DESCRIBE ContextMesssage_ContextType = 3
 	// for image generation
-	ContextMesssage_IMAGE_GENERATION ContextMesssage_ContextType = 3
+	ContextMesssage_IMAGE_GENERATION ContextMesssage_ContextType = 4
 	// text to speech
-	ContextMesssage_TTS ContextMesssage_ContextType = 4
+	ContextMesssage_TTS ContextMesssage_ContextType = 5
 )
 
 // Enum value maps for ContextMesssage_ContextType.
 var (
 	ContextMesssage_ContextType_name = map[int32]string{
 		0: "COTEXT_TYPE_IGNORE",
-		1: "LLM_QUERY",
-		2: "LLM_STREAM_QUERY",
-		3: "IMAGE_GENERATION",
-		4: "TTS",
+		1: "LLM_STREAM_QUERY",
+		2: "LLM_QUERY",
+		3: "LLM_IMAGE_DESCRIBE",
+		4: "IMAGE_GENERATION",
+		5: "TTS",
 	}
 	ContextMesssage_ContextType_value = map[string]int32{
 		"COTEXT_TYPE_IGNORE": 0,
-		"LLM_QUERY":          1,
-		"LLM_STREAM_QUERY":   2,
-		"IMAGE_GENERATION":   3,
-		"TTS":                4,
+		"LLM_STREAM_QUERY":   1,
+		"LLM_QUERY":          2,
+		"LLM_IMAGE_DESCRIBE": 3,
+		"IMAGE_GENERATION":   4,
+		"TTS":                5,
 	}
 )
 
@@ -431,7 +435,7 @@ var File_v1_conscious_contextMessage_proto protoreflect.FileDescriptor
 
 const file_v1_conscious_contextMessage_proto_rawDesc = "" +
 	"\n" +
-	"!v1/conscious/contextMessage.proto\x1a\x19v1/conscious/common.proto\"\xe2\a\n" +
+	"!v1/conscious/contextMessage.proto\x1a\x19v1/conscious/common.proto\"\xfb\a\n" +
 	"\x0fcontextMesssage\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
@@ -456,13 +460,14 @@ const file_v1_conscious_contextMessage_proto_rawDesc = "" +
 	"\treasoning\x18+ \x01(\tR\treasoning\x12\x1a\n" +
 	"\bthinking\x18, \x01(\tR\bthinking\x12(\n" +
 	"\tcreatedAt\x18- \x01(\v2\n" +
-	".TimestampR\tcreatedAt\"i\n" +
+	".TimestampR\tcreatedAt\"\x81\x01\n" +
 	"\vContextType\x12\x16\n" +
-	"\x12COTEXT_TYPE_IGNORE\x10\x00\x12\r\n" +
-	"\tLLM_QUERY\x10\x01\x12\x14\n" +
-	"\x10LLM_STREAM_QUERY\x10\x02\x12\x14\n" +
-	"\x10IMAGE_GENERATION\x10\x03\x12\a\n" +
-	"\x03TTS\x10\x04\"N\n" +
+	"\x12COTEXT_TYPE_IGNORE\x10\x00\x12\x14\n" +
+	"\x10LLM_STREAM_QUERY\x10\x01\x12\r\n" +
+	"\tLLM_QUERY\x10\x02\x12\x16\n" +
+	"\x12LLM_IMAGE_DESCRIBE\x10\x03\x12\x14\n" +
+	"\x10IMAGE_GENERATION\x10\x04\x12\a\n" +
+	"\x03TTS\x10\x05\"N\n" +
 	"\vContextRole\x12\x0f\n" +
 	"\vROLE_IGNORE\x10\x00\x12\b\n" +
 	"\x04USER\x10\x01\x12\r\n" +

@@ -47,6 +47,10 @@ curl http://localhost:9080/llmHandler/v1/chat/completions \
 curl http://localhost:9080/llmHandler/v1/models
 ```
 
+```
+curl http://localhost:9080/api/v1/conscious/models
+```
+
 ### Stream request test
 ```
 curl -N -X POST http://localhost:9080/api/v1/conscious/inStream \

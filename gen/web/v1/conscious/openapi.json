@@ -60,18 +60,8 @@
       }
     },
     "/v1/conscious/models": {
-      "post": {
+      "get": {
         "operationId": "getModels",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ModelRequest"
-              }
-            }
-          },
-          "required": true
-        },
         "responses": {
           "200": {
             "description": "conscious.Conscious.getModels response",
@@ -198,9 +188,6 @@
             "type": "string"
           }
         }
-      },
-      "ModelRequest": {
-        "type": "object"
       },
       "ModelResponse": {
         "type": "object",
@@ -367,8 +354,9 @@
         "type": "string",
         "enum": [
           "COTEXT_TYPE_IGNORE",
-          "LLM_QUERY",
           "LLM_STREAM_QUERY",
+          "LLM_QUERY",
+          "LLM_IMAGE_DESCRIBE",
           "IMAGE_GENERATION",
           "TTS"
         ]

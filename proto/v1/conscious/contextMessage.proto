@@ -23,17 +23,20 @@ message contextMesssage {
   enum ContextType {
     COTEXT_TYPE_IGNORE = 0;
 
-    // this is sent to LLM model for inference
-    LLM_QUERY = 1;
-
     // the message is sent to LLM model but expects stream as response
-    LLM_STREAM_QUERY = 2;
+    LLM_STREAM_QUERY = 1;
+
+    // this is sent to LLM model for inference
+    LLM_QUERY = 2;
+
+    // analyse the given image
+    LLM_IMAGE_DESCRIBE = 3;
 
     // for image generation
-    IMAGE_GENERATION = 3;
+    IMAGE_GENERATION = 4;
 
     // text to speech
-    TTS = 4;
+    TTS = 5;
   }
 
   ContextType type = 6;

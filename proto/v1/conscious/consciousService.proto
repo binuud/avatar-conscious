@@ -34,8 +34,7 @@ service Conscious {
 
   rpc getModels(ModelRequest) returns (ModelResponse) {
     option (google.api.http) = {
-      post : "/v1/conscious/models"
-      body : "*"
+      get : "/v1/conscious/models"
     };
   }
 

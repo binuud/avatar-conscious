@@ -7,8 +7,8 @@ export LLM_HOST="http://localhost:11234"
 export MQTT_HOST="tcp://localhost:1883"
 
 export LLM_MODEL="gemma4:latest"
-export FILE_STORE_PATH=$HOME/Code/avatar/conscious/dataVolume
-export SERVABLE_DIRECTORY=$HOME/Code/avatar/conscious/dataVolume/gen
+export FILE_STORE_PATH=$HOME/Code/avatar/avatar-conscious/dataVolume
+export SERVABLE_DIRECTORY=$HOME/Code/avatar/avatar-conscious/dataVolume/gen
 
 # reflex $(cat .reflex) -- go run cmd/conscious/main.go
 go run cmd/conscious/main.go
