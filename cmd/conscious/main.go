@@ -10,7 +10,9 @@ import (
 	"os"
 	"strings"
 
-	protoV1 "github.com/binuud/conscious/gen/go/v1/conscious"
+	pbAvatar "github.com/binuud/conscious/gen/go/v1/avatar"
+	pbConscious "github.com/binuud/conscious/gen/go/v1/conscious"
+	"github.com/binuud/conscious/pkg/servers/avatarServer"
 	"github.com/binuud/conscious/pkg/servers/consciousServer"
 	llmProxyServer "github.com/binuud/conscious/pkg/servers/llmProxyServer"
 	"github.com/binuud/conscious/pkg/servers/staticFileServer"
@@ -77,13 +79,19 @@ func runHtppServer() {
 	gwMux := runtime.NewServeMux()
 
 	// consciousServer
-	err = protoV1.RegisterConsciousHandler(ctx, gwMux, conn)
+	err = pbConscious.RegisterConsciousHandler(ctx, gwMux, conn)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	// avatar store server
+	err = pbAvatar.RegisterAvatarStoreServiceHandler(ctx, gwMux, conn)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
 	// systemMetricsServer
-	err = protoV1.RegisterMetricsHandler(ctx, gwMux, conn)
+	err = pbConscious.RegisterMetricsHandler(ctx, gwMux, conn)
 	if err != nil {
 		log.Fatalln(err)
 	}
@@ -101,6 +109,7 @@ func runHtppServer() {
 	httpMux.Handle("/api/", http.StripPrefix("/api", gwMux))
 	logrus.Infof("Server directory %s -> %s", "/api/", "conscious server")
 	logrus.Infof("Server directory %s -> %s", "/api/", "metrics server")
+	logrus.Infof("Server directory %s -> %s", "/api/", "avatar store server")
 
 	// Configure CORS options as needed
 	corsEnabledMux := cors.New(cors.Options{
@@ -133,10 +142,13 @@ func runGRPCServer() {
 	insecureServer := grpc.NewServer()
 
 	// GRPC Conscious Server
-	protoV1.RegisterConsciousServer(insecureServer, consciousServer.NewGrpcConsciousServer())
+	pbConscious.RegisterConsciousServer(insecureServer, consciousServer.NewGrpcConsciousServer())
+
+	// GRPC Avatar Store Server
+	pbAvatar.RegisterAvatarStoreServiceServer(insecureServer, avatarServer.NewAvatarStoreGrpcServer())
 
 	// GRPC SystemMetrics Server
-	protoV1.RegisterMetricsServer(insecureServer, systemMetricsServer.NewGrpcSystemMetricsServer())
+	pbConscious.RegisterMetricsServer(insecureServer, systemMetricsServer.NewGrpcSystemMetricsServer())
 
 	// Register reflection service on gRPC server.
 	reflection.Register(insecureServer)

@@ -3,9 +3,14 @@ package utils
 import (
 	"os"
 	"time"
+	"uuid"
 
 	"github.com/binuud/conscious/gen/go/v1/conscious"
 )
+
+func GenerateUUID() string {
+	return uuid.New().String()
+}
 
 // getEnv retrieves an environment variable or returns a fallback default value
 func GetEnv(key, fallback string) string {

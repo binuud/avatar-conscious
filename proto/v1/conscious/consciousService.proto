@@ -8,6 +8,8 @@ option go_package = "github.com/binuud/conscious/gen/go/v1/conscious";
 
 import "v1/conscious/common.proto";
 import "v1/conscious/contextMessage.proto";
+
+// for http annotations
 import "google/api/annotations.proto";
 
 

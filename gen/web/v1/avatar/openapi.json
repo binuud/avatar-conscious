@@ -1,0 +1,278 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "",
+    "version": ""
+  },
+  "paths": {
+    "/v1/avatarStore/create": {
+      "post": {
+        "operationId": "create",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AvatarStoreCreateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "avatar.AvatarStoreService.Create response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AvatarStoreCreateResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/avatarStore/delete": {
+      "post": {
+        "operationId": "delete",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AvatarStoreDeleteRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "avatar.AvatarStoreService.Delete response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AvatarStoreDeleteResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/avatarStore/get": {
+      "get": {
+        "operationId": "get",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "avatar.AvatarStoreService.Get response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AvatarStoreGetResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/avatarStore/list": {
+      "get": {
+        "operationId": "list",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "avatar.AvatarStoreService.List response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AvatarStoreListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/avatarStore/update": {
+      "post": {
+        "operationId": "update",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AvatarStoreUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "avatar.AvatarStoreService.Update response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AvatarStoreUpdateResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Avatar": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "permissions": {
+            "$ref": "#/components/schemas/Permission"
+          },
+          "systemPrompt": {
+            "type": "string"
+          }
+        }
+      },
+      "AvatarStoreCreateRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "permissions": {
+            "$ref": "#/components/schemas/Permission"
+          },
+          "systemPrompt": {
+            "type": "string"
+          }
+        }
+      },
+      "AvatarStoreCreateResponse": {
+        "type": "object",
+        "properties": {
+          "avatar": {
+            "$ref": "#/components/schemas/Avatar"
+          }
+        }
+      },
+      "AvatarStoreDeleteRequest": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string"
+          }
+        }
+      },
+      "AvatarStoreDeleteResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "AvatarStoreGetResponse": {
+        "type": "object",
+        "properties": {
+          "avatar": {
+            "$ref": "#/components/schemas/Avatar"
+          }
+        }
+      },
+      "AvatarStoreListResponse": {
+        "type": "object",
+        "properties": {
+          "avatars": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Avatar"
+            }
+          },
+          "totalCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
+      "AvatarStoreUpdateRequest": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "permissions": {
+            "$ref": "#/components/schemas/Permission"
+          },
+          "systemPrompt": {
+            "type": "string"
+          }
+        }
+      },
+      "AvatarStoreUpdateResponse": {
+        "type": "object",
+        "properties": {
+          "avatar": {
+            "$ref": "#/components/schemas/Avatar"
+          }
+        }
+      },
+      "Permission": {
+        "type": "string",
+        "enum": [
+          "PERMISSION_IGNORE",
+          "WEBCAMERA",
+          "ROBOT",
+          "ROVER",
+          "ARM",
+          "HOMEAUTOMATION"
+        ]
+      }
+    }
+  }
+}
