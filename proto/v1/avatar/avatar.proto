@@ -1,0 +1,34 @@
+syntax = "proto3";
+package avatar;
+
+option go_package = "github.com/binuud/conscious/gen/go/v1/avatar";
+
+
+
+// Permission enum for the Avatar message
+enum Permission {
+    PERMISSION_IGNORE = 0;
+    WEBCAMERA = 1;
+    ROBOT = 2;
+    ROVER = 3;
+    ARM = 4;
+    HOMEAUTOMATION = 5;
+}
+
+// Avatar message representing a robot or avatar entity
+message Avatar {
+    // Unique identifier for the avatar
+    string uuid = 1;
+    
+    // Name of the avatar
+    string name = 2;
+    
+    // Description of the avatar
+    string description = 3;
+    
+    // Permissions granted to the avatar
+    Permission permissions = 4;
+    
+    // System prompt for the avatar
+    string systemPrompt = 5;
+}

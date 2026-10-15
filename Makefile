@@ -45,7 +45,7 @@ help: ## This help.
 ##
 
 main: ## Build main
-	go build $(BUILDFLAGS) -o main .
+	go build $(BUILDFLAGS) -o main cmd/conscious/main.go
 
 build: ## build backend and frontend as a single image
 	docker build --no-cache  --build-arg BUILD_VER=$(BUILD_VER) $(MULTI_PLATFORM_DOCKER) -t $(REPO)/$(CONSCIOUS_APP_NAME) -f deployment/docker/conscious.dockerfile .
@@ -85,7 +85,7 @@ errcheck:
 
 ### the ordering of sub targets is very important
 ### do not change
-protos: protos-conscious ## run all protos
+protos: protos-conscious protos-avatar ## run all protos
 
 
 ## protos
@@ -109,6 +109,25 @@ protos-conscious: ## Build Go and Web Proto
 	proto/v1/conscious/contextMessage.proto \
 	proto/v1/conscious/consciousService.proto 
 	yq eval ./gen/web/v1/conscious/openapi.yaml -o=json -P > ./gen/web/v1/conscious/openapi.json
+
+protos-avatar: ## Build Go and Web Proto
+	mkdir -p gen/go gen/web/v1/avatar
+# ****** Conscious AiModule 
+	$(PROTOC) -I=./proto/.  \
+	--go_out=./gen/go/ \
+	--go_opt paths=source_relative \
+	--go-grpc_out=./gen/go/ \
+	--go-grpc_opt paths=source_relative \
+	--grpc-gateway_out=./gen/go/ \
+	--grpc-gateway_opt paths=source_relative \
+	--grpc-gateway_opt generate_unbound_methods=true \
+	--grpc-gateway-ts_out=./gen/web/ \
+	--grpc-gateway-ts_opt paths=source_relative \
+	--grpc-gateway-ts_opt generate_unbound_methods=true \
+	--oas_out ./gen/web/v1/avatar/ \
+	proto/v1/avatar/avatar.proto \
+	proto/v1/avatar/avatarStoreService.proto 
+	yq eval ./gen/web/v1/avatar/openapi.yaml -o=json -P > ./gen/web/v1/avatar/openapi.json
 
 ##
 ## Test Code

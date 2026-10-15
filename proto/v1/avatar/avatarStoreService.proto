@@ -1,0 +1,126 @@
+syntax = "proto3";
+package avatar;
+
+option go_package = "github.com/binuud/conscious/gen/go/v1/avatar";
+
+import "v1/avatar/avatar.proto";
+import "google/api/annotations.proto";
+
+// AvatarStoreService for managing avatars
+service AvatarStoreService {
+    // List all avatars
+    rpc List (AvatarStoreListRequest) returns (AvatarStoreListResponse) {
+      option (google.api.http) = {
+        get : "/v1/avatarStore/list"
+      };
+    }
+    
+    // Get a specific avatar by UUID
+    rpc Get (AvatarStoreGetRequest) returns (AvatarStoreGetResponse){
+      option (google.api.http) = {
+        get : "/v1/avatarStore/get"
+      };
+    }
+
+    // Create a new avatar
+    rpc Create (AvatarStoreCreateRequest) returns (AvatarStoreCreateResponse) {
+      option (google.api.http) = {
+        post : "/v1/avatarStore/create"
+        body : "*"
+      };
+    }
+    
+    // Update an existing avatar
+    rpc Update (AvatarStoreUpdateRequest) returns (AvatarStoreUpdateResponse){
+      option (google.api.http) = {
+        post : "/v1/avatarStore/update"
+        body : "*"
+      };
+    }
+    
+    // Delete an avatar
+    rpc Delete (AvatarStoreDeleteRequest) returns (AvatarStoreDeleteResponse){
+      option (google.api.http) = {
+        post : "/v1/avatarStore/delete"
+        body : "*"
+      };
+    }
+}
+
+// ListAvatarRequest for listing avatars
+message AvatarStoreListRequest {
+    // Limit the number of avatars returned
+    int32 limit = 1;
+    // Offset for pagination
+    int32 offset = 2;
+}
+
+// AvatarListResponse containing a list of avatars
+message AvatarStoreListResponse {
+    // List of avatars
+    repeated Avatar avatars = 1;
+    // Total count
+    int32 totalCount = 2;
+}
+
+// AvatarGetRequest for getting an avatar by UUID
+message AvatarStoreGetRequest {
+    // UUID of the avatar to retrieve
+    string uuid = 1;
+}
+
+// AvatarGetResponse containing a single avatar
+message AvatarStoreGetResponse {
+    // The avatar
+    Avatar avatar = 1;
+}
+
+// AvatarCreateRequest for creating an avatar
+message AvatarStoreCreateRequest {
+    // Name of the avatar
+    string name = 1;
+    // Description of the avatar
+    string description = 2;
+    // Permissions
+    Permission permissions = 3;
+    // System prompt
+    string systemPrompt = 4;
+}
+
+// AvatarCreateResponse containing the created avatar and its UUID
+message AvatarStoreCreateResponse {
+    // The created avatar
+    Avatar avatar = 1;
+}
+
+// AvatarUpdateRequest for updating an avatar
+message AvatarStoreUpdateRequest {
+    // UUID of the avatar to update
+    string uuid = 1;
+    // Name of the avatar (optional)
+    string name = 2;
+    // Description of the avatar (optional)
+    string description = 3;
+    // Permissions (optional)
+    Permission permissions = 4;
+    // System prompt (optional)
+    string systemPrompt = 5;
+}
+
+// AvatarUpdateResponse containing the updated avatar
+message AvatarStoreUpdateResponse {
+    // The updated avatar
+    Avatar avatar = 1;
+}
+
+// AvatarDeleteRequest for deleting an avatar
+message AvatarStoreDeleteRequest {
+    // UUID of the avatar to delete
+    string uuid = 1;
+}
+
+// AvatarDeleteResponse indicating success or failure
+message AvatarStoreDeleteResponse {
+    // Success message
+    string message = 1;
+}

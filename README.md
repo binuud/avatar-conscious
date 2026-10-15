@@ -10,6 +10,15 @@ To give a body, that is not affected in the original sin and the secondary sin. 
 
 This has to be fronted with a UI.   
 
+## Directory Structure
+
+* cmd - the main go file
+* documentation - all documentation md files
+* pkg/servers - all grpc server implementations go here
+* proto/v1 - all protofiles go here
+* scripts - support scripts, like launchers etc
+* vendor - go vendor files, do not make changes here
+
 ## Swagger Editor
 Once the proto files are created, and the OpenAPI json file is created, add the following to the final openApi json file
 
@@ -32,8 +41,8 @@ Check vision model
  ollama run gemma4:latest  ~/Code/avatar/conscious/dataVolume/sampleImages/elephantWithBall.jpg "what is in this image? Answer in 10 words"
 ```
 
-
 ```
 go install github.com/cespare/reflex@latest
 ```
+
 

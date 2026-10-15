@@ -1,27 +1,27 @@
-// {
-//   "name": "Go Docker Dev Environment with GoPls",
-//   "image": "dronasys-com/golang:1.27.2",
-//   "runArgs": [
-//     "--name", "conscious",
-//     "-p", "9080:9080",
-//     "-p", "9090:9090"
-//   ],
-//   // Automatically installs the official Go extension inside the container
-//   "customizations": {
-//     "vscode": {
-//       "extensions": [
-//         "golang.go",
-//         "42crunch.vscode-openapi",
-//         "drblury.protobuf-vsc"
-//       ],
-//       "settings": {
-//         "terminal.integrated.defaultProfile.linux": "bash"
-//       }
-//     }
-//   },
-//   // Mount local workspace folders into the container
-//   "workspaceMount": "source=${env:HOME}/Code/avatar/conscious,target=/app/,type=bind",
-//   "workspaceFolder": "/app",
-//   // Use 'remoteUser' if you need to run as a non-root user
-//   "remoteUser": "root"
-// }
+{
+  "name": "Go Docker Dev Environment with GoPls",
+  "image": "binuud/golang:1.27.2",
+  "runArgs": [
+    "--name", "conscious",
+    "-p", "9080:9080",
+    "-p", "9090:9090"
+  ],
+  // Automatically installs the official Go extension inside the container
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "golang.go",
+        "42crunch.vscode-openapi",
+        "drblury.protobuf-vsc"
+      ],
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash"
+      }
+    }
+  },
+  // Mount local workspace folders into the container
+  "workspaceMount": "source=${env:HOME}/Code/avatar/avatar-conscious,target=/app/,type=bind",
+  "workspaceFolder": "/app",
+  // Use 'remoteUser' if you need to run as a non-root user
+  "remoteUser": "root"
+}
