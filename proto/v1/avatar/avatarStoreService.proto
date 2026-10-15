@@ -4,6 +4,8 @@ package avatar;
 option go_package = "github.com/binuud/conscious/gen/go/v1/avatar";
 
 import "v1/avatar/avatar.proto";
+
+// for http annotations
 import "google/api/annotations.proto";
 
 // AvatarStoreService for managing avatars
