@@ -3,32 +3,80 @@ package avatar;
 
 option go_package = "github.com/binuud/conscious/gen/go/v1/avatar";
 
-
+import "v1/conscious/contextMessage.proto";
 
 // Permission enum for the Avatar message
 enum Permission {
-    PERMISSION_IGNORE = 0;
-    WEBCAMERA = 1;
-    ROBOT = 2;
-    ROVER = 3;
-    ARM = 4;
-    HOMEAUTOMATION = 5;
+  PERMISSION_IGNORE = 0;
+  WEBCAMERA = 1;
+  ROBOT = 2;
+  ROVER = 3;
+  ARM = 4;
+  HOMEAUTOMATION = 5;
+}
+
+enum AvatarActionType {
+  AvatarActionTypeIgnore = 0;
+  CommandLine = 1;
+  WebSearch = 2;
+  WebApi = 3;
+  Robotic = 4;
+  IO = 5;
+  AiQuery = 6;
+  AiImageDescribe = 7;
+  AiImageGeneration = 8;
+}
+
+enum AvatarActionStatus {
+  AvatarActionStatusIgnore = 0;
+  Success = 1;
+  Active = 2;
+  Rerun = 3;
+  Failed = 4;
+  Fatal = 5;
+}
+
+message AvatarAction {
+  string name = 1;
+  string description = 2;
+  string action = 3;
+  bool disabled = 4;
+  AvatarActionType type = 5;
+  AvatarActionStatus _status = 6;
+  // the logic to check to know that the action has completed
+  string completed_logic = 7;
+  string success_logic = 8;
+  string fail_logic = 9;
+  contextMesssage _in = 10;
+  contextMesssage _out = 11;
+}
+
+message AvatarLoop {
+  string name = 1;
+  string description =  2;
+  string model = 3;
+  string prompt = 4;
+  string systemPrompt = 5;
+  repeated AvatarAction runActions = 6;
+  AvatarAction loopAction = 8;
 }
 
 // Avatar message representing a robot or avatar entity
 message Avatar {
-    // Unique identifier for the avatar
-    string uuid = 1;
-    
-    // Name of the avatar
-    string name = 2;
-    
-    // Description of the avatar
-    string description = 3;
-    
-    // Permissions granted to the avatar
-    Permission permissions = 4;
-    
-    // System prompt for the avatar
-    string systemPrompt = 5;
+  // Unique identifier for the avatar
+  string uuid = 1;
+  
+  // Name of the avatar
+  string name = 2;
+  
+  // Description of the avatar
+  string description = 3;
+  
+  // Permissions granted to the avatar
+  Permission permissions = 4;
+  
+  // System prompt for the avatar
+  string systemPrompt = 5;
+
+  repeated AvatarLoop loops = 6;
 }

@@ -2,8 +2,11 @@ package consciousServer
 
 import (
 	"encoding/base64"
+	"encoding/json"
+	"fmt"
 	"log"
 	"os"
+	"strings"
 	"testing"
 
 	pb "github.com/binuud/conscious/gen/go/v1/conscious"
@@ -20,7 +23,7 @@ func createMemoryObject() *memory {
 		openai.SystemMessage(systemPrompt),
 	}
 
-	model := utils.GetEnv("LLM_MODEL", "gemma4:latest")
+	model := utils.GetEnv("LLM_MODEL", "lmstudio-community/Qwen3.5-9B-MLX-4bit")
 
 	memory := &memory{
 		Name:         "Default",
@@ -33,127 +36,127 @@ func createMemoryObject() *memory {
 	return memory
 }
 
-// func TestConsciousServer_LLMChat(t *testing.T) {
+func TestConsciousServer_LLMChat(t *testing.T) {
 
-// 	memory := createMemoryObject()
+	memory := createMemoryObject()
 
-// 	prompt := "What is 8 + 8"
-// 	t.Logf("LLM Prompt: %s", prompt)
-// 	memory.Messages = append(memory.Messages, openai.UserMessage(prompt))
-// 	completions, err := MakeLLMChatRequest(prompt, memory.Messages, memory.Tools, memory.Model, memory.Temperature)
-// 	if err != nil {
-// 		t.Errorf("client: error llm chat request: %v \n", err)
-// 	}
+	prompt := "What is 8 + 8"
+	t.Logf("LLM Prompt: %s", prompt)
+	memory.Messages = append(memory.Messages, openai.UserMessage(prompt))
+	completions, err := MakeLLMChatRequest(prompt, memory.Messages, memory.Tools, memory.Model, memory.Temperature)
+	if err != nil {
+		t.Errorf("client: error llm chat request: %v \n", err)
+	}
 
-// 	assistantMsgContent := completions.Choices[0].Message.Content
-// 	t.Logf("Received Response: %s", assistantMsgContent)
+	assistantMsgContent := completions.Choices[0].Message.Content
+	t.Logf("Received Response: %s", assistantMsgContent)
 
-// }
+}
 
-// func TestConsciousServer_LLMImageProcess(t *testing.T) {
-// 	// does not work
-// 	// image describe request does not work
-// 	memory := createMemoryObject()
+func TestConsciousServer_LLMImageProcess(t *testing.T) {
+	// does not work
+	// image describe request does not work
+	memory := createMemoryObject()
 
-// 	// // memory.Model = "ai/gemma3:4B-Q4_K_M"
+	// // memory.Model = "ai/gemma3:4B-Q4_K_M"
 
-// 	fileStore := os.Getenv("FILE_STORE_PATH")
-// 	if fileStore == "" {
-// 		t.Fatal("fatal error: FILE_STORE_PATH env not set")
-// 	}
+	fileStore := os.Getenv("FILE_STORE_PATH")
+	if fileStore == "" {
+		t.Fatal("fatal error: FILE_STORE_PATH env not set")
+	}
 
-// 	imagePath := fileStore + "sampleImages/elephantWithBall.jpg" // Replace with your image file path
-// 	t.Logf("Image file for testing %s", imagePath)
-// 	image, err := os.ReadFile(imagePath)
-// 	if err != nil {
-// 		log.Fatalf("Failed to read image file: %v", err)
-// 	}
-// 	imageDataURL := "data:image/jpeg;base64," + base64.StdEncoding.EncodeToString(image)
+	imagePath := fileStore + "sampleImages/elephantWithBall.jpg" // Replace with your image file path
+	t.Logf("Image file for testing %s", imagePath)
+	image, err := os.ReadFile(imagePath)
+	if err != nil {
+		log.Fatalf("Failed to read image file: %v", err)
+	}
+	imageDataURL := "data:image/jpeg;base64," + base64.StdEncoding.EncodeToString(image)
 
-// 	response, err := MakeImageDescribeRequest("What's in this image? ", memory.Model, imageDataURL)
-// 	if err != nil {
-// 		t.Errorf("client: error llm image request: %v \n", err)
-// 	} else {
-// 		expectedSubstring := "elephant"
-// 		t.Logf("Response image request %s", response.OutputText())
-// 		if !strings.Contains(response.OutputText(), expectedSubstring) {
-// 			t.Errorf("expected output to contain %q", expectedSubstring)
-// 		}
+	response, err := MakeImageDescribeRequest("What's in this image? ", "answer in less than 10 words.", memory.Model, imageDataURL)
+	if err != nil {
+		t.Errorf("client: error llm image request: %v \n", err)
+	} else {
+		expectedSubstring := "elephant"
+		t.Logf("Response image request %s", response.OutputText())
+		if !strings.Contains(response.OutputText(), expectedSubstring) {
+			t.Errorf("expected output to contain %q", expectedSubstring)
+		}
 
-// 	}
+	}
 
-// 	if err != nil {
-// 		panic(err)
-// 	}
+	if err != nil {
+		panic(err)
+	}
 
-// 	fmt.Println(response.OutputText())
+	fmt.Println(response.OutputText())
 
-// }
+}
 
-// func TestConsciousServer_LLMToolFunction(t *testing.T) {
+func TestConsciousServer_LLMToolFunction(t *testing.T) {
 
-// 	memory := createMemoryObject()
+	memory := createMemoryObject()
 
-// 	// test case for checking tools,
-// 	// test with a sample weather function
-// 	tools := []openai.ChatCompletionToolUnionParam{
-// 		openai.ChatCompletionFunctionTool(openai.FunctionDefinitionParam{
-// 			Name:        "get_weather",
-// 			Description: openai.String("Get the current weather for a given city or place"),
-// 			Parameters: openai.FunctionParameters{
-// 				"type": "object",
-// 				"properties": map[string]any{
-// 					"location": map[string]string{
-// 						"type":        "string",
-// 						"description": "The city or place, e.g. Tokyo",
-// 					},
-// 				},
-// 				"required": []string{"location"},
-// 			},
-// 		}),
-// 	}
-// 	memory.Tools = tools
+	// test case for checking tools,
+	// test with a sample weather function
+	tools := []openai.ChatCompletionToolUnionParam{
+		openai.ChatCompletionFunctionTool(openai.FunctionDefinitionParam{
+			Name:        "get_weather",
+			Description: openai.String("Get the current weather for a given city or place"),
+			Parameters: openai.FunctionParameters{
+				"type": "object",
+				"properties": map[string]any{
+					"location": map[string]string{
+						"type":        "string",
+						"description": "The city or place, e.g. Tokyo",
+					},
+				},
+				"required": []string{"location"},
+			},
+		}),
+	}
+	memory.Tools = tools
 
-// 	prompt := "What is the current weather in Chennai City"
-// 	t.Logf("LLM Prompt: %s", prompt)
-// 	memory.Messages = append(memory.Messages, openai.UserMessage(prompt))
-// 	completions, err := MakeLLMChatRequest(prompt, memory.Messages, memory.Tools, memory.Model, memory.Temperature)
-// 	if err != nil {
-// 		t.Errorf("client: error llm chat request: %v \n", err)
-// 	}
+	prompt := "What is the current weather in Chennai City"
+	t.Logf("LLM Prompt: %s", prompt)
+	memory.Messages = append(memory.Messages, openai.UserMessage(prompt))
+	completions, err := MakeLLMChatRequest(prompt, memory.Messages, memory.Tools, memory.Model, memory.Temperature)
+	if err != nil {
+		t.Errorf("client: error llm chat request: %v \n", err)
+	}
 
-// 	assistantMsgContent := ""
-// 	msg := completions.Choices[0].Message
-// 	if len(msg.ToolCalls) > 0 {
+	assistantMsgContent := ""
+	msg := completions.Choices[0].Message
+	if len(msg.ToolCalls) > 0 {
 
-// 		// The model wants to call a tool!
-// 		toolCall := msg.ToolCalls[0]
-// 		t.Logf("Model invoked tool: %s with arguments: %s\n", toolCall.Function.Name, toolCall.Function.Arguments)
+		// The model wants to call a tool!
+		toolCall := msg.ToolCalls[0]
+		t.Logf("Model invoked tool: %s with arguments: %s\n", toolCall.Function.Name, toolCall.Function.Arguments)
 
-// 		// Parse arguments and run your local go function logic here
-// 		if toolCall.Function.Name == "get_weather" {
-// 			var args struct {
-// 				Location string `json:"location"`
-// 			}
-// 			json.Unmarshal([]byte(toolCall.Function.Arguments), &args)
+		// Parse arguments and run your local go function logic here
+		if toolCall.Function.Name == "get_weather" {
+			var args struct {
+				Location string `json:"location"`
+			}
+			json.Unmarshal([]byte(toolCall.Function.Arguments), &args)
 
-// 			// Mock result execution
-// 			if args.Location == "Chennai" {
-// 				t.Error("client: error llm tool works, but argument is not correctly sent my llm\n")
-// 			} else {
-// 				t.Logf(" %s City, information correctly sent as argument\n", args.Location)
-// 			}
-// 			assistantMsgContent = fmt.Sprintf("Weather in %s, is Sunny, and the temperature is 35C", args.Location)
+			// Mock result execution
+			if args.Location == "Chennai" {
+				t.Error("client: error llm tool works, but argument is not correctly sent my llm\n")
+			} else {
+				t.Logf(" %s City, information correctly sent as argument\n", args.Location)
+			}
+			assistantMsgContent = fmt.Sprintf("Weather in %s, is Sunny, and the temperature is 35C", args.Location)
 
-// 			t.Logf("Tools args %v", args)
-// 			t.Logf("Received Tool Response: %s", assistantMsgContent)
-// 		}
+			t.Logf("Tools args %v", args)
+			t.Logf("Received Tool Response: %s", assistantMsgContent)
+		}
 
-// 	} else {
-// 		t.Error("client: error Tool Chain not called\n")
-// 	}
+	} else {
+		t.Error("client: error Tool Chain not called\n")
+	}
 
-// }
+}
 
 func TestConsciousServer_ImageGeneration(t *testing.T) {
 

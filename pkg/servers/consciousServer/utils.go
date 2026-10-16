@@ -94,11 +94,13 @@ func MakeLLMChatRequest(prompt string, messages []openai.ChatCompletionMessagePa
 
 	ctx := context.Background()
 
+	// logrus.Infof("MakeLLMChatRequest :%s:%s", model, prompt)
 	param := openai.ChatCompletionNewParams{
-		Messages:    messages,
-		Model:       model,
-		Temperature: openai.Opt(temperature),
-		Tools:       tools,
+		Messages:        messages,
+		Model:           model,
+		Temperature:     openai.Opt(temperature),
+		Tools:           tools,
+		ReasoningEffort: "none",
 	}
 
 	completion, err := client.Chat.Completions.New(ctx, param)
