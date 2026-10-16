@@ -62,6 +62,29 @@ func local_request_Conscious_In_0(ctx context.Context, marshaler runtime.Marshal
 	return msg, metadata, err
 }
 
+func request_Conscious_Generate_0(ctx context.Context, marshaler runtime.Marshaler, client ConsciousClient, req *http.Request, pathParams map[string]string) (Conscious_GenerateClient, runtime.ServerMetadata, error) {
+	var (
+		protoReq ContextMesssage
+		metadata runtime.ServerMetadata
+	)
+	if err := marshaler.NewDecoder(req.Body).Decode(&protoReq); err != nil && !errors.Is(err, io.EOF) {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if req.Body != nil {
+		_, _ = io.Copy(io.Discard, req.Body)
+	}
+	stream, err := client.Generate(ctx, &protoReq)
+	if err != nil {
+		return nil, metadata, err
+	}
+	header, err := stream.Header()
+	if err != nil {
+		return nil, metadata, err
+	}
+	metadata.HeaderMD = header
+	return stream, metadata, nil
+}
+
 func request_Conscious_InStream_0(ctx context.Context, marshaler runtime.Marshaler, client ConsciousClient, req *http.Request, pathParams map[string]string) (Conscious_InStreamClient, runtime.ServerMetadata, error) {
 	var (
 		protoReq ContextMesssage
@@ -195,6 +218,13 @@ func RegisterConsciousHandlerServer(ctx context.Context, mux *runtime.ServeMux, 
 		forward_Conscious_In_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
 
+	mux.Handle(http.MethodPost, pattern_Conscious_Generate_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		err := status.Error(codes.Unimplemented, "streaming calls are not yet supported in the in-process transport")
+		_, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+		return
+	})
+
 	mux.Handle(http.MethodPost, pattern_Conscious_InStream_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		err := status.Error(codes.Unimplemented, "streaming calls are not yet supported in the in-process transport")
 		_, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
@@ -318,6 +348,23 @@ func RegisterConsciousHandlerClient(ctx context.Context, mux *runtime.ServeMux, 
 		}
 		forward_Conscious_In_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+	mux.Handle(http.MethodPost, pattern_Conscious_Generate_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/conscious.Conscious/Generate", runtime.WithHTTPPathPattern("/v1/conscious/generate"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_Conscious_Generate_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		forward_Conscious_Generate_0(annotatedContext, mux, outboundMarshaler, w, req, func() (proto.Message, error) { return resp.Recv() }, mux.GetForwardResponseOptions()...)
+	})
 	mux.Handle(http.MethodPost, pattern_Conscious_InStream_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -391,6 +438,7 @@ func RegisterConsciousHandlerClient(ctx context.Context, mux *runtime.ServeMux, 
 
 var (
 	pattern_Conscious_In_0         = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "conscious", "in"}, ""))
+	pattern_Conscious_Generate_0   = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "conscious", "generate"}, ""))
 	pattern_Conscious_InStream_0   = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "conscious", "inStream"}, ""))
 	pattern_Conscious_GetModels_0  = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "conscious", "models"}, ""))
 	pattern_Conscious_FileUpload_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "conscious", "fileUpload"}, ""))
@@ -399,6 +447,7 @@ var (
 
 var (
 	forward_Conscious_In_0         = runtime.ForwardResponseMessage
+	forward_Conscious_Generate_0   = runtime.ForwardResponseStream
 	forward_Conscious_InStream_0   = runtime.ForwardResponseStream
 	forward_Conscious_GetModels_0  = runtime.ForwardResponseMessage
 	forward_Conscious_FileUpload_0 = runtime.ForwardResponseMessage

@@ -11,6 +11,7 @@ package consciousServer
 import (
 	"context"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -44,7 +45,9 @@ type memory struct {
 
 type grpcConsciousServer struct {
 	pb.UnimplementedConsciousServer
-	memory *memory
+	memory       *memory
+	openAiClient *openai.Client
+	commonTools  []openai.ChatCompletionToolUnionParam
 }
 
 func NewGrpcConsciousServer() *grpcConsciousServer {
@@ -95,8 +98,54 @@ func NewGrpcConsciousServer() *grpcConsciousServer {
 		logrus.Infof("Default memory found and loaded")
 	}
 	logrus.Infof("Starting Conscious with %s model", LLM_MODEL)
-	return &grpcConsciousServer{memory: memory}
 
+	client := openai.NewClient(
+		option.WithBaseURL(GetLLMEndpoint()),
+		option.WithAPIKey(""), // No API key needed for Model Runner
+	)
+
+	grpcServer := &grpcConsciousServer{
+		memory:       memory,
+		openAiClient: &client,
+	}
+	grpcServer.commonTools = grpcServer.addCommonToolsRoute()
+
+	return grpcServer
+}
+
+func (s *grpcConsciousServer) addCommonToolsRoute() []openai.ChatCompletionToolUnionParam {
+	return []openai.ChatCompletionToolUnionParam{
+		// tool case for image generation
+		openai.ChatCompletionFunctionTool(openai.FunctionDefinitionParam{
+			Name:        "get_image",
+			Description: openai.String("Retreive or create an image"),
+			Parameters: openai.FunctionParameters{
+				"type": "object",
+				"properties": map[string]any{
+					"text": map[string]string{
+						"type":        "string",
+						"description": "A description of the image",
+					},
+				},
+				"required": []string{"text"},
+			},
+		}),
+		// tool case for image description
+		openai.ChatCompletionFunctionTool(openai.FunctionDefinitionParam{
+			Name:        "get_image_description",
+			Description: openai.String("Describe a given image or photo."),
+			Parameters: openai.FunctionParameters{
+				"type": "object",
+				"properties": map[string]any{
+					"text": map[string]string{
+						"type":        "string",
+						"description": "A question about the image",
+					},
+				},
+				"required": []string{"text"},
+			},
+		}),
+	}
 }
 
 func (s *grpcConsciousServer) GetModels(ctx context.Context, in *pb.ModelRequest) (*pb.ModelResponse, error) {
@@ -131,14 +180,9 @@ func (s *grpcConsciousServer) In(ctx context.Context, in *pb.ContextMesssage) (*
 
 }
 
-// Removed the 'ctx context.Context' parameter and fixed the stream interface type
 func (s *grpcConsciousServer) InStream(in *pb.ContextMesssage, stream grpc.ServerStreamingServer[pb.ContextMesssage]) error {
 
 	logrus.Infof("InStream Received -> Request: %s, %s", in.Type, in.Prompt)
-	client := openai.NewClient(
-		option.WithBaseURL(GetLLMEndpoint()),
-		option.WithAPIKey(""), // No API key needed for Model Runner
-	)
 
 	// logrus.Infof("Send data to llm server %s", params.User.Value)
 
@@ -156,7 +200,7 @@ func (s *grpcConsciousServer) InStream(in *pb.ContextMesssage, stream grpc.Serve
 		},
 	}
 
-	llmStream := client.Responses.NewStreaming(context.Background(), params)
+	llmStream := s.openAiClient.Responses.NewStreaming(context.Background(), params)
 	defer func() {
 		_ = llmStream.Close()
 	}()
@@ -188,6 +232,88 @@ func (s *grpcConsciousServer) InStream(in *pb.ContextMesssage, stream grpc.Serve
 		}
 	}
 	return nil
+}
+
+// Generate,
+// Calls toools first with no memory, to decide if image generation or description or tts has to be called
+// Then calls the appropriate function
+func (s *grpcConsciousServer) Generate(in *pb.ContextMesssage, stream grpc.ServerStreamingServer[pb.ContextMesssage]) error {
+
+	logrus.Infof("Generate Received -> Request: %s", in.Prompt)
+
+	// make a tool request
+	// LLM will decide if the user wants to create image, create tts,
+	// describe image or chat stream
+	logrus.Infof("Tools %v\n", s.commonTools)
+	tool, err := GetLLMToolName(in.Prompt, "", in.Model, s.commonTools, s.memory.Temperature)
+	if err != nil {
+		// t.Errorf("client: error llm chat request: %v \n", err)
+		return err
+	}
+
+	// if llm model returns a tool name
+	if tool != nil {
+		logrus.Infof("Tool function selected : %s with arguments: %s\n", tool.Function.Name, tool.Function.Arguments)
+
+		switch tool.Function.Name {
+		case "get_image":
+			in.Type = pb.ContextMesssage_IMAGE_GENERATION
+			in.Model = utils.GetEnv("IMAGE_MODEL", "Runpod/FLUX.2-klein-4B-mflux-4bit")
+		case "get_image_description":
+			in.Type = pb.ContextMesssage_LLM_IMAGE_DESCRIBE
+			in.Model = utils.GetEnv("VISION_MODEL", "lmstudio-community/Qwen3.5-9B-MLX-4bit")
+		default:
+			logrus.Errorf("Invalid tool name selected by llm model %s", tool.Function.Name)
+			return fmt.Errorf("Invalid tool selected by llm model %s", tool.Function.Name)
+		}
+
+		// if model returns refined prompt,
+		// hot swap it for user prompt
+		var args struct {
+			Text string `json:"text"`
+		}
+		json.Unmarshal([]byte(tool.Function.Arguments), &args)
+		newPrompt := args.Text
+
+		if newPrompt != "" {
+			in.Prompt = newPrompt
+		}
+
+		// call the router function
+		// and modify the prompt
+
+		out, err := s.RouteRequest(in)
+		if err != nil {
+			logrus.Errorf("LLM Error %v", err)
+			return err
+		}
+
+		err = s.memory.Save("default")
+		if err != nil {
+			logrus.Panicf("Cannot save conscious memory %v", err)
+		}
+		logrus.Infof("In Received -> Response: %s", out)
+
+		// return the output response and exit stream
+		if err := stream.Send(out); err != nil {
+			return err
+		}
+		return nil
+	} else {
+		logrus.Infof("Tool function NOT selected\n")
+
+		if in.Data != "" {
+			// if an image is in the attachment, do a describe image
+			in.Type = pb.ContextMesssage_LLM_IMAGE_DESCRIBE
+			in.Model = utils.GetEnv("VISION_MODEL", "lmstudio-community/Qwen3.5-9B-MLX-4bit")
+		}
+
+	}
+
+	// this is a normal chat streaming call
+	// user has not asked for any tools
+	return s.InStream(in, stream)
+
 }
 
 func (s *grpcConsciousServer) FileUpload(ctx context.Context, in *pb.UploadRequest) (*pb.UploadResponse, error) {

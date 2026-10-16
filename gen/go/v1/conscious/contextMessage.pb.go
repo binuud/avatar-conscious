@@ -31,7 +31,7 @@ const (
 type ContextMesssage_ContextType int32
 
 const (
-	ContextMesssage_COTEXT_TYPE_IGNORE ContextMesssage_ContextType = 0
+	ContextMesssage_CONTEXT_TYPE_IGNORE ContextMesssage_ContextType = 0
 	// the message is sent to LLM model but expects stream as response
 	ContextMesssage_LLM_STREAM_QUERY ContextMesssage_ContextType = 1
 	// this is sent to LLM model for inference
@@ -47,7 +47,7 @@ const (
 // Enum value maps for ContextMesssage_ContextType.
 var (
 	ContextMesssage_ContextType_name = map[int32]string{
-		0: "COTEXT_TYPE_IGNORE",
+		0: "CONTEXT_TYPE_IGNORE",
 		1: "LLM_STREAM_QUERY",
 		2: "LLM_QUERY",
 		3: "LLM_IMAGE_DESCRIBE",
@@ -55,12 +55,12 @@ var (
 		5: "TTS",
 	}
 	ContextMesssage_ContextType_value = map[string]int32{
-		"COTEXT_TYPE_IGNORE": 0,
-		"LLM_STREAM_QUERY":   1,
-		"LLM_QUERY":          2,
-		"LLM_IMAGE_DESCRIBE": 3,
-		"IMAGE_GENERATION":   4,
-		"TTS":                5,
+		"CONTEXT_TYPE_IGNORE": 0,
+		"LLM_STREAM_QUERY":    1,
+		"LLM_QUERY":           2,
+		"LLM_IMAGE_DESCRIBE":  3,
+		"IMAGE_GENERATION":    4,
+		"TTS":                 5,
 	}
 )
 
@@ -424,7 +424,7 @@ func (x *ContextMesssage) GetType() ContextMesssage_ContextType {
 	if x != nil {
 		return x.Type
 	}
-	return ContextMesssage_COTEXT_TYPE_IGNORE
+	return ContextMesssage_CONTEXT_TYPE_IGNORE
 }
 
 func (x *ContextMesssage) GetRole() ContextMesssage_ContextRole {
@@ -565,7 +565,7 @@ const file_v1_conscious_contextMessage_proto_rawDesc = "" +
 	"\x0eUploadResponse\x12\x1b\n" +
 	"\tupload_id\x18\x01 \x01(\tR\buploadId\x12\x16\n" +
 	"\x06status\x18\x02 \x01(\tR\x06status\x12#\n" +
-	"\rerror_message\x18\x03 \x01(\tR\ferrorMessage\"\xfb\a\n" +
+	"\rerror_message\x18\x03 \x01(\tR\ferrorMessage\"\xfc\a\n" +
 	"\x0fcontextMesssage\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
@@ -590,9 +590,9 @@ const file_v1_conscious_contextMessage_proto_rawDesc = "" +
 	"\treasoning\x18+ \x01(\tR\treasoning\x12\x1a\n" +
 	"\bthinking\x18, \x01(\tR\bthinking\x12(\n" +
 	"\tcreatedAt\x18- \x01(\v2\n" +
-	".TimestampR\tcreatedAt\"\x81\x01\n" +
-	"\vContextType\x12\x16\n" +
-	"\x12COTEXT_TYPE_IGNORE\x10\x00\x12\x14\n" +
+	".TimestampR\tcreatedAt\"\x82\x01\n" +
+	"\vContextType\x12\x17\n" +
+	"\x13CONTEXT_TYPE_IGNORE\x10\x00\x12\x14\n" +
 	"\x10LLM_STREAM_QUERY\x10\x01\x12\r\n" +
 	"\tLLM_QUERY\x10\x02\x12\x16\n" +
 	"\x12LLM_IMAGE_DESCRIBE\x10\x03\x12\x14\n" +

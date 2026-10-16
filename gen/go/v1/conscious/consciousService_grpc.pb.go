@@ -25,6 +25,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	Conscious_In_FullMethodName         = "/conscious.Conscious/In"
+	Conscious_Generate_FullMethodName   = "/conscious.Conscious/Generate"
 	Conscious_InStream_FullMethodName   = "/conscious.Conscious/InStream"
 	Conscious_GetModels_FullMethodName  = "/conscious.Conscious/GetModels"
 	Conscious_FileUpload_FullMethodName = "/conscious.Conscious/FileUpload"
@@ -34,14 +35,11 @@ const (
 // ConsciousClient is the client API for Conscious service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-//
-// BrainRepository
-// Service for running brain pipes and flows
 type ConsciousClient interface {
-	// initially can only run one pipe or flow at a time
-	// This returns a run state, using which clients can follow the status
-	// This is an asynchronous call
 	In(ctx context.Context, in *ContextMesssage, opts ...grpc.CallOption) (*ContextMesssage, error)
+	// Generate call internall routes the call to image generation
+	// image description or tts, depending on the prompt
+	Generate(ctx context.Context, in *ContextMesssage, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ContextMesssage], error)
 	InStream(ctx context.Context, in *ContextMesssage, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ContextMesssage], error)
 	GetModels(ctx context.Context, in *ModelRequest, opts ...grpc.CallOption) (*ModelResponse, error)
 	FileUpload(ctx context.Context, in *UploadRequest, opts ...grpc.CallOption) (*UploadResponse, error)
@@ -67,9 +65,28 @@ func (c *consciousClient) In(ctx context.Context, in *ContextMesssage, opts ...g
 	return out, nil
 }
 
+func (c *consciousClient) Generate(ctx context.Context, in *ContextMesssage, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ContextMesssage], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &Conscious_ServiceDesc.Streams[0], Conscious_Generate_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[ContextMesssage, ContextMesssage]{ClientStream: stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type Conscious_GenerateClient = grpc.ServerStreamingClient[ContextMesssage]
+
 func (c *consciousClient) InStream(ctx context.Context, in *ContextMesssage, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ContextMesssage], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	stream, err := c.cc.NewStream(ctx, &Conscious_ServiceDesc.Streams[0], Conscious_InStream_FullMethodName, cOpts...)
+	stream, err := c.cc.NewStream(ctx, &Conscious_ServiceDesc.Streams[1], Conscious_InStream_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -119,14 +136,11 @@ func (c *consciousClient) Health(ctx context.Context, in *HealthRequest, opts ..
 // ConsciousServer is the server API for Conscious service.
 // All implementations must embed UnimplementedConsciousServer
 // for forward compatibility.
-//
-// BrainRepository
-// Service for running brain pipes and flows
 type ConsciousServer interface {
-	// initially can only run one pipe or flow at a time
-	// This returns a run state, using which clients can follow the status
-	// This is an asynchronous call
 	In(context.Context, *ContextMesssage) (*ContextMesssage, error)
+	// Generate call internall routes the call to image generation
+	// image description or tts, depending on the prompt
+	Generate(*ContextMesssage, grpc.ServerStreamingServer[ContextMesssage]) error
 	InStream(*ContextMesssage, grpc.ServerStreamingServer[ContextMesssage]) error
 	GetModels(context.Context, *ModelRequest) (*ModelResponse, error)
 	FileUpload(context.Context, *UploadRequest) (*UploadResponse, error)
@@ -144,6 +158,9 @@ type UnimplementedConsciousServer struct{}
 
 func (UnimplementedConsciousServer) In(context.Context, *ContextMesssage) (*ContextMesssage, error) {
 	return nil, status.Error(codes.Unimplemented, "method In not implemented")
+}
+func (UnimplementedConsciousServer) Generate(*ContextMesssage, grpc.ServerStreamingServer[ContextMesssage]) error {
+	return status.Error(codes.Unimplemented, "method Generate not implemented")
 }
 func (UnimplementedConsciousServer) InStream(*ContextMesssage, grpc.ServerStreamingServer[ContextMesssage]) error {
 	return status.Error(codes.Unimplemented, "method InStream not implemented")
@@ -195,6 +212,17 @@ func _Conscious_In_Handler(srv interface{}, ctx context.Context, dec func(interf
 	}
 	return interceptor(ctx, in, info, handler)
 }
+
+func _Conscious_Generate_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(ContextMesssage)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(ConsciousServer).Generate(m, &grpc.GenericServerStream[ContextMesssage, ContextMesssage]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type Conscious_GenerateServer = grpc.ServerStreamingServer[ContextMesssage]
 
 func _Conscious_InStream_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(ContextMesssage)
@@ -286,6 +314,11 @@ var Conscious_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "Generate",
+			Handler:       _Conscious_Generate_Handler,
+			ServerStreams: true,
+		},
 		{
 			StreamName:    "InStream",
 			Handler:       _Conscious_InStream_Handler,

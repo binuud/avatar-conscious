@@ -35,7 +35,7 @@ message contextMesssage {
   // context types, the same contextMessage is used for both request, response
   // this is for chaining
   enum ContextType {
-    COTEXT_TYPE_IGNORE = 0;
+    CONTEXT_TYPE_IGNORE = 0;
 
     // the message is sent to LLM model but expects stream as response
     LLM_STREAM_QUERY = 1;
