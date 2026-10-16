@@ -146,6 +146,31 @@ func MakeLLMSingleRequest(prompt string, systemPrompt string, model string, temp
 
 }
 
+func MakeLLMSingleToolRequest(prompt string, systemPrompt string, model string, tools []openai.ChatCompletionToolUnionParam, temperature float64) (*openai.ChatCompletion, error) {
+
+	client := openai.NewClient(
+		option.WithBaseURL(GetLLMEndpoint()),
+		option.WithAPIKey(""), // No API key needed for Model Runner
+	)
+
+	ctx := context.Background()
+
+	messages := []openai.ChatCompletionMessageParamUnion{
+		openai.SystemMessage(systemPrompt),
+		openai.UserMessage(prompt),
+	}
+
+	param := openai.ChatCompletionNewParams{
+		Messages:    messages,
+		Model:       model,
+		Tools:       tools,
+		Temperature: openai.Opt(temperature),
+	}
+
+	return client.Chat.Completions.New(ctx, param)
+
+}
+
 func MakeOpenAiImageGenerationRequest(prompt string, model string) (*openai.ImagesResponse, error) {
 
 	client := openai.NewClient(
