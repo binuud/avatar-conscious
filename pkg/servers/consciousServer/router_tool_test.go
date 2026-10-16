@@ -49,6 +49,27 @@ func Test_LLM_TOOL(t *testing.T) {
 			want_error: false,
 		},
 		{
+			name:       "Image generation prompt",
+			prompt:     "Create a realistic photo of a coffee cup, with steaming hot, and on a table",
+			want_tool:  "get_image",
+			want_param: "",
+			want_error: false,
+		},
+		{
+			name:       "Image generation prompt",
+			prompt:     "Draw a image of a cattle grazing",
+			want_tool:  "get_image",
+			want_param: "",
+			want_error: false,
+		},
+		{
+			name:       "Image describe",
+			prompt:     "Describe the different cars in the image",
+			want_tool:  "get_image_description",
+			want_param: "",
+			want_error: false,
+		},
+		{
 			name:       "Negative test case",
 			prompt:     "What is your name",
 			want_tool:  "",
@@ -88,6 +109,34 @@ func Test_LLM_TOOL(t *testing.T) {
 				"required": []string{"companyName"},
 			},
 		}),
+		openai.ChatCompletionFunctionTool(openai.FunctionDefinitionParam{
+			Name:        "get_image",
+			Description: openai.String("Retreive or create an image"),
+			Parameters: openai.FunctionParameters{
+				"type": "object",
+				"properties": map[string]any{
+					"text": map[string]string{
+						"type":        "string",
+						"description": "A description of the image",
+					},
+				},
+				"required": []string{"text"},
+			},
+		}),
+		openai.ChatCompletionFunctionTool(openai.FunctionDefinitionParam{
+			Name:        "get_image_description",
+			Description: openai.String("Describe a given image or photo."),
+			Parameters: openai.FunctionParameters{
+				"type": "object",
+				"properties": map[string]any{
+					"text": map[string]string{
+						"type":        "string",
+						"description": "A question about the image",
+					},
+				},
+				"required": []string{"text"},
+			},
+		}),
 	}
 	memory.Tools = tools
 
@@ -105,6 +154,11 @@ func Test_LLM_TOOL(t *testing.T) {
 				}
 
 			} else {
+
+				if tt.want_error {
+					t.Errorf("Expected error, but got none %v", err)
+					return
+				}
 
 				t.Logf("Tool called : %s with arguments: %s\n", toolCall.Function.Name, toolCall.Function.Arguments)
 
@@ -126,6 +180,19 @@ func Test_LLM_TOOL(t *testing.T) {
 
 				}
 
+				if toolCall.Function.Name == "get_price_of_stock" {
+					var args struct {
+						CompanyName string `json:"companyName"`
+					}
+					json.Unmarshal([]byte(toolCall.Function.Arguments), &args)
+
+					// Mock result execution
+					if !reflect.DeepEqual(args.CompanyName, tt.want_param) {
+						t.Errorf("LLM Tooling failed, tool argument not returned = %v, want %v", args.CompanyName, tt.want_param)
+					}
+
+				}
+
 			}
 
 		})
@@ -135,8 +202,7 @@ func Test_LLM_TOOL(t *testing.T) {
 func routerViaTool(prompt string, memory *memory, t *testing.T) (*openai.ChatCompletionMessageToolCallUnion, error) {
 
 	t.Logf("LLM Prompt: %s", prompt)
-	memory.Messages = append(memory.Messages, openai.UserMessage(prompt))
-	completions, err := MakeLLMChatRequest(prompt, memory.Messages, memory.Tools, memory.Model, memory.Temperature)
+	completions, err := MakeLLMSingleToolRequest(prompt, "", memory.Model, memory.Tools, memory.Temperature)
 	if err != nil {
 		// t.Errorf("client: error llm chat request: %v \n", err)
 		return nil, err
