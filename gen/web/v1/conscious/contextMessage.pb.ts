@@ -7,7 +7,7 @@
 import * as Common from "./common.pb"
 
 export enum contextMesssageContextType {
-  COTEXT_TYPE_IGNORE = "COTEXT_TYPE_IGNORE",
+  CONTEXT_TYPE_IGNORE = "CONTEXT_TYPE_IGNORE",
   LLM_STREAM_QUERY = "LLM_STREAM_QUERY",
   LLM_QUERY = "LLM_QUERY",
   LLM_IMAGE_DESCRIBE = "LLM_IMAGE_DESCRIBE",

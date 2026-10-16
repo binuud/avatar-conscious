@@ -46,3 +46,7 @@ go install github.com/cespare/reflex@latest
 ```
 
 
+## Remember
+
+* Avoid using containers during development, since gpuinfo, needs macos access
+* replace same with dummy binary, when running via docker

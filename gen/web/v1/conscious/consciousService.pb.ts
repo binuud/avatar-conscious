@@ -11,6 +11,9 @@ export class Conscious {
   static In(req: ContextMessage.contextMesssage, initReq?: fm.InitReq): Promise<ContextMessage.contextMesssage> {
     return fm.fetchReq<ContextMessage.contextMesssage, ContextMessage.contextMesssage>(`/v1/conscious/in`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
   }
+  static Generate(req: ContextMessage.contextMesssage, entityNotifier?: fm.NotifyStreamEntityArrival<ContextMessage.contextMesssage>, initReq?: fm.InitReq): Promise<void> {
+    return fm.fetchStreamingRequest<ContextMessage.contextMesssage, ContextMessage.contextMesssage>(`/v1/conscious/generate`, entityNotifier, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
+  }
   static InStream(req: ContextMessage.contextMesssage, entityNotifier?: fm.NotifyStreamEntityArrival<ContextMessage.contextMesssage>, initReq?: fm.InitReq): Promise<void> {
     return fm.fetchStreamingRequest<ContextMessage.contextMesssage, ContextMessage.contextMesssage>(`/v1/conscious/inStream`, entityNotifier, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
   }

@@ -30,9 +30,10 @@ var File_v1_conscious_consciousService_proto protoreflect.FileDescriptor
 
 const file_v1_conscious_consciousService_proto_rawDesc = "" +
 	"\n" +
-	"#v1/conscious/consciousService.proto\x12\tconscious\x1a\x19v1/conscious/common.proto\x1a!v1/conscious/contextMessage.proto\x1a\x1cgoogle/api/annotations.proto2\x84\x03\n" +
+	"#v1/conscious/consciousService.proto\x12\tconscious\x1a\x19v1/conscious/common.proto\x1a!v1/conscious/contextMessage.proto\x1a\x1cgoogle/api/annotations.proto2\xd9\x03\n" +
 	"\tConscious\x12E\n" +
 	"\x02In\x12\x10.contextMesssage\x1a\x10.contextMesssage\"\x1b\x82\xd3\xe4\x93\x02\x15:\x01*\"\x10/v1/conscious/in\x12S\n" +
+	"\bGenerate\x12\x10.contextMesssage\x1a\x10.contextMesssage\"!\x82\xd3\xe4\x93\x02\x1b:\x01*\"\x16/v1/conscious/generate0\x01\x12S\n" +
 	"\bInStream\x12\x10.contextMesssage\x1a\x10.contextMesssage\"!\x82\xd3\xe4\x93\x02\x1b:\x01*\"\x16/v1/conscious/inStream0\x01\x12H\n" +
 	"\tGetModels\x12\r.ModelRequest\x1a\x0e.ModelResponse\"\x1c\x82\xd3\xe4\x93\x02\x16\x12\x14/v1/conscious/models\x12R\n" +
 	"\n" +
@@ -51,17 +52,19 @@ var file_v1_conscious_consciousService_proto_goTypes = []any{
 }
 var file_v1_conscious_consciousService_proto_depIdxs = []int32{
 	0, // 0: conscious.Conscious.In:input_type -> contextMesssage
-	0, // 1: conscious.Conscious.InStream:input_type -> contextMesssage
-	1, // 2: conscious.Conscious.GetModels:input_type -> ModelRequest
-	2, // 3: conscious.Conscious.FileUpload:input_type -> UploadRequest
-	3, // 4: conscious.Conscious.Health:input_type -> HealthRequest
-	0, // 5: conscious.Conscious.In:output_type -> contextMesssage
-	0, // 6: conscious.Conscious.InStream:output_type -> contextMesssage
-	4, // 7: conscious.Conscious.GetModels:output_type -> ModelResponse
-	5, // 8: conscious.Conscious.FileUpload:output_type -> UploadResponse
-	6, // 9: conscious.Conscious.Health:output_type -> HealthResponse
-	5, // [5:10] is the sub-list for method output_type
-	0, // [0:5] is the sub-list for method input_type
+	0, // 1: conscious.Conscious.Generate:input_type -> contextMesssage
+	0, // 2: conscious.Conscious.InStream:input_type -> contextMesssage
+	1, // 3: conscious.Conscious.GetModels:input_type -> ModelRequest
+	2, // 4: conscious.Conscious.FileUpload:input_type -> UploadRequest
+	3, // 5: conscious.Conscious.Health:input_type -> HealthRequest
+	0, // 6: conscious.Conscious.In:output_type -> contextMesssage
+	0, // 7: conscious.Conscious.Generate:output_type -> contextMesssage
+	0, // 8: conscious.Conscious.InStream:output_type -> contextMesssage
+	4, // 9: conscious.Conscious.GetModels:output_type -> ModelResponse
+	5, // 10: conscious.Conscious.FileUpload:output_type -> UploadResponse
+	6, // 11: conscious.Conscious.Health:output_type -> HealthResponse
+	6, // [6:12] is the sub-list for method output_type
+	0, // [0:6] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name

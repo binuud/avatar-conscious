@@ -14,15 +14,22 @@ import "google/api/annotations.proto";
 
 
 
-// BrainRepository
-// Service for running brain pipes and flows
+// Conscious
+
 service Conscious {
-  // initially can only run one pipe or flow at a time
-  // This returns a run state, using which clients can follow the status
-  // This is an asynchronous call
+
   rpc In(contextMesssage) returns (contextMesssage) {
     option (google.api.http) = {
       post : "/v1/conscious/in"
+      body : "*"
+    };
+  }
+
+  // Generate call internall routes the call to image generation
+  // image description or tts, depending on the prompt
+  rpc Generate(contextMesssage) returns (stream contextMesssage) {
+    option (google.api.http) = {
+      post : "/v1/conscious/generate"
       body : "*"
     };
   }

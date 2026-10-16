@@ -104,6 +104,75 @@ components:
           $ref: '#/components/schemas/Permission'
         systemPrompt:
           type: string
+        loops:
+          type: array
+          items:
+            $ref: '#/components/schemas/AvatarLoop'
+    AvatarAction:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        action:
+          type: string
+        disabled:
+          type: boolean
+        type:
+          $ref: '#/components/schemas/AvatarActionType'
+        Status:
+          $ref: '#/components/schemas/AvatarActionStatus'
+        completedLogic:
+          type: string
+        successLogic:
+          type: string
+        failLogic:
+          type: string
+        In:
+          $ref: '#/components/schemas/contextMesssage'
+        Out:
+          $ref: '#/components/schemas/contextMesssage'
+    AvatarActionStatus:
+      type: string
+      enum:
+        - "AvatarActionStatusIgnore"
+        - "Success"
+        - "Active"
+        - "Rerun"
+        - "Failed"
+        - "Fatal"
+    AvatarActionType:
+      type: string
+      enum:
+        - "AvatarActionTypeIgnore"
+        - "CommandLine"
+        - "WebSearch"
+        - "WebApi"
+        - "Robotic"
+        - "IO"
+        - "AiQuery"
+        - "AiImageDescribe"
+        - "AiImageGeneration"
+    AvatarLoop:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        model:
+          type: string
+        prompt:
+          type: string
+        systemPrompt:
+          type: string
+        runActions:
+          type: array
+          items:
+            $ref: '#/components/schemas/AvatarAction'
+        loopAction:
+          $ref: '#/components/schemas/AvatarAction'
     AvatarStoreCreateRequest:
       type: object
       properties:

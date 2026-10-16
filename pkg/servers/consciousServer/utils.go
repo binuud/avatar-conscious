@@ -171,6 +171,26 @@ func MakeLLMSingleToolRequest(prompt string, systemPrompt string, model string, 
 
 }
 
+// GetLLMToolCall
+// returns the tool name, that the model wants to call
+func GetLLMToolName(prompt string, systemPrompt string, model string, tools []openai.ChatCompletionToolUnionParam, temperature float64) (*openai.ChatCompletionMessageToolCallUnion, error) {
+
+	completions, err := MakeLLMSingleToolRequest(prompt, "", systemPrompt, tools, temperature)
+	if err != nil {
+		// t.Errorf("client: error llm chat request: %v \n", err)
+		return nil, err
+	}
+	msg := completions.Choices[0].Message
+	if len(msg.ToolCalls) > 0 {
+
+		// The model wants to call a tool!
+		toolCall := msg.ToolCalls[0]
+		return &toolCall, nil
+
+	}
+	return nil, nil
+}
+
 func MakeOpenAiImageGenerationRequest(prompt string, model string) (*openai.ImagesResponse, error) {
 
 	client := openai.NewClient(

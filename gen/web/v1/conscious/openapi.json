@@ -32,6 +32,33 @@
         }
       }
     },
+    "/v1/conscious/generate": {
+      "post": {
+        "operationId": "generate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/contextMesssage"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "conscious.Conscious.Generate response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/contextMesssage"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/conscious/in": {
       "post": {
         "operationId": "in",
@@ -410,7 +437,7 @@
       "contextMesssage.ContextType": {
         "type": "string",
         "enum": [
-          "COTEXT_TYPE_IGNORE",
+          "CONTEXT_TYPE_IGNORE",
           "LLM_STREAM_QUERY",
           "LLM_QUERY",
           "LLM_IMAGE_DESCRIBE",

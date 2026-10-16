@@ -63,8 +63,40 @@ curl -N -X POST http://localhost:9080/api/v1/conscious/inStream \
   }'
 ```
 
+### Generate request with inbuilt router
+
+Normal chat streaming
+```
+curl -N -X POST http://localhost:9080/api/v1/conscious/generate \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer ollama" \
+  -d '{
+    "model": "mlx-community/gemma-4-12b-it-4bit",
+    "prompt": "how are you",
+    "stream": true
+  }'
+```
+
+Image generation
+```
+curl -N -X POST http://localhost:9080/api/v1/conscious/generate \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer ollama" \
+  -d '{
+    "uuid": "bddd24ba-0cd9-4be2-a027-bad056cd31f8"
+    "model": "mlx-community/gemma-4-12b-it-4bit",
+    "prompt": "Create an image of a cat jumping over moon",
+    "stream": true
+  }'
+```
+
 ### Stream system metrics 
 ```
 curl -N -X POST http://localhost:9080/api/v1/consciousMetrics/getSystemMetrics \
   -H "Content-Type: application/json" 
+```
+
+```
+## model that supports tool calling
+export LLM_MODEL="mlx-community/gemma-4-12b-it-4bit" 
 ```
