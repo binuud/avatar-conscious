@@ -34,25 +34,16 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type memory struct {
-	Name         string
-	Model        string
-	SystemPrompt string
-	Temperature  float64
-	Messages     []openai.ChatCompletionMessageParamUnion
-	Tools        []openai.ChatCompletionToolUnionParam
-}
-
 type grpcConsciousServer struct {
 	pb.UnimplementedConsciousServer
-	memory       *memory
+	memory       *Memory
 	openAiClient *openai.Client
 	commonTools  []openai.ChatCompletionToolUnionParam
 }
 
 func NewGrpcConsciousServer() *grpcConsciousServer {
 
-	systemPrompt := "You are a helpful weather assistant. You must use the tools provided to answer questions. Very polite, friendly with children. Do not use curse words. Do not use bad words. Reply briefly, in less than 20 words as far as possible. Do not use any smilies, emojis, or symbols in your responses from now on."
+	systemPrompt := "You are a helpful assistant."
 
 	messages := []openai.ChatCompletionMessageParamUnion{
 		openai.SystemMessage(systemPrompt),
@@ -62,24 +53,8 @@ func NewGrpcConsciousServer() *grpcConsciousServer {
 	if LLM_MODEL == "" {
 		LLM_MODEL = "gemma3"
 	}
-	tools := []openai.ChatCompletionToolUnionParam{
-		openai.ChatCompletionFunctionTool(openai.FunctionDefinitionParam{
-			Name:        "get_weather",
-			Description: openai.String("Get the current weather for a given city or place"),
-			Parameters: openai.FunctionParameters{
-				"type": "object",
-				"properties": map[string]any{
-					"location": map[string]string{
-						"type":        "string",
-						"description": "The city or place, e.g. Tokyo",
-					},
-				},
-				"required": []string{"location"},
-			},
-		}),
-	}
 
-	memory := &memory{
+	memory := &Memory{
 		Name:         "Default",
 		Model:        LLM_MODEL,
 		SystemPrompt: systemPrompt,
@@ -87,10 +62,9 @@ func NewGrpcConsciousServer() *grpcConsciousServer {
 		Messages:     messages,
 	}
 
-	err := memory.Load("default")
+	err := memory.Load()
 
 	// do not save tools because of issue with saving hash map
-	memory.Tools = tools
 	memory.DumpMemory()
 	if err != nil {
 		logrus.Infof("No Default memory found")
@@ -171,10 +145,6 @@ func (s *grpcConsciousServer) In(ctx context.Context, in *pb.ContextMesssage) (*
 		return nil, err
 	}
 
-	err = s.memory.Save("default")
-	if err != nil {
-		logrus.Panicf("Cannot save conscious memory %v", err)
-	}
 	logrus.Infof("In Received -> Response: %s", out)
 	return out, nil
 
@@ -184,7 +154,7 @@ func (s *grpcConsciousServer) InStream(in *pb.ContextMesssage, stream grpc.Serve
 
 	logrus.Infof("InStream Received -> Request: %s, %s", in.Type, in.Prompt)
 
-	// logrus.Infof("Send data to llm server %s", params.User.Value)
+	s.memory.AppendMemory(openai.UserMessage(in.Prompt))
 
 	params := responses.ResponseNewParams{
 		Model: in.Model,
@@ -288,7 +258,7 @@ func (s *grpcConsciousServer) Generate(in *pb.ContextMesssage, stream grpc.Serve
 			return err
 		}
 
-		err = s.memory.Save("default")
+		err = s.memory.Save()
 		if err != nil {
 			logrus.Panicf("Cannot save conscious memory %v", err)
 		}

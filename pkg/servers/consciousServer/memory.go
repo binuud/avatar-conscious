@@ -1,14 +1,25 @@
 package consciousServer
 
 import (
-	"encoding/gob"
-	"os"
-
 	datalayer "github.com/binuud/conscious/pkg/dataLayer"
+	"github.com/openai/openai-go/v3"
 	"github.com/sirupsen/logrus"
 )
 
-func (m *memory) DumpMemory() {
+const (
+	MEMORY_DIRECTORY = "memories"
+)
+
+type Memory struct {
+	Name         string
+	Model        string
+	SystemPrompt string
+	Temperature  float64
+	Messages     []openai.ChatCompletionMessageParamUnion
+	Tools        []openai.ChatCompletionToolUnionParam
+}
+
+func (m *Memory) DumpMemory() {
 	logrus.Info("-----------------------------------------------------------------")
 	logrus.Infof("Name: %s, Model: %s, Temp: %f", m.Name, m.Model, m.Temperature)
 	logrus.Infof("System Prompt: %s", m.SystemPrompt)
@@ -41,44 +52,32 @@ func (m *memory) DumpMemory() {
 	logrus.Info("-----------------------------------------------------------------")
 }
 
-// internal function to load from model file
-func (m *memory) Load(fileName string) error {
-
-	file, err := os.Open(datalayer.GetFileAbsolutePath(fileName))
-	if err != nil {
-		return err
+// AppendMemory
+// append to memory, only append user and assistant message to memory
+func (m *Memory) AppendMemory(message openai.ChatCompletionMessageParamUnion) {
+	if message.OfUser != nil || message.OfAssistant == nil {
+		m.Messages = append(m.Messages, message)
 	}
-	defer file.Close() // Ensure the file is closed
-
-	decoder := gob.NewDecoder(file)
-	err = decoder.Decode(m) // Decode into the pointer
-	if err != nil {
-		return err
-	}
-	return nil
-
+	m.Save()
 }
 
-func (m *memory) Save(fileName string) error {
+// Load function to load from model file
+func (m *Memory) Load() error {
 
-	fullFileName := datalayer.GetFileName(fileName)
-
-	f, err := os.Create(fullFileName)
+	// Read profile back (Go automatically infers type T from your variable assignment)
+	localMemory, err := datalayer.ReadBinary[Memory](datalayer.GetFileAbsolutePath(MEMORY_DIRECTORY, m.Name))
 	if err != nil {
 		return err
 	}
-	defer f.Close()
-	enc := gob.NewEncoder(f)
+	*m = localMemory
+	return nil
+}
 
-	// save the file and return error if present
+func (m *Memory) Save() error {
 
-	// we need not save tool chain
-	tools := m.Tools
-	m.Tools = nil
-	err = enc.Encode(m)
-	m.Tools = tools
-
-	if err != nil {
+	fullFileName := datalayer.GetFileAbsolutePath(MEMORY_DIRECTORY, m.Name)
+	// Save list of configs
+	if err := datalayer.SaveBinary(fullFileName, m); err != nil {
 		logrus.Errorf("Cannot save file %s %v", fullFileName, err)
 		return err
 	}

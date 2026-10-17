@@ -199,7 +199,7 @@ func Test_LLM_TOOL(t *testing.T) {
 	}
 }
 
-func routerViaTool(prompt string, memory *memory, t *testing.T) (*openai.ChatCompletionMessageToolCallUnion, error) {
+func routerViaTool(prompt string, memory *Memory, t *testing.T) (*openai.ChatCompletionMessageToolCallUnion, error) {
 
 	t.Logf("LLM Prompt: %s", prompt)
 	completions, err := MakeLLMSingleToolRequest(prompt, "", memory.Model, memory.Tools, memory.Temperature)

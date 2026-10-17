@@ -15,7 +15,7 @@ import (
 	"github.com/openai/openai-go/v3"
 )
 
-func createMemoryObject() *memory {
+func createMemoryObject() *Memory {
 
 	systemPrompt := "You are a helpful weather assistant. You must use the tools provided to answer questions. Very polite, friendly with children. Do not use curse words. Do not use bad words. Reply briefly, in less than 20 words as far as possible. Do not use any smilies, emojis, or symbols in your responses from now on."
 
@@ -25,8 +25,8 @@ func createMemoryObject() *memory {
 
 	model := utils.GetEnv("LLM_MODEL", "lmstudio-community/Qwen3.5-9B-MLX-4bit")
 
-	memory := &memory{
-		Name:         "Default",
+	memory := &Memory{
+		Name:         "test-memory",
 		Model:        model,
 		SystemPrompt: systemPrompt,
 		Temperature:  0.8,
