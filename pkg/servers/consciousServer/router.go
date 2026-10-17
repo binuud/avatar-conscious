@@ -33,7 +33,7 @@ func (s *grpcConsciousServer) RouteRequest(in *protoV1.ContextMesssage) (*protoV
 
 func (s *grpcConsciousServer) RouteLLMChatRequest(in *protoV1.ContextMesssage) (*protoV1.ContextMesssage, error) {
 
-	s.memory.Messages = append(s.memory.Messages, openai.UserMessage(in.Prompt))
+	s.memory.AppendMemory(openai.UserMessage(in.Prompt))
 	completions, err := MakeLLMChatRequest(in.Prompt, s.memory.Messages, s.memory.Tools, s.memory.Model, s.memory.Temperature)
 	if err != nil {
 		return nil, err
@@ -69,7 +69,8 @@ func (s *grpcConsciousServer) RouteLLMChatRequest(in *protoV1.ContextMesssage) (
 		// provided response is not a tool call and a direct assistant response
 		logrus.Println("Model direct response:", assistantMsgContent)
 		// add response to memory
-		s.memory.Messages = append(s.memory.Messages, openai.AssistantMessage(assistantMsgContent))
+		s.memory.AppendMemory(openai.AssistantMessage(assistantMsgContent))
+		s.memory.Save()
 
 		// send to tts, for it to generate voice over of the text
 		// mqttServer.SendOnTTS(assistantMsgContent)
@@ -102,8 +103,11 @@ func (s *grpcConsciousServer) RouteLLMImageDescribeRequest(in *protoV1.ContextMe
 		return nil, err
 	}
 
+	assistantMsgContent := result.OutputText()
+	s.memory.AppendMemory(openai.AssistantMessage(assistantMsgContent))
+
 	return &protoV1.ContextMesssage{
-		Response: result.OutputText(),
+		Response: assistantMsgContent,
 	}, nil
 
 }
@@ -134,6 +138,9 @@ func (s *grpcConsciousServer) RouteOpenAiImageGenerationRequest(in *protoV1.Cont
 	if err := os.WriteFile(imageFileName, image, 0o600); err != nil {
 		panic(err)
 	}
+
+	assistantMsgContent := "Image generated and saved to disk."
+	s.memory.AppendMemory(openai.AssistantMessage(assistantMsgContent))
 
 	return &protoV1.ContextMesssage{
 		Uuid:          in.Uuid,

@@ -51,13 +51,25 @@ curl http://localhost:9080/llmHandler/v1/models
 curl http://localhost:9080/api/v1/conscious/models
 ```
 
+### In request test
+```
+curl -N -X POST http://localhost:9080/api/v1/conscious/in \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer ollama" \
+  -d '{
+    "model": "mlx-community/gemma-4-12b-it-4bit",
+    "prompt": "how are you",
+    "stream": true
+  }'
+```
+
 ### Stream request test
 ```
 curl -N -X POST http://localhost:9080/api/v1/conscious/inStream \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer ollama" \
   -d '{
-    "model": "gemma4:latest",
+    "model": "mlx-community/gemma-4-12b-it-4bit",
     "prompt": "how are you",
     "stream": true
   }'

@@ -33,5 +33,6 @@ go.work.sum
 .DS_Store
 
 outdir/*
+dataVolume/memories/*
 dataVolume/gen/*
 dataVolume/uploads/*
