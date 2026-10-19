@@ -112,3 +112,18 @@ curl -N -X POST http://localhost:9080/api/v1/consciousMetrics/getSystemMetrics \
 ## model that supports tool calling
 export LLM_MODEL="mlx-community/gemma-4-12b-it-4bit" 
 ```
+
+## mock server test
+
+run the mock server first
+```
+make run-mock-server
+```
+
+```
+curl -X GET http://localhost:8081/user/1
+```
+
+```
+curl -X GET http://localhost:8081/users
+```

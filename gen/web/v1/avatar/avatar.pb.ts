@@ -36,6 +36,20 @@ export enum AvatarActionStatus {
   Fatal = "Fatal",
 }
 
+export type ToolParams = {
+  name?: string
+  type?: string
+  description?: string
+  required?: boolean
+}
+
+export type Tool = {
+  name?: string
+  description?: string
+  type?: string
+  parameters?: {[key: string]: ToolParams}
+}
+
 export type AvatarAction = {
   name?: string
   description?: string
@@ -46,6 +60,9 @@ export type AvatarAction = {
   completedLogic?: string
   successLogic?: string
   failLogic?: string
+  model?: string
+  prompt?: string
+  systemPrompt?: string
   In?: ContextMessage.contextMesssage
   Out?: ContextMessage.contextMesssage
 }

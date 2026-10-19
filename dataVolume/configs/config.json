@@ -1,0 +1,40 @@
+[
+  {
+    "function": {
+      "name": "get_image",
+      "description": "Retreive or create an image",
+      "parameters": {
+        "properties": {
+          "text": {
+            "description": "A description of the image",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "type": "object"
+      }
+    },
+    "type": "function"
+  },
+  {
+    "function": {
+      "name": "get_image_description",
+      "description": "Describe a given image or photo.",
+      "parameters": {
+        "properties": {
+          "text": {
+            "description": "A question about the image",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "type": "object"
+      }
+    },
+    "type": "function"
+  }
+]

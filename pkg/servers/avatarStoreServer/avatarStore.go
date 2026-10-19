@@ -1,4 +1,4 @@
-package avatarServer
+package avatarStoreServer
 
 import (
 	"fmt"

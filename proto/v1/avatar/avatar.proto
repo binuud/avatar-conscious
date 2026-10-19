@@ -6,6 +6,21 @@ option go_package = "github.com/binuud/conscious/gen/go/v1/avatar";
 import "v1/conscious/contextMessage.proto";
 
 // Permission enum for the Avatar message
+
+message ToolParams {
+  string name = 1;
+  string type = 2;
+  string description = 3;
+  bool required = 4;
+}
+
+message Tool {
+  string name = 1;
+  string description = 2;
+  string type = 3;
+  map<string, ToolParams> parameters = 4;
+}
+
 enum Permission {
   PERMISSION_IGNORE = 0;
   WEBCAMERA = 1;
@@ -47,8 +62,13 @@ message AvatarAction {
   string completed_logic = 7;
   string success_logic = 8;
   string fail_logic = 9;
-  contextMesssage _in = 10;
-  contextMesssage _out = 11;
+
+  string model = 11;
+  string prompt = 12;
+  string systemPrompt = 13;
+
+  contextMesssage _in = 21;
+  contextMesssage _out = 22;
 }
 
 message AvatarLoop {

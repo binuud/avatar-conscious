@@ -11,7 +11,7 @@ import (
 
 func Test_LLM_TOOL(t *testing.T) {
 
-	memory := createMemoryObject()
+	memory := NewMemory()
 
 	tests := []struct {
 		name       string
@@ -202,7 +202,8 @@ func Test_LLM_TOOL(t *testing.T) {
 func routerViaTool(prompt string, memory *Memory, t *testing.T) (*openai.ChatCompletionMessageToolCallUnion, error) {
 
 	t.Logf("LLM Prompt: %s", prompt)
-	completions, err := MakeLLMSingleToolRequest(prompt, "", memory.Model, memory.Tools, memory.Temperature)
+	memory.AppendMemory(openai.UserMessage(prompt))
+	completions, err := MakeLLMSingleToolRequest(memory.Messages, memory.Model, memory.Tools, memory.Temperature)
 	if err != nil {
 		// t.Errorf("client: error llm chat request: %v \n", err)
 		return nil, err

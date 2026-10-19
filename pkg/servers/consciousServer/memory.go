@@ -2,6 +2,7 @@ package consciousServer
 
 import (
 	datalayer "github.com/binuud/conscious/pkg/dataLayer"
+	"github.com/binuud/conscious/pkg/utils"
 	"github.com/openai/openai-go/v3"
 	"github.com/sirupsen/logrus"
 )
@@ -17,6 +18,27 @@ type Memory struct {
 	Temperature  float64
 	Messages     []openai.ChatCompletionMessageParamUnion
 	Tools        []openai.ChatCompletionToolUnionParam
+}
+
+func NewMemory() *Memory {
+
+	systemPrompt := "You are a helpful assistant. You must use the tools provided to answer questions. Very polite, friendly with children. Do not use curse words. Do not use bad words. Do not use any smilies, emojis, or symbols in your responses from now on."
+
+	messages := []openai.ChatCompletionMessageParamUnion{
+		openai.SystemMessage(systemPrompt),
+	}
+
+	model := utils.GetEnv("LLM_MODEL", "lmstudio-community/Qwen3.5-9B-MLX-4bit")
+
+	memory := &Memory{
+		Name:         "test-memory",
+		Model:        model,
+		SystemPrompt: systemPrompt,
+		Temperature:  0.8,
+		Messages:     messages,
+		Tools:        nil,
+	}
+	return memory
 }
 
 func (m *Memory) DumpMemory() {
@@ -55,7 +77,7 @@ func (m *Memory) DumpMemory() {
 // AppendMemory
 // append to memory, only append user and assistant message to memory
 func (m *Memory) AppendMemory(message openai.ChatCompletionMessageParamUnion) {
-	if message.OfUser != nil || message.OfAssistant == nil {
+	if message.OfUser != nil || message.OfAssistant != nil {
 		m.Messages = append(m.Messages, message)
 	}
 	m.Save()

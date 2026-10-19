@@ -22,7 +22,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// Permission enum for the Avatar message
 type Permission int32
 
 const (
@@ -206,6 +205,142 @@ func (AvatarActionStatus) EnumDescriptor() ([]byte, []int) {
 	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{2}
 }
 
+type ToolParams struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Type          string                 `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
+	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Required      bool                   `protobuf:"varint,4,opt,name=required,proto3" json:"required,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ToolParams) Reset() {
+	*x = ToolParams{}
+	mi := &file_v1_avatar_avatar_proto_msgTypes[0]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ToolParams) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ToolParams) ProtoMessage() {}
+
+func (x *ToolParams) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_avatar_avatar_proto_msgTypes[0]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ToolParams.ProtoReflect.Descriptor instead.
+func (*ToolParams) Descriptor() ([]byte, []int) {
+	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{0}
+}
+
+func (x *ToolParams) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *ToolParams) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *ToolParams) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *ToolParams) GetRequired() bool {
+	if x != nil {
+		return x.Required
+	}
+	return false
+}
+
+type Tool struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Description   string                 `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
+	Type          string                 `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
+	Parameters    map[string]*ToolParams `protobuf:"bytes,4,rep,name=parameters,proto3" json:"parameters,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *Tool) Reset() {
+	*x = Tool{}
+	mi := &file_v1_avatar_avatar_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Tool) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Tool) ProtoMessage() {}
+
+func (x *Tool) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_avatar_avatar_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Tool.ProtoReflect.Descriptor instead.
+func (*Tool) Descriptor() ([]byte, []int) {
+	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *Tool) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Tool) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *Tool) GetType() string {
+	if x != nil {
+		return x.Type
+	}
+	return ""
+}
+
+func (x *Tool) GetParameters() map[string]*ToolParams {
+	if x != nil {
+		return x.Parameters
+	}
+	return nil
+}
+
 type AvatarAction struct {
 	state       protoimpl.MessageState `protogen:"open.v1"`
 	Name        string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
@@ -218,15 +353,18 @@ type AvatarAction struct {
 	CompletedLogic string                     `protobuf:"bytes,7,opt,name=completed_logic,json=completedLogic,proto3" json:"completed_logic,omitempty"`
 	SuccessLogic   string                     `protobuf:"bytes,8,opt,name=success_logic,json=successLogic,proto3" json:"success_logic,omitempty"`
 	FailLogic      string                     `protobuf:"bytes,9,opt,name=fail_logic,json=failLogic,proto3" json:"fail_logic,omitempty"`
-	XIn            *conscious.ContextMesssage `protobuf:"bytes,10,opt,name=_in,json=In,proto3" json:"_in,omitempty"`
-	XOut           *conscious.ContextMesssage `protobuf:"bytes,11,opt,name=_out,json=Out,proto3" json:"_out,omitempty"`
+	Model          string                     `protobuf:"bytes,11,opt,name=model,proto3" json:"model,omitempty"`
+	Prompt         string                     `protobuf:"bytes,12,opt,name=prompt,proto3" json:"prompt,omitempty"`
+	SystemPrompt   string                     `protobuf:"bytes,13,opt,name=systemPrompt,proto3" json:"systemPrompt,omitempty"`
+	XIn            *conscious.ContextMesssage `protobuf:"bytes,21,opt,name=_in,json=In,proto3" json:"_in,omitempty"`
+	XOut           *conscious.ContextMesssage `protobuf:"bytes,22,opt,name=_out,json=Out,proto3" json:"_out,omitempty"`
 	unknownFields  protoimpl.UnknownFields
 	sizeCache      protoimpl.SizeCache
 }
 
 func (x *AvatarAction) Reset() {
 	*x = AvatarAction{}
-	mi := &file_v1_avatar_avatar_proto_msgTypes[0]
+	mi := &file_v1_avatar_avatar_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -238,7 +376,7 @@ func (x *AvatarAction) String() string {
 func (*AvatarAction) ProtoMessage() {}
 
 func (x *AvatarAction) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_avatar_avatar_proto_msgTypes[0]
+	mi := &file_v1_avatar_avatar_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -251,7 +389,7 @@ func (x *AvatarAction) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AvatarAction.ProtoReflect.Descriptor instead.
 func (*AvatarAction) Descriptor() ([]byte, []int) {
-	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{0}
+	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *AvatarAction) GetName() string {
@@ -317,6 +455,27 @@ func (x *AvatarAction) GetFailLogic() string {
 	return ""
 }
 
+func (x *AvatarAction) GetModel() string {
+	if x != nil {
+		return x.Model
+	}
+	return ""
+}
+
+func (x *AvatarAction) GetPrompt() string {
+	if x != nil {
+		return x.Prompt
+	}
+	return ""
+}
+
+func (x *AvatarAction) GetSystemPrompt() string {
+	if x != nil {
+		return x.SystemPrompt
+	}
+	return ""
+}
+
 func (x *AvatarAction) GetXIn() *conscious.ContextMesssage {
 	if x != nil {
 		return x.XIn
@@ -346,7 +505,7 @@ type AvatarLoop struct {
 
 func (x *AvatarLoop) Reset() {
 	*x = AvatarLoop{}
-	mi := &file_v1_avatar_avatar_proto_msgTypes[1]
+	mi := &file_v1_avatar_avatar_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -358,7 +517,7 @@ func (x *AvatarLoop) String() string {
 func (*AvatarLoop) ProtoMessage() {}
 
 func (x *AvatarLoop) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_avatar_avatar_proto_msgTypes[1]
+	mi := &file_v1_avatar_avatar_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -371,7 +530,7 @@ func (x *AvatarLoop) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AvatarLoop.ProtoReflect.Descriptor instead.
 func (*AvatarLoop) Descriptor() ([]byte, []int) {
-	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{1}
+	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *AvatarLoop) GetName() string {
@@ -443,7 +602,7 @@ type Avatar struct {
 
 func (x *Avatar) Reset() {
 	*x = Avatar{}
-	mi := &file_v1_avatar_avatar_proto_msgTypes[2]
+	mi := &file_v1_avatar_avatar_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -455,7 +614,7 @@ func (x *Avatar) String() string {
 func (*Avatar) ProtoMessage() {}
 
 func (x *Avatar) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_avatar_avatar_proto_msgTypes[2]
+	mi := &file_v1_avatar_avatar_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -468,7 +627,7 @@ func (x *Avatar) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Avatar.ProtoReflect.Descriptor instead.
 func (*Avatar) Descriptor() ([]byte, []int) {
-	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{2}
+	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *Avatar) GetUuid() string {
@@ -517,7 +676,23 @@ var File_v1_avatar_avatar_proto protoreflect.FileDescriptor
 
 const file_v1_avatar_avatar_proto_rawDesc = "" +
 	"\n" +
-	"\x16v1/avatar/avatar.proto\x12\x06avatar\x1a!v1/conscious/contextMessage.proto\"\x90\x03\n" +
+	"\x16v1/avatar/avatar.proto\x12\x06avatar\x1a!v1/conscious/contextMessage.proto\"r\n" +
+	"\n" +
+	"ToolParams\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x12\n" +
+	"\x04type\x18\x02 \x01(\tR\x04type\x12 \n" +
+	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x1a\n" +
+	"\brequired\x18\x04 \x01(\bR\brequired\"\xe1\x01\n" +
+	"\x04Tool\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
+	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x12\n" +
+	"\x04type\x18\x03 \x01(\tR\x04type\x12<\n" +
+	"\n" +
+	"parameters\x18\x04 \x03(\v2\x1c.avatar.Tool.ParametersEntryR\n" +
+	"parameters\x1aQ\n" +
+	"\x0fParametersEntry\x12\x10\n" +
+	"\x03key\x18\x01 \x01(\tR\x03key\x12(\n" +
+	"\x05value\x18\x02 \x01(\v2\x12.avatar.ToolParamsR\x05value:\x028\x01\"\xe2\x03\n" +
 	"\fAvatarAction\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x16\n" +
@@ -528,10 +703,12 @@ const file_v1_avatar_avatar_proto_rawDesc = "" +
 	"\x0fcompleted_logic\x18\a \x01(\tR\x0ecompletedLogic\x12#\n" +
 	"\rsuccess_logic\x18\b \x01(\tR\fsuccessLogic\x12\x1d\n" +
 	"\n" +
-	"fail_logic\x18\t \x01(\tR\tfailLogic\x12!\n" +
-	"\x03_in\x18\n" +
-	" \x01(\v2\x10.contextMesssageR\x02In\x12#\n" +
-	"\x04_out\x18\v \x01(\v2\x10.contextMesssageR\x03Out\"\x80\x02\n" +
+	"fail_logic\x18\t \x01(\tR\tfailLogic\x12\x14\n" +
+	"\x05model\x18\v \x01(\tR\x05model\x12\x16\n" +
+	"\x06prompt\x18\f \x01(\tR\x06prompt\x12\"\n" +
+	"\fsystemPrompt\x18\r \x01(\tR\fsystemPrompt\x12!\n" +
+	"\x03_in\x18\x15 \x01(\v2\x10.contextMesssageR\x02In\x12#\n" +
+	"\x04_out\x18\x16 \x01(\v2\x10.contextMesssageR\x03Out\"\x80\x02\n" +
 	"\n" +
 	"AvatarLoop\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
@@ -594,30 +771,35 @@ func file_v1_avatar_avatar_proto_rawDescGZIP() []byte {
 }
 
 var file_v1_avatar_avatar_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
-var file_v1_avatar_avatar_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_v1_avatar_avatar_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_v1_avatar_avatar_proto_goTypes = []any{
 	(Permission)(0),                   // 0: avatar.Permission
 	(AvatarActionType)(0),             // 1: avatar.AvatarActionType
 	(AvatarActionStatus)(0),           // 2: avatar.AvatarActionStatus
-	(*AvatarAction)(nil),              // 3: avatar.AvatarAction
-	(*AvatarLoop)(nil),                // 4: avatar.AvatarLoop
-	(*Avatar)(nil),                    // 5: avatar.Avatar
-	(*conscious.ContextMesssage)(nil), // 6: contextMesssage
+	(*ToolParams)(nil),                // 3: avatar.ToolParams
+	(*Tool)(nil),                      // 4: avatar.Tool
+	(*AvatarAction)(nil),              // 5: avatar.AvatarAction
+	(*AvatarLoop)(nil),                // 6: avatar.AvatarLoop
+	(*Avatar)(nil),                    // 7: avatar.Avatar
+	nil,                               // 8: avatar.Tool.ParametersEntry
+	(*conscious.ContextMesssage)(nil), // 9: contextMesssage
 }
 var file_v1_avatar_avatar_proto_depIdxs = []int32{
-	1, // 0: avatar.AvatarAction.type:type_name -> avatar.AvatarActionType
-	2, // 1: avatar.AvatarAction._status:type_name -> avatar.AvatarActionStatus
-	6, // 2: avatar.AvatarAction._in:type_name -> contextMesssage
-	6, // 3: avatar.AvatarAction._out:type_name -> contextMesssage
-	3, // 4: avatar.AvatarLoop.runActions:type_name -> avatar.AvatarAction
-	3, // 5: avatar.AvatarLoop.loopAction:type_name -> avatar.AvatarAction
-	0, // 6: avatar.Avatar.permissions:type_name -> avatar.Permission
-	4, // 7: avatar.Avatar.loops:type_name -> avatar.AvatarLoop
-	8, // [8:8] is the sub-list for method output_type
-	8, // [8:8] is the sub-list for method input_type
-	8, // [8:8] is the sub-list for extension type_name
-	8, // [8:8] is the sub-list for extension extendee
-	0, // [0:8] is the sub-list for field type_name
+	8,  // 0: avatar.Tool.parameters:type_name -> avatar.Tool.ParametersEntry
+	1,  // 1: avatar.AvatarAction.type:type_name -> avatar.AvatarActionType
+	2,  // 2: avatar.AvatarAction._status:type_name -> avatar.AvatarActionStatus
+	9,  // 3: avatar.AvatarAction._in:type_name -> contextMesssage
+	9,  // 4: avatar.AvatarAction._out:type_name -> contextMesssage
+	5,  // 5: avatar.AvatarLoop.runActions:type_name -> avatar.AvatarAction
+	5,  // 6: avatar.AvatarLoop.loopAction:type_name -> avatar.AvatarAction
+	0,  // 7: avatar.Avatar.permissions:type_name -> avatar.Permission
+	6,  // 8: avatar.Avatar.loops:type_name -> avatar.AvatarLoop
+	3,  // 9: avatar.Tool.ParametersEntry.value:type_name -> avatar.ToolParams
+	10, // [10:10] is the sub-list for method output_type
+	10, // [10:10] is the sub-list for method input_type
+	10, // [10:10] is the sub-list for extension type_name
+	10, // [10:10] is the sub-list for extension extendee
+	0,  // [0:10] is the sub-list for field type_name
 }
 
 func init() { file_v1_avatar_avatar_proto_init() }
@@ -631,7 +813,7 @@ func file_v1_avatar_avatar_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_v1_avatar_avatar_proto_rawDesc), len(file_v1_avatar_avatar_proto_rawDesc)),
 			NumEnums:      3,
-			NumMessages:   3,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

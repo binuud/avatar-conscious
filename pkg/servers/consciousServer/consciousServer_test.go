@@ -15,35 +15,14 @@ import (
 	"github.com/openai/openai-go/v3"
 )
 
-func createMemoryObject() *Memory {
-
-	systemPrompt := "You are a helpful weather assistant. You must use the tools provided to answer questions. Very polite, friendly with children. Do not use curse words. Do not use bad words. Reply briefly, in less than 20 words as far as possible. Do not use any smilies, emojis, or symbols in your responses from now on."
-
-	messages := []openai.ChatCompletionMessageParamUnion{
-		openai.SystemMessage(systemPrompt),
-	}
-
-	model := utils.GetEnv("LLM_MODEL", "lmstudio-community/Qwen3.5-9B-MLX-4bit")
-
-	memory := &Memory{
-		Name:         "test-memory",
-		Model:        model,
-		SystemPrompt: systemPrompt,
-		Temperature:  0.8,
-		Messages:     messages,
-		Tools:        nil,
-	}
-	return memory
-}
-
 func TestConsciousServer_LLMChat(t *testing.T) {
 
-	memory := createMemoryObject()
+	memory := NewMemory()
 
 	prompt := "What is 8 + 8"
 	t.Logf("LLM Prompt: %s", prompt)
 	memory.Messages = append(memory.Messages, openai.UserMessage(prompt))
-	completions, err := MakeLLMChatRequest(prompt, memory.Messages, memory.Tools, memory.Model, memory.Temperature)
+	completions, err := MakeLLMChatRequest(memory.Messages, memory.Tools, memory.Model, memory.Temperature)
 	if err != nil {
 		t.Errorf("client: error llm chat request: %v \n", err)
 	}
@@ -56,7 +35,7 @@ func TestConsciousServer_LLMChat(t *testing.T) {
 func TestConsciousServer_LLMImageProcess(t *testing.T) {
 	// does not work
 	// image describe request does not work
-	memory := createMemoryObject()
+	memory := NewMemory()
 
 	// // memory.Model = "ai/gemma3:4B-Q4_K_M"
 
@@ -95,7 +74,7 @@ func TestConsciousServer_LLMImageProcess(t *testing.T) {
 
 func TestConsciousServer_LLMToolFunction(t *testing.T) {
 
-	memory := createMemoryObject()
+	memory := NewMemory()
 
 	// test case for checking tools,
 	// test with a sample weather function
@@ -120,7 +99,7 @@ func TestConsciousServer_LLMToolFunction(t *testing.T) {
 	prompt := "What is the current weather in Chennai City"
 	t.Logf("LLM Prompt: %s", prompt)
 	memory.Messages = append(memory.Messages, openai.UserMessage(prompt))
-	completions, err := MakeLLMChatRequest(prompt, memory.Messages, memory.Tools, memory.Model, memory.Temperature)
+	completions, err := MakeLLMChatRequest(memory.Messages, memory.Tools, memory.Model, memory.Temperature)
 	if err != nil {
 		t.Errorf("client: error llm chat request: %v \n", err)
 	}

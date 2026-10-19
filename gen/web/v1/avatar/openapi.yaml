@@ -129,6 +129,12 @@ components:
           type: string
         failLogic:
           type: string
+        model:
+          type: string
+        prompt:
+          type: string
+        systemPrompt:
+          type: string
         In:
           $ref: '#/components/schemas/contextMesssage'
         Out:
