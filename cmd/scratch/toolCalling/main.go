@@ -3,21 +3,59 @@ package main
 import (
 	"github.com/binuud/conscious/pkg/llm"
 	"github.com/binuud/conscious/pkg/memory"
+	"github.com/binuud/conscious/pkg/tools/aiGenTools"
+	apitools "github.com/binuud/conscious/pkg/tools/apiTools"
 	"github.com/binuud/conscious/pkg/tools/commonTools"
 	"github.com/binuud/conscious/pkg/tools/toolRegistry"
 	"github.com/openai/openai-go/v3"
 	"github.com/sirupsen/logrus"
 )
 
-func main() {
+var tools = toolRegistry.NewToolRegistry()
 
+func registerTools() {
+
+	tools.AddTool(commonTools.NewToolFileContents())
+	tools.AddTool(apitools.NewApiGetTool())
+	tools.AddTool(aiGenTools.NewAiGenerateImageTool())
+
+}
+
+func CheckImageGeneration() {
+
+	memory := memory.NewMemory()
+	memory.Tools = tools.GetCommonTools()
+
+	prompt := "Create an image of a cat, crawling on a desk, trying to catch a mouse"
+	memory.Messages = append(memory.Messages, openai.UserMessage(prompt))
+
+	logrus.Infof("LLM Prompt: %s", prompt)
+	completions, err := llm.MakeLLMSingleToolRequest(memory.Messages, memory.Model, memory.Tools, memory.Temperature)
+	if err != nil {
+		logrus.Errorf("client: error llm chat request: %v \n", err)
+	}
+
+	msg := completions.Choices[0].Message
+	if len(msg.ToolCalls) > 0 {
+		out, err := tools.HandleToolCalls(msg.ToolCalls)
+		if err == nil {
+			logrus.Infof("Output received %s", out)
+		}
+	}
+
+}
+
+func CheckWebFetch() {
 	memory := memory.NewMemory()
 
 	tools := toolRegistry.NewToolRegistry()
-	tools.AddTool("get_file_contents", commonTools.NewToolFileContents())
+	tools.AddTool(commonTools.NewToolFileContents())
+	tools.AddTool(apitools.NewApiGetTool())
+	tools.AddTool(aiGenTools.NewAiGenerateImageTool())
+
 	memory.Tools = tools.GetCommonTools()
 
-	prompt := "What is the contents of AGENTS.md file"
+	prompt := "Get details about a person named john, using http get api request to url http://localhost:8081/user/[USER NAME]"
 	memory.Messages = append(memory.Messages, openai.UserMessage(prompt))
 	logrus.Infof("LLM Prompt: %s", prompt)
 	completions, err := llm.MakeLLMSingleToolRequest(memory.Messages, memory.Model, memory.Tools, memory.Temperature)
@@ -32,4 +70,41 @@ func main() {
 			logrus.Infof("Output received %s", out)
 		}
 	}
+}
+
+func CheckFileContents() {
+
+	memory := memory.NewMemory()
+
+	tools := toolRegistry.NewToolRegistry()
+	tools.AddTool(commonTools.NewToolFileContents())
+	tools.AddTool(apitools.NewApiGetTool())
+
+	memory.Tools = tools.GetCommonTools()
+
+	prompt := "What is the contents of AGENTS.md file"
+	memory.Messages = append(memory.Messages, openai.UserMessage(prompt))
+	logrus.Infof("LLM Prompt: %s", prompt)
+	completions, err := llm.MakeLLMSingleToolRequest(memory.Messages, memory.Model, memory.Tools, memory.Temperature)
+	if err != nil {
+		logrus.Errorf("client: error llm chat request: %v \n", err)
+	}
+
+	msg := completions.Choices[0].Message
+	if len(msg.ToolCalls) > 0 {
+		out, err := tools.HandleToolCalls(msg.ToolCalls)
+		if err != nil {
+			logrus.Errorf("Error received %v", err)
+		} else {
+			logrus.Infof("Output received %s", out)
+		}
+
+	}
+}
+
+func main() {
+	registerTools()
+	CheckImageGeneration()
+	// CheckFileContents()
+	CheckWebFetch()
 }
