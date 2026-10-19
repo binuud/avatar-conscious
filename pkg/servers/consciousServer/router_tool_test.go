@@ -6,12 +6,14 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/binuud/conscious/pkg/llm"
+	"github.com/binuud/conscious/pkg/memory"
 	"github.com/openai/openai-go/v3"
 )
 
 func Test_LLM_TOOL(t *testing.T) {
 
-	memory := NewMemory()
+	memory := memory.NewMemory()
 
 	tests := []struct {
 		name       string
@@ -199,11 +201,11 @@ func Test_LLM_TOOL(t *testing.T) {
 	}
 }
 
-func routerViaTool(prompt string, memory *Memory, t *testing.T) (*openai.ChatCompletionMessageToolCallUnion, error) {
+func routerViaTool(prompt string, memory *memory.Memory, t *testing.T) (*openai.ChatCompletionMessageToolCallUnion, error) {
 
 	t.Logf("LLM Prompt: %s", prompt)
 	memory.AppendMemory(openai.UserMessage(prompt))
-	completions, err := MakeLLMSingleToolRequest(memory.Messages, memory.Model, memory.Tools, memory.Temperature)
+	completions, err := llm.MakeLLMSingleToolRequest(memory.Messages, memory.Model, memory.Tools, memory.Temperature)
 	if err != nil {
 		// t.Errorf("client: error llm chat request: %v \n", err)
 		return nil, err

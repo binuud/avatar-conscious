@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/binuud/conscious/pkg/servers/consciousServer"
+	"github.com/binuud/conscious/pkg/llm"
+	"github.com/binuud/conscious/pkg/memory"
 	"github.com/openai/openai-go/v3"
 	"github.com/sirupsen/logrus"
 )
@@ -12,7 +13,7 @@ import (
 func main() {
 
 	logrus.Infof("Read skills file")
-	memory := consciousServer.NewMemory()
+	memory := memory.NewMemory()
 	// Read the skills.md file
 	filePath := "dataVolume/skills/skill.md"
 	fileBytes, err := os.ReadFile(filePath)
@@ -38,7 +39,7 @@ func main() {
 	}
 	// logrus.Infof("skill prompt %s", completePrompt)
 
-	completions, err := consciousServer.MakeLLMChatRequest(memory.Messages, nil, memory.Model, memory.Temperature)
+	completions, err := llm.MakeLLMChatRequest(memory.Messages, nil, memory.Model, memory.Temperature)
 	if err != nil {
 		logrus.Errorf("client: error llm chat request: %v \n", err)
 	}

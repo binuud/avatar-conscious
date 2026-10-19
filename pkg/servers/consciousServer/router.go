@@ -8,6 +8,7 @@ import (
 	"os"
 
 	protoV1 "github.com/binuud/conscious/gen/go/v1/conscious"
+	"github.com/binuud/conscious/pkg/llm"
 	"github.com/binuud/conscious/pkg/utils"
 	"github.com/openai/openai-go/v3"
 	"github.com/sirupsen/logrus"
@@ -34,7 +35,7 @@ func (s *grpcConsciousServer) RouteRequest(in *protoV1.ContextMesssage) (*protoV
 func (s *grpcConsciousServer) RouteLLMChatRequest(in *protoV1.ContextMesssage) (*protoV1.ContextMesssage, error) {
 
 	s.memory.AppendMemory(openai.UserMessage(in.Prompt))
-	completions, err := MakeLLMChatRequest(s.memory.Messages, s.memory.Tools, s.memory.Model, s.memory.Temperature)
+	completions, err := llm.MakeLLMChatRequest(s.memory.Messages, s.memory.Tools, s.memory.Model, s.memory.Temperature)
 	if err != nil {
 		return nil, err
 	}
@@ -98,7 +99,7 @@ func (s *grpcConsciousServer) RouteLLMImageDescribeRequest(in *protoV1.ContextMe
 		in.BodyText = "data:image/jpeg;base64," + base64.StdEncoding.EncodeToString(image)
 	}
 
-	result, err := MakeImageDescribeRequest(in.Prompt, in.SystemPrompt, in.Model, in.BodyText)
+	result, err := llm.MakeImageDescribeRequest(in.Prompt, in.SystemPrompt, in.Model, in.BodyText)
 	if err != nil {
 		return nil, err
 	}
@@ -117,7 +118,7 @@ func (s *grpcConsciousServer) RouteOpenAiImageGenerationRequest(in *protoV1.Cont
 	logrus.Infof("RouteOpenAiImageGenerationRequest -> %s, %s", in.Model, in.Prompt)
 	s.memory.Messages = append(s.memory.Messages, openai.UserMessage(in.Prompt))
 
-	result, err := MakeOpenAiImageGenerationRequest(in.Prompt, in.Model)
+	result, err := llm.MakeOpenAiImageGenerationRequest(in.Prompt, in.Model)
 	if err != nil {
 		logrus.Errorf("RouteOpenAiImageGenerationRequest -> MakeOpenAiImageGenerationRequest result(%v), %v", result, err)
 		return nil, err
@@ -160,7 +161,7 @@ func (s *grpcConsciousServer) RouteImageCreateRequest(in *protoV1.ContextMesssag
 	filename := FILE_STORE_PATH + "/gen/" + servableFile
 	logrus.Infof("RouteImageCreateRequest -> %s, %s, %s", in.Model, in.Prompt, filename)
 	// servableFile = "fa23d376-bc55-4ad6-94a0-dfc1ec04c6bf.png"
-	err := MakeImageGenerationRequest(in.Prompt, in.Model, filename)
+	err := llm.MakeImageGenerationRequest(in.Prompt, in.Model, filename)
 	if err != nil {
 		logrus.Errorf("RouteImageCreateRequest -> MakeImageGenerationRequest %v", err)
 		return nil, err

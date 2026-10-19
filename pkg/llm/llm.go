@@ -1,4 +1,4 @@
-package consciousServer
+package llm
 
 import (
 	"context"
