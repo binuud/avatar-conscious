@@ -1,7 +1,8 @@
 package main
 
 import (
-	"github.com/binuud/conscious/pkg/servers/consciousServer"
+	"github.com/binuud/conscious/pkg/llm"
+	"github.com/binuud/conscious/pkg/memory"
 	"github.com/binuud/conscious/pkg/tools/commonTools"
 	"github.com/binuud/conscious/pkg/tools/toolRegistry"
 	"github.com/openai/openai-go/v3"
@@ -10,7 +11,7 @@ import (
 
 func main() {
 
-	memory := consciousServer.NewMemory()
+	memory := memory.NewMemory()
 
 	tools := toolRegistry.NewToolRegistry()
 	tools.AddTool("get_file_contents", commonTools.NewToolFileContents())
@@ -19,7 +20,7 @@ func main() {
 	prompt := "What is the contents of AGENTS.md file"
 	memory.Messages = append(memory.Messages, openai.UserMessage(prompt))
 	logrus.Infof("LLM Prompt: %s", prompt)
-	completions, err := consciousServer.MakeLLMSingleToolRequest(memory.Messages, memory.Model, memory.Tools, memory.Temperature)
+	completions, err := llm.MakeLLMSingleToolRequest(memory.Messages, memory.Model, memory.Tools, memory.Temperature)
 	if err != nil {
 		logrus.Errorf("client: error llm chat request: %v \n", err)
 	}

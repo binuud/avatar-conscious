@@ -1,4 +1,4 @@
-package consciousServer
+package memory
 
 import (
 	datalayer "github.com/binuud/conscious/pkg/dataLayer"

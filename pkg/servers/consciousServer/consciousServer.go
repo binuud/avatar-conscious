@@ -20,6 +20,8 @@ import (
 
 	pb "github.com/binuud/conscious/gen/go/v1/conscious"
 	datalayer "github.com/binuud/conscious/pkg/dataLayer"
+	"github.com/binuud/conscious/pkg/llm"
+	"github.com/binuud/conscious/pkg/memory"
 	"github.com/binuud/conscious/pkg/utils"
 	grpc "google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -37,7 +39,7 @@ import (
 
 type grpcConsciousServer struct {
 	pb.UnimplementedConsciousServer
-	memory       *Memory
+	memory       *memory.Memory
 	openAiClient *openai.Client
 	commonTools  []openai.ChatCompletionToolUnionParam
 }
@@ -55,7 +57,7 @@ func NewGrpcConsciousServer() *grpcConsciousServer {
 		LLM_MODEL = "gemma3"
 	}
 
-	memory := &Memory{
+	memory := &memory.Memory{
 		Name:         "Default",
 		Model:        LLM_MODEL,
 		SystemPrompt: systemPrompt,
@@ -75,7 +77,7 @@ func NewGrpcConsciousServer() *grpcConsciousServer {
 	logrus.Infof("Starting Conscious with %s model", LLM_MODEL)
 
 	client := openai.NewClient(
-		option.WithBaseURL(GetLLMEndpoint()),
+		option.WithBaseURL(llm.GetLLMEndpoint()),
 		option.WithAPIKey(""), // No API key needed for Model Runner
 	)
 
@@ -127,7 +129,7 @@ func (s *grpcConsciousServer) addCommonToolsRoute() []openai.ChatCompletionToolU
 
 func (s *grpcConsciousServer) GetModels(ctx context.Context, in *pb.ModelRequest) (*pb.ModelResponse, error) {
 
-	models, err := MakeLLMGetModels()
+	models, err := llm.MakeLLMGetModels()
 	if err != nil {
 		logrus.Errorf("Cannot get models %v", err)
 		return nil, err
@@ -218,7 +220,7 @@ func (s *grpcConsciousServer) Generate(in *pb.ContextMesssage, stream grpc.Serve
 	// LLM will decide if the user wants to create image, create tts,
 	// describe image or chat stream
 	logrus.Infof("Tools %v\n", s.commonTools)
-	tool, err := GetLLMToolName([]openai.ChatCompletionMessageParamUnion{openai.UserMessage(in.Prompt)}, in.Model, s.commonTools, s.memory.Temperature)
+	tool, err := llm.GetLLMToolName([]openai.ChatCompletionMessageParamUnion{openai.UserMessage(in.Prompt)}, in.Model, s.commonTools, s.memory.Temperature)
 	if err != nil {
 		// t.Errorf("client: error llm chat request: %v \n", err)
 		return err
@@ -355,7 +357,7 @@ func (s *grpcConsciousServer) Health(ctx context.Context, in *pb.HealthRequest) 
 func (s *grpcConsciousServer) MakeLLMChatRequest(prompt string) (*openai.ChatCompletion, error) {
 
 	s.memory.Messages = append(s.memory.Messages, openai.UserMessage(prompt))
-	completions, err := MakeLLMChatRequest(s.memory.Messages, s.memory.Tools, s.memory.Model, s.memory.Temperature)
+	completions, err := llm.MakeLLMChatRequest(s.memory.Messages, s.memory.Tools, s.memory.Model, s.memory.Temperature)
 	if err != nil {
 		return nil, err
 	}

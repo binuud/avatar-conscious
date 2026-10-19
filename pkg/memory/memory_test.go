@@ -1,4 +1,4 @@
-package consciousServer
+package memory
 
 import (
 	"testing"
