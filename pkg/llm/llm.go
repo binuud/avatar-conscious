@@ -146,6 +146,37 @@ func MakeLLMSingleRequest(prompt string, systemPrompt string, model string, temp
 
 }
 
+func MakeLLMSchemaResponseRequest(prompt string, systemPrompt string, model string, schema map[string]any) (string, error) {
+
+	client := openai.NewClient(
+		option.WithBaseURL(GetLLMEndpoint()),
+		option.WithAPIKey(""), // No API key needed for Model Runner
+	)
+
+	response, err := client.Responses.New(context.Background(), responses.ResponseNewParams{
+		Model: model,
+		Input: responses.ResponseNewParamsInputUnion{OfInputItemList: responses.ResponseInputParam{
+			responses.ResponseInputItemParamOfMessage(
+				responses.ResponseInputMessageContentListParam{responses.ResponseInputContentParamOfInputText(systemPrompt)},
+				responses.EasyInputMessageRoleSystem,
+			),
+			responses.ResponseInputItemParamOfMessage(
+				responses.ResponseInputMessageContentListParam{responses.ResponseInputContentParamOfInputText(prompt)},
+				responses.EasyInputMessageRoleUser,
+			),
+		}},
+		Text: responses.ResponseTextConfigParam{Format: responses.ResponseFormatTextConfigUnionParam{
+			OfJSONSchema: &responses.ResponseFormatTextJSONSchemaConfigParam{Name: "event", Schema: schema, Strict: openai.Bool(true)},
+		}},
+	})
+	if err != nil {
+		panic(err)
+	}
+
+	return response.OutputText(), nil
+
+}
+
 func MakeLLMSingleToolRequest(messages []openai.ChatCompletionMessageParamUnion, model string, tools []openai.ChatCompletionToolUnionParam, temperature float64) (*openai.ChatCompletion, error) {
 
 	client := openai.NewClient(

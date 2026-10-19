@@ -21,28 +21,30 @@ func registerTools() {
 	tools.AddTool(aiGenTools.NewAiGenerateImageDescriptionTool())
 }
 
-func CheckImageDescriber() {
+func CheckImageDescriber() string {
 
 	memory := memory.NewMemory()
 	memory.Tools = tools.GetCommonTools()
-
-	prompt := "Describe the image from file sampleLicense.jpg, and get the license number and driver name"
+	prompt := "Describe the image from file sampleLicense.jpg, and get the license number and driver name, in format {'license': [LICENSE NUMBER],'name':'[NAME OF PERSON']}"
 	memory.Messages = append(memory.Messages, openai.UserMessage(prompt))
 
 	logrus.Infof("LLM Prompt: %s", prompt)
 	completions, err := llm.MakeLLMSingleToolRequest(memory.Messages, memory.Model, memory.Tools, memory.Temperature)
 	if err != nil {
 		logrus.Errorf("client: error llm chat request: %v \n", err)
+		return ""
 	}
-
+	out := ""
 	msg := completions.Choices[0].Message
 	if len(msg.ToolCalls) > 0 {
-		out, err := tools.HandleToolCalls(msg.ToolCalls)
-		if err == nil {
-			logrus.Infof("Output received %s", out)
+		out, err = tools.HandleToolCalls(msg.ToolCalls)
+		if err != nil {
+			logrus.Errorf("HandleToolCalls: %v \n", err)
+			return ""
 		}
-	}
 
+	}
+	return out
 }
 
 func CheckImageGeneration() {
@@ -69,17 +71,12 @@ func CheckImageGeneration() {
 
 }
 
-func CheckWebFetch() {
+func CheckWebFetch(systemPrompt string) {
 	memory := memory.NewMemory()
-
-	tools := toolRegistry.NewToolRegistry()
-	tools.AddTool(commonTools.NewToolFileContents())
-	tools.AddTool(apitools.NewApiGetTool())
-	tools.AddTool(aiGenTools.NewAiGenerateImageTool())
-
 	memory.Tools = tools.GetCommonTools()
 
-	prompt := "Get details about a person named john, using http get api request to url http://localhost:8081/user/[USER NAME]"
+	prompt := "Get license details of the person, strip spaces in the license number , using http get api request to url http://localhost:8081/checklicense/[license Number]"
+	memory.Messages = append(memory.Messages, openai.AssistantMessage("License details are as follows "+systemPrompt))
 	memory.Messages = append(memory.Messages, openai.UserMessage(prompt))
 	logrus.Infof("LLM Prompt: %s", prompt)
 	completions, err := llm.MakeLLMSingleToolRequest(memory.Messages, memory.Model, memory.Tools, memory.Temperature)
@@ -90,9 +87,12 @@ func CheckWebFetch() {
 	msg := completions.Choices[0].Message
 	if len(msg.ToolCalls) > 0 {
 		out, err := tools.HandleToolCalls(msg.ToolCalls)
-		if err == nil {
-			logrus.Infof("Output received %s", out)
+		if err != nil {
+			logrus.Errorf("CheckWebFetch: %v \n", err)
 		}
+
+		logrus.Infof("Output received %s", out)
+
 	}
 }
 
@@ -128,8 +128,13 @@ func CheckFileContents() {
 
 func main() {
 	registerTools()
-	CheckImageDescriber()
+	out := CheckImageDescriber()
+	if out == "" {
+		logrus.Fatalf("No output received from CheckImageDescriber")
+	}
+	// we got output from previous step
+	CheckWebFetch(out)
 	// CheckImageGeneration()
 	// CheckFileContents()
-	// CheckWebFetch()
+
 }
