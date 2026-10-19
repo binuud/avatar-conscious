@@ -131,5 +131,6 @@ func GetRequest(endpoint string, queryString string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("Failed to read response body: %v\n", err)
 	}
+	logrus.Infof("GetRequest result got: %s", string(body))
 	return string(body), nil
 }

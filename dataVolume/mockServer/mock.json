@@ -31,6 +31,16 @@
       }
     },
     {
+      "methods": ["GET"],
+      "status": 200,
+      "path": "/checklicense/MH1220260012345",
+      "json": {
+        "id": "mh1220260012345",
+        "name": "Rahul Kumar",
+        "address": "1 John Doe Street, John Doe City."
+      }
+    },
+    {
       "methods": ["POST"],
       "path": "/error",
       "delay": 100,

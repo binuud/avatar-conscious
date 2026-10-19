@@ -3,6 +3,7 @@ module github.com/binuud/conscious
 go 1.27.0
 
 require (
+	github.com/google/jsonschema-go v0.4.3
 	github.com/google/uuid v1.6.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.29.0
 	github.com/openai/openai-go/v3 v3.50.0

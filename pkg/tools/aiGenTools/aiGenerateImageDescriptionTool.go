@@ -61,7 +61,7 @@ func (t AiGenerateImageDescriptionTool) InputSchemaAsOpenAiParam() openai.Functi
 			},
 			"prompt": map[string]string{
 				"type":        "string",
-				"description": "The original prompt given by the user",
+				"description": "The original prompt given by the user, do not change the user prompt, with instructions on return object",
 			},
 		},
 		"required": []string{"imagefile", "prompt"},
@@ -76,6 +76,7 @@ func (t AiGenerateImageDescriptionTool) Handler(args string) (string, error) {
 	}
 	logrus.Infof("Arguments parsed into input structure %v", in)
 	return DescribeImage(in.Prompt, in.ImageFile)
+
 }
 
 func DescribeImage(prompt string, fileName string) (string, error) {
@@ -97,6 +98,7 @@ func DescribeImage(prompt string, fileName string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	logrus.Infof("DescribeImage Output %s", result.OutputText())
 	return result.OutputText(), nil
 
 }
