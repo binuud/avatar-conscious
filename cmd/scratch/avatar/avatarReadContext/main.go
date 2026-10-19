@@ -8,10 +8,16 @@ import (
 
 	"github.com/binuud/conscious/pkg/llm"
 	"github.com/binuud/conscious/pkg/memory"
+	"github.com/binuud/conscious/pkg/tools/aiGenTools"
+	apitools "github.com/binuud/conscious/pkg/tools/apiTools"
+	"github.com/binuud/conscious/pkg/tools/commonTools"
+	"github.com/binuud/conscious/pkg/tools/toolRegistry"
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/openai/openai-go/v3"
 	"github.com/sirupsen/logrus"
 )
+
+var tools = toolRegistry.NewToolRegistry()
 
 type Step struct {
 	Name        string `json:"name"`
@@ -23,6 +29,14 @@ type Avatar struct {
 	Name        string `json:"name"`
 	Description string `json:"description"`
 	Steps       []Step `json:"steps"`
+}
+
+func registerTools() {
+
+	tools.AddTool(commonTools.NewToolFileContents())
+	tools.AddTool(apitools.NewApiGetTool())
+	tools.AddTool(aiGenTools.NewAiGenerateImageTool())
+	tools.AddTool(aiGenTools.NewAiGenerateImageDescriptionTool())
 }
 
 func parseAvatar() {
@@ -112,6 +126,58 @@ func getJSONSchema() (*jsonschema.Schema, error) {
 	// return string(output), nil
 }
 
+func runAvatar() {
+	output := `{
+  "steps": [
+    {
+      "name": "Extract License Information",
+      "description": "Analyze the uploaded license image to extract the license number and driver name.",
+      "prompt": "Describe the image from file sampleLicense.jpg, and get the license number, remove all spaces from the license number, and driver name, in format {'license': [LICENCE NUMBER],'name':'[NAME OF PERSON]'}"
+    },
+    {
+      "name": "Verify License Validity",
+      "description": "Verify the extracted license number against the database API to confirm the user is a valid driver.",
+      "prompt": "Call the API to verify the license number and compare the returned name with the extracted name. API Endpoint: http://localhost:8081/checklicense/[LICENSE NUMBER]"
+    }
+  ],
+  "description": "Verifies if the user is a valid voter by checking the voter id with a database",
+  "name": "election-officer"
+	}`
+
+	var in Avatar
+	if err := json.Unmarshal([]byte(output), &in); err != nil {
+		logrus.Fatalf("Cannot unmarshall %v", err)
+	}
+
+	memory := memory.NewMemory()
+	memory.Tools = tools.GetCommonTools()
+
+	for i, step := range in.Steps {
+		logrus.Infof("Step %d : %s", i, step.Name)
+		logrus.Infof("Prompt %s", step.Prompt)
+		memory.Messages = append(memory.Messages, openai.UserMessage(step.Prompt))
+
+		completions, err := llm.MakeLLMSingleToolRequest(memory.Messages, memory.Model, memory.Tools, memory.Temperature)
+		if err != nil {
+			logrus.Errorf("client: error llm chat request: %v \n", err)
+			return
+		}
+
+		msg := completions.Choices[0].Message
+		if len(msg.ToolCalls) > 0 {
+			out, err := tools.HandleToolCalls(msg.ToolCalls)
+			if err != nil {
+				logrus.Errorf("HandleToolCalls: %v \n", err)
+				return
+			}
+			memory.Messages = append(memory.Messages, openai.AssistantMessage(out))
+		}
+	}
+
+}
+
 func main() {
-	parseAvatar()
+	registerTools()
+	// parseAvatar()
+	runAvatar()
 }

@@ -19,10 +19,10 @@ export FILE_STORE_PATH=$PWD/dataVolume
 export SERVABLE_DIRECTORY=$PWD/dataVolume/gen
 
 ## read an avatar file, and have llm generate instructions from it
-# go run cmd/scratch/avatar/avatarReadContext/main.go
+go run cmd/scratch/avatar/avatarReadContext/main.go
 
 ## To check tool calling
-go run cmd/scratch/toolCalling/main.go
+# go run cmd/scratch/toolCalling/main.go
 
 #reflex go run cmd/scratch/skill/skillContextRead/main.go
 # reflex $(cat .reflex) -- go run cmd/scratch/skill/skillContextRead/main.go
