@@ -18,8 +18,9 @@ import (
 // which has to be parsed into a equivalent structure
 // this provides the input structure
 type ApiGetTool_Input struct {
-	// path is the absolute path to read (required).
-	Endpoint    string `json:"endpoint"`
+	// endpoint of the query
+	Endpoint string `json:"endpoint"`
+	// query string, this can be a string or a map of string, string
 	QueryString string `json:"querystring"`
 }
 
