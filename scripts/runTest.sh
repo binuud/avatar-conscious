@@ -17,8 +17,9 @@ export FILE_STORE_PATH=${PWD}/dataVolume/
 export SERVABLE_DIRECTORY=${PWD}/dataVolume/gen
 
 
-# go test ./pkg/... -v
-go test -v --run Test_Memory ./pkg/servers/consciousServer
+go test -v ./pkg/... 
+# go test -v --run Test_Avatar ./pkg/servers/avatar
+# go test -v --run Test_Memory ./pkg/servers/consciousServer
 # go test ./pkg/... -v -run "Test_RouterViaTool"
 # go test -v --run Test_LLM_TOOL ./pkg/servers/consciousServer
 # go test ./pkg/... -v -run "TestConsciousServer_LLMImageProcess"

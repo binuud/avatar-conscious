@@ -14,13 +14,16 @@ require (
 	google.golang.org/genproto/googleapis/api v0.0.0-20260729162451-8efbd57d26e0
 	google.golang.org/grpc v1.83.0
 	google.golang.org/protobuf v1.36.11
+	gopkg.in/yaml.v3 v3.0.1
 )
 
 require (
 	github.com/ebitengine/purego v0.6.0-alpha.3.0.20240117154336-babd452e909b // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
+	github.com/kr/text v0.2.0 // indirect
 	github.com/mitchellh/colorstring v0.0.0-20190213212951-d06e56a500db // indirect
 	github.com/rivo/uniseg v0.4.4 // indirect
+	github.com/rogpeppe/go-internal v1.16.0 // indirect
 	github.com/schollz/progressbar/v3 v3.14.1 // indirect
 	github.com/tidwall/gjson v1.19.0 // indirect
 	github.com/tidwall/match v1.1.1 // indirect

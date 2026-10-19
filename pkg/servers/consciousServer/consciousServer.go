@@ -19,6 +19,7 @@ import (
 	"time"
 
 	pb "github.com/binuud/conscious/gen/go/v1/conscious"
+	datalayer "github.com/binuud/conscious/pkg/dataLayer"
 	"github.com/binuud/conscious/pkg/utils"
 	grpc "google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -65,12 +66,12 @@ func NewGrpcConsciousServer() *grpcConsciousServer {
 	err := memory.Load()
 
 	// do not save tools because of issue with saving hash map
-	memory.DumpMemory()
 	if err != nil {
 		logrus.Infof("No Default memory found")
 	} else {
 		logrus.Infof("Default memory found and loaded")
 	}
+	memory.DumpMemory()
 	logrus.Infof("Starting Conscious with %s model", LLM_MODEL)
 
 	client := openai.NewClient(
@@ -83,6 +84,8 @@ func NewGrpcConsciousServer() *grpcConsciousServer {
 		openAiClient: &client,
 	}
 	grpcServer.commonTools = grpcServer.addCommonToolsRoute()
+
+	datalayer.SaveJSON(datalayer.GetFileAbsolutePath("configs", "config.json"), grpcServer.commonTools)
 
 	return grpcServer
 }
@@ -215,7 +218,7 @@ func (s *grpcConsciousServer) Generate(in *pb.ContextMesssage, stream grpc.Serve
 	// LLM will decide if the user wants to create image, create tts,
 	// describe image or chat stream
 	logrus.Infof("Tools %v\n", s.commonTools)
-	tool, err := GetLLMToolName(in.Prompt, "", in.Model, s.commonTools, s.memory.Temperature)
+	tool, err := GetLLMToolName([]openai.ChatCompletionMessageParamUnion{openai.UserMessage(in.Prompt)}, in.Model, s.commonTools, s.memory.Temperature)
 	if err != nil {
 		// t.Errorf("client: error llm chat request: %v \n", err)
 		return err
@@ -352,7 +355,7 @@ func (s *grpcConsciousServer) Health(ctx context.Context, in *pb.HealthRequest) 
 func (s *grpcConsciousServer) MakeLLMChatRequest(prompt string) (*openai.ChatCompletion, error) {
 
 	s.memory.Messages = append(s.memory.Messages, openai.UserMessage(prompt))
-	completions, err := MakeLLMChatRequest(prompt, s.memory.Messages, s.memory.Tools, s.memory.Model, s.memory.Temperature)
+	completions, err := MakeLLMChatRequest(s.memory.Messages, s.memory.Tools, s.memory.Model, s.memory.Temperature)
 	if err != nil {
 		return nil, err
 	}

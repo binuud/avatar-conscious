@@ -1,6 +1,6 @@
 // avatarServer implements the AvatarService for the service from avatar proto file
 // This server manages avatars (robots, assistants, etc.)
-package avatarServer
+package avatarStoreServer
 
 import (
 	"context"

@@ -7,7 +7,7 @@ import (
 )
 
 func Test_Memory(t *testing.T) {
-	m := createMemoryObject()
+	m := NewMemory()
 	err := m.Save()
 	if err != nil {
 		t.Errorf("client: cannot save memory as binary file: %v \n", err)

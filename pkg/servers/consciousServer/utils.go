@@ -85,7 +85,7 @@ func MakeImageDescribeRequest(prompt string, systemPrompt string, model string, 
 	return response, nil
 }
 
-func MakeLLMChatRequest(prompt string, messages []openai.ChatCompletionMessageParamUnion, tools []openai.ChatCompletionToolUnionParam, model string, temperature float64) (*openai.ChatCompletion, error) {
+func MakeLLMChatRequest(messages []openai.ChatCompletionMessageParamUnion, tools []openai.ChatCompletionToolUnionParam, model string, temperature float64) (*openai.ChatCompletion, error) {
 
 	client := openai.NewClient(
 		option.WithBaseURL(GetLLMEndpoint()),
@@ -146,7 +146,7 @@ func MakeLLMSingleRequest(prompt string, systemPrompt string, model string, temp
 
 }
 
-func MakeLLMSingleToolRequest(prompt string, systemPrompt string, model string, tools []openai.ChatCompletionToolUnionParam, temperature float64) (*openai.ChatCompletion, error) {
+func MakeLLMSingleToolRequest(messages []openai.ChatCompletionMessageParamUnion, model string, tools []openai.ChatCompletionToolUnionParam, temperature float64) (*openai.ChatCompletion, error) {
 
 	client := openai.NewClient(
 		option.WithBaseURL(GetLLMEndpoint()),
@@ -154,11 +154,6 @@ func MakeLLMSingleToolRequest(prompt string, systemPrompt string, model string, 
 	)
 
 	ctx := context.Background()
-
-	messages := []openai.ChatCompletionMessageParamUnion{
-		openai.SystemMessage(systemPrompt),
-		openai.UserMessage(prompt),
-	}
 
 	param := openai.ChatCompletionNewParams{
 		Messages:    messages,
@@ -173,9 +168,9 @@ func MakeLLMSingleToolRequest(prompt string, systemPrompt string, model string, 
 
 // GetLLMToolCall
 // returns the tool name, that the model wants to call
-func GetLLMToolName(prompt string, systemPrompt string, model string, tools []openai.ChatCompletionToolUnionParam, temperature float64) (*openai.ChatCompletionMessageToolCallUnion, error) {
+func GetLLMToolName(messages []openai.ChatCompletionMessageParamUnion, model string, tools []openai.ChatCompletionToolUnionParam, temperature float64) (*openai.ChatCompletionMessageToolCallUnion, error) {
 
-	completions, err := MakeLLMSingleToolRequest(prompt, "", systemPrompt, tools, temperature)
+	completions, err := MakeLLMSingleToolRequest(messages, model, tools, temperature)
 	if err != nil {
 		// t.Errorf("client: error llm chat request: %v \n", err)
 		return nil, err

@@ -34,7 +34,7 @@ func (s *grpcConsciousServer) RouteRequest(in *protoV1.ContextMesssage) (*protoV
 func (s *grpcConsciousServer) RouteLLMChatRequest(in *protoV1.ContextMesssage) (*protoV1.ContextMesssage, error) {
 
 	s.memory.AppendMemory(openai.UserMessage(in.Prompt))
-	completions, err := MakeLLMChatRequest(in.Prompt, s.memory.Messages, s.memory.Tools, s.memory.Model, s.memory.Temperature)
+	completions, err := MakeLLMChatRequest(s.memory.Messages, s.memory.Tools, s.memory.Model, s.memory.Temperature)
 	if err != nil {
 		return nil, err
 	}

@@ -12,11 +12,12 @@ import (
 
 	pbAvatar "github.com/binuud/conscious/gen/go/v1/avatar"
 	pbConscious "github.com/binuud/conscious/gen/go/v1/conscious"
-	"github.com/binuud/conscious/pkg/servers/avatarServer"
+	"github.com/binuud/conscious/pkg/servers/avatarStoreServer"
 	"github.com/binuud/conscious/pkg/servers/consciousServer"
 	llmProxyServer "github.com/binuud/conscious/pkg/servers/llmProxyServer"
 	"github.com/binuud/conscious/pkg/servers/staticFileServer"
 	"github.com/binuud/conscious/pkg/servers/systemMetricsServer"
+
 	"github.com/binuud/conscious/pkg/utils"
 
 	// mqttServer "github.com/dronasys-com/brain-nodes/pkg/servers/mqttBridge"
@@ -145,7 +146,7 @@ func runGRPCServer() {
 	pbConscious.RegisterConsciousServer(insecureServer, consciousServer.NewGrpcConsciousServer())
 
 	// GRPC Avatar Store Server
-	pbAvatar.RegisterAvatarStoreServiceServer(insecureServer, avatarServer.NewAvatarStoreGrpcServer())
+	pbAvatar.RegisterAvatarStoreServiceServer(insecureServer, avatarStoreServer.NewAvatarStoreGrpcServer())
 
 	// GRPC SystemMetrics Server
 	pbConscious.RegisterMetricsServer(insecureServer, systemMetricsServer.NewGrpcSystemMetricsServer())
