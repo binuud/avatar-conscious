@@ -21,6 +21,16 @@
       }
     },
     {
+      "methods": ["GET"],
+      "status": 200,
+      "path": "/user/john",
+      "json": {
+        "id": 2,
+        "name": "John Doe",
+        "address": "1 John Doe Street, John Doe City."
+      }
+    },
+    {
       "methods": ["POST"],
       "path": "/error",
       "delay": 100,

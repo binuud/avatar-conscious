@@ -37,9 +37,9 @@ func NewToolRegistry() *ToolRegistry {
 // AddTool()
 // Tools have to be defined and added to registry
 // Even skills can only call tools already registered with tool registry
-func (t *ToolRegistry) AddTool(name string, tool toolMeta.CommonToolInterface) {
-	logrus.Infof("AddedTool %s to ToolRegistry", name)
-	t.Tools[name] = tool
+func (t *ToolRegistry) AddTool(tool toolMeta.CommonToolInterface) {
+	logrus.Infof("AddedTool %s to ToolRegistry", tool.Name())
+	t.Tools[tool.Name()] = tool
 }
 
 // AddTool()
