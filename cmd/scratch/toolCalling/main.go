@@ -122,7 +122,6 @@ func CheckFileContents() {
 		} else {
 			logrus.Infof("Output received %s", out)
 		}
-
 	}
 }
 
