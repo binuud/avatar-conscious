@@ -18,6 +18,30 @@ func registerTools() {
 	tools.AddTool(commonTools.NewToolFileContents())
 	tools.AddTool(apitools.NewApiGetTool())
 	tools.AddTool(aiGenTools.NewAiGenerateImageTool())
+	tools.AddTool(aiGenTools.NewAiGenerateImageDescriptionTool())
+}
+
+func CheckImageDescriber() {
+
+	memory := memory.NewMemory()
+	memory.Tools = tools.GetCommonTools()
+
+	prompt := "Describe the image from file sampleLicense.jpg, and get the license number and driver name"
+	memory.Messages = append(memory.Messages, openai.UserMessage(prompt))
+
+	logrus.Infof("LLM Prompt: %s", prompt)
+	completions, err := llm.MakeLLMSingleToolRequest(memory.Messages, memory.Model, memory.Tools, memory.Temperature)
+	if err != nil {
+		logrus.Errorf("client: error llm chat request: %v \n", err)
+	}
+
+	msg := completions.Choices[0].Message
+	if len(msg.ToolCalls) > 0 {
+		out, err := tools.HandleToolCalls(msg.ToolCalls)
+		if err == nil {
+			logrus.Infof("Output received %s", out)
+		}
+	}
 
 }
 
@@ -104,7 +128,8 @@ func CheckFileContents() {
 
 func main() {
 	registerTools()
-	CheckImageGeneration()
+	CheckImageDescriber()
+	// CheckImageGeneration()
 	// CheckFileContents()
-	CheckWebFetch()
+	// CheckWebFetch()
 }

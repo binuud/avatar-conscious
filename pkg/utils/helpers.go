@@ -80,3 +80,7 @@ func GetUploadsFolder() string {
 func GetGeneratedFilesFolder() string {
 	return GetEnv("FILE_STORE_PATH", ".") + "/gen/"
 }
+
+func GetSamplesFolder() string {
+	return GetEnv("FILE_STORE_PATH", ".") + "/sampleImages/"
+}
