@@ -1,7 +1,9 @@
 package utils
 
 import (
+	"fmt"
 	"os/exec"
+	"runtime"
 	"strconv"
 	"strings"
 	"time"
@@ -11,6 +13,8 @@ import (
 	"github.com/shirou/gopsutil/mem"
 	"github.com/sirupsen/logrus"
 )
+
+var __IsGpuMetricsAvailable = false
 
 func NewSystemMetrics() (*pb.SystemMetrics, error) {
 	// Sample CPU usage over 250ms so we get a meaningful percentage.
@@ -30,17 +34,9 @@ func NewSystemMetrics() (*pb.SystemMetrics, error) {
 
 	ramUsage := (float64(vm.Used) / float64(vm.Total) * 100)
 
-	// gpu info built from project
-	// https://github.com/andersrennermalm/gpuinfo.git
-	cmd := exec.Command("./gpuinfo", "-p")
-	cmdOut, err := cmd.Output()
 	gpuUsage := 0.0
-	if err != nil {
-		// This will catch if the command doesn't exist or fails to run
-		logrus.Fatalf("Error executing command, gpuinfo binary missing, only for macos: %v\n", err)
-	} else {
-		outputStr := strings.TrimSpace(string(cmdOut))
-		gpuUsage, err = strconv.ParseFloat(outputStr, 64)
+	if __IsGpuMetricsAvailable {
+		gpuUsage, err = GetGpuUsage()
 		if err != nil {
 			logrus.Fatalf("Cannot parse gpuinfo output: %v\n", err)
 		}
@@ -54,4 +50,50 @@ func NewSystemMetrics() (*pb.SystemMetrics, error) {
 		GpuUsage:      gpuUsage,
 		CreatedAt:     time.Now().Unix(),
 	}, nil
+}
+
+// GetGpuUsage()
+// only works on macos
+// finds the total gpuusage on all gpu chips
+func GetGpuUsage() (float64, error) {
+
+	// gpu info built from project
+	// https://github.com/andersrennermalm/gpuinfo.git
+	gpuUsage := 0.0
+	cmd := exec.Command("gpuinfo", "-p")
+	cmdOut, err := cmd.Output()
+	if err != nil {
+		// This will catch if the command doesn't exist or fails to run
+		return gpuUsage, fmt.Errorf("gpuinfo binary missing, gpuinfo only for macos: %v\n", err)
+	} else {
+		outputStr := strings.TrimSpace(string(cmdOut))
+		gpuUsage, err = strconv.ParseFloat(outputStr, 64)
+		if err != nil {
+			// unable to parse gpuinfo, file may be corrupted, or version unsupported
+			return gpuUsage, fmt.Errorf("Cannot parse gpuinfo output: %v\n", err)
+		}
+	}
+	return gpuUsage, nil
+
+}
+
+// IsGpuMetricsAvailable()
+// checks if os is macos, and if gpuinfo binary is available in path
+// then it sets variable __IsGpuMetricsAvailable to true and returns true
+func IsGpuMetricsAvailable() (isAvailable bool) {
+	isAvailable = false
+	os := runtime.GOOS
+
+	if os == "darwin" {
+		logrus.Infof("Operating system: %s", os)
+		gpuUsage, err := GetGpuUsage()
+		if err == nil {
+			logrus.Infof("CHECK:IsGpuMetricsAvailable: able to get gpuusage on macos %f", gpuUsage)
+			isAvailable = true
+		} else {
+			logrus.Infof("GPU Info is not available")
+		}
+	}
+	__IsGpuMetricsAvailable = isAvailable
+	return
 }
