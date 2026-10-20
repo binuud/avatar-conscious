@@ -7,9 +7,9 @@ import (
 	"log"
 	"os"
 
-	protoV1 "github.com/binuud/conscious/gen/go/v1/conscious"
-	"github.com/binuud/conscious/pkg/llm"
-	"github.com/binuud/conscious/pkg/utils"
+	protoV1 "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
+	"github.com/binuud/avatar-conscious/pkg/llm"
+	"github.com/binuud/avatar-conscious/pkg/utils"
 	"github.com/openai/openai-go/v3"
 	"github.com/sirupsen/logrus"
 )

@@ -604,7 +604,7 @@ const file_v1_avatar_avatarStoreService_proto_rawDesc = "" +
 	"\x03Get\x12\x1d.avatar.AvatarStoreGetRequest\x1a\x1e.avatar.AvatarStoreGetResponse\"\x1b\x82\xd3\xe4\x93\x02\x15\x12\x13/v1/avatarStore/get\x12p\n" +
 	"\x06Create\x12 .avatar.AvatarStoreCreateRequest\x1a!.avatar.AvatarStoreCreateResponse\"!\x82\xd3\xe4\x93\x02\x1b:\x01*\"\x16/v1/avatarStore/create\x12p\n" +
 	"\x06Update\x12 .avatar.AvatarStoreUpdateRequest\x1a!.avatar.AvatarStoreUpdateResponse\"!\x82\xd3\xe4\x93\x02\x1b:\x01*\"\x16/v1/avatarStore/update\x12p\n" +
-	"\x06Delete\x12 .avatar.AvatarStoreDeleteRequest\x1a!.avatar.AvatarStoreDeleteResponse\"!\x82\xd3\xe4\x93\x02\x1b:\x01*\"\x16/v1/avatarStore/deleteB.Z,github.com/binuud/conscious/gen/go/v1/avatarb\x06proto3"
+	"\x06Delete\x12 .avatar.AvatarStoreDeleteRequest\x1a!.avatar.AvatarStoreDeleteResponse\"!\x82\xd3\xe4\x93\x02\x1b:\x01*\"\x16/v1/avatarStore/deleteB5Z3github.com/binuud/avatar-conscious/gen/go/v1/avatarb\x06proto3"
 
 var (
 	file_v1_avatar_avatarStoreService_proto_rawDescOnce sync.Once

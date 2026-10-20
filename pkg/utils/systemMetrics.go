@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	pb "github.com/binuud/conscious/gen/go/v1/conscious"
+	pb "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	"github.com/shirou/gopsutil/cpu"
 	"github.com/shirou/gopsutil/mem"
 	"github.com/sirupsen/logrus"

@@ -5,8 +5,8 @@ import (
 	"sync"
 	"time"
 
-	pb "github.com/binuud/conscious/gen/go/v1/avatar"
-	"github.com/binuud/conscious/pkg/utils"
+	pb "github.com/binuud/avatar-conscious/gen/go/v1/avatar"
+	"github.com/binuud/avatar-conscious/pkg/utils"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )

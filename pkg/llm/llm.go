@@ -6,7 +6,7 @@ import (
 	"io"
 	"os"
 
-	protoV1 "github.com/binuud/conscious/gen/go/v1/conscious"
+	protoV1 "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	"github.com/openai/openai-go/v3"
 	"github.com/openai/openai-go/v3/option"
 	"github.com/openai/openai-go/v3/responses"

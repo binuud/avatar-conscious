@@ -7,7 +7,7 @@
 package avatar
 
 import (
-	conscious "github.com/binuud/conscious/gen/go/v1/conscious"
+	conscious "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -756,7 +756,7 @@ const file_v1_avatar_avatar_proto_rawDesc = "" +
 	"\x05Rerun\x10\x03\x12\n" +
 	"\n" +
 	"\x06Failed\x10\x04\x12\t\n" +
-	"\x05Fatal\x10\x05B.Z,github.com/binuud/conscious/gen/go/v1/avatarb\x06proto3"
+	"\x05Fatal\x10\x05B5Z3github.com/binuud/avatar-conscious/gen/go/v1/avatarb\x06proto3"
 
 var (
 	file_v1_avatar_avatar_proto_rawDescOnce sync.Once

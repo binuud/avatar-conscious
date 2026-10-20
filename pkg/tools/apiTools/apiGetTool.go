@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/binuud/conscious/pkg/tools/toolMeta"
+	"github.com/binuud/avatar-conscious/pkg/tools/toolMeta"
 	"github.com/openai/openai-go/v3"
 	"github.com/sirupsen/logrus"
 )

@@ -39,7 +39,7 @@ const file_v1_conscious_consciousService_proto_rawDesc = "" +
 	"\n" +
 	"FileUpload\x12\x0e.UploadRequest\x1a\x0f.UploadResponse\"#\x82\xd3\xe4\x93\x02\x1d:\x01*\"\x18/v1/conscious/fileUpload\x12=\n" +
 	"\x06Health\x12\x0e.HealthRequest\x1a\x0f.HealthResponse\"\x12\x82\xd3\xe4\x93\x02\f\x12\n" +
-	"/v1/healthB1Z/github.com/binuud/conscious/gen/go/v1/consciousb\x06proto3"
+	"/v1/healthB8Z6github.com/binuud/avatar-conscious/gen/go/v1/consciousb\x06proto3"
 
 var file_v1_conscious_consciousService_proto_goTypes = []any{
 	(*ContextMesssage)(nil), // 0: contextMesssage
