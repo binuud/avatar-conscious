@@ -5,7 +5,7 @@ import (
 	"time"
 	"uuid"
 
-	"github.com/binuud/conscious/gen/go/v1/conscious"
+	"github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 )
 
 func GenerateUUID() string {

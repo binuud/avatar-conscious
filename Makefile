@@ -70,6 +70,9 @@ publish-private-microservices: ## Deploy all images to docker hub
 tidy: ## run tidy
 	go mod tidy
 
+update-go-modules: ## update all go modules
+	go get -u ./...
+	
 vendor: ## run vendor
 	go mod tidy
 	go mod vendor

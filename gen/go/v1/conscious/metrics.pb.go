@@ -208,7 +208,7 @@ const file_v1_conscious_metrics_proto_rawDesc = "" +
 	"\x17GetSystemMetricsRequest\x12(\n" +
 	"\x0fintervalSeconds\x18\x01 \x01(\rR\x0fintervalSeconds2\x90\x01\n" +
 	"\aMetrics\x12\x84\x01\n" +
-	"\x10GetSystemMetrics\x12\".conscious.GetSystemMetricsRequest\x1a\x18.conscious.SystemMetrics\"0\x82\xd3\xe4\x93\x02*:\x01*\"%/v1/consciousMetrics/getSystemMetrics0\x01B1Z/github.com/binuud/conscious/gen/go/v1/consciousb\x06proto3"
+	"\x10GetSystemMetrics\x12\".conscious.GetSystemMetricsRequest\x1a\x18.conscious.SystemMetrics\"0\x82\xd3\xe4\x93\x02*:\x01*\"%/v1/consciousMetrics/getSystemMetrics0\x01B8Z6github.com/binuud/avatar-conscious/gen/go/v1/consciousb\x06proto3"
 
 var (
 	file_v1_conscious_metrics_proto_rawDescOnce sync.Once

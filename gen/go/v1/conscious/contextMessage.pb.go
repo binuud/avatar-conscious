@@ -609,7 +609,7 @@ const file_v1_conscious_contextMessage_proto_rawDesc = "" +
 	"\rSTATUS_IGNORE\x10\x00\x12\v\n" +
 	"\aSUCCESS\x10\x01\x12\b\n" +
 	"\x04FAIL\x10\x02\x12\t\n" +
-	"\x05FATAL\x10\x03B1Z/github.com/binuud/conscious/gen/go/v1/consciousb\x06proto3"
+	"\x05FATAL\x10\x03B8Z6github.com/binuud/avatar-conscious/gen/go/v1/consciousb\x06proto3"
 
 var (
 	file_v1_conscious_contextMessage_proto_rawDescOnce sync.Once

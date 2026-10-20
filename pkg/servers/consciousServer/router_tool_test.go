@@ -6,8 +6,8 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/binuud/conscious/pkg/llm"
-	"github.com/binuud/conscious/pkg/memory"
+	"github.com/binuud/avatar-conscious/pkg/llm"
+	"github.com/binuud/avatar-conscious/pkg/memory"
 	"github.com/openai/openai-go/v3"
 )
 

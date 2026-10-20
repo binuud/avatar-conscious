@@ -5,7 +5,7 @@ package avatarStoreServer
 import (
 	"context"
 
-	pb "github.com/binuud/conscious/gen/go/v1/avatar"
+	pb "github.com/binuud/avatar-conscious/gen/go/v1/avatar"
 
 	"github.com/sirupsen/logrus"
 )

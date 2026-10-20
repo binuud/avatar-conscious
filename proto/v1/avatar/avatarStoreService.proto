@@ -1,7 +1,7 @@
 syntax = "proto3";
 package avatar;
 
-option go_package = "github.com/binuud/conscious/gen/go/v1/avatar";
+option go_package = "github.com/binuud/avatar-conscious/gen/go/v1/avatar";
 
 import "v1/avatar/avatar.proto";
 

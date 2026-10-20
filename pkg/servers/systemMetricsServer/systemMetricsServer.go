@@ -3,8 +3,8 @@ package systemMetricsServer
 import (
 	"time"
 
-	pb "github.com/binuud/conscious/gen/go/v1/conscious"
-	"github.com/binuud/conscious/pkg/utils"
+	pb "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
+	"github.com/binuud/avatar-conscious/pkg/utils"
 )
 
 const defaultInterval = 2 * time.Second

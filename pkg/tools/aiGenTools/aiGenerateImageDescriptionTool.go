@@ -6,10 +6,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/binuud/conscious/pkg/llm"
-	"github.com/binuud/conscious/pkg/memory"
-	"github.com/binuud/conscious/pkg/tools/toolMeta"
-	"github.com/binuud/conscious/pkg/utils"
+	"github.com/binuud/avatar-conscious/pkg/llm"
+	"github.com/binuud/avatar-conscious/pkg/memory"
+	"github.com/binuud/avatar-conscious/pkg/tools/toolMeta"
+	"github.com/binuud/avatar-conscious/pkg/utils"
 	"github.com/openai/openai-go/v3"
 	"github.com/sirupsen/logrus"
 )

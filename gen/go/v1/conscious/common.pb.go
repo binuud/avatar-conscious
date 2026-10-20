@@ -430,7 +430,7 @@ const file_v1_conscious_common_proto_rawDesc = "" +
 	"\x04Down\x10\x03\"\x0e\n" +
 	"\fModelRequest\"/\n" +
 	"\rModelResponse\x12\x1e\n" +
-	"\x06models\x18\x01 \x03(\v2\x06.ModelR\x06modelsB1Z/github.com/binuud/conscious/gen/go/v1/consciousb\x06proto3"
+	"\x06models\x18\x01 \x03(\v2\x06.ModelR\x06modelsB8Z6github.com/binuud/avatar-conscious/gen/go/v1/consciousb\x06proto3"
 
 var (
 	file_v1_conscious_common_proto_rawDescOnce sync.Once

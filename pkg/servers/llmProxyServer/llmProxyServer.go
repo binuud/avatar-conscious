@@ -6,7 +6,7 @@ import (
 	"net/http/httputil"
 	"net/url"
 
-	"github.com/binuud/conscious/pkg/utils"
+	"github.com/binuud/avatar-conscious/pkg/utils"
 	"github.com/sirupsen/logrus"
 )
 

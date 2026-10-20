@@ -10,15 +10,15 @@ import (
 	"os"
 	"strings"
 
-	pbAvatar "github.com/binuud/conscious/gen/go/v1/avatar"
-	pbConscious "github.com/binuud/conscious/gen/go/v1/conscious"
-	"github.com/binuud/conscious/pkg/servers/avatarStoreServer"
-	"github.com/binuud/conscious/pkg/servers/consciousServer"
-	llmProxyServer "github.com/binuud/conscious/pkg/servers/llmProxyServer"
-	"github.com/binuud/conscious/pkg/servers/staticFileServer"
-	"github.com/binuud/conscious/pkg/servers/systemMetricsServer"
+	pbAvatar "github.com/binuud/avatar-conscious/gen/go/v1/avatar"
+	pbConscious "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
+	"github.com/binuud/avatar-conscious/pkg/servers/avatarStoreServer"
+	"github.com/binuud/avatar-conscious/pkg/servers/consciousServer"
+	llmProxyServer "github.com/binuud/avatar-conscious/pkg/servers/llmProxyServer"
+	"github.com/binuud/avatar-conscious/pkg/servers/staticFileServer"
+	"github.com/binuud/avatar-conscious/pkg/servers/systemMetricsServer"
 
-	"github.com/binuud/conscious/pkg/utils"
+	"github.com/binuud/avatar-conscious/pkg/utils"
 
 	// mqttServer "github.com/dronasys-com/brain-nodes/pkg/servers/mqttBridge"
 

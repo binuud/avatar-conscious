@@ -1,8 +1,8 @@
 package memory
 
 import (
-	datalayer "github.com/binuud/conscious/pkg/dataLayer"
-	"github.com/binuud/conscious/pkg/utils"
+	datalayer "github.com/binuud/avatar-conscious/pkg/dataLayer"
+	"github.com/binuud/avatar-conscious/pkg/utils"
 	"github.com/openai/openai-go/v3"
 	"github.com/sirupsen/logrus"
 )
