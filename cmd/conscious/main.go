@@ -35,6 +35,10 @@ var (
 	server_http_port = flag.Int("http_port", 9080, "The Brain Backend Server HTTP port, no token required unsecured")
 )
 
+func bootstrap() {
+	utils.IsGpuMetricsAvailable()
+}
+
 func serveStaticPaths() *http.ServeMux {
 
 	httpMux := http.NewServeMux()
@@ -161,6 +165,7 @@ func runGRPCServer() {
 
 func main() {
 	logrus.Println("Welcome to life")
+	bootstrap()
 
 	LLM_HOST := utils.GetEnv("LLM_HOST", "http://localhost:12434")
 
