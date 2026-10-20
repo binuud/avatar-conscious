@@ -10,6 +10,10 @@ To give a body, that is not affected in the original sin and the secondary sin. 
 
 This has to be fronted with a UI.   
 
+## Usage
+
+Please refer to [Avatar Project](https://github.com/binuud/avatar), for usage, installation details.
+
 ## Directory Structure
 
 * cmd - the main go file
