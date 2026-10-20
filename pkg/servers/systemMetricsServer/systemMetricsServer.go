@@ -14,7 +14,6 @@ type grpcMetricsServer struct {
 }
 
 func NewGrpcSystemMetricsServer() *grpcMetricsServer {
-	utils.IsGpuMetricsAvailable()
 	return &grpcMetricsServer{}
 }
 

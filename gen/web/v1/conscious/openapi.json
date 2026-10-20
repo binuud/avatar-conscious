@@ -280,6 +280,10 @@
             "type": "number",
             "format": "double"
           },
+          "gpuMemUsed": {
+            "type": "integer",
+            "format": "int64"
+          },
           "totalDiskBytes": {
             "type": "integer",
             "format": "uint64"

@@ -14,7 +14,7 @@ This has to be fronted with a UI.
 
 Please refer to [Avatar Project](https://github.com/binuud/avatar), for usage, installation details.
 
-For metrics to work, (only on macos), copy gpuinfo binary to your path.
+Metrics to work, (only on macos)
 
 ## Directory Structure
 
@@ -54,9 +54,9 @@ go install github.com/cespare/reflex@latest
 
 ## Remember
 
-* Avoid using containers during development, since gpuinfo, needs macos access
+* Avoid using containers during development, since metrics, needs macos access
 * replace same with dummy binary, when running via docker
 
 ## Credits
 
-* gpu info built from [this project](https://github.com/andersrennermalm/gpuinfo)
+

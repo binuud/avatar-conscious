@@ -36,7 +36,7 @@ var (
 )
 
 func bootstrap() {
-	utils.IsGpuMetricsAvailable()
+	utils.Bootstrap()
 }
 
 func serveStaticPaths() *http.ServeMux {

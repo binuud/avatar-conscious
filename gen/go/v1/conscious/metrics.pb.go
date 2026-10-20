@@ -42,12 +42,14 @@ type SystemMetrics struct {
 	RamUsage float64 `protobuf:"fixed64,5,opt,name=ramUsage,proto3" json:"ramUsage,omitempty"`
 	// gpu usage as a percentage (0-100)
 	GpuUsage float64 `protobuf:"fixed64,6,opt,name=gpuUsage,proto3" json:"gpuUsage,omitempty"`
+	// memory used by GPU
+	GpuMemUsed int64 `protobuf:"varint,7,opt,name=gpuMemUsed,proto3" json:"gpuMemUsed,omitempty"`
 	// total disk in bytes
-	TotalDiskBytes uint64 `protobuf:"varint,7,opt,name=totalDiskBytes,proto3" json:"totalDiskBytes,omitempty"`
+	TotalDiskBytes uint64 `protobuf:"varint,8,opt,name=totalDiskBytes,proto3" json:"totalDiskBytes,omitempty"`
 	// used disk in bytes
-	UsedDiskBytes uint64 `protobuf:"varint,8,opt,name=usedDiskBytes,proto3" json:"usedDiskBytes,omitempty"`
+	UsedDiskBytes uint64 `protobuf:"varint,9,opt,name=usedDiskBytes,proto3" json:"usedDiskBytes,omitempty"`
 	// unix timestamp of when the metrics were sampled
-	CreatedAt     int64 `protobuf:"varint,9,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
+	CreatedAt     int64 `protobuf:"varint,11,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -124,6 +126,13 @@ func (x *SystemMetrics) GetGpuUsage() float64 {
 	return 0
 }
 
+func (x *SystemMetrics) GetGpuMemUsed() int64 {
+	if x != nil {
+		return x.GpuMemUsed
+	}
+	return 0
+}
+
 func (x *SystemMetrics) GetTotalDiskBytes() uint64 {
 	if x != nil {
 		return x.TotalDiskBytes
@@ -194,17 +203,20 @@ var File_v1_conscious_metrics_proto protoreflect.FileDescriptor
 
 const file_v1_conscious_metrics_proto_rawDesc = "" +
 	"\n" +
-	"\x1av1/conscious/metrics.proto\x12\tconscious\x1a\x1cgoogle/api/annotations.proto\"\xad\x02\n" +
+	"\x1av1/conscious/metrics.proto\x12\tconscious\x1a\x1cgoogle/api/annotations.proto\"\xcd\x02\n" +
 	"\rSystemMetrics\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x1a\n" +
 	"\bcpuUsage\x18\x02 \x01(\x01R\bcpuUsage\x12$\n" +
 	"\rtotalRamBytes\x18\x03 \x01(\x04R\rtotalRamBytes\x12\"\n" +
 	"\fusedRamBytes\x18\x04 \x01(\x04R\fusedRamBytes\x12\x1a\n" +
 	"\bramUsage\x18\x05 \x01(\x01R\bramUsage\x12\x1a\n" +
-	"\bgpuUsage\x18\x06 \x01(\x01R\bgpuUsage\x12&\n" +
-	"\x0etotalDiskBytes\x18\a \x01(\x04R\x0etotalDiskBytes\x12$\n" +
-	"\rusedDiskBytes\x18\b \x01(\x04R\rusedDiskBytes\x12\x1c\n" +
-	"\tcreatedAt\x18\t \x01(\x03R\tcreatedAt\"C\n" +
+	"\bgpuUsage\x18\x06 \x01(\x01R\bgpuUsage\x12\x1e\n" +
+	"\n" +
+	"gpuMemUsed\x18\a \x01(\x03R\n" +
+	"gpuMemUsed\x12&\n" +
+	"\x0etotalDiskBytes\x18\b \x01(\x04R\x0etotalDiskBytes\x12$\n" +
+	"\rusedDiskBytes\x18\t \x01(\x04R\rusedDiskBytes\x12\x1c\n" +
+	"\tcreatedAt\x18\v \x01(\x03R\tcreatedAt\"C\n" +
 	"\x17GetSystemMetricsRequest\x12(\n" +
 	"\x0fintervalSeconds\x18\x01 \x01(\rR\x0fintervalSeconds2\x90\x01\n" +
 	"\aMetrics\x12\x84\x01\n" +

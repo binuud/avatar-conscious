@@ -29,14 +29,17 @@ message SystemMetrics {
   // gpu usage as a percentage (0-100)
   double gpuUsage = 6;
 
+  // memory used by GPU
+  int64 gpuMemUsed = 7;
+
   // total disk in bytes
-  uint64 totalDiskBytes = 7;
+  uint64 totalDiskBytes = 8;
 
   // used disk in bytes
-  uint64 usedDiskBytes = 8;
+  uint64 usedDiskBytes = 9;
 
   // unix timestamp of when the metrics were sampled
-  int64 createdAt = 9;
+  int64 createdAt = 11;
 }
 
 service Metrics {
