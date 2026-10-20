@@ -12,6 +12,7 @@ export type SystemMetrics = {
   usedRamBytes?: string
   ramUsage?: number
   gpuUsage?: number
+  gpuMemUsed?: string
   totalDiskBytes?: string
   usedDiskBytes?: string
   createdAt?: string

@@ -1,11 +1,11 @@
 package utils
 
 import (
+	"bytes"
 	"fmt"
 	"os/exec"
-	"runtime"
+	"regexp"
 	"strconv"
-	"strings"
 	"time"
 
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
@@ -13,8 +13,6 @@ import (
 	"github.com/shirou/gopsutil/mem"
 	"github.com/sirupsen/logrus"
 )
-
-var __IsGpuMetricsAvailable = false
 
 func NewSystemMetrics() (*pb.SystemMetrics, error) {
 	// Sample CPU usage over 250ms so we get a meaningful percentage.
@@ -34,11 +32,12 @@ func NewSystemMetrics() (*pb.SystemMetrics, error) {
 
 	ramUsage := (float64(vm.Used) / float64(vm.Total) * 100)
 
-	gpuUsage := 0.0
+	gpuUsage := 0
+	gpuMem := 0
 	if __IsGpuMetricsAvailable {
-		gpuUsage, err = GetGpuUsage()
+		gpuUsage, gpuMem, err = GetGpuMetrics()
 		if err != nil {
-			logrus.Fatalf("Cannot parse gpuinfo output: %v\n", err)
+			logrus.Fatalf("Cannot parse GetGpuMetrics output: %v\n", err)
 		}
 	}
 
@@ -47,53 +46,55 @@ func NewSystemMetrics() (*pb.SystemMetrics, error) {
 		TotalRamBytes: uint64(vm.Used),
 		UsedRamBytes:  uint64(vm.Total),
 		RamUsage:      ramUsage,
-		GpuUsage:      gpuUsage,
+		GpuUsage:      float64(gpuUsage),
+		GpuMemUsed:    int64(gpuMem),
 		CreatedAt:     time.Now().Unix(),
 	}, nil
 }
 
-// GetGpuUsage()
-// only works on macos
-// finds the total gpuusage on all gpu chips
-func GetGpuUsage() (float64, error) {
+// GetGpuMetrics()
+// runs ioreg to capture the current GPU metrics percentage on M-series chips.
+// returns gpusage as percentage, and total memory used by GPU in bytes
+func GetGpuMetrics() (gpuUsage int, gpuMem int, err error) {
 
-	// gpu info built from project
-	// https://github.com/andersrennermalm/gpuinfo.git
-	gpuUsage := 0.0
-	cmd := exec.Command("gpuinfo", "-p")
-	cmdOut, err := cmd.Output()
+	gpuUsage = 0
+	gpuMem = 0
+
+	// Query the AGXAccelerator service for the performance metrics dictionary
+	cmd := exec.Command("ioreg", "-r", "-c", "AGXAccelerator", "-d", "2")
+	var out bytes.Buffer
+	cmd.Stdout = &out
+
+	if err := cmd.Run(); err != nil {
+		return gpuUsage, gpuMem, fmt.Errorf("failed running ioreg: %w", err)
+	}
+
+	// Regex to extract the "Device Utilization %" integer value
+	re := regexp.MustCompile(`"Device Utilization %"\s*=\s*(\d+)`)
+	matches := re.FindStringSubmatch(out.String())
+
+	if len(matches) < 2 {
+		return gpuUsage, gpuMem, fmt.Errorf("could not parse GPU utilization; confirm this is an Apple Silicon Mac")
+	}
+	// Convert parsed string back to an integer
+	gpuUsage, err = strconv.Atoi(matches[1])
 	if err != nil {
-		// This will catch if the command doesn't exist or fails to run
-		return gpuUsage, fmt.Errorf("gpuinfo binary missing, gpuinfo only for macos: %v\n", err)
-	} else {
-		outputStr := strings.TrimSpace(string(cmdOut))
-		gpuUsage, err = strconv.ParseFloat(outputStr, 64)
-		if err != nil {
-			// unable to parse gpuinfo, file may be corrupted, or version unsupported
-			return gpuUsage, fmt.Errorf("Cannot parse gpuinfo output: %v\n", err)
-		}
+		return
 	}
-	return gpuUsage, nil
 
-}
+	// Regex to extract the "Device Utilization %" integer value
+	re = regexp.MustCompile(`"In use system memory"\s*=\s*(\d+)`)
+	matches = re.FindStringSubmatch(out.String())
 
-// IsGpuMetricsAvailable()
-// checks if os is macos, and if gpuinfo binary is available in path
-// then it sets variable __IsGpuMetricsAvailable to true and returns true
-func IsGpuMetricsAvailable() (isAvailable bool) {
-	isAvailable = false
-	os := runtime.GOOS
-
-	if os == "darwin" {
-		logrus.Infof("Operating system: %s", os)
-		gpuUsage, err := GetGpuUsage()
-		if err == nil {
-			logrus.Infof("CHECK:IsGpuMetricsAvailable: able to get gpuusage on macos %f", gpuUsage)
-			isAvailable = true
-		} else {
-			logrus.Infof("GPU Info is not available")
-		}
+	if len(matches) < 2 {
+		return
 	}
-	__IsGpuMetricsAvailable = isAvailable
+
+	// Convert parsed string back to an integer
+	gpuMem, err = strconv.Atoi(matches[1])
+	if err != nil {
+		return
+	}
+
 	return
 }
