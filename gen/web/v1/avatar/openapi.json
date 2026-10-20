@@ -216,10 +216,10 @@
             "type": "string"
           },
           "In": {
-            "$ref": "#/components/schemas/contextMesssage"
+            "$ref": "#/components/schemas/ContextMesssage"
           },
           "Out": {
-            "$ref": "#/components/schemas/contextMesssage"
+            "$ref": "#/components/schemas/ContextMesssage"
           }
         }
       },

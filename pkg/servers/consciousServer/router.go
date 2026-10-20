@@ -79,7 +79,12 @@ func (s *grpcConsciousServer) RouteLLMChatRequest(in *protoV1.ContextMesssage) (
 	}
 
 	return &protoV1.ContextMesssage{
-		Data: completions.Choices[0].Message.Content,
+		Uuid:        in.Uuid,
+		Model:       in.Model,
+		Prompt:      in.Prompt,
+		CreatedAt:   in.CreatedAt,
+		CompletedAt: utils.GetTimeStamp(),
+		Data:        completions.Choices[0].Message.Content,
 	}, nil
 
 }
@@ -108,7 +113,12 @@ func (s *grpcConsciousServer) RouteLLMImageDescribeRequest(in *protoV1.ContextMe
 	s.memory.AppendMemory(openai.AssistantMessage(assistantMsgContent))
 
 	return &protoV1.ContextMesssage{
-		Response: assistantMsgContent,
+		Uuid:        in.Uuid,
+		Model:       in.Model,
+		Prompt:      in.Prompt,
+		CreatedAt:   in.CreatedAt,
+		CompletedAt: utils.GetTimeStamp(),
+		Response:    assistantMsgContent,
 	}, nil
 
 }
@@ -145,6 +155,10 @@ func (s *grpcConsciousServer) RouteOpenAiImageGenerationRequest(in *protoV1.Cont
 
 	return &protoV1.ContextMesssage{
 		Uuid:          in.Uuid,
+		Model:         in.Model,
+		Prompt:        in.Prompt,
+		CreatedAt:     in.CreatedAt,
+		CompletedAt:   utils.GetTimeStamp(),
 		ResponseImage: servableFile,
 	}, nil
 
@@ -169,6 +183,10 @@ func (s *grpcConsciousServer) RouteImageCreateRequest(in *protoV1.ContextMesssag
 
 	return &protoV1.ContextMesssage{
 		Uuid:          in.Uuid,
+		Model:         in.Model,
+		Prompt:        in.Prompt,
+		CreatedAt:     in.CreatedAt,
+		CompletedAt:   utils.GetTimeStamp(),
 		ResponseImage: servableFile,
 	}, nil
 

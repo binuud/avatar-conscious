@@ -23,7 +23,7 @@ func GetEnv(key, fallback string) string {
 func GetTimeStamp() *conscious.Timestamp {
 
 	return &conscious.Timestamp{
-		Seconds: time.Now().UnixMilli(),
+		Seconds: time.Now().Unix(),
 		Nanos:   0,
 	}
 

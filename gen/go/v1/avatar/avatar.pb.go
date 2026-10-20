@@ -707,8 +707,8 @@ const file_v1_avatar_avatar_proto_rawDesc = "" +
 	"\x05model\x18\v \x01(\tR\x05model\x12\x16\n" +
 	"\x06prompt\x18\f \x01(\tR\x06prompt\x12\"\n" +
 	"\fsystemPrompt\x18\r \x01(\tR\fsystemPrompt\x12!\n" +
-	"\x03_in\x18\x15 \x01(\v2\x10.contextMesssageR\x02In\x12#\n" +
-	"\x04_out\x18\x16 \x01(\v2\x10.contextMesssageR\x03Out\"\x80\x02\n" +
+	"\x03_in\x18\x15 \x01(\v2\x10.ContextMesssageR\x02In\x12#\n" +
+	"\x04_out\x18\x16 \x01(\v2\x10.ContextMesssageR\x03Out\"\x80\x02\n" +
 	"\n" +
 	"AvatarLoop\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
@@ -782,14 +782,14 @@ var file_v1_avatar_avatar_proto_goTypes = []any{
 	(*AvatarLoop)(nil),                // 6: avatar.AvatarLoop
 	(*Avatar)(nil),                    // 7: avatar.Avatar
 	nil,                               // 8: avatar.Tool.ParametersEntry
-	(*conscious.ContextMesssage)(nil), // 9: contextMesssage
+	(*conscious.ContextMesssage)(nil), // 9: ContextMesssage
 }
 var file_v1_avatar_avatar_proto_depIdxs = []int32{
 	8,  // 0: avatar.Tool.parameters:type_name -> avatar.Tool.ParametersEntry
 	1,  // 1: avatar.AvatarAction.type:type_name -> avatar.AvatarActionType
 	2,  // 2: avatar.AvatarAction._status:type_name -> avatar.AvatarActionStatus
-	9,  // 3: avatar.AvatarAction._in:type_name -> contextMesssage
-	9,  // 4: avatar.AvatarAction._out:type_name -> contextMesssage
+	9,  // 3: avatar.AvatarAction._in:type_name -> ContextMesssage
+	9,  // 4: avatar.AvatarAction._out:type_name -> ContextMesssage
 	5,  // 5: avatar.AvatarLoop.runActions:type_name -> avatar.AvatarAction
 	5,  // 6: avatar.AvatarLoop.loopAction:type_name -> avatar.AvatarAction
 	0,  // 7: avatar.Avatar.permissions:type_name -> avatar.Permission

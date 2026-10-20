@@ -39,7 +39,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/contextMesssage"
+                "$ref": "#/components/schemas/ContextMesssage"
               }
             }
           },
@@ -51,7 +51,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/contextMesssage"
+                  "$ref": "#/components/schemas/ContextMesssage"
                 }
               }
             }
@@ -66,7 +66,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/contextMesssage"
+                "$ref": "#/components/schemas/ContextMesssage"
               }
             }
           },
@@ -78,7 +78,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/contextMesssage"
+                  "$ref": "#/components/schemas/ContextMesssage"
                 }
               }
             }
@@ -93,7 +93,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/contextMesssage"
+                "$ref": "#/components/schemas/ContextMesssage"
               }
             }
           },
@@ -105,7 +105,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/contextMesssage"
+                  "$ref": "#/components/schemas/ContextMesssage"
                 }
               }
             }
@@ -186,6 +186,129 @@
   },
   "components": {
     "schemas": {
+      "ContextMesssage": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "model": {
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/ContextMesssage.ContextType"
+          },
+          "role": {
+            "$ref": "#/components/schemas/ContextMesssage.ContextRole"
+          },
+          "stream": {
+            "type": "boolean"
+          },
+          "prompt": {
+            "type": "string"
+          },
+          "systemPrompt": {
+            "type": "string"
+          },
+          "seed": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "temperature": {
+            "type": "number",
+            "format": "float"
+          },
+          "data": {
+            "type": "string"
+          },
+          "bodyText": {
+            "type": "string"
+          },
+          "schema": {
+            "type": "string"
+          },
+          "bodyBytes": {
+            "type": "string",
+            "format": "base64"
+          },
+          "vision": {
+            "type": "string",
+            "format": "base64"
+          },
+          "audio": {
+            "type": "string",
+            "format": "base64"
+          },
+          "text": {
+            "type": "string",
+            "format": "base64"
+          },
+          "status": {
+            "$ref": "#/components/schemas/ContextMesssage.ContextStatus"
+          },
+          "statusMessage": {
+            "type": "string"
+          },
+          "errorMessage": {
+            "type": "string"
+          },
+          "response": {
+            "type": "string"
+          },
+          "responseImage": {
+            "type": "string"
+          },
+          "reasoning": {
+            "type": "string"
+          },
+          "thinking": {
+            "type": "string"
+          },
+          "createdAt": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "completedAt": {
+            "$ref": "#/components/schemas/Timestamp"
+          }
+        }
+      },
+      "ContextMesssage.ContextRole": {
+        "type": "string",
+        "enum": [
+          "ROLE_IGNORE",
+          "USER",
+          "ASSISTANT",
+          "SYSTEM",
+          "AGENT"
+        ]
+      },
+      "ContextMesssage.ContextStatus": {
+        "type": "string",
+        "enum": [
+          "STATUS_IGNORE",
+          "SUCCESS",
+          "FAIL",
+          "ONGOING",
+          "FATAL"
+        ]
+      },
+      "ContextMesssage.ContextType": {
+        "type": "string",
+        "enum": [
+          "CONTEXT_TYPE_IGNORE",
+          "LLM_STREAM_QUERY",
+          "LLM_QUERY",
+          "LLM_IMAGE_DESCRIBE",
+          "IMAGE_GENERATION",
+          "TTS"
+        ]
+      },
       "GetSystemMetricsRequest": {
         "type": "object",
         "properties": {
@@ -340,114 +463,6 @@
             "type": "string"
           }
         }
-      },
-      "contextMesssage": {
-        "type": "object",
-        "properties": {
-          "uuid": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "model": {
-            "type": "string"
-          },
-          "type": {
-            "$ref": "#/components/schemas/contextMesssage.ContextType"
-          },
-          "role": {
-            "$ref": "#/components/schemas/contextMesssage.ContextRole"
-          },
-          "stream": {
-            "type": "boolean"
-          },
-          "prompt": {
-            "type": "string"
-          },
-          "systemPrompt": {
-            "type": "string"
-          },
-          "data": {
-            "type": "string"
-          },
-          "bodyText": {
-            "type": "string"
-          },
-          "bodyBytes": {
-            "type": "string",
-            "format": "base64"
-          },
-          "vision": {
-            "type": "string",
-            "format": "base64"
-          },
-          "audio": {
-            "type": "string",
-            "format": "base64"
-          },
-          "text": {
-            "type": "string",
-            "format": "base64"
-          },
-          "status": {
-            "$ref": "#/components/schemas/contextMesssage.ContextStatus"
-          },
-          "statusMessage": {
-            "type": "string"
-          },
-          "errorMessage": {
-            "type": "string"
-          },
-          "response": {
-            "type": "string"
-          },
-          "responseImage": {
-            "type": "string"
-          },
-          "reasoning": {
-            "type": "string"
-          },
-          "thinking": {
-            "type": "string"
-          },
-          "createdAt": {
-            "$ref": "#/components/schemas/Timestamp"
-          }
-        }
-      },
-      "contextMesssage.ContextRole": {
-        "type": "string",
-        "enum": [
-          "ROLE_IGNORE",
-          "USER",
-          "ASSISTANT",
-          "SYSTEM",
-          "AGENT"
-        ]
-      },
-      "contextMesssage.ContextStatus": {
-        "type": "string",
-        "enum": [
-          "STATUS_IGNORE",
-          "SUCCESS",
-          "FAIL",
-          "FATAL"
-        ]
-      },
-      "contextMesssage.ContextType": {
-        "type": "string",
-        "enum": [
-          "CONTEXT_TYPE_IGNORE",
-          "LLM_STREAM_QUERY",
-          "LLM_QUERY",
-          "LLM_IMAGE_DESCRIBE",
-          "IMAGE_GENERATION",
-          "TTS"
-        ]
       }
     }
   }

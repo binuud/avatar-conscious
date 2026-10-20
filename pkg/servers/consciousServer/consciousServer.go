@@ -159,7 +159,10 @@ func (s *grpcConsciousServer) InStream(in *pb.ContextMesssage, stream grpc.Serve
 
 	logrus.Infof("InStream Received -> Request: %s, %s", in.Type, in.Prompt)
 
-	s.memory.AppendMemory(openai.UserMessage(in.Prompt))
+	// thinking := ""
+	completeResponse := ""
+
+	s.memory.AppendInMessage(in)
 
 	params := responses.ResponseNewParams{
 		Model: in.Model,
@@ -191,36 +194,79 @@ func (s *grpcConsciousServer) InStream(in *pb.ContextMesssage, stream grpc.Serve
 		}
 
 		data := llmStream.Current()
-		// fmt.Printf("Type %s, data %s \n", data.Type, data.Delta)
-		resp := &pb.ContextMesssage{
+
+		out := &pb.ContextMesssage{
+			Uuid:     in.Uuid,
 			Response: data.Delta,
 		}
-		if err := stream.Send(resp); err != nil {
-			return err
-		}
+
 		if data.JSON.Text.Valid() {
 
 			// when reasoning, thinking is enabled, we might see this twice.
 			// once for reasoning, and once for actualy response
+
 			logrus.Infof("Finished Content %s \n\n", data.Type)
-			// completeText = data.Text
+
+			if data.Type == "response.output_text.done" {
+				// streaming complete
+				// handle closure later
+				completeResponse = data.Text
+				logrus.Infof("Complete response %s \n\n", completeResponse)
+			}
 		}
+
+		// send the out message
+		if err := stream.Send(out); err != nil {
+			return err
+		}
+
 	}
+
+	// if streaming is done
+	// send last out message with completeAt timestamp
+	out := &pb.ContextMesssage{
+		Uuid:        in.Uuid,
+		Model:       in.Model,
+		Prompt:      in.Prompt,
+		CreatedAt:   in.CreatedAt,
+		CompletedAt: utils.GetTimeStamp(),
+		Response:    completeResponse,
+	}
+
+	s.memory.AppendOutMessage(out)
+
+	// send the out message
+	if err := stream.Send(out); err != nil {
+		return err
+	}
+
 	return nil
+
 }
 
-// Generate,
+// Generate()
 // Calls toools first with no memory, to decide if image generation or description or tts has to be called
 // Then calls the appropriate function
 func (s *grpcConsciousServer) Generate(in *pb.ContextMesssage, stream grpc.ServerStreamingServer[pb.ContextMesssage]) error {
 
 	logrus.Infof("Generate Received -> Request: %s", in.Prompt)
 
+	in.CreatedAt = utils.GetTimeStamp()
+
+	// do not add to memory
+	// till tool completion is done
+	// we do not want tool routing to be in memory
+
 	// make a tool request
 	// LLM will decide if the user wants to create image, create tts,
 	// describe image or chat stream
 	logrus.Infof("Tools %v\n", s.commonTools)
-	tool, err := llm.GetLLMToolName([]openai.ChatCompletionMessageParamUnion{openai.UserMessage(in.Prompt)}, in.Model, s.commonTools, s.memory.Temperature)
+
+	tool, err := llm.GetLLMToolName([]openai.ChatCompletionMessageParamUnion{openai.UserMessage(in.Prompt)},
+		in.Model,
+		s.commonTools,
+		s.memory.Temperature)
+
 	if err != nil {
 		// t.Errorf("client: error llm chat request: %v \n", err)
 		return err
@@ -257,16 +303,16 @@ func (s *grpcConsciousServer) Generate(in *pb.ContextMesssage, stream grpc.Serve
 		// call the router function
 		// and modify the prompt
 
+		s.memory.AppendInMessage(in)
+
 		out, err := s.RouteRequest(in)
 		if err != nil {
 			logrus.Errorf("LLM Error %v", err)
 			return err
 		}
 
-		err = s.memory.Save()
-		if err != nil {
-			logrus.Panicf("Cannot save conscious memory %v", err)
-		}
+		s.memory.AppendOutMessage(out)
+
 		logrus.Infof("In Received -> Response: %s", out)
 
 		// return the output response and exit stream
@@ -275,6 +321,9 @@ func (s *grpcConsciousServer) Generate(in *pb.ContextMesssage, stream grpc.Serve
 		}
 		return nil
 	} else {
+
+		// corner case, #TODO binu
+		// fix this later
 		logrus.Infof("Tool function NOT selected\n")
 
 		if in.Data != "" {

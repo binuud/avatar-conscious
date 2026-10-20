@@ -6,7 +6,7 @@
 
 import * as Common from "./common.pb"
 
-export enum contextMesssageContextType {
+export enum ContextMesssageContextType {
   CONTEXT_TYPE_IGNORE = "CONTEXT_TYPE_IGNORE",
   LLM_STREAM_QUERY = "LLM_STREAM_QUERY",
   LLM_QUERY = "LLM_QUERY",
@@ -15,7 +15,7 @@ export enum contextMesssageContextType {
   TTS = "TTS",
 }
 
-export enum contextMesssageContextRole {
+export enum ContextMesssageContextRole {
   ROLE_IGNORE = "ROLE_IGNORE",
   USER = "USER",
   ASSISTANT = "ASSISTANT",
@@ -23,10 +23,11 @@ export enum contextMesssageContextRole {
   AGENT = "AGENT",
 }
 
-export enum contextMesssageContextStatus {
+export enum ContextMesssageContextStatus {
   STATUS_IGNORE = "STATUS_IGNORE",
   SUCCESS = "SUCCESS",
   FAIL = "FAIL",
+  ONGOING = "ONGOING",
   FATAL = "FATAL",
 }
 
@@ -42,23 +43,26 @@ export type UploadResponse = {
   errorMessage?: string
 }
 
-export type contextMesssage = {
+export type ContextMesssage = {
   uuid?: string
   name?: string
   description?: string
   model?: string
-  type?: contextMesssageContextType
-  role?: contextMesssageContextRole
+  type?: ContextMesssageContextType
+  role?: ContextMesssageContextRole
   stream?: boolean
   prompt?: string
   systemPrompt?: string
+  seed?: string
+  temperature?: number
   data?: string
   bodyText?: string
+  schema?: string
   bodyBytes?: Uint8Array
   vision?: Uint8Array
   audio?: Uint8Array
   text?: Uint8Array
-  status?: contextMesssageContextStatus
+  status?: ContextMesssageContextStatus
   statusMessage?: string
   errorMessage?: string
   response?: string
@@ -66,4 +70,5 @@ export type contextMesssage = {
   reasoning?: string
   thinking?: string
   createdAt?: Common.Timestamp
+  completedAt?: Common.Timestamp
 }

@@ -110,6 +110,7 @@ protos-conscious: ## Build Go and Web Proto
 	proto/v1/conscious/metrics.proto \
 	proto/v1/conscious/common.proto \
 	proto/v1/conscious/contextMessage.proto \
+	proto/v1/conscious/memory.proto \
 	proto/v1/conscious/consciousService.proto 
 	yq eval ./gen/web/v1/conscious/openapi.yaml -o=json -P > ./gen/web/v1/conscious/openapi.json
 

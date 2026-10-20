@@ -1,0 +1,31 @@
+/// Please use the following editor setup for this file:
+
+// Tab size=4; Tabs as spaces; Clean up trailing whitepsace
+// 'make proto' will run clang-format to fix formatiing
+syntax = "proto3";
+option go_package = "github.com/binuud/avatar-conscious/gen/go/v1/conscious";
+
+import "v1/conscious/common.proto";
+import "v1/conscious/contextMessage.proto";
+
+
+message SingleContext {
+  ContextMesssage In = 1;
+  ContextMesssage Out = 2;
+}
+
+message Memory {
+
+  string uuid = 1;
+  string name = 2;
+  string description = 3;
+  string model = 4;
+
+  string systemPrompt = 6;
+  int64  seed = 7;
+  double  temperature = 8;
+
+  repeated SingleContext contexts = 9;
+
+  Timestamp createdAt = 11;
+}

@@ -63,8 +63,8 @@ export type AvatarAction = {
   model?: string
   prompt?: string
   systemPrompt?: string
-  In?: ContextMessage.contextMesssage
-  Out?: ContextMessage.contextMesssage
+  In?: ContextMessage.ContextMesssage
+  Out?: ContextMessage.ContextMesssage
 }
 
 export type AvatarLoop = {
