@@ -1,6 +1,7 @@
 package memory
 
 import (
+	pb "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	datalayer "github.com/binuud/avatar-conscious/pkg/dataLayer"
 	"github.com/binuud/avatar-conscious/pkg/utils"
 	"github.com/openai/openai-go/v3"
@@ -12,12 +13,11 @@ const (
 )
 
 type Memory struct {
-	Name         string
-	Model        string
-	SystemPrompt string
-	Temperature  float64
-	Messages     []openai.ChatCompletionMessageParamUnion
-	Tools        []openai.ChatCompletionToolUnionParam
+	// extend the proto buffer
+	pb.Memory
+	Messages       []openai.ChatCompletionMessageParamUnion
+	Tools          []openai.ChatCompletionToolUnionParam
+	CurrentContext *pb.SingleContext
 }
 
 func NewMemory() *Memory {
@@ -37,6 +37,7 @@ func NewMemory() *Memory {
 		Temperature:  0.8,
 		Messages:     messages,
 		Tools:        nil,
+		Contexts:     make([]*pb.SingleContext, 0),
 	}
 	return memory
 }
@@ -72,6 +73,32 @@ func (m *Memory) DumpMemory() {
 		logrus.Infof("Name: %s, content: %s", role, content)
 	}
 	logrus.Info("-----------------------------------------------------------------")
+}
+
+// AppendInMessage
+// Append IN Message, take the prompt and add to User Type message
+// append to memory, only append user and assistant message to memory
+func (m *Memory) AppendInMessage(in *pb.ContextMesssage) {
+	// reset current context
+	m.CurrentContext = &pb.SingleContext{
+		In: in,
+	}
+	m.AppendMemory(openai.UserMessage(in.Prompt))
+	m.Save()
+}
+
+// AppendOutMessage
+// Append OUT Message, take the prompt and add to Assistant Type message
+// append to memory, only append user and assistant message to memory
+func (m *Memory) AppendOutMessage(out *pb.ContextMesssage) {
+	if m.CurrentContext == nil {
+		m.CurrentContext = &pb.SingleContext{}
+		logrus.Errorf("AppendOutMessage: received an out message, without an in message")
+	}
+	m.CurrentContext.Out = out
+	m.Contexts = append(m.Contexts, m.CurrentContext)
+	m.AppendMemory(openai.AssistantMessage(out.Prompt))
+	m.Save()
 }
 
 // AppendMemory

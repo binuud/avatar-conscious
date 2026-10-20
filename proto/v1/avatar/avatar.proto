@@ -67,8 +67,8 @@ message AvatarAction {
   string prompt = 12;
   string systemPrompt = 13;
 
-  contextMesssage _in = 21;
-  contextMesssage _out = 22;
+  ContextMesssage _in = 21;
+  ContextMesssage _out = 22;
 }
 
 message AvatarLoop {

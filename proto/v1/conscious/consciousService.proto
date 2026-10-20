@@ -18,7 +18,7 @@ import "google/api/annotations.proto";
 
 service Conscious {
 
-  rpc In(contextMesssage) returns (contextMesssage) {
+  rpc In(ContextMesssage) returns (ContextMesssage) {
     option (google.api.http) = {
       post : "/v1/conscious/in"
       body : "*"
@@ -27,14 +27,14 @@ service Conscious {
 
   // Generate call internall routes the call to image generation
   // image description or tts, depending on the prompt
-  rpc Generate(contextMesssage) returns (stream contextMesssage) {
+  rpc Generate(ContextMesssage) returns (stream ContextMesssage) {
     option (google.api.http) = {
       post : "/v1/conscious/generate"
       body : "*"
     };
   }
 
-  rpc InStream(contextMesssage) returns (stream contextMesssage) {
+  rpc InStream(ContextMesssage) returns (stream ContextMesssage) {
     option (google.api.http) = {
       post : "/v1/conscious/inStream"
       body : "*"

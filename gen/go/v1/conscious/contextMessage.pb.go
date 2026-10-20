@@ -157,8 +157,9 @@ const (
 	ContextMesssage_STATUS_IGNORE ContextMesssage_ContextStatus = 0
 	ContextMesssage_SUCCESS       ContextMesssage_ContextStatus = 1
 	ContextMesssage_FAIL          ContextMesssage_ContextStatus = 2
+	ContextMesssage_ONGOING       ContextMesssage_ContextStatus = 3
 	// needs live user intervention
-	ContextMesssage_FATAL ContextMesssage_ContextStatus = 3
+	ContextMesssage_FATAL ContextMesssage_ContextStatus = 4
 )
 
 // Enum value maps for ContextMesssage_ContextStatus.
@@ -167,13 +168,15 @@ var (
 		0: "STATUS_IGNORE",
 		1: "SUCCESS",
 		2: "FAIL",
-		3: "FATAL",
+		3: "ONGOING",
+		4: "FATAL",
 	}
 	ContextMesssage_ContextStatus_value = map[string]int32{
 		"STATUS_IGNORE": 0,
 		"SUCCESS":       1,
 		"FAIL":          2,
-		"FATAL":         3,
+		"ONGOING":       3,
+		"FATAL":         4,
 	}
 )
 
@@ -341,15 +344,18 @@ type ContextMesssage struct {
 	// user prompt
 	Prompt string `protobuf:"bytes,11,opt,name=prompt,proto3" json:"prompt,omitempty"`
 	// system prompt
-	SystemPrompt string `protobuf:"bytes,12,opt,name=systemPrompt,proto3" json:"systemPrompt,omitempty"`
+	SystemPrompt string  `protobuf:"bytes,12,opt,name=systemPrompt,proto3" json:"systemPrompt,omitempty"`
+	Seed         int64   `protobuf:"varint,13,opt,name=seed,proto3" json:"seed,omitempty"`
+	Temperature  float32 `protobuf:"fixed32,14,opt,name=temperature,proto3" json:"temperature,omitempty"`
 	// each element of the form as a corresponding Display Element
 	// this is to save the state of form elements that have to be displayed on
 	Data          string                        `protobuf:"bytes,21,opt,name=data,proto3" json:"data,omitempty"`
 	BodyText      string                        `protobuf:"bytes,22,opt,name=bodyText,proto3" json:"bodyText,omitempty"`
-	BodyBytes     []byte                        `protobuf:"bytes,23,opt,name=bodyBytes,proto3" json:"bodyBytes,omitempty"`
-	Vision        []byte                        `protobuf:"bytes,24,opt,name=vision,proto3" json:"vision,omitempty"`
-	Audio         []byte                        `protobuf:"bytes,25,opt,name=audio,proto3" json:"audio,omitempty"`
-	Text          []byte                        `protobuf:"bytes,26,opt,name=text,proto3" json:"text,omitempty"`
+	Schema        string                        `protobuf:"bytes,23,opt,name=schema,proto3" json:"schema,omitempty"`
+	BodyBytes     []byte                        `protobuf:"bytes,24,opt,name=bodyBytes,proto3" json:"bodyBytes,omitempty"`
+	Vision        []byte                        `protobuf:"bytes,25,opt,name=vision,proto3" json:"vision,omitempty"`
+	Audio         []byte                        `protobuf:"bytes,26,opt,name=audio,proto3" json:"audio,omitempty"`
+	Text          []byte                        `protobuf:"bytes,27,opt,name=text,proto3" json:"text,omitempty"`
 	Status        ContextMesssage_ContextStatus `protobuf:"varint,31,opt,name=status,proto3,enum=ContextMesssage_ContextStatus" json:"status,omitempty"`
 	StatusMessage string                        `protobuf:"bytes,32,opt,name=statusMessage,proto3" json:"statusMessage,omitempty"`
 	ErrorMessage  string                        `protobuf:"bytes,33,opt,name=errorMessage,proto3" json:"errorMessage,omitempty"`
@@ -357,7 +363,8 @@ type ContextMesssage struct {
 	ResponseImage string                        `protobuf:"bytes,42,opt,name=responseImage,proto3" json:"responseImage,omitempty"`
 	Reasoning     string                        `protobuf:"bytes,43,opt,name=reasoning,proto3" json:"reasoning,omitempty"`
 	Thinking      string                        `protobuf:"bytes,44,opt,name=thinking,proto3" json:"thinking,omitempty"`
-	CreatedAt     *Timestamp                    `protobuf:"bytes,45,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
+	CreatedAt     *Timestamp                    `protobuf:"bytes,51,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
+	CompletedAt   *Timestamp                    `protobuf:"bytes,52,opt,name=completedAt,proto3" json:"completedAt,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -455,6 +462,20 @@ func (x *ContextMesssage) GetSystemPrompt() string {
 	return ""
 }
 
+func (x *ContextMesssage) GetSeed() int64 {
+	if x != nil {
+		return x.Seed
+	}
+	return 0
+}
+
+func (x *ContextMesssage) GetTemperature() float32 {
+	if x != nil {
+		return x.Temperature
+	}
+	return 0
+}
+
 func (x *ContextMesssage) GetData() string {
 	if x != nil {
 		return x.Data
@@ -465,6 +486,13 @@ func (x *ContextMesssage) GetData() string {
 func (x *ContextMesssage) GetBodyText() string {
 	if x != nil {
 		return x.BodyText
+	}
+	return ""
+}
+
+func (x *ContextMesssage) GetSchema() string {
+	if x != nil {
+		return x.Schema
 	}
 	return ""
 }
@@ -553,6 +581,13 @@ func (x *ContextMesssage) GetCreatedAt() *Timestamp {
 	return nil
 }
 
+func (x *ContextMesssage) GetCompletedAt() *Timestamp {
+	if x != nil {
+		return x.CompletedAt
+	}
+	return nil
+}
+
 var File_v1_conscious_contextMessage_proto protoreflect.FileDescriptor
 
 const file_v1_conscious_contextMessage_proto_rawDesc = "" +
@@ -565,32 +600,37 @@ const file_v1_conscious_contextMessage_proto_rawDesc = "" +
 	"\x0eUploadResponse\x12\x1b\n" +
 	"\tupload_id\x18\x01 \x01(\tR\buploadId\x12\x16\n" +
 	"\x06status\x18\x02 \x01(\tR\x06status\x12#\n" +
-	"\rerror_message\x18\x03 \x01(\tR\ferrorMessage\"\xfc\a\n" +
-	"\x0fcontextMesssage\x12\x12\n" +
+	"\rerror_message\x18\x03 \x01(\tR\ferrorMessage\"\x85\t\n" +
+	"\x0fContextMesssage\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x14\n" +
 	"\x05model\x18\x04 \x01(\tR\x05model\x120\n" +
-	"\x04type\x18\x06 \x01(\x0e2\x1c.contextMesssage.ContextTypeR\x04type\x120\n" +
-	"\x04role\x18\a \x01(\x0e2\x1c.contextMesssage.ContextRoleR\x04role\x12\x16\n" +
+	"\x04type\x18\x06 \x01(\x0e2\x1c.ContextMesssage.ContextTypeR\x04type\x120\n" +
+	"\x04role\x18\a \x01(\x0e2\x1c.ContextMesssage.ContextRoleR\x04role\x12\x16\n" +
 	"\x06stream\x18\b \x01(\bR\x06stream\x12\x16\n" +
 	"\x06prompt\x18\v \x01(\tR\x06prompt\x12\"\n" +
 	"\fsystemPrompt\x18\f \x01(\tR\fsystemPrompt\x12\x12\n" +
+	"\x04seed\x18\r \x01(\x03R\x04seed\x12 \n" +
+	"\vtemperature\x18\x0e \x01(\x02R\vtemperature\x12\x12\n" +
 	"\x04data\x18\x15 \x01(\tR\x04data\x12\x1a\n" +
-	"\bbodyText\x18\x16 \x01(\tR\bbodyText\x12\x1c\n" +
-	"\tbodyBytes\x18\x17 \x01(\fR\tbodyBytes\x12\x16\n" +
-	"\x06vision\x18\x18 \x01(\fR\x06vision\x12\x14\n" +
-	"\x05audio\x18\x19 \x01(\fR\x05audio\x12\x12\n" +
-	"\x04text\x18\x1a \x01(\fR\x04text\x126\n" +
-	"\x06status\x18\x1f \x01(\x0e2\x1e.contextMesssage.ContextStatusR\x06status\x12$\n" +
+	"\bbodyText\x18\x16 \x01(\tR\bbodyText\x12\x16\n" +
+	"\x06schema\x18\x17 \x01(\tR\x06schema\x12\x1c\n" +
+	"\tbodyBytes\x18\x18 \x01(\fR\tbodyBytes\x12\x16\n" +
+	"\x06vision\x18\x19 \x01(\fR\x06vision\x12\x14\n" +
+	"\x05audio\x18\x1a \x01(\fR\x05audio\x12\x12\n" +
+	"\x04text\x18\x1b \x01(\fR\x04text\x126\n" +
+	"\x06status\x18\x1f \x01(\x0e2\x1e.ContextMesssage.ContextStatusR\x06status\x12$\n" +
 	"\rstatusMessage\x18  \x01(\tR\rstatusMessage\x12\"\n" +
 	"\ferrorMessage\x18! \x01(\tR\ferrorMessage\x12\x1a\n" +
 	"\bresponse\x18) \x01(\tR\bresponse\x12$\n" +
 	"\rresponseImage\x18* \x01(\tR\rresponseImage\x12\x1c\n" +
 	"\treasoning\x18+ \x01(\tR\treasoning\x12\x1a\n" +
 	"\bthinking\x18, \x01(\tR\bthinking\x12(\n" +
-	"\tcreatedAt\x18- \x01(\v2\n" +
-	".TimestampR\tcreatedAt\"\x82\x01\n" +
+	"\tcreatedAt\x183 \x01(\v2\n" +
+	".TimestampR\tcreatedAt\x12,\n" +
+	"\vcompletedAt\x184 \x01(\v2\n" +
+	".TimestampR\vcompletedAt\"\x82\x01\n" +
 	"\vContextType\x12\x17\n" +
 	"\x13CONTEXT_TYPE_IGNORE\x10\x00\x12\x14\n" +
 	"\x10LLM_STREAM_QUERY\x10\x01\x12\r\n" +
@@ -604,12 +644,13 @@ const file_v1_conscious_contextMessage_proto_rawDesc = "" +
 	"\tASSISTANT\x10\x02\x12\n" +
 	"\n" +
 	"\x06SYSTEM\x10\x03\x12\t\n" +
-	"\x05AGENT\x10\x04\"D\n" +
+	"\x05AGENT\x10\x04\"Q\n" +
 	"\rContextStatus\x12\x11\n" +
 	"\rSTATUS_IGNORE\x10\x00\x12\v\n" +
 	"\aSUCCESS\x10\x01\x12\b\n" +
-	"\x04FAIL\x10\x02\x12\t\n" +
-	"\x05FATAL\x10\x03B8Z6github.com/binuud/avatar-conscious/gen/go/v1/consciousb\x06proto3"
+	"\x04FAIL\x10\x02\x12\v\n" +
+	"\aONGOING\x10\x03\x12\t\n" +
+	"\x05FATAL\x10\x04B8Z6github.com/binuud/avatar-conscious/gen/go/v1/consciousb\x06proto3"
 
 var (
 	file_v1_conscious_contextMessage_proto_rawDescOnce sync.Once
@@ -626,24 +667,25 @@ func file_v1_conscious_contextMessage_proto_rawDescGZIP() []byte {
 var file_v1_conscious_contextMessage_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
 var file_v1_conscious_contextMessage_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_v1_conscious_contextMessage_proto_goTypes = []any{
-	(ContextMesssage_ContextType)(0),   // 0: contextMesssage.ContextType
-	(ContextMesssage_ContextRole)(0),   // 1: contextMesssage.ContextRole
-	(ContextMesssage_ContextStatus)(0), // 2: contextMesssage.ContextStatus
+	(ContextMesssage_ContextType)(0),   // 0: ContextMesssage.ContextType
+	(ContextMesssage_ContextRole)(0),   // 1: ContextMesssage.ContextRole
+	(ContextMesssage_ContextStatus)(0), // 2: ContextMesssage.ContextStatus
 	(*UploadRequest)(nil),              // 3: UploadRequest
 	(*UploadResponse)(nil),             // 4: UploadResponse
-	(*ContextMesssage)(nil),            // 5: contextMesssage
+	(*ContextMesssage)(nil),            // 5: ContextMesssage
 	(*Timestamp)(nil),                  // 6: Timestamp
 }
 var file_v1_conscious_contextMessage_proto_depIdxs = []int32{
-	0, // 0: contextMesssage.type:type_name -> contextMesssage.ContextType
-	1, // 1: contextMesssage.role:type_name -> contextMesssage.ContextRole
-	2, // 2: contextMesssage.status:type_name -> contextMesssage.ContextStatus
-	6, // 3: contextMesssage.createdAt:type_name -> Timestamp
-	4, // [4:4] is the sub-list for method output_type
-	4, // [4:4] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	0, // 0: ContextMesssage.type:type_name -> ContextMesssage.ContextType
+	1, // 1: ContextMesssage.role:type_name -> ContextMesssage.ContextRole
+	2, // 2: ContextMesssage.status:type_name -> ContextMesssage.ContextStatus
+	6, // 3: ContextMesssage.createdAt:type_name -> Timestamp
+	6, // 4: ContextMesssage.completedAt:type_name -> Timestamp
+	5, // [5:5] is the sub-list for method output_type
+	5, // [5:5] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_v1_conscious_contextMessage_proto_init() }
