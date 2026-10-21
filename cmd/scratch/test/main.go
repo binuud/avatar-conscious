@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/binuud/avatar-conscious/pkg/utils"
+	bootstap "github.com/binuud/avatar-conscious/pkg/bootstrap"
 	"github.com/spf13/cobra"
 )
 
@@ -77,6 +77,6 @@ func main() {
 	// rootCmd.AddCommand(NewDebugCommand())
 	// rootCmd.AddCommand(NewGreetCommand())
 	fmt.Println("Started")
-	utils.Bootstrap()
+	bootstap.Bootstrap()
 	// Execute()
 }

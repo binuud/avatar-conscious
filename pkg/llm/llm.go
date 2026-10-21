@@ -31,10 +31,10 @@ func MakeLLMGetModels() ([]*protoV1.Model, error) {
 
 	page, err := client.Models.List(context.TODO())
 	if err != nil {
-		panic(err.Error())
+		return nil, fmt.Errorf("cannot connect to llm server %v", err)
 	}
 
-	fmt.Println("Available Models:")
+	logrus.Println("Available Models:")
 	// Loop through the results automatically handled by the SDK iterator
 	for _, item := range page.Data {
 		model := &protoV1.Model{
@@ -43,7 +43,7 @@ func MakeLLMGetModels() ([]*protoV1.Model, error) {
 			Created: item.Created,
 			OwnedBy: item.OwnedBy,
 		}
-		fmt.Printf("- %s (Owned by: %s)\n", model.Id, model.OwnedBy)
+		logrus.Printf("- %s (Owned by: %s)\n", model.Id, model.OwnedBy)
 		models = append(models, model)
 	}
 

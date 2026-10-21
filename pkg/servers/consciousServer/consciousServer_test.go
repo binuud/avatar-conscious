@@ -19,7 +19,7 @@ import (
 
 func TestConsciousServer_LLMChat(t *testing.T) {
 
-	memory := memory.NewMemory()
+	memory := memory.NewMemory("test-memory")
 
 	prompt := "What is 8 + 8"
 	t.Logf("LLM Prompt: %s", prompt)
@@ -37,7 +37,7 @@ func TestConsciousServer_LLMChat(t *testing.T) {
 func TestConsciousServer_LLMImageProcess(t *testing.T) {
 	// does not work
 	// image describe request does not work
-	memory := memory.NewMemory()
+	memory := memory.NewMemory("test-memory")
 
 	// // memory.Model = "ai/gemma3:4B-Q4_K_M"
 
@@ -76,7 +76,7 @@ func TestConsciousServer_LLMImageProcess(t *testing.T) {
 
 func TestConsciousServer_LLMToolFunction(t *testing.T) {
 
-	memory := memory.NewMemory()
+	memory := memory.NewMemory("test-memory")
 
 	// test case for checking tools,
 	// test with a sample weather function

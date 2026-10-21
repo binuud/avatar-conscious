@@ -73,7 +73,7 @@ func (t AiGenerateImageTool) Handler(args string) (string, error) {
 
 func GetAiImage(prompt string) (string, error) {
 
-	memory := memory.NewMemory()
+	memory := memory.NewMemory("")
 	memory.Model = utils.GetEnv("IMAGE_MODEL", "Runpod/FLUX.2-klein-4B-mflux-4bit")
 	memory.AppendMemory(openai.UserMessage(prompt))
 

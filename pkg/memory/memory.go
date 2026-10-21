@@ -1,9 +1,13 @@
 package memory
 
 import (
+	"fmt"
+	"io"
+
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	datalayer "github.com/binuud/avatar-conscious/pkg/dataLayer"
 	"github.com/binuud/avatar-conscious/pkg/utils"
+
 	"github.com/openai/openai-go/v3"
 	"github.com/sirupsen/logrus"
 )
@@ -20,7 +24,7 @@ type Memory struct {
 	CurrentContext *pb.SingleContext
 }
 
-func NewMemory() *Memory {
+func NewMemory(name string) *Memory {
 
 	systemPrompt := "You are a helpful assistant. You must use the tools provided to answer questions. Very polite, friendly with children. Do not use curse words. Do not use bad words. Do not use any smilies, emojis, or symbols in your responses from now on."
 
@@ -31,7 +35,7 @@ func NewMemory() *Memory {
 	model := utils.GetEnv("LLM_MODEL", "lmstudio-community/Qwen3.5-9B-MLX-4bit")
 
 	memory := &Memory{
-		Name:         "test-memory",
+		Name:         name,
 		Model:        model,
 		SystemPrompt: systemPrompt,
 		Temperature:  0.8,
@@ -39,10 +43,19 @@ func NewMemory() *Memory {
 		Tools:        nil,
 		Contexts:     make([]*pb.SingleContext, 0),
 	}
+
+	if name == "" {
+		// unnamed memory is use and throw, they are not saved
+	} else {
+		// if memory is named, try to load it from cache
+		// memory with names _, is use and throw memory, ignore same
+		memory.Load(name)
+	}
+
 	return memory
 }
 
-func (m *Memory) DumpMemory() {
+func (m *Memory) DumpMemory(w io.Writer) {
 	logrus.Info("-----------------------------------------------------------------")
 	logrus.Infof("Name: %s, Model: %s, Temp: %f", m.Name, m.Model, m.Temperature)
 	logrus.Infof("System Prompt: %s", m.SystemPrompt)
@@ -69,13 +82,18 @@ func (m *Memory) DumpMemory() {
 			role = "Tool"
 			content = msg.OfTool.Content.OfString.Value
 		}
-
+		if w != nil {
+			// write to an io writer, so UI client or non standard client
+			// can view the output
+			str := fmt.Sprintf("Name: %s, content: %s", role, content)
+			w.Write([]byte(str))
+		}
 		logrus.Infof("Name: %s, content: %s", role, content)
 	}
 	logrus.Info("-----------------------------------------------------------------")
 }
 
-// AppendInMessage
+// AppendInMessage()
 // Append IN Message, take the prompt and add to User Type message
 // append to memory, only append user and assistant message to memory
 func (m *Memory) AppendInMessage(in *pb.ContextMesssage) {
@@ -111,10 +129,10 @@ func (m *Memory) AppendMemory(message openai.ChatCompletionMessageParamUnion) {
 }
 
 // Load function to load from model file
-func (m *Memory) Load() error {
+func (m *Memory) Load(name string) error {
 
 	// Read profile back (Go automatically infers type T from your variable assignment)
-	localMemory, err := datalayer.ReadBinary[Memory](datalayer.GetFileAbsolutePath(MEMORY_DIRECTORY, m.Name))
+	localMemory, err := datalayer.ReadBinary[Memory](datalayer.GetFileAbsolutePath(MEMORY_DIRECTORY, name))
 	if err != nil {
 		return err
 	}
@@ -124,6 +142,9 @@ func (m *Memory) Load() error {
 
 func (m *Memory) Save() error {
 
+	if m.Name == "" {
+		return nil
+	}
 	fullFileName := datalayer.GetFileAbsolutePath(MEMORY_DIRECTORY, m.Name)
 	// Save list of configs
 	if err := datalayer.SaveBinary(fullFileName, m); err != nil {

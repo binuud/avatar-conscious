@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os/exec"
 	"regexp"
+	"runtime"
 	"strconv"
 	"time"
 
@@ -34,7 +35,8 @@ func NewSystemMetrics() (*pb.SystemMetrics, error) {
 
 	gpuUsage := 0
 	gpuMem := 0
-	if __IsGpuMetricsAvailable {
+
+	if runtime.GOOS == "darwin" {
 		gpuUsage, gpuMem, err = GetGpuMetrics()
 		if err != nil {
 			logrus.Fatalf("Cannot parse GetGpuMetrics output: %v\n", err)

@@ -23,6 +23,7 @@ import (
 	datalayer "github.com/binuud/avatar-conscious/pkg/dataLayer"
 	"github.com/binuud/avatar-conscious/pkg/llm"
 	"github.com/binuud/avatar-conscious/pkg/memory"
+	"github.com/binuud/avatar-conscious/pkg/slashCommands"
 	"github.com/binuud/avatar-conscious/pkg/utils"
 	grpc "google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -66,15 +67,7 @@ func NewGrpcConsciousServer() *grpcConsciousServer {
 		Messages:     messages,
 	}
 
-	err := memory.Load()
-
-	// do not save tools because of issue with saving hash map
-	if err != nil {
-		logrus.Infof("No Default memory found")
-	} else {
-		logrus.Infof("Default memory found and loaded")
-	}
-	memory.DumpMemory()
+	memory.DumpMemory(nil)
 	logrus.Infof("Starting Conscious with %s model", LLM_MODEL)
 
 	client := openai.NewClient(
@@ -259,8 +252,8 @@ func (s *grpcConsciousServer) Generate(in *pb.ContextMesssage, stream grpc.Serve
 		var buf bytes.Buffer
 		// remove the first slash and handle the command
 
-		utils.SetStream(&buf)
-		utils.HandleSlashCommand(in.Prompt[1:])
+		slashCommands.SetStream(&buf)
+		slashCommands.HandleSlashCommand(in.Prompt[1:])
 		out := &pb.ContextMesssage{
 			Response: buf.String(),
 		}
