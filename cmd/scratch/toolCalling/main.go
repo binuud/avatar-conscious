@@ -23,7 +23,7 @@ func registerTools() {
 
 func CheckImageDescriber() string {
 
-	memory := memory.NewMemory()
+	memory := memory.NewMemory("")
 	memory.Tools = tools.GetCommonTools()
 	prompt := "Describe the image from file sampleLicense.jpg, and get the license number and driver name, in format {'license': [LICENSE NUMBER],'name':'[NAME OF PERSON']}"
 	memory.Messages = append(memory.Messages, openai.UserMessage(prompt))
@@ -49,7 +49,7 @@ func CheckImageDescriber() string {
 
 func CheckImageGeneration() {
 
-	memory := memory.NewMemory()
+	memory := memory.NewMemory("")
 	memory.Tools = tools.GetCommonTools()
 
 	prompt := "Create an image of a cat, crawling on a desk, trying to catch a mouse"
@@ -72,7 +72,7 @@ func CheckImageGeneration() {
 }
 
 func CheckWebFetch(systemPrompt string) {
-	memory := memory.NewMemory()
+	memory := memory.NewMemory("")
 	memory.Tools = tools.GetCommonTools()
 
 	prompt := "Get license details of the person, strip spaces in the license number , using http get api request to url http://localhost:8081/checklicense/[license Number]"
@@ -98,7 +98,7 @@ func CheckWebFetch(systemPrompt string) {
 
 func CheckFileContents() {
 
-	memory := memory.NewMemory()
+	memory := memory.NewMemory("")
 
 	tools := toolRegistry.NewToolRegistry()
 	tools.AddTool(commonTools.NewToolFileContents())

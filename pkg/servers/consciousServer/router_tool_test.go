@@ -13,7 +13,8 @@ import (
 
 func Test_LLM_TOOL(t *testing.T) {
 
-	memory := memory.NewMemory()
+	memoryName := "test-memory"
+	memory := memory.NewMemory(memoryName)
 
 	tests := []struct {
 		name       string

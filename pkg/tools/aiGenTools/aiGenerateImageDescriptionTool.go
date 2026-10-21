@@ -81,7 +81,7 @@ func (t AiGenerateImageDescriptionTool) Handler(args string) (string, error) {
 
 func DescribeImage(prompt string, fileName string) (string, error) {
 
-	memory := memory.NewMemory()
+	memory := memory.NewMemory("")
 	memory.Model = utils.GetEnv("VISION_MODEL", "lmstudio-community/Qwen3.5-9B-MLX-4bit")
 	memory.AppendMemory(openai.UserMessage(prompt))
 

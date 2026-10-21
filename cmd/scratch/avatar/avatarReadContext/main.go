@@ -42,9 +42,9 @@ func registerTools() {
 func parseAvatar() {
 
 	logrus.Infof("Read avatar file")
-	memory := memory.NewMemory()
+	memory := memory.NewMemory("")
 	// Read the avatar.md file
-	filePath := "dataVolume/avatars/election-officer.md"
+	filePath := "dataVolume/avatarStore/election-officer.md"
 	fileBytes, err := os.ReadFile(filePath)
 	if err != nil {
 		fmt.Printf("❌ Error reading %s: %v\n", filePath, err)
@@ -73,25 +73,29 @@ func parseAvatar() {
 	// 	logrus.Fatalf("client: error llm chat request: %v \n", err)
 	// }
 
-	step := map[string]any{
-		"type": "object",
-		"properties": map[string]any{
-			"name":        map[string]any{"type": "string"},
-			"description": map[string]any{"type": "string"},
-			"prompt":      map[string]any{"type": "string"},
-		},
-		"required":             []string{"explanation", "output"},
-		"additionalProperties": false,
-	}
-	schema := map[string]any{
-		"type": "object",
-		"properties": map[string]any{
-			"steps":       map[string]any{"type": "array", "items": step},
-			"name":        map[string]any{"type": "string"},
-			"description": map[string]any{"type": "string"},
-		},
-		"required":             []string{"steps", "final_answer"},
-		"additionalProperties": false,
+	// step := map[string]any{
+	// 	"type": "object",
+	// 	"properties": map[string]any{
+	// 		"name":        map[string]any{"type": "string"},
+	// 		"description": map[string]any{"type": "string"},
+	// 		"prompt":      map[string]any{"type": "string"},
+	// 	},
+	// 	"required":             []string{"explanation", "output"},
+	// 	"additionalProperties": false,
+	// }
+	// schema := map[string]any{
+	// 	"type": "object",
+	// 	"properties": map[string]any{
+	// 		"steps":       map[string]any{"type": "array", "items": step},
+	// 		"name":        map[string]any{"type": "string"},
+	// 		"description": map[string]any{"type": "string"},
+	// 	},
+	// 	"required":             []string{"steps", "final_answer"},
+	// 	"additionalProperties": false,
+	// }
+	schema, err := getJsonSchemaMap()
+	if err != nil {
+		logrus.Fatalf("parseAvatar: %v", err)
 	}
 
 	output, err := llm.MakeLLMSchemaResponseRequest(completePrompt, systemPrompt, memory.Model, schema)
@@ -108,22 +112,27 @@ func parseAvatar() {
 	fmt.Printf("Struct %+v", in)
 }
 
-func getJSONSchema() (*jsonschema.Schema, error) {
-	// Infer the schema from the Go struct type
-	schema, err := jsonschema.For[Avatar](nil)
+func getJsonSchemaMap() (map[string]any, error) {
+
+	var schemaMap map[string]any
+
+	schemaJSON, err := jsonschema.For[Avatar](nil)
 	if err != nil {
 		log.Fatalf("Failed to run  jsonschema: %v", err)
 	}
-	return schema, nil
 
-	// // Marshal to JSON for printing
-	// output, err := json.MarshalIndent(schema, "", "  ")
-	// if err != nil {
-	// 	log.Fatalf("Failed to marshal schema: %v", err)
-	// }
+	output, err := json.MarshalIndent(schemaJSON, "", "  ")
+	if err != nil {
+		log.Fatalf("Failed to marshal schema: %v", err)
+	}
 
-	// fmt.Println(string(output))
-	// return string(output), nil
+	// 3. Unmarshal the JSON bytes into your map
+	err = json.Unmarshal(output, &schemaMap)
+	if err != nil {
+		fmt.Printf("Error unmarshalling schema: %v\n", err)
+		return nil, err
+	}
+	return schemaMap, nil
 }
 
 func runAvatar() {
@@ -149,7 +158,7 @@ func runAvatar() {
 		logrus.Fatalf("Cannot unmarshall %v", err)
 	}
 
-	memory := memory.NewMemory()
+	memory := memory.NewMemory("")
 	memory.Tools = tools.GetCommonTools()
 
 	for i, step := range in.Steps {
@@ -178,6 +187,7 @@ func runAvatar() {
 
 func main() {
 	registerTools()
-	// parseAvatar()
-	runAvatar()
+
+	parseAvatar()
+	// runAvatar()
 }
