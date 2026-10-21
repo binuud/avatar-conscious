@@ -9,6 +9,7 @@
 package consciousServer
 
 import (
+	"bytes"
 	"context"
 	"encoding/base64"
 	"encoding/json"
@@ -249,9 +250,26 @@ func (s *grpcConsciousServer) InStream(in *pb.ContextMesssage, stream grpc.Serve
 // Then calls the appropriate function
 func (s *grpcConsciousServer) Generate(in *pb.ContextMesssage, stream grpc.ServerStreamingServer[pb.ContextMesssage]) error {
 
+	in.CreatedAt = utils.GetTimeStamp()
 	logrus.Infof("Generate Received -> Request: %s", in.Prompt)
 
-	in.CreatedAt = utils.GetTimeStamp()
+	// do not add to memory
+	if strings.HasPrefix(in.Prompt, "/") {
+		// if prompt starts with a "/" treat is as a command, and not a prompt
+		var buf bytes.Buffer
+		// remove the first slash and handle the command
+
+		utils.SetStream(&buf)
+		utils.HandleSlashCommand(in.Prompt[1:])
+		out := &pb.ContextMesssage{
+			Response: buf.String(),
+		}
+		if err := stream.Send(out); err != nil {
+			return err
+		}
+		return nil
+
+	}
 
 	// do not add to memory
 	// till tool completion is done

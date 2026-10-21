@@ -13,4 +13,5 @@ func Bootstrap() {
 		__IsDarwin = true
 	}
 
+	BootstrapSlashCommands()
 }
