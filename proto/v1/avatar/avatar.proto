@@ -81,8 +81,8 @@ message AvatarLoop {
   AvatarAction loopAction = 8;
 }
 
-// Avatar message representing a robot or avatar entity
-message Avatar {
+// from the front matter
+message AvatarMeta {
   // Unique identifier for the avatar
   string uuid = 1;
   
@@ -91,6 +91,13 @@ message Avatar {
   
   // Description of the avatar
   string description = 3;
+
+  repeated string triggers = 4;
+}
+// Avatar message representing a robot or avatar entity
+message Avatar {
+
+  AvatarMeta meta = 1;
   
   // Permissions granted to the avatar
   Permission permissions = 4;
@@ -99,4 +106,7 @@ message Avatar {
   string systemPrompt = 5;
 
   repeated AvatarLoop loops = 6;
+
+  // the complete data of the Avatar file
+  string data = 7;
 }

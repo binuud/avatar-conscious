@@ -77,11 +77,17 @@ export type AvatarLoop = {
   loopAction?: AvatarAction
 }
 
-export type Avatar = {
+export type AvatarMeta = {
   uuid?: string
   name?: string
   description?: string
+  triggers?: string[]
+}
+
+export type Avatar = {
+  meta?: AvatarMeta
   permissions?: Permission
   systemPrompt?: string
   loops?: AvatarLoop[]
+  data?: string
 }

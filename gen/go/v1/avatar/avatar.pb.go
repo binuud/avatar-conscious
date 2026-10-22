@@ -582,27 +582,96 @@ func (x *AvatarLoop) GetLoopAction() *AvatarAction {
 	return nil
 }
 
-// Avatar message representing a robot or avatar entity
-type Avatar struct {
+// from the front matter
+type AvatarMeta struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
 	// Unique identifier for the avatar
 	Uuid string `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
 	// Name of the avatar
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// Description of the avatar
-	Description string `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Description   string   `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Triggers      []string `protobuf:"bytes,4,rep,name=triggers,proto3" json:"triggers,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AvatarMeta) Reset() {
+	*x = AvatarMeta{}
+	mi := &file_v1_avatar_avatar_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AvatarMeta) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AvatarMeta) ProtoMessage() {}
+
+func (x *AvatarMeta) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_avatar_avatar_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AvatarMeta.ProtoReflect.Descriptor instead.
+func (*AvatarMeta) Descriptor() ([]byte, []int) {
+	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *AvatarMeta) GetUuid() string {
+	if x != nil {
+		return x.Uuid
+	}
+	return ""
+}
+
+func (x *AvatarMeta) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *AvatarMeta) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *AvatarMeta) GetTriggers() []string {
+	if x != nil {
+		return x.Triggers
+	}
+	return nil
+}
+
+// Avatar message representing a robot or avatar entity
+type Avatar struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Meta  *AvatarMeta            `protobuf:"bytes,1,opt,name=meta,proto3" json:"meta,omitempty"`
 	// Permissions granted to the avatar
 	Permissions Permission `protobuf:"varint,4,opt,name=permissions,proto3,enum=avatar.Permission" json:"permissions,omitempty"`
 	// System prompt for the avatar
-	SystemPrompt  string        `protobuf:"bytes,5,opt,name=systemPrompt,proto3" json:"systemPrompt,omitempty"`
-	Loops         []*AvatarLoop `protobuf:"bytes,6,rep,name=loops,proto3" json:"loops,omitempty"`
+	SystemPrompt string        `protobuf:"bytes,5,opt,name=systemPrompt,proto3" json:"systemPrompt,omitempty"`
+	Loops        []*AvatarLoop `protobuf:"bytes,6,rep,name=loops,proto3" json:"loops,omitempty"`
+	// the complete data of the Avatar file
+	Data          string `protobuf:"bytes,7,opt,name=data,proto3" json:"data,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Avatar) Reset() {
 	*x = Avatar{}
-	mi := &file_v1_avatar_avatar_proto_msgTypes[4]
+	mi := &file_v1_avatar_avatar_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -614,7 +683,7 @@ func (x *Avatar) String() string {
 func (*Avatar) ProtoMessage() {}
 
 func (x *Avatar) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_avatar_avatar_proto_msgTypes[4]
+	mi := &file_v1_avatar_avatar_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -627,28 +696,14 @@ func (x *Avatar) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Avatar.ProtoReflect.Descriptor instead.
 func (*Avatar) Descriptor() ([]byte, []int) {
-	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{4}
+	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *Avatar) GetUuid() string {
+func (x *Avatar) GetMeta() *AvatarMeta {
 	if x != nil {
-		return x.Uuid
+		return x.Meta
 	}
-	return ""
-}
-
-func (x *Avatar) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
-}
-
-func (x *Avatar) GetDescription() string {
-	if x != nil {
-		return x.Description
-	}
-	return ""
+	return nil
 }
 
 func (x *Avatar) GetPermissions() Permission {
@@ -670,6 +725,13 @@ func (x *Avatar) GetLoops() []*AvatarLoop {
 		return x.Loops
 	}
 	return nil
+}
+
+func (x *Avatar) GetData() string {
+	if x != nil {
+		return x.Data
+	}
+	return ""
 }
 
 var File_v1_avatar_avatar_proto protoreflect.FileDescriptor
@@ -721,14 +783,19 @@ const file_v1_avatar_avatar_proto_rawDesc = "" +
 	"runActions\x124\n" +
 	"\n" +
 	"loopAction\x18\b \x01(\v2\x14.avatar.AvatarActionR\n" +
-	"loopAction\"\xd6\x01\n" +
-	"\x06Avatar\x12\x12\n" +
+	"loopAction\"r\n" +
+	"\n" +
+	"AvatarMeta\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
-	"\vdescription\x18\x03 \x01(\tR\vdescription\x124\n" +
+	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x1a\n" +
+	"\btriggers\x18\x04 \x03(\tR\btriggers\"\xc8\x01\n" +
+	"\x06Avatar\x12&\n" +
+	"\x04meta\x18\x01 \x01(\v2\x12.avatar.AvatarMetaR\x04meta\x124\n" +
 	"\vpermissions\x18\x04 \x01(\x0e2\x12.avatar.PermissionR\vpermissions\x12\"\n" +
 	"\fsystemPrompt\x18\x05 \x01(\tR\fsystemPrompt\x12(\n" +
-	"\x05loops\x18\x06 \x03(\v2\x12.avatar.AvatarLoopR\x05loops*e\n" +
+	"\x05loops\x18\x06 \x03(\v2\x12.avatar.AvatarLoopR\x05loops\x12\x12\n" +
+	"\x04data\x18\a \x01(\tR\x04data*e\n" +
 	"\n" +
 	"Permission\x12\x15\n" +
 	"\x11PERMISSION_IGNORE\x10\x00\x12\r\n" +
@@ -771,7 +838,7 @@ func file_v1_avatar_avatar_proto_rawDescGZIP() []byte {
 }
 
 var file_v1_avatar_avatar_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
-var file_v1_avatar_avatar_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_v1_avatar_avatar_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_v1_avatar_avatar_proto_goTypes = []any{
 	(Permission)(0),                   // 0: avatar.Permission
 	(AvatarActionType)(0),             // 1: avatar.AvatarActionType
@@ -780,26 +847,28 @@ var file_v1_avatar_avatar_proto_goTypes = []any{
 	(*Tool)(nil),                      // 4: avatar.Tool
 	(*AvatarAction)(nil),              // 5: avatar.AvatarAction
 	(*AvatarLoop)(nil),                // 6: avatar.AvatarLoop
-	(*Avatar)(nil),                    // 7: avatar.Avatar
-	nil,                               // 8: avatar.Tool.ParametersEntry
-	(*conscious.ContextMesssage)(nil), // 9: ContextMesssage
+	(*AvatarMeta)(nil),                // 7: avatar.AvatarMeta
+	(*Avatar)(nil),                    // 8: avatar.Avatar
+	nil,                               // 9: avatar.Tool.ParametersEntry
+	(*conscious.ContextMesssage)(nil), // 10: ContextMesssage
 }
 var file_v1_avatar_avatar_proto_depIdxs = []int32{
-	8,  // 0: avatar.Tool.parameters:type_name -> avatar.Tool.ParametersEntry
+	9,  // 0: avatar.Tool.parameters:type_name -> avatar.Tool.ParametersEntry
 	1,  // 1: avatar.AvatarAction.type:type_name -> avatar.AvatarActionType
 	2,  // 2: avatar.AvatarAction._status:type_name -> avatar.AvatarActionStatus
-	9,  // 3: avatar.AvatarAction._in:type_name -> ContextMesssage
-	9,  // 4: avatar.AvatarAction._out:type_name -> ContextMesssage
+	10, // 3: avatar.AvatarAction._in:type_name -> ContextMesssage
+	10, // 4: avatar.AvatarAction._out:type_name -> ContextMesssage
 	5,  // 5: avatar.AvatarLoop.runActions:type_name -> avatar.AvatarAction
 	5,  // 6: avatar.AvatarLoop.loopAction:type_name -> avatar.AvatarAction
-	0,  // 7: avatar.Avatar.permissions:type_name -> avatar.Permission
-	6,  // 8: avatar.Avatar.loops:type_name -> avatar.AvatarLoop
-	3,  // 9: avatar.Tool.ParametersEntry.value:type_name -> avatar.ToolParams
-	10, // [10:10] is the sub-list for method output_type
-	10, // [10:10] is the sub-list for method input_type
-	10, // [10:10] is the sub-list for extension type_name
-	10, // [10:10] is the sub-list for extension extendee
-	0,  // [0:10] is the sub-list for field type_name
+	7,  // 7: avatar.Avatar.meta:type_name -> avatar.AvatarMeta
+	0,  // 8: avatar.Avatar.permissions:type_name -> avatar.Permission
+	6,  // 9: avatar.Avatar.loops:type_name -> avatar.AvatarLoop
+	3,  // 10: avatar.Tool.ParametersEntry.value:type_name -> avatar.ToolParams
+	11, // [11:11] is the sub-list for method output_type
+	11, // [11:11] is the sub-list for method input_type
+	11, // [11:11] is the sub-list for extension type_name
+	11, // [11:11] is the sub-list for extension extendee
+	0,  // [0:11] is the sub-list for field type_name
 }
 
 func init() { file_v1_avatar_avatar_proto_init() }
@@ -813,7 +882,7 @@ func file_v1_avatar_avatar_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_v1_avatar_avatar_proto_rawDesc), len(file_v1_avatar_avatar_proto_rawDesc)),
 			NumEnums:      3,
-			NumMessages:   6,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

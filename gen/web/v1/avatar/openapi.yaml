@@ -94,12 +94,8 @@ components:
     Avatar:
       type: object
       properties:
-        uuid:
-          type: string
-        name:
-          type: string
-        description:
-          type: string
+        meta:
+          $ref: '#/components/schemas/AvatarMeta'
         permissions:
           $ref: '#/components/schemas/Permission'
         systemPrompt:
@@ -108,6 +104,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AvatarLoop'
+        data:
+          type: string
     AvatarAction:
       type: object
       properties:
@@ -179,6 +177,19 @@ components:
             $ref: '#/components/schemas/AvatarAction'
         loopAction:
           $ref: '#/components/schemas/AvatarAction'
+    AvatarMeta:
+      type: object
+      properties:
+        uuid:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        triggers:
+          type: array
+          items:
+            type: string
     AvatarStoreCreateRequest:
       type: object
       properties:
