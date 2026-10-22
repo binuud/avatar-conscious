@@ -3,6 +3,7 @@ module github.com/binuud/avatar-conscious
 go 1.27.2
 
 require (
+	github.com/adrg/frontmatter v0.2.0
 	github.com/google/jsonschema-go v0.4.3
 	github.com/google/uuid v1.6.0
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.32.0
@@ -20,6 +21,7 @@ require (
 )
 
 require (
+	github.com/BurntSushi/toml v1.4.1-0.20240526193622-a339e1f7089c // indirect
 	github.com/coder/websocket v1.8.15 // indirect
 	github.com/ebitengine/purego v0.6.0-alpha.3.0.20240117154336-babd452e909b // indirect
 	github.com/go-ole/go-ole v1.2.6 // indirect
@@ -40,4 +42,5 @@ require (
 	golang.org/x/term v0.47.0 // indirect
 	golang.org/x/text v0.43.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20261012220534-4341edf3f941 // indirect
+	gopkg.in/yaml.v2 v2.3.0 // indirect
 )

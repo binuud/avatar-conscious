@@ -13,14 +13,15 @@ export LLM_MODEL="lmstudio-community/Qwen3.5-9B-MLX-4bit"
 # export LLM_MODEL="lmstudio-community/Qwen3.5-9B-MLX-4bit"
 export IMAGE_QUERY_MODEL="lmstudio-community/Qwen3.5-9B-MLX-4bit"
 
-export FILE_STORE_PATH=${PWD}/dataVolume/
+export FILE_STORE_PATH=${PWD}/dataVolume
 export SERVABLE_DIRECTORY=${PWD}/dataVolume/gen
 
 
 # go test ./pkg/...
 # go test ./pkg/...  -v
 # go test -v  ./pkg/servers/avatar
-go test -v  ./pkg/settings
+go test -v  ./pkg/servers/avatarStoreServer
+#go test -v  ./pkg/settings
 # go test -v --run Test_Memory ./pkg/servers/consciousServer
 # go test ./pkg/... -v -run "Test_RouterViaTool"
 # go test -v --run Test_LLM_TOOL ./pkg/servers/consciousServer

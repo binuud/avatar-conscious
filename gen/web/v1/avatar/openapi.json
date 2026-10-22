@@ -153,14 +153,8 @@
       "Avatar": {
         "type": "object",
         "properties": {
-          "uuid": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
+          "meta": {
+            "$ref": "#/components/schemas/AvatarMeta"
           },
           "permissions": {
             "$ref": "#/components/schemas/Permission"
@@ -173,6 +167,9 @@
             "items": {
               "$ref": "#/components/schemas/AvatarLoop"
             }
+          },
+          "data": {
+            "type": "string"
           }
         }
       },
@@ -274,6 +271,26 @@
           },
           "loopAction": {
             "$ref": "#/components/schemas/AvatarAction"
+          }
+        }
+      },
+      "AvatarMeta": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "triggers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },

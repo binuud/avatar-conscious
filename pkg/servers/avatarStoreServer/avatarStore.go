@@ -11,14 +11,31 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+const (
+	AVATAR_DIRECTORY       = "avatars"
+	AVATAR_STORE_DIRECTORY = "avatarStore"
+)
+
 type avatarStore struct {
 	sync.RWMutex
 	avatars map[string]*pb.Avatar
 }
 
 func NewAvatarStore() *avatarStore {
+
+	entries, err := ListAvatarsFromStore()
+	if err != nil {
+		return nil
+	}
+
+	avatars := make(map[string]*pb.Avatar)
+
+	for _, entry := range entries {
+		avatars[entry.Meta.Uuid] = entry
+	}
+
 	return &avatarStore{
-		avatars: make(map[string]*pb.Avatar),
+		avatars: avatars,
 	}
 }
 
@@ -62,6 +79,7 @@ func (s *avatarStore) List(limit, offset int32) ([]*pb.Avatar, int32) {
 	defer s.RUnlock()
 
 	avatars := make([]*pb.Avatar, 0)
+
 	count := 0
 
 	// Simple iteration (implement proper sorting/filtering as needed)
@@ -69,9 +87,9 @@ func (s *avatarStore) List(limit, offset int32) ([]*pb.Avatar, int32) {
 		if count >= int(limit) {
 			break
 		}
-		if count >= int(offset) {
-			break
-		}
+		// if count >= int(offset) {
+		// 	break
+		// }
 		avatars = append(avatars, avatar)
 		count++
 	}
@@ -86,9 +104,11 @@ func (s *avatarStore) Create(name, description string, permissions pb.Permission
 	uuid := fmt.Sprintf("avatar-%d", time.Now().UnixNano())
 
 	avatar := &pb.Avatar{
-		Uuid:         utils.GenerateUUID(),
-		Name:         name,
-		Description:  description,
+		Meta: &pb.AvatarMeta{
+			Uuid:        utils.GenerateUUID(),
+			Name:        name,
+			Description: description,
+		},
 		Permissions:  permissions,
 		SystemPrompt: systemPrompt,
 	}
@@ -108,8 +128,8 @@ func (s *avatarStore) Update(uuid string, name, description string, permissions 
 		return nil, status.Error(codes.NotFound, "avatar not found")
 	}
 
-	avatar.Name = name
-	avatar.Description = description
+	avatar.Meta.Name = name
+	avatar.Meta.Description = description
 	avatar.Permissions = permissions
 	avatar.SystemPrompt = systemPrompt
 
