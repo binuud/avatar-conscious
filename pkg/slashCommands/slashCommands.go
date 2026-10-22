@@ -17,6 +17,7 @@ import (
 	"github.com/binuud/avatar-conscious/pkg/llm"
 	"github.com/binuud/avatar-conscious/pkg/memory"
 	"github.com/binuud/avatar-conscious/pkg/servers/avatar"
+	"github.com/binuud/avatar-conscious/pkg/settings"
 	"github.com/spf13/cobra"
 )
 
@@ -69,5 +70,7 @@ func Bootstrap() {
 	SlashCommands.AddCommand(llm.NewModelsCommand())
 	SlashCommands.AddCommand(avatar.NewAvatarCommand())
 	SlashCommands.AddCommand(memory.NewMemoryCommand())
+	SlashCommands.AddCommand(settings.NewSettingsCommand())
+
 	Execute()
 }

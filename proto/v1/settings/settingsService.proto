@@ -1,0 +1,67 @@
+/// Please use the following editor setup for this file:
+
+// Tab size=4; Tabs as spaces; Clean up trailing whitepsace
+// 'make proto' will run clang-format to fix formatiing
+syntax = "proto3";
+package settings;
+option go_package = "github.com/binuud/avatar-conscious/gen/go/v1/settings";
+
+import "v1/settings/settings.proto";
+// for http annotations
+import "google/api/annotations.proto";
+
+
+service Preferences {
+
+  // get a preference by name or key
+  rpc Get(GetRequest) returns (GetResponse) {
+    option (google.api.http) = {
+      get : "/v1/preferences/get"
+    };
+  }
+
+  // get all non internal preferences
+  rpc List(ListRequest) returns (ListResponse) {
+    option (google.api.http) = {
+      get : "/v1/preferences/list"
+    };
+  }
+
+  // set a preference by name or key
+  rpc Set(SetRequest) returns (SetResponse) {
+    option (google.api.http) = {
+      post : "/v1/preferences/set"
+      body : "*"
+    };
+  }
+
+}
+
+message GetRequest {
+  string name = 1;
+}
+
+message GetResponse {
+  Config entry = 1;
+}
+
+message ListRequest {
+  string name = 1;
+}
+
+// List Reponse, groups settings by group
+// each group can have an array of config entries
+// so settings can be group like LLM, UI, DATABASE etc
+// this makes UI effort easier
+message ListResponse {
+  map<string, ConfigList> groups = 1;
+}
+
+message SetRequest {
+  string name = 1;
+  Config entry = 2;
+}
+
+message SetResponse {
+  Config entry = 1;
+}

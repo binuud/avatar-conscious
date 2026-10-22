@@ -88,11 +88,11 @@ errcheck:
 
 ### the ordering of sub targets is very important
 ### do not change
-protos: protos-conscious protos-avatar ## run all protos
+protos: protos-settings protos-conscious protos-avatar ## run all protos
 
 
 ## protos
-protos-conscious: ## Build Go and Web Proto
+protos-conscious: ## Build Go and Web Proto for Conscious module
 	mkdir -p gen/go gen/web/v1/conscious
 # ****** Conscious AiModule 
 	$(PROTOC) -I=./proto/.  \
@@ -114,9 +114,9 @@ protos-conscious: ## Build Go and Web Proto
 	proto/v1/conscious/consciousService.proto 
 	yq eval ./gen/web/v1/conscious/openapi.yaml -o=json -P > ./gen/web/v1/conscious/openapi.json
 
-protos-avatar: ## Build Go and Web Proto
+protos-avatar: ## Build Go and Web Proto for avatar module
 	mkdir -p gen/go gen/web/v1/avatar
-# ****** Conscious AiModule 
+# ****** Conscious Avatar 
 	$(PROTOC) -I=./proto/.  \
 	--go_out=./gen/go/ \
 	--go_opt paths=source_relative \
@@ -133,6 +133,23 @@ protos-avatar: ## Build Go and Web Proto
 	proto/v1/avatar/avatarStoreService.proto 
 	yq eval ./gen/web/v1/avatar/openapi.yaml -o=json -P > ./gen/web/v1/avatar/openapi.json
 
+protos-settings: ## Build Go and Web Proto for settings module
+	mkdir -p gen/go gen/web/v1/settings
+# ****** Conscious Settings 
+	$(PROTOC) -I=./proto/.  \
+	--go_out=./gen/go/ \
+	--go_opt paths=source_relative \
+	--go-grpc_out=./gen/go/ \
+	--go-grpc_opt paths=source_relative \
+	--grpc-gateway_out=./gen/go/ \
+	--grpc-gateway_opt paths=source_relative \
+	--grpc-gateway_opt generate_unbound_methods=true \
+	--grpc-gateway-ts_out=./gen/web/ \
+	--grpc-gateway-ts_opt paths=source_relative \
+	--grpc-gateway-ts_opt generate_unbound_methods=true \
+	--oas_out ./gen/web/v1/settings/ \
+	proto/v1/settings/settings.proto 
+	yq eval ./gen/web/v1/settings/openapi.yaml -o=json -P > ./gen/web/v1/settings/openapi.json
 ##
 ## Test Code
 ##
