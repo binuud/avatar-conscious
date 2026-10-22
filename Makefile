@@ -88,7 +88,7 @@ errcheck:
 
 ### the ordering of sub targets is very important
 ### do not change
-protos: protos-settings protos-conscious protos-avatar ## run all protos
+protos: protos-quantum-ui protos-settings protos-conscious protos-avatar ## run all protos
 
 
 ## protos
@@ -150,6 +150,24 @@ protos-settings: ## Build Go and Web Proto for settings module
 	--oas_out ./gen/web/v1/settings/ \
 	proto/v1/settings/settings.proto 
 	yq eval ./gen/web/v1/settings/openapi.yaml -o=json -P > ./gen/web/v1/settings/openapi.json
+
+protos-quantum-ui: ## Build Go and Web Proto for quantum-ui module
+	mkdir -p gen/go gen/web/v1/quantumUI
+# ****** quantumUI Settings 
+	$(PROTOC) -I=./proto/.  \
+	--go_out=./gen/go/ \
+	--go_opt paths=source_relative \
+	--go-grpc_out=./gen/go/ \
+	--go-grpc_opt paths=source_relative \
+	--grpc-gateway_out=./gen/go/ \
+	--grpc-gateway_opt paths=source_relative \
+	--grpc-gateway_opt generate_unbound_methods=true \
+	--grpc-gateway-ts_out=./gen/web/ \
+	--grpc-gateway-ts_opt paths=source_relative \
+	--grpc-gateway-ts_opt generate_unbound_methods=true \
+	--oas_out ./gen/web/v1/quantumUI/ \
+	proto/v1/quantumUI/quantumUI.proto 
+	yq eval ./gen/web/v1/quantumUI/openapi.yaml -o=json -P > ./gen/web/v1/quantumUI/openapi.json	
 ##
 ## Test Code
 ##
