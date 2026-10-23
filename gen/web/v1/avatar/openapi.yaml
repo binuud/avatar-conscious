@@ -5,6 +5,82 @@ info:
   title: ""
   version: ""
 paths:
+  /v1/avatar/Connect:
+    post:
+      operationId: connect
+      parameters:
+        - name: name
+          in: query
+          schema:
+            type: string
+        - name: uuid
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: avatar.AvatarService.Connect response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConnectResponse'
+  /v1/avatar/get:
+    get:
+      operationId: get
+      parameters:
+        - name: name
+          in: query
+          schema:
+            type: string
+        - name: uuid
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: avatar.AvatarService.Get response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetResponse'
+  /v1/avatar/start:
+    post:
+      operationId: start
+      parameters:
+        - name: name
+          in: query
+          schema:
+            type: string
+        - name: uuid
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: avatar.AvatarService.Start response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StartResponse'
+  /v1/avatar/stop:
+    post:
+      operationId: stop
+      parameters:
+        - name: name
+          in: query
+          schema:
+            type: string
+        - name: uuid
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: avatar.AvatarService.Stop response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/StopResponse'
   /v1/avatarStore/create:
     post:
       operationId: create
@@ -100,43 +176,14 @@ components:
           $ref: '#/components/schemas/Permission'
         systemPrompt:
           type: string
-        loops:
+        steps:
           type: array
           items:
-            $ref: '#/components/schemas/AvatarLoop'
-        data:
+            $ref: '#/components/schemas/Steps'
+        content:
           type: string
-    AvatarAction:
-      type: object
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-        action:
-          type: string
-        disabled:
-          type: boolean
-        type:
-          $ref: '#/components/schemas/AvatarActionType'
-        Status:
-          $ref: '#/components/schemas/AvatarActionStatus'
-        completedLogic:
-          type: string
-        successLogic:
-          type: string
-        failLogic:
-          type: string
-        model:
-          type: string
-        prompt:
-          type: string
-        systemPrompt:
-          type: string
-        In:
-          $ref: '#/components/schemas/ContextMesssage'
-        Out:
-          $ref: '#/components/schemas/ContextMesssage'
+        ui:
+          $ref: '#/components/schemas/QuantumUI'
     AvatarActionStatus:
       type: string
       enum:
@@ -158,25 +205,6 @@ components:
         - "AiQuery"
         - "AiImageDescribe"
         - "AiImageGeneration"
-    AvatarLoop:
-      type: object
-      properties:
-        name:
-          type: string
-        description:
-          type: string
-        model:
-          type: string
-        prompt:
-          type: string
-        systemPrompt:
-          type: string
-        runActions:
-          type: array
-          items:
-            $ref: '#/components/schemas/AvatarAction'
-        loopAction:
-          $ref: '#/components/schemas/AvatarAction'
     AvatarMeta:
       type: object
       properties:
@@ -249,6 +277,16 @@ components:
       properties:
         avatar:
           $ref: '#/components/schemas/Avatar'
+    ConnectResponse:
+      type: object
+      properties:
+        avatar:
+          $ref: '#/components/schemas/Avatar'
+    GetResponse:
+      type: object
+      properties:
+        avatar:
+          $ref: '#/components/schemas/Avatar'
     Permission:
       type: string
       enum:
@@ -258,3 +296,22 @@ components:
         - "ROVER"
         - "ARM"
         - "HOMEAUTOMATION"
+    StartResponse:
+      type: object
+      properties:
+        avatar:
+          $ref: '#/components/schemas/Avatar'
+    Steps:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        prompt:
+          type: string
+    StopResponse:
+      type: object
+      properties:
+        avatar:
+          $ref: '#/components/schemas/Avatar'

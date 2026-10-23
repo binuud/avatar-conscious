@@ -1,4 +1,4 @@
-package avatar
+package avatarServer
 
 import (
 	"testing"

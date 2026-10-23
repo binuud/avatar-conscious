@@ -1,4 +1,4 @@
-package avatar
+package avatarServer
 
 import (
 	"encoding/json"
@@ -7,9 +7,12 @@ import (
 	"log"
 	"os"
 
+	pb "github.com/binuud/avatar-conscious/gen/go/v1/avatar"
+	pbQuantumUI "github.com/binuud/avatar-conscious/gen/go/v1/quantumUI"
 	datalayer "github.com/binuud/avatar-conscious/pkg/dataLayer"
 	"github.com/binuud/avatar-conscious/pkg/llm"
 	"github.com/binuud/avatar-conscious/pkg/memory"
+	"github.com/binuud/avatar-conscious/pkg/servers/avatarStoreServer"
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/openai/openai-go/v3"
 	"github.com/sirupsen/logrus"
@@ -20,24 +23,55 @@ const (
 	AVATAR_STORE_DIRECTORY = "avatarStore"
 )
 
-type Step struct {
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Prompt      string `json:"prompt"`
-}
+// type Step struct {
+// 	Name        string `json:"name"`
+// 	Description string `json:"description"`
+// 	Prompt      string `json:"prompt"`
+// }
 
-type Avatar struct {
-	Uuid        string `json:"uuid"`
-	Name        string `json:"name"`
-	Description string `json:"description"`
-	Steps       []Step `json:"steps"`
-}
+// type Avatar struct {
+// 	Uuid        string `json:"uuid"`
+// 	Name        string `json:"name"`
+// 	Description string `json:"description"`
+// 	Steps       []Step `json:"steps"`
+// }
 
 type AvatarWrapper struct {
-	Avatar
+	*pb.Avatar
 	FileName     string
 	SystemPrompt string
 	Memory       *memory.Memory
+}
+
+func NewQuantumUi() *pbQuantumUI.QuantumUI {
+	return &pbQuantumUI.QuantumUI{
+		Name:        "First Pane",
+		Description: "This is a test pane",
+		Title:       "Avatar Pane",
+		Components: []*pbQuantumUI.UiComponent{
+			{
+				Id:          "firstName",
+				Label:       "First Name",
+				PlaceHolder: "Enter your first name",
+				Value:       "",
+				Width:       50,
+				Type:        pbQuantumUI.UiComponent_INPUT,
+			},
+			{
+				Id:          "lastName",
+				Label:       "Last Name",
+				PlaceHolder: "Enter your last name",
+				Value:       "",
+				Width:       50,
+				Type:        pbQuantumUI.UiComponent_INPUT,
+			},
+			{
+				Value: "lorem ipsum dolor sit amet consectetur adipiscing elit optio ducimus temporibus ullamco ipsum dolor omnis aut et fugiat fugiat et voluptas et vero est autem minim possimus et libero facere imperdiet nihil consequatur eiusmod nostrud voluptas vero aliquip possimus duis qui dolorum et cupiditate elit minus quas ea voluptas consequatur",
+				Width: 100,
+				Type:  pbQuantumUI.UiComponent_PLAINTEXT,
+			},
+		},
+	}
 }
 
 func NewAvatar(name string) *AvatarWrapper {
@@ -48,11 +82,23 @@ func NewAvatar(name string) *AvatarWrapper {
 		SystemPrompt: "Review the provided instruction structure and extract a JSON list of all steps with prompts if needed, api endpoints and commands to be run.",
 	}
 
-	err := avatar.Load(name)
+	a, err := avatarStoreServer.ReadAvatarFromStore(name)
 	if err != nil {
 		logrus.Errorf("cannot load avatar, check if the avatar was built, %v", err)
 		return nil
 	}
+
+	// hard code UI for testing
+
+	avatar.Avatar = a
+	avatar.Ui = NewQuantumUi()
+
+	// try reading the built avatar
+	err = avatar.Load(name)
+	if err != nil {
+		logrus.Errorf("cannot load avatar, check if the avatar was built, %v", err)
+	}
+
 	return avatar
 }
 
@@ -80,17 +126,17 @@ func (a *AvatarWrapper) Load(name string) error {
 	if err != nil {
 		return err
 	}
-	*a = localAvatar
+	a.Avatar.Steps = localAvatar.Steps
 	return nil
 }
 
 func (a *AvatarWrapper) Save() error {
 
-	if a.Avatar.Name == "" {
+	if a.Avatar.Meta.Name == "" {
 		return fmt.Errorf("avatar name missing, cannot save")
 	}
 
-	filePath := datalayer.GetFileAbsolutePath(AVATAR_DIRECTORY, a.Avatar.Name+".avatar")
+	filePath := datalayer.GetFileAbsolutePath(AVATAR_DIRECTORY, a.Avatar.Meta.Name+".avatar")
 	// Save list of configs
 	if err := datalayer.SaveBinary(filePath, a); err != nil {
 		logrus.Errorf("Cannot save avatar file %s %v", filePath, err)
@@ -143,8 +189,8 @@ func (a *AvatarWrapper) Build() error {
 		return err
 	}
 
-	var in Avatar
-	if err := json.Unmarshal([]byte(output), &in); err != nil {
+	var in *pb.Avatar
+	if err := json.Unmarshal([]byte(output), in); err != nil {
 		logrus.Fatalf("Cannot unmarshall %v", err)
 		return err
 	}
@@ -162,7 +208,7 @@ func (a *AvatarWrapper) getAvatarJsonSchemaMap() (map[string]any, error) {
 
 	var schemaMap map[string]any
 
-	schemaJSON, err := jsonschema.For[Avatar](nil)
+	schemaJSON, err := jsonschema.For[pb.Avatar](nil)
 	if err != nil {
 		log.Fatalf("Failed to run  jsonschema: %v", err)
 	}
@@ -182,8 +228,8 @@ func (a *AvatarWrapper) getAvatarJsonSchemaMap() (map[string]any, error) {
 }
 
 func (a *AvatarWrapper) Run() {
-	logrus.Infof(" >> Running Avatar %s \n", a.Name)
-	logrus.Infof("		Description %s \n", a.Description)
+	logrus.Infof(" >> Running Avatar %s \n", a.Meta.Name)
+	logrus.Infof("		Description %s \n", a.Meta.Description)
 	for _, item := range a.Avatar.Steps {
 		logrus.Infof(" >>>> Running Step %s \n", item.Name)
 		logrus.Infof("			Description %s \n", item.Description)
@@ -194,7 +240,7 @@ func (a *AvatarWrapper) Print(w io.Writer) {
 	if w == nil {
 		return
 	}
-	str := fmt.Sprintf("Name: %s\nDescription %s\n\n", a.Name, a.Description)
+	str := fmt.Sprintf("Name: %s\nDescription %s\n\n", a.Meta.Name, a.Meta.Description)
 
 	for _, item := range a.Avatar.Steps {
 		str += fmt.Sprintf("Step Name: %s\nStep Description %s\n\n", item.Name, item.Description)

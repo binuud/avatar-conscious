@@ -16,7 +16,7 @@ import (
 
 	"github.com/binuud/avatar-conscious/pkg/llm"
 	"github.com/binuud/avatar-conscious/pkg/memory"
-	"github.com/binuud/avatar-conscious/pkg/servers/avatar"
+	"github.com/binuud/avatar-conscious/pkg/servers/avatarServer"
 	"github.com/binuud/avatar-conscious/pkg/settings"
 	"github.com/binuud/avatar-conscious/pkg/testbed"
 	"github.com/spf13/cobra"
@@ -69,7 +69,7 @@ func HandleSlashCommand(input string) {
 // add all slash commands from the different packages
 func Bootstrap() {
 	SlashCommands.AddCommand(llm.NewModelsCommand())
-	SlashCommands.AddCommand(avatar.NewAvatarCommand())
+	SlashCommands.AddCommand(avatarServer.NewAvatarCommand())
 	SlashCommands.AddCommand(memory.NewMemoryCommand())
 	SlashCommands.AddCommand(settings.NewSettingsCommand())
 	SlashCommands.AddCommand(testbed.NewTestBedCommand())

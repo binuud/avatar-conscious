@@ -4,7 +4,7 @@
 * This file is a generated Typescript file for GRPC Gateway, DO NOT MODIFY
 */
 
-export enum uiComponentUiType {
+export enum UiComponentUiType {
   UiTypeIgnore = "UiTypeIgnore",
   TEXTAREA = "TEXTAREA",
   INPUT = "INPUT",
@@ -14,15 +14,7 @@ export enum uiComponentUiType {
   WEBCAM = "WEBCAM",
 }
 
-export enum ConfigType {
-  DATA_IGNORE = "DATA_IGNORE",
-  STRING = "STRING",
-  NUMBER = "NUMBER",
-  FLOAT = "FLOAT",
-  BOOLEAN = "BOOLEAN",
-}
-
-export type uiComponent = {
+export type UiComponent = {
   id?: string
   class?: string
   label?: string
@@ -33,29 +25,13 @@ export type uiComponent = {
   width?: number
   rows?: number
   cols?: number
-  type?: uiComponentUiType
+  type?: UiComponentUiType
 }
 
-export type quantumUI = {
+export type QuantumUI = {
   uuid?: string
   name?: string
   description?: string
   title?: string
-  components?: uiComponent[]
-}
-
-export type Config = {
-  name?: string
-  description?: string
-  value?: string
-  group?: string
-  type?: ConfigType
-}
-
-export type ConfigList = {
-  configs?: Config[]
-}
-
-export type Settings = {
-  entry?: {[key: string]: Config}
+  components?: UiComponent[]
 }

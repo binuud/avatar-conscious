@@ -5,6 +5,7 @@
 */
 
 import * as ContextMessage from "../conscious/contextMessage.pb"
+import * as QuatumUIQuantumUI from "../quantumUI/quantumUI.pb"
 
 export enum Permission {
   PERMISSION_IGNORE = "PERMISSION_IGNORE",
@@ -84,10 +85,17 @@ export type AvatarMeta = {
   triggers?: string[]
 }
 
+export type Steps = {
+  name?: string
+  description?: string
+  prompt?: string
+}
+
 export type Avatar = {
   meta?: AvatarMeta
   permissions?: Permission
   systemPrompt?: string
-  loops?: AvatarLoop[]
-  data?: string
+  steps?: Steps[]
+  content?: string
+  ui?: QuatumUIQuantumUI.QuantumUI
 }

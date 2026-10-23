@@ -19,8 +19,8 @@ export SERVABLE_DIRECTORY=${PWD}/dataVolume/gen
 
 # go test ./pkg/...
 # go test ./pkg/...  -v
-# go test -v  ./pkg/servers/avatar
-go test -v  ./pkg/servers/avatarStoreServer
+go test -v  ./pkg/servers/avatarServer
+# go test -v  ./pkg/servers/avatarStoreServer
 #go test -v  ./pkg/settings
 # go test -v --run Test_Memory ./pkg/servers/consciousServer
 # go test ./pkg/... -v -run "Test_RouterViaTool"

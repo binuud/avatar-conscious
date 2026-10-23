@@ -4,6 +4,7 @@ package avatar;
 option go_package = "github.com/binuud/avatar-conscious/gen/go/v1/avatar";
 
 import "v1/conscious/contextMessage.proto";
+import "v1/quantumUI/quantumUI.proto";
 
 // Permission enum for the Avatar message
 
@@ -94,6 +95,14 @@ message AvatarMeta {
 
   repeated string triggers = 4;
 }
+
+
+message Steps {
+  string name = 1;
+  string description = 2;
+  string prompt = 3;
+}
+
 // Avatar message representing a robot or avatar entity
 message Avatar {
 
@@ -105,8 +114,10 @@ message Avatar {
   // System prompt for the avatar
   string systemPrompt = 5;
 
-  repeated AvatarLoop loops = 6;
+  repeated Steps steps = 6;
 
   // the complete data of the Avatar file
-  string data = 7;
+  string content = 7;
+
+  quatumUI.QuantumUI ui = 11;
 }

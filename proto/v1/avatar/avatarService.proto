@@ -1,0 +1,74 @@
+syntax = "proto3";
+package avatar;
+
+option go_package = "github.com/binuud/avatar-conscious/gen/go/v1/avatar";
+
+import "v1/avatar/avatar.proto";
+
+// for http annotations
+import "google/api/annotations.proto";
+
+
+service AvatarService {
+
+  rpc Get(GetRequest) returns (GetResponse) {
+    option (google.api.http) = {
+      get : "/v1/avatar/get"
+    };
+  }
+
+  // Start the avatar, avatar is a long running process
+  rpc Start(StartRequest) returns (StartResponse) {
+    option (google.api.http) = {
+      post : "/v1/avatar/start"
+    };
+  }
+
+  rpc Connect(ConnectRequest) returns (ConnectResponse) {
+    option (google.api.http) = {
+      post : "/v1/avatar/Connect"
+    };
+  }
+
+  rpc Stop(StopRequest) returns (StopResponse) {
+    option (google.api.http) = {
+      post : "/v1/avatar/stop"
+    };
+  }
+}
+
+message GetRequest {
+  string uuid = 1;
+  string name = 2;
+}
+
+message GetResponse {
+  Avatar avatar = 1;
+}
+
+message StartRequest {
+  string uuid = 1;
+  string name = 2;
+}
+
+message StartResponse {
+  Avatar avatar = 1;
+}
+
+message ConnectRequest {
+  string uuid = 1;
+  string name = 2;
+}
+
+message ConnectResponse {
+  Avatar avatar = 1;
+}
+
+message StopRequest {
+  string uuid = 1;
+  string name = 2;
+}
+
+message StopResponse {
+  Avatar avatar = 1;
+}
