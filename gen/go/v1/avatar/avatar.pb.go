@@ -663,7 +663,7 @@ func (x *AvatarMeta) GetUi() *quantumUI.QuantumUI {
 	return nil
 }
 
-type Steps struct {
+type Step struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Description   string                 `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
@@ -672,9 +672,70 @@ type Steps struct {
 	sizeCache     protoimpl.SizeCache
 }
 
+func (x *Step) Reset() {
+	*x = Step{}
+	mi := &file_v1_avatar_avatar_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *Step) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Step) ProtoMessage() {}
+
+func (x *Step) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_avatar_avatar_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Step.ProtoReflect.Descriptor instead.
+func (*Step) Descriptor() ([]byte, []int) {
+	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *Step) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *Step) GetDescription() string {
+	if x != nil {
+		return x.Description
+	}
+	return ""
+}
+
+func (x *Step) GetPrompt() string {
+	if x != nil {
+		return x.Prompt
+	}
+	return ""
+}
+
+// this is required as a seperate message
+// do not remove
+// this is for ai to parse steps into a known structure
+type Steps struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Steps         []*Step                `protobuf:"bytes,1,rep,name=steps,proto3" json:"steps,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
 func (x *Steps) Reset() {
 	*x = Steps{}
-	mi := &file_v1_avatar_avatar_proto_msgTypes[5]
+	mi := &file_v1_avatar_avatar_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -686,7 +747,7 @@ func (x *Steps) String() string {
 func (*Steps) ProtoMessage() {}
 
 func (x *Steps) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_avatar_avatar_proto_msgTypes[5]
+	mi := &file_v1_avatar_avatar_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -699,28 +760,14 @@ func (x *Steps) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Steps.ProtoReflect.Descriptor instead.
 func (*Steps) Descriptor() ([]byte, []int) {
-	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{5}
+	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *Steps) GetName() string {
+func (x *Steps) GetSteps() []*Step {
 	if x != nil {
-		return x.Name
+		return x.Steps
 	}
-	return ""
-}
-
-func (x *Steps) GetDescription() string {
-	if x != nil {
-		return x.Description
-	}
-	return ""
-}
-
-func (x *Steps) GetPrompt() string {
-	if x != nil {
-		return x.Prompt
-	}
-	return ""
+	return nil
 }
 
 // Avatar message representing a robot or avatar entity
@@ -730,8 +777,8 @@ type Avatar struct {
 	// Permissions granted to the avatar
 	Permissions Permission `protobuf:"varint,4,opt,name=permissions,proto3,enum=avatar.Permission" json:"permissions,omitempty"`
 	// System prompt for the avatar
-	SystemPrompt string   `protobuf:"bytes,5,opt,name=systemPrompt,proto3" json:"systemPrompt,omitempty"`
-	Steps        []*Steps `protobuf:"bytes,6,rep,name=steps,proto3" json:"steps,omitempty"`
+	SystemPrompt string  `protobuf:"bytes,5,opt,name=systemPrompt,proto3" json:"systemPrompt,omitempty"`
+	Steps        []*Step `protobuf:"bytes,6,rep,name=steps,proto3" json:"steps,omitempty"`
 	// the complete data of the Avatar file
 	Content       string `protobuf:"bytes,7,opt,name=content,proto3" json:"content,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -740,7 +787,7 @@ type Avatar struct {
 
 func (x *Avatar) Reset() {
 	*x = Avatar{}
-	mi := &file_v1_avatar_avatar_proto_msgTypes[6]
+	mi := &file_v1_avatar_avatar_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -752,7 +799,7 @@ func (x *Avatar) String() string {
 func (*Avatar) ProtoMessage() {}
 
 func (x *Avatar) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_avatar_avatar_proto_msgTypes[6]
+	mi := &file_v1_avatar_avatar_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -765,7 +812,7 @@ func (x *Avatar) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Avatar.ProtoReflect.Descriptor instead.
 func (*Avatar) Descriptor() ([]byte, []int) {
-	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{6}
+	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *Avatar) GetMeta() *AvatarMeta {
@@ -789,7 +836,7 @@ func (x *Avatar) GetSystemPrompt() string {
 	return ""
 }
 
-func (x *Avatar) GetSteps() []*Steps {
+func (x *Avatar) GetSteps() []*Step {
 	if x != nil {
 		return x.Steps
 	}
@@ -859,16 +906,18 @@ const file_v1_avatar_avatar_proto_rawDesc = "" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x1a\n" +
 	"\btriggers\x18\x04 \x03(\tR\btriggers\x12#\n" +
-	"\x02ui\x18\x05 \x01(\v2\x13.quatumUI.QuantumUIR\x02ui\"U\n" +
-	"\x05Steps\x12\x12\n" +
+	"\x02ui\x18\x05 \x01(\v2\x13.quatumUI.QuantumUIR\x02ui\"T\n" +
+	"\x04Step\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x16\n" +
-	"\x06prompt\x18\x03 \x01(\tR\x06prompt\"\xc9\x01\n" +
+	"\x06prompt\x18\x03 \x01(\tR\x06prompt\"+\n" +
+	"\x05Steps\x12\"\n" +
+	"\x05steps\x18\x01 \x03(\v2\f.avatar.StepR\x05steps\"\xc8\x01\n" +
 	"\x06Avatar\x12&\n" +
 	"\x04meta\x18\x01 \x01(\v2\x12.avatar.AvatarMetaR\x04meta\x124\n" +
 	"\vpermissions\x18\x04 \x01(\x0e2\x12.avatar.PermissionR\vpermissions\x12\"\n" +
-	"\fsystemPrompt\x18\x05 \x01(\tR\fsystemPrompt\x12#\n" +
-	"\x05steps\x18\x06 \x03(\v2\r.avatar.StepsR\x05steps\x12\x18\n" +
+	"\fsystemPrompt\x18\x05 \x01(\tR\fsystemPrompt\x12\"\n" +
+	"\x05steps\x18\x06 \x03(\v2\f.avatar.StepR\x05steps\x12\x18\n" +
 	"\acontent\x18\a \x01(\tR\acontent*e\n" +
 	"\n" +
 	"Permission\x12\x15\n" +
@@ -912,7 +961,7 @@ func file_v1_avatar_avatar_proto_rawDescGZIP() []byte {
 }
 
 var file_v1_avatar_avatar_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
-var file_v1_avatar_avatar_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_v1_avatar_avatar_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_v1_avatar_avatar_proto_goTypes = []any{
 	(Permission)(0),                   // 0: avatar.Permission
 	(AvatarActionType)(0),             // 1: avatar.AvatarActionType
@@ -922,30 +971,32 @@ var file_v1_avatar_avatar_proto_goTypes = []any{
 	(*AvatarAction)(nil),              // 5: avatar.AvatarAction
 	(*AvatarLoop)(nil),                // 6: avatar.AvatarLoop
 	(*AvatarMeta)(nil),                // 7: avatar.AvatarMeta
-	(*Steps)(nil),                     // 8: avatar.Steps
-	(*Avatar)(nil),                    // 9: avatar.Avatar
-	nil,                               // 10: avatar.Tool.ParametersEntry
-	(*conscious.ContextMesssage)(nil), // 11: ContextMesssage
-	(*quantumUI.QuantumUI)(nil),       // 12: quatumUI.QuantumUI
+	(*Step)(nil),                      // 8: avatar.Step
+	(*Steps)(nil),                     // 9: avatar.Steps
+	(*Avatar)(nil),                    // 10: avatar.Avatar
+	nil,                               // 11: avatar.Tool.ParametersEntry
+	(*conscious.ContextMesssage)(nil), // 12: ContextMesssage
+	(*quantumUI.QuantumUI)(nil),       // 13: quatumUI.QuantumUI
 }
 var file_v1_avatar_avatar_proto_depIdxs = []int32{
-	10, // 0: avatar.Tool.parameters:type_name -> avatar.Tool.ParametersEntry
+	11, // 0: avatar.Tool.parameters:type_name -> avatar.Tool.ParametersEntry
 	1,  // 1: avatar.AvatarAction.type:type_name -> avatar.AvatarActionType
 	2,  // 2: avatar.AvatarAction._status:type_name -> avatar.AvatarActionStatus
-	11, // 3: avatar.AvatarAction._in:type_name -> ContextMesssage
-	11, // 4: avatar.AvatarAction._out:type_name -> ContextMesssage
+	12, // 3: avatar.AvatarAction._in:type_name -> ContextMesssage
+	12, // 4: avatar.AvatarAction._out:type_name -> ContextMesssage
 	5,  // 5: avatar.AvatarLoop.runActions:type_name -> avatar.AvatarAction
 	5,  // 6: avatar.AvatarLoop.loopAction:type_name -> avatar.AvatarAction
-	12, // 7: avatar.AvatarMeta.ui:type_name -> quatumUI.QuantumUI
-	7,  // 8: avatar.Avatar.meta:type_name -> avatar.AvatarMeta
-	0,  // 9: avatar.Avatar.permissions:type_name -> avatar.Permission
-	8,  // 10: avatar.Avatar.steps:type_name -> avatar.Steps
-	3,  // 11: avatar.Tool.ParametersEntry.value:type_name -> avatar.ToolParams
-	12, // [12:12] is the sub-list for method output_type
-	12, // [12:12] is the sub-list for method input_type
-	12, // [12:12] is the sub-list for extension type_name
-	12, // [12:12] is the sub-list for extension extendee
-	0,  // [0:12] is the sub-list for field type_name
+	13, // 7: avatar.AvatarMeta.ui:type_name -> quatumUI.QuantumUI
+	8,  // 8: avatar.Steps.steps:type_name -> avatar.Step
+	7,  // 9: avatar.Avatar.meta:type_name -> avatar.AvatarMeta
+	0,  // 10: avatar.Avatar.permissions:type_name -> avatar.Permission
+	8,  // 11: avatar.Avatar.steps:type_name -> avatar.Step
+	3,  // 12: avatar.Tool.ParametersEntry.value:type_name -> avatar.ToolParams
+	13, // [13:13] is the sub-list for method output_type
+	13, // [13:13] is the sub-list for method input_type
+	13, // [13:13] is the sub-list for extension type_name
+	13, // [13:13] is the sub-list for extension extendee
+	0,  // [0:13] is the sub-list for field type_name
 }
 
 func init() { file_v1_avatar_avatar_proto_init() }
@@ -959,7 +1010,7 @@ func file_v1_avatar_avatar_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_v1_avatar_avatar_proto_rawDesc), len(file_v1_avatar_avatar_proto_rawDesc)),
 			NumEnums:      3,
-			NumMessages:   8,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

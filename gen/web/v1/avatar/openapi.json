@@ -297,7 +297,7 @@
           "steps": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Steps"
+              "$ref": "#/components/schemas/Step"
             }
           },
           "content": {
@@ -480,7 +480,7 @@
           }
         }
       },
-      "Steps": {
+      "Step": {
         "type": "object",
         "properties": {
           "name": {

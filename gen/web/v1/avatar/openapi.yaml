@@ -179,7 +179,7 @@ components:
         steps:
           type: array
           items:
-            $ref: '#/components/schemas/Steps'
+            $ref: '#/components/schemas/Step'
         content:
           type: string
     AvatarActionStatus:
@@ -301,7 +301,7 @@ components:
       properties:
         avatar:
           $ref: '#/components/schemas/Avatar'
-    Steps:
+    Step:
       type: object
       properties:
         name:

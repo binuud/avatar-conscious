@@ -86,16 +86,20 @@ export type AvatarMeta = {
   ui?: QuatumUIQuantumUI.QuantumUI
 }
 
-export type Steps = {
+export type Step = {
   name?: string
   description?: string
   prompt?: string
+}
+
+export type Steps = {
+  steps?: Step[]
 }
 
 export type Avatar = {
   meta?: AvatarMeta
   permissions?: Permission
   systemPrompt?: string
-  steps?: Steps[]
+  steps?: Step[]
   content?: string
 }

@@ -81,7 +81,7 @@ func NewAvatarCommand() *cobra.Command {
 				name := args[0]
 				if name != "" {
 					cmd.Printf("Building avatar %s\n", name)
-					a := NewAvatarFromStore("election-officer.md")
+					a := NewAvatarFromStore(name)
 					a.Build()
 					a.Save()
 				}
