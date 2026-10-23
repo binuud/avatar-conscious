@@ -302,9 +302,6 @@
           },
           "content": {
             "type": "string"
-          },
-          "ui": {
-            "$ref": "#/components/schemas/QuantumUI"
           }
         }
       },
@@ -350,6 +347,9 @@
             "items": {
               "type": "string"
             }
+          },
+          "ui": {
+            "$ref": "#/components/schemas/QuantumUI"
           }
         }
       },

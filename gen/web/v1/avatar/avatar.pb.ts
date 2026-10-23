@@ -83,6 +83,7 @@ export type AvatarMeta = {
   name?: string
   description?: string
   triggers?: string[]
+  ui?: QuatumUIQuantumUI.QuantumUI
 }
 
 export type Steps = {
@@ -97,5 +98,4 @@ export type Avatar = {
   systemPrompt?: string
   steps?: Steps[]
   content?: string
-  ui?: QuatumUIQuantumUI.QuantumUI
 }

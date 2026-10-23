@@ -22,3 +22,7 @@ func ListAvatars() ([]string, error) {
 	}
 	return items, nil
 }
+
+func ParseAvatarFile(fileName string) {
+
+}

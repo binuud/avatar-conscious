@@ -94,6 +94,8 @@ message AvatarMeta {
   string description = 3;
 
   repeated string triggers = 4;
+
+  quatumUI.QuantumUI ui = 5;
 }
 
 
@@ -119,5 +121,4 @@ message Avatar {
   // the complete data of the Avatar file
   string content = 7;
 
-  quatumUI.QuantumUI ui = 11;
 }

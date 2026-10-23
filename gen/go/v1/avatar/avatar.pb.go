@@ -591,8 +591,9 @@ type AvatarMeta struct {
 	// Name of the avatar
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// Description of the avatar
-	Description   string   `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
-	Triggers      []string `protobuf:"bytes,4,rep,name=triggers,proto3" json:"triggers,omitempty"`
+	Description   string               `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Triggers      []string             `protobuf:"bytes,4,rep,name=triggers,proto3" json:"triggers,omitempty"`
+	Ui            *quantumUI.QuantumUI `protobuf:"bytes,5,opt,name=ui,proto3" json:"ui,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -651,6 +652,13 @@ func (x *AvatarMeta) GetDescription() string {
 func (x *AvatarMeta) GetTriggers() []string {
 	if x != nil {
 		return x.Triggers
+	}
+	return nil
+}
+
+func (x *AvatarMeta) GetUi() *quantumUI.QuantumUI {
+	if x != nil {
+		return x.Ui
 	}
 	return nil
 }
@@ -725,8 +733,7 @@ type Avatar struct {
 	SystemPrompt string   `protobuf:"bytes,5,opt,name=systemPrompt,proto3" json:"systemPrompt,omitempty"`
 	Steps        []*Steps `protobuf:"bytes,6,rep,name=steps,proto3" json:"steps,omitempty"`
 	// the complete data of the Avatar file
-	Content       string               `protobuf:"bytes,7,opt,name=content,proto3" json:"content,omitempty"`
-	Ui            *quantumUI.QuantumUI `protobuf:"bytes,11,opt,name=ui,proto3" json:"ui,omitempty"`
+	Content       string `protobuf:"bytes,7,opt,name=content,proto3" json:"content,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -796,13 +803,6 @@ func (x *Avatar) GetContent() string {
 	return ""
 }
 
-func (x *Avatar) GetUi() *quantumUI.QuantumUI {
-	if x != nil {
-		return x.Ui
-	}
-	return nil
-}
-
 var File_v1_avatar_avatar_proto protoreflect.FileDescriptor
 
 const file_v1_avatar_avatar_proto_rawDesc = "" +
@@ -852,24 +852,24 @@ const file_v1_avatar_avatar_proto_rawDesc = "" +
 	"runActions\x124\n" +
 	"\n" +
 	"loopAction\x18\b \x01(\v2\x14.avatar.AvatarActionR\n" +
-	"loopAction\"r\n" +
+	"loopAction\"\x97\x01\n" +
 	"\n" +
 	"AvatarMeta\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x1a\n" +
-	"\btriggers\x18\x04 \x03(\tR\btriggers\"U\n" +
+	"\btriggers\x18\x04 \x03(\tR\btriggers\x12#\n" +
+	"\x02ui\x18\x05 \x01(\v2\x13.quatumUI.QuantumUIR\x02ui\"U\n" +
 	"\x05Steps\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x16\n" +
-	"\x06prompt\x18\x03 \x01(\tR\x06prompt\"\xee\x01\n" +
+	"\x06prompt\x18\x03 \x01(\tR\x06prompt\"\xc9\x01\n" +
 	"\x06Avatar\x12&\n" +
 	"\x04meta\x18\x01 \x01(\v2\x12.avatar.AvatarMetaR\x04meta\x124\n" +
 	"\vpermissions\x18\x04 \x01(\x0e2\x12.avatar.PermissionR\vpermissions\x12\"\n" +
 	"\fsystemPrompt\x18\x05 \x01(\tR\fsystemPrompt\x12#\n" +
 	"\x05steps\x18\x06 \x03(\v2\r.avatar.StepsR\x05steps\x12\x18\n" +
-	"\acontent\x18\a \x01(\tR\acontent\x12#\n" +
-	"\x02ui\x18\v \x01(\v2\x13.quatumUI.QuantumUIR\x02ui*e\n" +
+	"\acontent\x18\a \x01(\tR\acontent*e\n" +
 	"\n" +
 	"Permission\x12\x15\n" +
 	"\x11PERMISSION_IGNORE\x10\x00\x12\r\n" +
@@ -936,10 +936,10 @@ var file_v1_avatar_avatar_proto_depIdxs = []int32{
 	11, // 4: avatar.AvatarAction._out:type_name -> ContextMesssage
 	5,  // 5: avatar.AvatarLoop.runActions:type_name -> avatar.AvatarAction
 	5,  // 6: avatar.AvatarLoop.loopAction:type_name -> avatar.AvatarAction
-	7,  // 7: avatar.Avatar.meta:type_name -> avatar.AvatarMeta
-	0,  // 8: avatar.Avatar.permissions:type_name -> avatar.Permission
-	8,  // 9: avatar.Avatar.steps:type_name -> avatar.Steps
-	12, // 10: avatar.Avatar.ui:type_name -> quatumUI.QuantumUI
+	12, // 7: avatar.AvatarMeta.ui:type_name -> quatumUI.QuantumUI
+	7,  // 8: avatar.Avatar.meta:type_name -> avatar.AvatarMeta
+	0,  // 9: avatar.Avatar.permissions:type_name -> avatar.Permission
+	8,  // 10: avatar.Avatar.steps:type_name -> avatar.Steps
 	3,  // 11: avatar.Tool.ParametersEntry.value:type_name -> avatar.ToolParams
 	12, // [12:12] is the sub-list for method output_type
 	12, // [12:12] is the sub-list for method input_type

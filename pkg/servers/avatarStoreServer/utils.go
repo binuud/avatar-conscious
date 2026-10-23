@@ -1,13 +1,15 @@
 package avatarStoreServer
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"strings"
 
-	"github.com/adrg/frontmatter"
+	"buf.build/go/protoyaml"
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/avatar"
 	datalayer "github.com/binuud/avatar-conscious/pkg/dataLayer"
+	"github.com/binuud/avatar-conscious/pkg/utils"
 )
 
 func ListAvatarsFromStore() ([]*pb.Avatar, error) {
@@ -30,6 +32,11 @@ func ListAvatarsFromStore() ([]*pb.Avatar, error) {
 	return items, nil
 }
 
+// ReadAvatarFromStore()
+// Reads the Avatar md file
+// Parses out the yaml part and other md file content
+// Unmarshalls yaml into avatar struct
+// DO NOT CHANGE THIS
 func ReadAvatarFromStore(fileName string) (*pb.Avatar, error) {
 
 	if !strings.HasSuffix(fileName, ".md") {
@@ -38,26 +45,22 @@ func ReadAvatarFromStore(fileName string) (*pb.Avatar, error) {
 
 	filePath := datalayer.GetFileAbsolutePath(AVATAR_STORE_DIRECTORY, fileName)
 
-	file, err := os.Open(filePath)
+	fileContents, err := os.ReadFile(filePath)
 	if err != nil {
-		log.Fatalf("Failed to open file: %v", err)
+		log.Fatalf("Failed to read file: %s", err)
 	}
-	defer file.Close()
-
-	// fileBytes, err := os.ReadFile(filePath)
-	// if err != nil {
-	// 	logrus.Errorf("Error reading %s: %v\n", fileName, err)
-	// 	return nil, err
-	// }
 
 	var meta pb.AvatarMeta
 
-	// 3. Parse the frontmatter and extract the remaining content body
-	// frontmatter.Parse reads from any io.Reader, populates the struct,
-	// and returns the rest of the file content as a byte slice.
-	content, err := frontmatter.Parse(file, &meta)
+	yaml, content, ok := utils.ExtractFrontMatter(string(fileContents))
+	if !ok {
+		return nil, fmt.Errorf("Failed to parse frontmatter, please check if yaml is delimitted by '---'")
+	}
+
+	// to get around string to enum convertion
+	err = protoyaml.Unmarshal([]byte(yaml), &meta)
 	if err != nil {
-		log.Fatalf("Failed to parse frontmatter: %v", err)
+		return nil, err
 	}
 
 	return &pb.Avatar{

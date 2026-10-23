@@ -84,15 +84,13 @@ func NewAvatar(name string) *AvatarWrapper {
 
 	a, err := avatarStoreServer.ReadAvatarFromStore(name)
 	if err != nil {
-		logrus.Errorf("cannot load avatar, check if the avatar was built, %v", err)
+		logrus.Errorf("cannot load avatar, %v", err)
 		return nil
 	}
 
 	// hard code UI for testing
-
 	avatar.Avatar = a
-	avatar.Ui = NewQuantumUi()
-
+	// avatar.Ui = NewQuantumUi()
 	// try reading the built avatar
 	err = avatar.Load(name)
 	if err != nil {
@@ -100,6 +98,7 @@ func NewAvatar(name string) *AvatarWrapper {
 	}
 
 	return avatar
+
 }
 
 func NewAvatarFromStore(fileName string) *AvatarWrapper {
