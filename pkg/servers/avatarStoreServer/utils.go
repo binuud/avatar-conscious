@@ -3,6 +3,7 @@ package avatarStoreServer
 import (
 	"log"
 	"os"
+	"strings"
 
 	"github.com/adrg/frontmatter"
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/avatar"
@@ -31,6 +32,10 @@ func ListAvatarsFromStore() ([]*pb.Avatar, error) {
 
 func ReadAvatarFromStore(fileName string) (*pb.Avatar, error) {
 
+	if !strings.HasSuffix(fileName, ".md") {
+		fileName = fileName + ".md"
+	}
+
 	filePath := datalayer.GetFileAbsolutePath(AVATAR_STORE_DIRECTORY, fileName)
 
 	file, err := os.Open(filePath)
@@ -56,7 +61,7 @@ func ReadAvatarFromStore(fileName string) (*pb.Avatar, error) {
 	}
 
 	return &pb.Avatar{
-		Meta: &meta,
-		Data: string(content),
+		Meta:    &meta,
+		Content: string(content),
 	}, nil
 }

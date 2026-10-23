@@ -13,6 +13,7 @@ import (
 	pbAvatar "github.com/binuud/avatar-conscious/gen/go/v1/avatar"
 	pbConscious "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	"github.com/binuud/avatar-conscious/pkg/bootstrap"
+	"github.com/binuud/avatar-conscious/pkg/servers/avatarServer"
 	"github.com/binuud/avatar-conscious/pkg/servers/avatarStoreServer"
 	"github.com/binuud/avatar-conscious/pkg/servers/consciousServer"
 	llmProxyServer "github.com/binuud/avatar-conscious/pkg/servers/llmProxyServer"
@@ -92,6 +93,12 @@ func runHtppServer() {
 		log.Fatalln(err)
 	}
 
+	// avatar server
+	err = pbAvatar.RegisterAvatarServiceHandler(ctx, gwMux, conn)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 	// systemMetricsServer
 	err = pbConscious.RegisterMetricsHandler(ctx, gwMux, conn)
 	if err != nil {
@@ -145,6 +152,9 @@ func runGRPCServer() {
 
 	// GRPC Conscious Server
 	pbConscious.RegisterConsciousServer(insecureServer, consciousServer.NewGrpcConsciousServer())
+
+	// GRPC Avatar Store Server
+	pbAvatar.RegisterAvatarServiceServer(insecureServer, avatarServer.NewAvatarGrpcServer())
 
 	// GRPC Avatar Store Server
 	pbAvatar.RegisterAvatarStoreServiceServer(insecureServer, avatarStoreServer.NewAvatarStoreGrpcServer())

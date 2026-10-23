@@ -82,61 +82,6 @@ func (UiComponent_UiType) EnumDescriptor() ([]byte, []int) {
 	return file_v1_quantumUI_quantumUI_proto_rawDescGZIP(), []int{0, 0}
 }
 
-type Config_Type int32
-
-const (
-	Config_DATA_IGNORE Config_Type = 0
-	Config_STRING      Config_Type = 1
-	Config_NUMBER      Config_Type = 2
-	Config_FLOAT       Config_Type = 3
-	Config_BOOLEAN     Config_Type = 4
-)
-
-// Enum value maps for Config_Type.
-var (
-	Config_Type_name = map[int32]string{
-		0: "DATA_IGNORE",
-		1: "STRING",
-		2: "NUMBER",
-		3: "FLOAT",
-		4: "BOOLEAN",
-	}
-	Config_Type_value = map[string]int32{
-		"DATA_IGNORE": 0,
-		"STRING":      1,
-		"NUMBER":      2,
-		"FLOAT":       3,
-		"BOOLEAN":     4,
-	}
-)
-
-func (x Config_Type) Enum() *Config_Type {
-	p := new(Config_Type)
-	*p = x
-	return p
-}
-
-func (x Config_Type) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (Config_Type) Descriptor() protoreflect.EnumDescriptor {
-	return file_v1_quantumUI_quantumUI_proto_enumTypes[1].Descriptor()
-}
-
-func (Config_Type) Type() protoreflect.EnumType {
-	return &file_v1_quantumUI_quantumUI_proto_enumTypes[1]
-}
-
-func (x Config_Type) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use Config_Type.Descriptor instead.
-func (Config_Type) EnumDescriptor() ([]byte, []int) {
-	return file_v1_quantumUI_quantumUI_proto_rawDescGZIP(), []int{2, 0}
-}
-
 type UiComponent struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -337,176 +282,12 @@ func (x *QuantumUI) GetComponents() []*UiComponent {
 	return nil
 }
 
-type Config struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Description   string                 `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
-	Value         string                 `protobuf:"bytes,3,opt,name=value,proto3" json:"value,omitempty"`
-	Group         string                 `protobuf:"bytes,4,opt,name=group,proto3" json:"group,omitempty"`
-	Type          Config_Type            `protobuf:"varint,5,opt,name=type,proto3,enum=quatumUI.Config_Type" json:"type,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *Config) Reset() {
-	*x = Config{}
-	mi := &file_v1_quantumUI_quantumUI_proto_msgTypes[2]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Config) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Config) ProtoMessage() {}
-
-func (x *Config) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_quantumUI_quantumUI_proto_msgTypes[2]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Config.ProtoReflect.Descriptor instead.
-func (*Config) Descriptor() ([]byte, []int) {
-	return file_v1_quantumUI_quantumUI_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *Config) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
-}
-
-func (x *Config) GetDescription() string {
-	if x != nil {
-		return x.Description
-	}
-	return ""
-}
-
-func (x *Config) GetValue() string {
-	if x != nil {
-		return x.Value
-	}
-	return ""
-}
-
-func (x *Config) GetGroup() string {
-	if x != nil {
-		return x.Group
-	}
-	return ""
-}
-
-func (x *Config) GetType() Config_Type {
-	if x != nil {
-		return x.Type
-	}
-	return Config_DATA_IGNORE
-}
-
-type ConfigList struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Configs       []*Config              `protobuf:"bytes,1,rep,name=configs,proto3" json:"configs,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *ConfigList) Reset() {
-	*x = ConfigList{}
-	mi := &file_v1_quantumUI_quantumUI_proto_msgTypes[3]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *ConfigList) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*ConfigList) ProtoMessage() {}
-
-func (x *ConfigList) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_quantumUI_quantumUI_proto_msgTypes[3]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use ConfigList.ProtoReflect.Descriptor instead.
-func (*ConfigList) Descriptor() ([]byte, []int) {
-	return file_v1_quantumUI_quantumUI_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *ConfigList) GetConfigs() []*Config {
-	if x != nil {
-		return x.Configs
-	}
-	return nil
-}
-
-type Settings struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Entry         map[string]*Config     `protobuf:"bytes,1,rep,name=entry,proto3" json:"entry,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *Settings) Reset() {
-	*x = Settings{}
-	mi := &file_v1_quantumUI_quantumUI_proto_msgTypes[4]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Settings) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Settings) ProtoMessage() {}
-
-func (x *Settings) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_quantumUI_quantumUI_proto_msgTypes[4]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Settings.ProtoReflect.Descriptor instead.
-func (*Settings) Descriptor() ([]byte, []int) {
-	return file_v1_quantumUI_quantumUI_proto_rawDescGZIP(), []int{4}
-}
-
-func (x *Settings) GetEntry() map[string]*Config {
-	if x != nil {
-		return x.Entry
-	}
-	return nil
-}
-
 var File_v1_quantumUI_quantumUI_proto protoreflect.FileDescriptor
 
 const file_v1_quantumUI_quantumUI_proto_rawDesc = "" +
 	"\n" +
 	"\x1cv1/quantumUI/quantumUI.proto\x12\bquatumUI\"\x85\x03\n" +
-	"\vuiComponent\x12\x0e\n" +
+	"\vUiComponent\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05class\x18\x02 \x01(\tR\x05class\x12\x14\n" +
 	"\x05label\x18\x03 \x01(\tR\x05label\x12\x14\n" +
@@ -518,7 +299,7 @@ const file_v1_quantumUI_quantumUI_proto_rawDesc = "" +
 	"\x04rows\x18\t \x01(\x05R\x04rows\x12\x12\n" +
 	"\x04cols\x18\n" +
 	" \x01(\x05R\x04cols\x120\n" +
-	"\x04type\x18\v \x01(\x0e2\x1c.quatumUI.uiComponent.UiTypeR\x04type\"h\n" +
+	"\x04type\x18\v \x01(\x0e2\x1c.quatumUI.UiComponent.UiTypeR\x04type\"h\n" +
 	"\x06UiType\x12\x10\n" +
 	"\fUiTypeIgnore\x10\x00\x12\f\n" +
 	"\bTEXTAREA\x10\x01\x12\t\n" +
@@ -529,37 +310,14 @@ const file_v1_quantumUI_quantumUI_proto_rawDesc = "" +
 	"\x06BUTTON\x10\x05\x12\n" +
 	"\n" +
 	"\x06WEBCAM\x10\x06\"\xa2\x01\n" +
-	"\tquantumUI\x12\x12\n" +
+	"\tQuantumUI\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x14\n" +
 	"\x05title\x18\x04 \x01(\tR\x05title\x125\n" +
 	"\n" +
-	"components\x18\x05 \x03(\v2\x15.quatumUI.uiComponentR\n" +
-	"components\"\xde\x01\n" +
-	"\x06Config\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
-	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x14\n" +
-	"\x05value\x18\x03 \x01(\tR\x05value\x12\x14\n" +
-	"\x05group\x18\x04 \x01(\tR\x05group\x12)\n" +
-	"\x04type\x18\x05 \x01(\x0e2\x15.quatumUI.Config.TypeR\x04type\"G\n" +
-	"\x04Type\x12\x0f\n" +
-	"\vDATA_IGNORE\x10\x00\x12\n" +
-	"\n" +
-	"\x06STRING\x10\x01\x12\n" +
-	"\n" +
-	"\x06NUMBER\x10\x02\x12\t\n" +
-	"\x05FLOAT\x10\x03\x12\v\n" +
-	"\aBOOLEAN\x10\x04\"8\n" +
-	"\n" +
-	"ConfigList\x12*\n" +
-	"\aconfigs\x18\x01 \x03(\v2\x10.quatumUI.ConfigR\aconfigs\"\x8b\x01\n" +
-	"\bSettings\x123\n" +
-	"\x05entry\x18\x01 \x03(\v2\x1d.quatumUI.Settings.EntryEntryR\x05entry\x1aJ\n" +
-	"\n" +
-	"EntryEntry\x12\x10\n" +
-	"\x03key\x18\x01 \x01(\tR\x03key\x12&\n" +
-	"\x05value\x18\x02 \x01(\v2\x10.quatumUI.ConfigR\x05value:\x028\x01B8Z6github.com/binuud/avatar-conscious/gen/go/v1/quantumUIb\x06proto3"
+	"components\x18\x05 \x03(\v2\x15.quatumUI.UiComponentR\n" +
+	"componentsB8Z6github.com/binuud/avatar-conscious/gen/go/v1/quantumUIb\x06proto3"
 
 var (
 	file_v1_quantumUI_quantumUI_proto_rawDescOnce sync.Once
@@ -573,30 +331,21 @@ func file_v1_quantumUI_quantumUI_proto_rawDescGZIP() []byte {
 	return file_v1_quantumUI_quantumUI_proto_rawDescData
 }
 
-var file_v1_quantumUI_quantumUI_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_v1_quantumUI_quantumUI_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
+var file_v1_quantumUI_quantumUI_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_v1_quantumUI_quantumUI_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_v1_quantumUI_quantumUI_proto_goTypes = []any{
-	(UiComponent_UiType)(0), // 0: quatumUI.uiComponent.UiType
-	(Config_Type)(0),        // 1: quatumUI.Config.Type
-	(*UiComponent)(nil),     // 2: quatumUI.uiComponent
-	(*QuantumUI)(nil),       // 3: quatumUI.quantumUI
-	(*Config)(nil),          // 4: quatumUI.Config
-	(*ConfigList)(nil),      // 5: quatumUI.ConfigList
-	(*Settings)(nil),        // 6: quatumUI.Settings
-	nil,                     // 7: quatumUI.Settings.EntryEntry
+	(UiComponent_UiType)(0), // 0: quatumUI.UiComponent.UiType
+	(*UiComponent)(nil),     // 1: quatumUI.UiComponent
+	(*QuantumUI)(nil),       // 2: quatumUI.QuantumUI
 }
 var file_v1_quantumUI_quantumUI_proto_depIdxs = []int32{
-	0, // 0: quatumUI.uiComponent.type:type_name -> quatumUI.uiComponent.UiType
-	2, // 1: quatumUI.quantumUI.components:type_name -> quatumUI.uiComponent
-	1, // 2: quatumUI.Config.type:type_name -> quatumUI.Config.Type
-	4, // 3: quatumUI.ConfigList.configs:type_name -> quatumUI.Config
-	7, // 4: quatumUI.Settings.entry:type_name -> quatumUI.Settings.EntryEntry
-	4, // 5: quatumUI.Settings.EntryEntry.value:type_name -> quatumUI.Config
-	6, // [6:6] is the sub-list for method output_type
-	6, // [6:6] is the sub-list for method input_type
-	6, // [6:6] is the sub-list for extension type_name
-	6, // [6:6] is the sub-list for extension extendee
-	0, // [0:6] is the sub-list for field type_name
+	0, // 0: quatumUI.UiComponent.type:type_name -> quatumUI.UiComponent.UiType
+	1, // 1: quatumUI.QuantumUI.components:type_name -> quatumUI.UiComponent
+	2, // [2:2] is the sub-list for method output_type
+	2, // [2:2] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_v1_quantumUI_quantumUI_proto_init() }
@@ -609,8 +358,8 @@ func file_v1_quantumUI_quantumUI_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_v1_quantumUI_quantumUI_proto_rawDesc), len(file_v1_quantumUI_quantumUI_proto_rawDesc)),
-			NumEnums:      2,
-			NumMessages:   6,
+			NumEnums:      1,
+			NumMessages:   2,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

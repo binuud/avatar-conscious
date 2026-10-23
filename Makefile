@@ -130,6 +130,7 @@ protos-avatar: ## Build Go and Web Proto for avatar module
 	--grpc-gateway-ts_opt generate_unbound_methods=true \
 	--oas_out ./gen/web/v1/avatar/ \
 	proto/v1/avatar/avatar.proto \
+	proto/v1/avatar/avatarService.proto \
 	proto/v1/avatar/avatarStoreService.proto 
 	yq eval ./gen/web/v1/avatar/openapi.yaml -o=json -P > ./gen/web/v1/avatar/openapi.json
 
