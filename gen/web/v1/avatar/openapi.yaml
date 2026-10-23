@@ -182,8 +182,6 @@ components:
             $ref: '#/components/schemas/Steps'
         content:
           type: string
-        ui:
-          $ref: '#/components/schemas/QuantumUI'
     AvatarActionStatus:
       type: string
       enum:
@@ -218,6 +216,8 @@ components:
           type: array
           items:
             type: string
+        ui:
+          $ref: '#/components/schemas/QuantumUI'
     AvatarStoreCreateRequest:
       type: object
       properties:

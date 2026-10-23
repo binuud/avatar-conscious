@@ -1,82 +1,163 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 	"os"
+	"strings"
 
-	bootstap "github.com/binuud/avatar-conscious/pkg/bootstrap"
-	"github.com/spf13/cobra"
+	"buf.build/go/protoyaml"
+	pb "github.com/binuud/avatar-conscious/gen/go/v1/avatar"
+	"github.com/sirupsen/logrus"
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/types/known/structpb"
+	"gopkg.in/yaml.v3"
 )
 
-var rootCmd = &cobra.Command{
-	Use:     "demo [arg]",
-	Short:   "A brief description shown in command lists",
-	Long:    `A detailed paragraph explaining what the command does when help is explicitly invoked.`,
-	Example: `  demo my-argument --flag-value`,
-	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) == 0 {
-			cmd.Help()
-			os.Exit(0)
-		}
-		// do actual work
-	},
+func MapToProtobufStruct(m map[string]interface{}) (*structpb.Struct, error) {
+	b, err := json.Marshal(m)
+	if err != nil {
+		return nil, err
+	}
+	s := &structpb.Struct{}
+	err = protojson.Unmarshal(b, s)
+	if err != nil {
+		return nil, err
+	}
+	return s, nil
+}
+func ProtobufStructToMap(s *structpb.Struct) (map[string]interface{}, error) {
+	b, err := protojson.Marshal(s)
+	if err != nil {
+		return nil, err
+	}
+	m := make(map[string]interface{})
+	err = json.Unmarshal(b, &m)
+	if err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
-func NewGreetCommand() *cobra.Command {
-	return &cobra.Command{
-		Use:   "greet [name]",
-		Short: "Print a friendly greeting",
-		Args:  cobra.MaximumNArgs(1),
-		RunE: func(cmd *cobra.Command, args []string) error {
-			name := "world"
-			if len(args) == 1 {
-				name = args[0]
-			}
-			fmt.Printf("Hello, %s!\n", name)
-			return nil
-		},
-	}
+func StructToProtobufStruct(s interface{}) (*structpb.Struct, error) {
+	return MapToProtobufStruct(s.(map[string]interface{}))
 }
 
-func NewServeCommand() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "serve",
-		Short: "Run the HTTP server",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			port, _ := cmd.Flags().GetInt("port")
-			fmt.Printf("Serving on :%d\n", port)
-			return nil
-		},
-	}
-	cmd.Flags().Int("port", 8080, "port to listen on")
-	return cmd
+func ProtobufStructToStruct(s *structpb.Struct) (interface{}, error) {
+	return ProtobufStructToMap(s)
 }
 
-func NewDebugCommand() *cobra.Command {
-	cmd := &cobra.Command{
-		Use:   "debug",
-		Short: "debug the HTTP server",
-		RunE: func(cmd *cobra.Command, args []string) error {
-			port, _ := cmd.Flags().GetInt("port")
-			fmt.Printf("Serving on :%d\n", port)
-			return nil
-		},
+func MapAnyToMapString(m map[any]any) map[string]any {
+	clean := make(map[string]any)
+	for k, v := range m {
+		clean[fmt.Sprintf("%v", k)] = v
 	}
-	cmd.Flags().Int("port", 8080, "port to listen on")
-	return cmd
+	return clean
 }
 
-func Execute() {
-	if err := rootCmd.Execute(); err != nil {
-		os.Exit(1)
+func MapToProtoStruct(m map[string]any, targetMessage *pb.Avatar) error {
+	// 1. Convert the Go map to intermediate JSON bytes
+	jsonBytes, err := json.Marshal(m)
+	if err != nil {
+		return fmt.Errorf("failed to marshal map to json: %w", err)
 	}
+
+	// 2. Unmarshal the JSON bytes into the Protobuf struct
+	// protojson handles protobuf specific conventions (like camelCase vs snake_case conversion)
+	options := protojson.UnmarshalOptions{DiscardUnknown: true}
+	if err := options.Unmarshal(jsonBytes, targetMessage); err != nil {
+		return fmt.Errorf("failed to unmarshal json to proto struct: %w", err)
+	}
+
+	return nil
+}
+
+// UnmarshalYAMLFile will return a YAML configuration file in it's raw Golang form.
+func UnmarshalYAMLFile(fileData string) (map[any]any, error) {
+
+	yamlData := make(map[any]any)
+
+	err := yaml.Unmarshal([]byte(fileData), &yamlData)
+	logrus.Fatalf("UnmarshalYAMLFile: cannot unmarshall into yaml %v", err)
+
+	return yamlData, nil
+
+}
+
+// ExtractFrontMatter isolates the YAML block and returns the YAML, the remaining content, and a boolean status
+func ExtractFrontMatter(input string) (yaml string, content string, found bool) {
+	// Standardize line endings if needed, then check if it starts with the markdown fence
+	if !strings.HasPrefix(input, "---\n") && !strings.HasPrefix(input, "---\r\n") {
+		return "", input, false
+	}
+
+	// Split by the fence. SplitN with 3 limits the slice size:
+	// parts[0] will be empty (before the first ---)
+	// parts[1] will be the front matter block
+	// parts[2] will be the remainder of the markdown file
+	parts := strings.SplitN(input, "---", 3)
+	if len(parts) < 3 {
+		return "", input, false
+	}
+
+	// Trim surrounding whitespace from the block
+	yamlBlock := strings.TrimSpace(parts[1])
+	remainingContent := strings.TrimSpace(parts[2])
+
+	return yamlBlock, remainingContent, true
+}
+
+func GetFileContents() string {
+	content, err := os.ReadFile("sample.md")
+	if err != nil {
+		log.Fatalf("Failed to read file: %s", err)
+	}
+
+	// Convert the byte slice to a string to print it
+	return string(content)
 }
 
 func main() {
-	// rootCmd.AddCommand(NewServeCommand())
-	// rootCmd.AddCommand(NewDebugCommand())
-	// rootCmd.AddCommand(NewGreetCommand())
-	fmt.Println("Started")
-	bootstap.Bootstrap()
-	// Execute()
+	contents := GetFileContents()
+	y, _, f := ExtractFrontMatter(contents)
+
+	logrus.Info("---------------------------------------")
+	logrus.Infof(" YAML %v, \n%v\n\n", f, y)
+	logrus.Info("---------------------------------------")
+
+	// Target Protobuf message (must be generated by protoc-gen-go)
+	var avatarMeta pb.AvatarMeta
+
+	// 3. Configure unmarshaling options
+	// opts := protoyaml.UnmarshalOptions{
+	// 	// Example: Ignore unknown fields (default is to error on unknown fields)
+	// 	IgnoreUnknown: true,
+	// }
+
+	// 4. Unmarshal YAML into the Protobuf message
+	err := protoyaml.Unmarshal([]byte(y), &avatarMeta)
+	if err != nil {
+		log.Fatalf("Error unmarshaling: %v", err)
+	}
+
+	logrus.Info("---------------------------------------")
+	logrus.Infof(" Struct %v", avatarMeta)
+	logrus.Info("---------------------------------------")
+
+	// j, err := UnmarshalYAMLFile(y)
+	// logrus.Infof("UnmarshalYAMLFile %v", j)
+
+	// var avatar pb.Avatar
+
+	// // Convert map[string]any to *structpb.Struct
+	// err = MapToProtoStruct(MapAnyToMapString(j), &avatar)
+	// if err != nil {
+	// 	log.Fatalf("Failed to MapToProtoStruct map to proto struct: %v", err)
+	// }
+	// // err = protojson.Unmarshal(j, &avatar)
+	// if err != nil {
+	// 	log.Fatalf("Failed to unmarshal JSON to struct: %v", err)
+	// }
+
 }
