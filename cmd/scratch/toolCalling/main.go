@@ -1,6 +1,7 @@
 package main
 
 import (
+	pb "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	"github.com/binuud/avatar-conscious/pkg/llm"
 	"github.com/binuud/avatar-conscious/pkg/memory"
 	"github.com/binuud/avatar-conscious/pkg/tools/aiGenTools"
@@ -34,7 +35,7 @@ func CheckImageDescriber() string {
 		logrus.Errorf("client: error llm chat request: %v \n", err)
 		return ""
 	}
-	out := ""
+	out := &pb.ContextMesssage{}
 	msg := completions.Choices[0].Message
 	if len(msg.ToolCalls) > 0 {
 		out, err = tools.HandleToolCalls(msg.ToolCalls)
@@ -44,7 +45,7 @@ func CheckImageDescriber() string {
 		}
 
 	}
-	return out
+	return out.Response
 }
 
 func CheckImageGeneration() {

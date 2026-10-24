@@ -6,6 +6,7 @@ import (
 	"os"
 	"strings"
 
+	pb "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	"github.com/binuud/avatar-conscious/pkg/tools/toolMeta"
 	"github.com/openai/openai-go/v3"
 	"github.com/sirupsen/logrus"
@@ -59,14 +60,23 @@ func (t WebFetchTool) InputSchemaAsOpenAiParam() openai.FunctionParameters {
 	}
 }
 
-func (t WebFetchTool) Handler(args string) (string, error) {
-	logrus.Infof("Arguments received %v", args)
-	var in WebFetchTool_Input
-	if err := json.Unmarshal([]byte(args), &in); err != nil {
-		return "", err
+func (t WebFetchTool) Handler(in *pb.ContextMesssage) (*pb.ContextMesssage, error) {
+	logrus.Infof("AiGenerateImageTool Handler Arguments received %v", in.Prompt)
+	var inpObj WebFetchTool_Input
+	if err := json.Unmarshal([]byte(in.Prompt), &inpObj); err != nil {
+		return nil, err
 	}
 	logrus.Infof("Arguments parsed into input structure %v", in)
-	return GetFileContents(in.Url)
+
+	outMsg, err := GetFileContents(inpObj.Url)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.ContextMesssage{
+		Uuid:     in.Uuid,
+		Prompt:   in.Prompt,
+		Response: outMsg,
+	}, nil
 }
 
 func GetFileContents(fileName string) (string, error) {
