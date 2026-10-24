@@ -24,13 +24,12 @@ export type StartResponse = {
   avatar?: AvatarAvatar.Avatar
 }
 
-export type ConnectRequest = {
-  uuid?: string
-  name?: string
+export type ControlRequest = {
+  control?: AvatarAvatar.AvatarControl
 }
 
-export type ConnectResponse = {
-  avatar?: AvatarAvatar.Avatar
+export type ControlResponse = {
+  control?: AvatarAvatar.AvatarControl
 }
 
 export type StopRequest = {
@@ -48,9 +47,6 @@ export class AvatarService {
   }
   static Start(req: StartRequest, initReq?: fm.InitReq): Promise<StartResponse> {
     return fm.fetchReq<StartRequest, StartResponse>(`/v1/avatar/start`, {...initReq, method: "POST"})
-  }
-  static Connect(req: ConnectRequest, initReq?: fm.InitReq): Promise<ConnectResponse> {
-    return fm.fetchReq<ConnectRequest, ConnectResponse>(`/v1/avatar/Connect`, {...initReq, method: "POST"})
   }
   static Stop(req: StopRequest, initReq?: fm.InitReq): Promise<StopResponse> {
     return fm.fetchReq<StopRequest, StopResponse>(`/v1/avatar/stop`, {...initReq, method: "POST"})

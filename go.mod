@@ -6,6 +6,7 @@ require (
 	buf.build/go/protoyaml v0.7.0
 	github.com/google/jsonschema-go v0.4.3
 	github.com/google/uuid v1.6.0
+	github.com/gorilla/websocket v1.5.3
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.32.0
 	github.com/openai/openai-go/v3 v3.82.0
 	github.com/rs/cors v1.11.1

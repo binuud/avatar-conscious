@@ -107,15 +107,21 @@ func runHtppServer() {
 
 	httpMux := serveStaticPaths()
 
+	// for bidirectional stream on avatar live server
+
+	httpMux.HandleFunc("/api/avatar/ws", avatarServer.WebsocketHandler)
 	// mqttServer.InitMQTT()
-	// httpMux.HandleFunc("/ws", mqttServer.WebsocketHandler)
 
 	// handle llm proxt on path /llmHandler
 	httpMux.Handle("/llmHandler/", http.StripPrefix("/llmHandler", llmProxyServer.GetLlmProxyHandler()))
 	logrus.Infof("Server directory %s -> %s", "/llmHandler/", "llm proxy")
 
+	// handle websocket
+	// httpMux.HandleFunc("/ws", mqttServer.WebsocketHandler)
+
 	// link the concious gateway server to httpmux
 	httpMux.Handle("/api/", http.StripPrefix("/api", gwMux))
+	logrus.Infof("Server directory %s -> %s", "/api/avatar/ws", "avatar control websocket")
 	logrus.Infof("Server directory %s -> %s", "/api/", "conscious server")
 	logrus.Infof("Server directory %s -> %s", "/api/", "metrics server")
 	logrus.Infof("Server directory %s -> %s", "/api/", "avatar store server")
@@ -153,7 +159,7 @@ func runGRPCServer() {
 	// GRPC Conscious Server
 	pbConscious.RegisterConsciousServer(insecureServer, consciousServer.NewGrpcConsciousServer())
 
-	// GRPC Avatar Store Server
+	// GRPC Avatar Server
 	pbAvatar.RegisterAvatarServiceServer(insecureServer, avatarServer.NewAvatarGrpcServer())
 
 	// GRPC Avatar Store Server

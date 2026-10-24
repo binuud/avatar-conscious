@@ -18,7 +18,13 @@ export SERVABLE_DIRECTORY=${PWD}/dataVolume/gen
 
 # go test ./pkg/...
 # go test ./pkg/...  -v
-go test -v  --run Test_Avatar_Election_Officer ./pkg/servers/avatarServer
+
+## test run for running avatar step by step
+# go test -v  --run Test_Avatar_By_Step_Election_Officer ./pkg/servers/avatarServer
+
+## test run for running avatar step by step, control via bidirectional server
+go test -v  --run Test_AvatarServer_Control ./pkg/servers/avatarServer
+
 # go test -v  ./pkg/servers/avatarStoreServer
 #go test -v  ./pkg/settings
 # go test -v --run Test_Memory ./pkg/servers/consciousServer

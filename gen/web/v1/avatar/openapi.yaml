@@ -5,25 +5,6 @@ info:
   title: ""
   version: ""
 paths:
-  /v1/avatar/Connect:
-    post:
-      operationId: connect
-      parameters:
-        - name: name
-          in: query
-          schema:
-            type: string
-        - name: uuid
-          in: query
-          schema:
-            type: string
-      responses:
-        "200":
-          description: avatar.AvatarService.Connect response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ConnectResponse'
   /v1/avatar/get:
     get:
       operationId: get
@@ -165,6 +146,157 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/AvatarStoreUpdateResponse'
+  /v1/avatarlive/connect:
+    post:
+      operationId: control
+      parameters:
+        - name: control.action
+          in: query
+          schema:
+            $ref: '#/components/schemas/AvatarControl.AvatarAction'
+        - name: control.completedAt.nanos
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: control.completedAt.seconds
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: control.createdAt.nanos
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: control.createdAt.seconds
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: control.currentStep
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: control.meta.description
+          in: query
+          schema:
+            type: string
+        - name: control.meta.name
+          in: query
+          schema:
+            type: string
+        - name: control.meta.triggers
+          in: query
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: control.meta.ui.components.class
+          in: query
+          schema:
+            type: string
+        - name: control.meta.ui.components.cols
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: control.meta.ui.components.help
+          in: query
+          schema:
+            type: string
+        - name: control.meta.ui.components.id
+          in: query
+          schema:
+            type: string
+        - name: control.meta.ui.components.label
+          in: query
+          schema:
+            type: string
+        - name: control.meta.ui.components.placeHolder
+          in: query
+          schema:
+            type: string
+        - name: control.meta.ui.components.rows
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: control.meta.ui.components.style
+          in: query
+          schema:
+            type: string
+        - name: control.meta.ui.components.type
+          in: query
+          schema:
+            $ref: '#/components/schemas/UiComponent.UiType'
+        - name: control.meta.ui.components.value
+          in: query
+          schema:
+            type: string
+        - name: control.meta.ui.components.width
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: control.meta.ui.description
+          in: query
+          schema:
+            type: string
+        - name: control.meta.ui.name
+          in: query
+          schema:
+            type: string
+        - name: control.meta.ui.title
+          in: query
+          schema:
+            type: string
+        - name: control.meta.ui.uuid
+          in: query
+          schema:
+            type: string
+        - name: control.meta.uuid
+          in: query
+          schema:
+            type: string
+        - name: control.status
+          in: query
+          schema:
+            $ref: '#/components/schemas/AvatarControl.AvatarStatus'
+        - name: control.stepStatuses.completedAt.nanos
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: control.stepStatuses.completedAt.seconds
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: control.stepStatuses.createdAt.nanos
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: control.stepStatuses.createdAt.seconds
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: control.stepStatuses.status
+          in: query
+          schema:
+            $ref: '#/components/schemas/StepStatus.AvatarStepStatus'
+      responses:
+        "200":
+          description: avatar.AvatarService.Control response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ControlResponse'
 components:
   schemas:
     Avatar:
@@ -182,15 +314,6 @@ components:
             $ref: '#/components/schemas/Step'
         content:
           type: string
-    AvatarActionStatus:
-      type: string
-      enum:
-        - "AvatarActionStatusIgnore"
-        - "Success"
-        - "Active"
-        - "Rerun"
-        - "Failed"
-        - "Fatal"
     AvatarActionType:
       type: string
       enum:
@@ -203,6 +326,45 @@ components:
         - "AiQuery"
         - "AiImageDescribe"
         - "AiImageGeneration"
+    AvatarControl:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/AvatarMeta'
+        status:
+          $ref: '#/components/schemas/AvatarControl.AvatarStatus'
+        action:
+          $ref: '#/components/schemas/AvatarControl.AvatarAction'
+        currentStep:
+          type: integer
+          format: int32
+        stepStatuses:
+          type: array
+          items:
+            $ref: '#/components/schemas/StepStatus'
+        createdAt:
+          $ref: '#/components/schemas/Timestamp'
+        completedAt:
+          $ref: '#/components/schemas/Timestamp'
+    AvatarControl.AvatarAction:
+      type: string
+      enum:
+        - "AvatarActionIgnore"
+        - "Run"
+        - "StartDebug"
+        - "Stop"
+        - "RunStep"
+        - "StopStep"
+    AvatarControl.AvatarStatus:
+      type: string
+      enum:
+        - "AvatarActionStatusIgnore"
+        - "Success"
+        - "Active"
+        - "Rerun"
+        - "Failed"
+        - "Fatal"
+        - "Stopped"
     AvatarMeta:
       type: object
       properties:
@@ -277,11 +439,11 @@ components:
       properties:
         avatar:
           $ref: '#/components/schemas/Avatar'
-    ConnectResponse:
+    ControlResponse:
       type: object
       properties:
-        avatar:
-          $ref: '#/components/schemas/Avatar'
+        control:
+          $ref: '#/components/schemas/AvatarControl'
     GetResponse:
       type: object
       properties:
@@ -310,8 +472,37 @@ components:
           type: string
         prompt:
           type: string
+    StepStatus:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/StepStatus.AvatarStepStatus'
+        createdAt:
+          $ref: '#/components/schemas/Timestamp'
+        completedAt:
+          $ref: '#/components/schemas/Timestamp'
+    StepStatus.AvatarStepStatus:
+      type: string
+      enum:
+        - "AvatarActionStatusIgnore"
+        - "Success"
+        - "Active"
+        - "Rerun"
+        - "Failed"
+        - "Fatal"
+        - "NotStarted"
     StopResponse:
       type: object
       properties:
         avatar:
           $ref: '#/components/schemas/Avatar'
+    UiComponent.UiType:
+      type: string
+      enum:
+        - "UiTypeIgnore"
+        - "TEXTAREA"
+        - "INPUT"
+        - "CHECKBOX"
+        - "PLAINTEXT"
+        - "BUTTON"
+        - "WEBCAM"

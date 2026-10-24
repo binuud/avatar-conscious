@@ -4,7 +4,7 @@
 * This file is a generated Typescript file for GRPC Gateway, DO NOT MODIFY
 */
 
-import * as ContextMessage from "../conscious/contextMessage.pb"
+import * as Common from "../conscious/common.pb"
 import * as QuatumUIQuantumUI from "../quantumUI/quantumUI.pb"
 
 export enum Permission {
@@ -28,13 +28,33 @@ export enum AvatarActionType {
   AiImageGeneration = "AiImageGeneration",
 }
 
-export enum AvatarActionStatus {
+export enum StepStatusAvatarStepStatus {
   AvatarActionStatusIgnore = "AvatarActionStatusIgnore",
   Success = "Success",
   Active = "Active",
   Rerun = "Rerun",
   Failed = "Failed",
   Fatal = "Fatal",
+  NotStarted = "NotStarted",
+}
+
+export enum AvatarControlAvatarStatus {
+  AvatarActionStatusIgnore = "AvatarActionStatusIgnore",
+  Success = "Success",
+  Active = "Active",
+  Rerun = "Rerun",
+  Failed = "Failed",
+  Fatal = "Fatal",
+  Stopped = "Stopped",
+}
+
+export enum AvatarControlAvatarAction {
+  AvatarActionIgnore = "AvatarActionIgnore",
+  Run = "Run",
+  StartDebug = "StartDebug",
+  Stop = "Stop",
+  RunStep = "RunStep",
+  StopStep = "StopStep",
 }
 
 export type ToolParams = {
@@ -49,33 +69,6 @@ export type Tool = {
   description?: string
   type?: string
   parameters?: {[key: string]: ToolParams}
-}
-
-export type AvatarAction = {
-  name?: string
-  description?: string
-  action?: string
-  disabled?: boolean
-  type?: AvatarActionType
-  Status?: AvatarActionStatus
-  completedLogic?: string
-  successLogic?: string
-  failLogic?: string
-  model?: string
-  prompt?: string
-  systemPrompt?: string
-  In?: ContextMessage.ContextMesssage
-  Out?: ContextMessage.ContextMesssage
-}
-
-export type AvatarLoop = {
-  name?: string
-  description?: string
-  model?: string
-  prompt?: string
-  systemPrompt?: string
-  runActions?: AvatarAction[]
-  loopAction?: AvatarAction
 }
 
 export type AvatarMeta = {
@@ -96,10 +89,26 @@ export type Steps = {
   steps?: Step[]
 }
 
+export type StepStatus = {
+  status?: StepStatusAvatarStepStatus
+  createdAt?: Common.Timestamp
+  completedAt?: Common.Timestamp
+}
+
 export type Avatar = {
   meta?: AvatarMeta
   permissions?: Permission
   systemPrompt?: string
   steps?: Step[]
   content?: string
+}
+
+export type AvatarControl = {
+  meta?: AvatarMeta
+  status?: AvatarControlAvatarStatus
+  action?: AvatarControlAvatarAction
+  currentStep?: number
+  stepStatuses?: StepStatus[]
+  createdAt?: Common.Timestamp
+  completedAt?: Common.Timestamp
 }

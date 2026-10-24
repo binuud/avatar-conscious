@@ -148,62 +148,187 @@ func (AvatarActionType) EnumDescriptor() ([]byte, []int) {
 	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{1}
 }
 
-type AvatarActionStatus int32
+type StepStatus_AvatarStepStatus int32
 
 const (
-	AvatarActionStatus_AvatarActionStatusIgnore AvatarActionStatus = 0
-	AvatarActionStatus_Success                  AvatarActionStatus = 1
-	AvatarActionStatus_Active                   AvatarActionStatus = 2
-	AvatarActionStatus_Rerun                    AvatarActionStatus = 3
-	AvatarActionStatus_Failed                   AvatarActionStatus = 4
-	AvatarActionStatus_Fatal                    AvatarActionStatus = 5
+	StepStatus_AvatarActionStatusIgnore StepStatus_AvatarStepStatus = 0
+	StepStatus_Success                  StepStatus_AvatarStepStatus = 1
+	StepStatus_Active                   StepStatus_AvatarStepStatus = 2
+	StepStatus_Rerun                    StepStatus_AvatarStepStatus = 3
+	StepStatus_Failed                   StepStatus_AvatarStepStatus = 4
+	StepStatus_Fatal                    StepStatus_AvatarStepStatus = 5
+	StepStatus_NotStarted               StepStatus_AvatarStepStatus = 6
 )
 
-// Enum value maps for AvatarActionStatus.
+// Enum value maps for StepStatus_AvatarStepStatus.
 var (
-	AvatarActionStatus_name = map[int32]string{
+	StepStatus_AvatarStepStatus_name = map[int32]string{
 		0: "AvatarActionStatusIgnore",
 		1: "Success",
 		2: "Active",
 		3: "Rerun",
 		4: "Failed",
 		5: "Fatal",
+		6: "NotStarted",
 	}
-	AvatarActionStatus_value = map[string]int32{
+	StepStatus_AvatarStepStatus_value = map[string]int32{
 		"AvatarActionStatusIgnore": 0,
 		"Success":                  1,
 		"Active":                   2,
 		"Rerun":                    3,
 		"Failed":                   4,
 		"Fatal":                    5,
+		"NotStarted":               6,
 	}
 )
 
-func (x AvatarActionStatus) Enum() *AvatarActionStatus {
-	p := new(AvatarActionStatus)
+func (x StepStatus_AvatarStepStatus) Enum() *StepStatus_AvatarStepStatus {
+	p := new(StepStatus_AvatarStepStatus)
 	*p = x
 	return p
 }
 
-func (x AvatarActionStatus) String() string {
+func (x StepStatus_AvatarStepStatus) String() string {
 	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
 }
 
-func (AvatarActionStatus) Descriptor() protoreflect.EnumDescriptor {
+func (StepStatus_AvatarStepStatus) Descriptor() protoreflect.EnumDescriptor {
 	return file_v1_avatar_avatar_proto_enumTypes[2].Descriptor()
 }
 
-func (AvatarActionStatus) Type() protoreflect.EnumType {
+func (StepStatus_AvatarStepStatus) Type() protoreflect.EnumType {
 	return &file_v1_avatar_avatar_proto_enumTypes[2]
 }
 
-func (x AvatarActionStatus) Number() protoreflect.EnumNumber {
+func (x StepStatus_AvatarStepStatus) Number() protoreflect.EnumNumber {
 	return protoreflect.EnumNumber(x)
 }
 
-// Deprecated: Use AvatarActionStatus.Descriptor instead.
-func (AvatarActionStatus) EnumDescriptor() ([]byte, []int) {
-	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{2}
+// Deprecated: Use StepStatus_AvatarStepStatus.Descriptor instead.
+func (StepStatus_AvatarStepStatus) EnumDescriptor() ([]byte, []int) {
+	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{5, 0}
+}
+
+type AvatarControl_AvatarStatus int32
+
+const (
+	AvatarControl_AvatarActionStatusIgnore AvatarControl_AvatarStatus = 0
+	AvatarControl_Success                  AvatarControl_AvatarStatus = 1
+	AvatarControl_Active                   AvatarControl_AvatarStatus = 2
+	AvatarControl_Rerun                    AvatarControl_AvatarStatus = 3
+	AvatarControl_Failed                   AvatarControl_AvatarStatus = 4
+	AvatarControl_Fatal                    AvatarControl_AvatarStatus = 5
+	AvatarControl_Stopped                  AvatarControl_AvatarStatus = 6
+)
+
+// Enum value maps for AvatarControl_AvatarStatus.
+var (
+	AvatarControl_AvatarStatus_name = map[int32]string{
+		0: "AvatarActionStatusIgnore",
+		1: "Success",
+		2: "Active",
+		3: "Rerun",
+		4: "Failed",
+		5: "Fatal",
+		6: "Stopped",
+	}
+	AvatarControl_AvatarStatus_value = map[string]int32{
+		"AvatarActionStatusIgnore": 0,
+		"Success":                  1,
+		"Active":                   2,
+		"Rerun":                    3,
+		"Failed":                   4,
+		"Fatal":                    5,
+		"Stopped":                  6,
+	}
+)
+
+func (x AvatarControl_AvatarStatus) Enum() *AvatarControl_AvatarStatus {
+	p := new(AvatarControl_AvatarStatus)
+	*p = x
+	return p
+}
+
+func (x AvatarControl_AvatarStatus) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (AvatarControl_AvatarStatus) Descriptor() protoreflect.EnumDescriptor {
+	return file_v1_avatar_avatar_proto_enumTypes[3].Descriptor()
+}
+
+func (AvatarControl_AvatarStatus) Type() protoreflect.EnumType {
+	return &file_v1_avatar_avatar_proto_enumTypes[3]
+}
+
+func (x AvatarControl_AvatarStatus) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use AvatarControl_AvatarStatus.Descriptor instead.
+func (AvatarControl_AvatarStatus) EnumDescriptor() ([]byte, []int) {
+	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{7, 0}
+}
+
+type AvatarControl_AvatarAction int32
+
+const (
+	AvatarControl_AvatarActionIgnore AvatarControl_AvatarAction = 0
+	// Run the avatar to completion
+	AvatarControl_Run AvatarControl_AvatarAction = 1
+	// Start the avatar in step by step mode
+	AvatarControl_StartDebug AvatarControl_AvatarAction = 2
+	AvatarControl_Stop       AvatarControl_AvatarAction = 3
+	// Run a particular step
+	AvatarControl_RunStep  AvatarControl_AvatarAction = 4
+	AvatarControl_StopStep AvatarControl_AvatarAction = 5
+)
+
+// Enum value maps for AvatarControl_AvatarAction.
+var (
+	AvatarControl_AvatarAction_name = map[int32]string{
+		0: "AvatarActionIgnore",
+		1: "Run",
+		2: "StartDebug",
+		3: "Stop",
+		4: "RunStep",
+		5: "StopStep",
+	}
+	AvatarControl_AvatarAction_value = map[string]int32{
+		"AvatarActionIgnore": 0,
+		"Run":                1,
+		"StartDebug":         2,
+		"Stop":               3,
+		"RunStep":            4,
+		"StopStep":           5,
+	}
+)
+
+func (x AvatarControl_AvatarAction) Enum() *AvatarControl_AvatarAction {
+	p := new(AvatarControl_AvatarAction)
+	*p = x
+	return p
+}
+
+func (x AvatarControl_AvatarAction) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (AvatarControl_AvatarAction) Descriptor() protoreflect.EnumDescriptor {
+	return file_v1_avatar_avatar_proto_enumTypes[4].Descriptor()
+}
+
+func (AvatarControl_AvatarAction) Type() protoreflect.EnumType {
+	return &file_v1_avatar_avatar_proto_enumTypes[4]
+}
+
+func (x AvatarControl_AvatarAction) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use AvatarControl_AvatarAction.Descriptor instead.
+func (AvatarControl_AvatarAction) EnumDescriptor() ([]byte, []int) {
+	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{7, 1}
 }
 
 type ToolParams struct {
@@ -342,247 +467,6 @@ func (x *Tool) GetParameters() map[string]*ToolParams {
 	return nil
 }
 
-type AvatarAction struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Name        string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Description string                 `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
-	Action      string                 `protobuf:"bytes,3,opt,name=action,proto3" json:"action,omitempty"`
-	Disabled    bool                   `protobuf:"varint,4,opt,name=disabled,proto3" json:"disabled,omitempty"`
-	Type        AvatarActionType       `protobuf:"varint,5,opt,name=type,proto3,enum=avatar.AvatarActionType" json:"type,omitempty"`
-	XStatus     AvatarActionStatus     `protobuf:"varint,6,opt,name=_status,json=Status,proto3,enum=avatar.AvatarActionStatus" json:"_status,omitempty"`
-	// the logic to check to know that the action has completed
-	CompletedLogic string                     `protobuf:"bytes,7,opt,name=completed_logic,json=completedLogic,proto3" json:"completed_logic,omitempty"`
-	SuccessLogic   string                     `protobuf:"bytes,8,opt,name=success_logic,json=successLogic,proto3" json:"success_logic,omitempty"`
-	FailLogic      string                     `protobuf:"bytes,9,opt,name=fail_logic,json=failLogic,proto3" json:"fail_logic,omitempty"`
-	Model          string                     `protobuf:"bytes,11,opt,name=model,proto3" json:"model,omitempty"`
-	Prompt         string                     `protobuf:"bytes,12,opt,name=prompt,proto3" json:"prompt,omitempty"`
-	SystemPrompt   string                     `protobuf:"bytes,13,opt,name=systemPrompt,proto3" json:"systemPrompt,omitempty"`
-	XIn            *conscious.ContextMesssage `protobuf:"bytes,21,opt,name=_in,json=In,proto3" json:"_in,omitempty"`
-	XOut           *conscious.ContextMesssage `protobuf:"bytes,22,opt,name=_out,json=Out,proto3" json:"_out,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
-}
-
-func (x *AvatarAction) Reset() {
-	*x = AvatarAction{}
-	mi := &file_v1_avatar_avatar_proto_msgTypes[2]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *AvatarAction) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*AvatarAction) ProtoMessage() {}
-
-func (x *AvatarAction) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_avatar_avatar_proto_msgTypes[2]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use AvatarAction.ProtoReflect.Descriptor instead.
-func (*AvatarAction) Descriptor() ([]byte, []int) {
-	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *AvatarAction) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
-}
-
-func (x *AvatarAction) GetDescription() string {
-	if x != nil {
-		return x.Description
-	}
-	return ""
-}
-
-func (x *AvatarAction) GetAction() string {
-	if x != nil {
-		return x.Action
-	}
-	return ""
-}
-
-func (x *AvatarAction) GetDisabled() bool {
-	if x != nil {
-		return x.Disabled
-	}
-	return false
-}
-
-func (x *AvatarAction) GetType() AvatarActionType {
-	if x != nil {
-		return x.Type
-	}
-	return AvatarActionType_AvatarActionTypeIgnore
-}
-
-func (x *AvatarAction) GetXStatus() AvatarActionStatus {
-	if x != nil {
-		return x.XStatus
-	}
-	return AvatarActionStatus_AvatarActionStatusIgnore
-}
-
-func (x *AvatarAction) GetCompletedLogic() string {
-	if x != nil {
-		return x.CompletedLogic
-	}
-	return ""
-}
-
-func (x *AvatarAction) GetSuccessLogic() string {
-	if x != nil {
-		return x.SuccessLogic
-	}
-	return ""
-}
-
-func (x *AvatarAction) GetFailLogic() string {
-	if x != nil {
-		return x.FailLogic
-	}
-	return ""
-}
-
-func (x *AvatarAction) GetModel() string {
-	if x != nil {
-		return x.Model
-	}
-	return ""
-}
-
-func (x *AvatarAction) GetPrompt() string {
-	if x != nil {
-		return x.Prompt
-	}
-	return ""
-}
-
-func (x *AvatarAction) GetSystemPrompt() string {
-	if x != nil {
-		return x.SystemPrompt
-	}
-	return ""
-}
-
-func (x *AvatarAction) GetXIn() *conscious.ContextMesssage {
-	if x != nil {
-		return x.XIn
-	}
-	return nil
-}
-
-func (x *AvatarAction) GetXOut() *conscious.ContextMesssage {
-	if x != nil {
-		return x.XOut
-	}
-	return nil
-}
-
-type AvatarLoop struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Description   string                 `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
-	Model         string                 `protobuf:"bytes,3,opt,name=model,proto3" json:"model,omitempty"`
-	Prompt        string                 `protobuf:"bytes,4,opt,name=prompt,proto3" json:"prompt,omitempty"`
-	SystemPrompt  string                 `protobuf:"bytes,5,opt,name=systemPrompt,proto3" json:"systemPrompt,omitempty"`
-	RunActions    []*AvatarAction        `protobuf:"bytes,6,rep,name=runActions,proto3" json:"runActions,omitempty"`
-	LoopAction    *AvatarAction          `protobuf:"bytes,8,opt,name=loopAction,proto3" json:"loopAction,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *AvatarLoop) Reset() {
-	*x = AvatarLoop{}
-	mi := &file_v1_avatar_avatar_proto_msgTypes[3]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *AvatarLoop) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*AvatarLoop) ProtoMessage() {}
-
-func (x *AvatarLoop) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_avatar_avatar_proto_msgTypes[3]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use AvatarLoop.ProtoReflect.Descriptor instead.
-func (*AvatarLoop) Descriptor() ([]byte, []int) {
-	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *AvatarLoop) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
-}
-
-func (x *AvatarLoop) GetDescription() string {
-	if x != nil {
-		return x.Description
-	}
-	return ""
-}
-
-func (x *AvatarLoop) GetModel() string {
-	if x != nil {
-		return x.Model
-	}
-	return ""
-}
-
-func (x *AvatarLoop) GetPrompt() string {
-	if x != nil {
-		return x.Prompt
-	}
-	return ""
-}
-
-func (x *AvatarLoop) GetSystemPrompt() string {
-	if x != nil {
-		return x.SystemPrompt
-	}
-	return ""
-}
-
-func (x *AvatarLoop) GetRunActions() []*AvatarAction {
-	if x != nil {
-		return x.RunActions
-	}
-	return nil
-}
-
-func (x *AvatarLoop) GetLoopAction() *AvatarAction {
-	if x != nil {
-		return x.LoopAction
-	}
-	return nil
-}
-
 // from the front matter
 type AvatarMeta struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -600,7 +484,7 @@ type AvatarMeta struct {
 
 func (x *AvatarMeta) Reset() {
 	*x = AvatarMeta{}
-	mi := &file_v1_avatar_avatar_proto_msgTypes[4]
+	mi := &file_v1_avatar_avatar_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -612,7 +496,7 @@ func (x *AvatarMeta) String() string {
 func (*AvatarMeta) ProtoMessage() {}
 
 func (x *AvatarMeta) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_avatar_avatar_proto_msgTypes[4]
+	mi := &file_v1_avatar_avatar_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -625,7 +509,7 @@ func (x *AvatarMeta) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AvatarMeta.ProtoReflect.Descriptor instead.
 func (*AvatarMeta) Descriptor() ([]byte, []int) {
-	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{4}
+	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{2}
 }
 
 func (x *AvatarMeta) GetUuid() string {
@@ -674,7 +558,7 @@ type Step struct {
 
 func (x *Step) Reset() {
 	*x = Step{}
-	mi := &file_v1_avatar_avatar_proto_msgTypes[5]
+	mi := &file_v1_avatar_avatar_proto_msgTypes[3]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -686,7 +570,7 @@ func (x *Step) String() string {
 func (*Step) ProtoMessage() {}
 
 func (x *Step) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_avatar_avatar_proto_msgTypes[5]
+	mi := &file_v1_avatar_avatar_proto_msgTypes[3]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -699,7 +583,7 @@ func (x *Step) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Step.ProtoReflect.Descriptor instead.
 func (*Step) Descriptor() ([]byte, []int) {
-	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{5}
+	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{3}
 }
 
 func (x *Step) GetName() string {
@@ -735,7 +619,7 @@ type Steps struct {
 
 func (x *Steps) Reset() {
 	*x = Steps{}
-	mi := &file_v1_avatar_avatar_proto_msgTypes[6]
+	mi := &file_v1_avatar_avatar_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -747,7 +631,7 @@ func (x *Steps) String() string {
 func (*Steps) ProtoMessage() {}
 
 func (x *Steps) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_avatar_avatar_proto_msgTypes[6]
+	mi := &file_v1_avatar_avatar_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -760,12 +644,75 @@ func (x *Steps) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Steps.ProtoReflect.Descriptor instead.
 func (*Steps) Descriptor() ([]byte, []int) {
-	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{6}
+	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *Steps) GetSteps() []*Step {
 	if x != nil {
 		return x.Steps
+	}
+	return nil
+}
+
+// Step status is kept seperate from Steps
+// LLM will generate the Steps
+// StepStatus is updated by Avatar Handler
+type StepStatus struct {
+	state         protoimpl.MessageState      `protogen:"open.v1"`
+	Status        StepStatus_AvatarStepStatus `protobuf:"varint,1,opt,name=status,proto3,enum=avatar.StepStatus_AvatarStepStatus" json:"status,omitempty"`
+	CreatedAt     *conscious.Timestamp        `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	CompletedAt   *conscious.Timestamp        `protobuf:"bytes,3,opt,name=completed_at,json=completedAt,proto3" json:"completed_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *StepStatus) Reset() {
+	*x = StepStatus{}
+	mi := &file_v1_avatar_avatar_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *StepStatus) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*StepStatus) ProtoMessage() {}
+
+func (x *StepStatus) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_avatar_avatar_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use StepStatus.ProtoReflect.Descriptor instead.
+func (*StepStatus) Descriptor() ([]byte, []int) {
+	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *StepStatus) GetStatus() StepStatus_AvatarStepStatus {
+	if x != nil {
+		return x.Status
+	}
+	return StepStatus_AvatarActionStatusIgnore
+}
+
+func (x *StepStatus) GetCreatedAt() *conscious.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *StepStatus) GetCompletedAt() *conscious.Timestamp {
+	if x != nil {
+		return x.CompletedAt
 	}
 	return nil
 }
@@ -780,14 +727,14 @@ type Avatar struct {
 	SystemPrompt string  `protobuf:"bytes,5,opt,name=systemPrompt,proto3" json:"systemPrompt,omitempty"`
 	Steps        []*Step `protobuf:"bytes,6,rep,name=steps,proto3" json:"steps,omitempty"`
 	// the complete data of the Avatar file
-	Content       string `protobuf:"bytes,7,opt,name=content,proto3" json:"content,omitempty"`
+	Content       string `protobuf:"bytes,10,opt,name=content,proto3" json:"content,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *Avatar) Reset() {
 	*x = Avatar{}
-	mi := &file_v1_avatar_avatar_proto_msgTypes[7]
+	mi := &file_v1_avatar_avatar_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -799,7 +746,7 @@ func (x *Avatar) String() string {
 func (*Avatar) ProtoMessage() {}
 
 func (x *Avatar) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_avatar_avatar_proto_msgTypes[7]
+	mi := &file_v1_avatar_avatar_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -812,7 +759,7 @@ func (x *Avatar) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Avatar.ProtoReflect.Descriptor instead.
 func (*Avatar) Descriptor() ([]byte, []int) {
-	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{7}
+	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *Avatar) GetMeta() *AvatarMeta {
@@ -850,11 +797,105 @@ func (x *Avatar) GetContent() string {
 	return ""
 }
 
+// for control the avatar
+// bidirectional stream control can be used
+type AvatarControl struct {
+	state         protoimpl.MessageState     `protogen:"open.v1"`
+	Meta          *AvatarMeta                `protobuf:"bytes,1,opt,name=meta,proto3" json:"meta,omitempty"`
+	Status        AvatarControl_AvatarStatus `protobuf:"varint,2,opt,name=status,proto3,enum=avatar.AvatarControl_AvatarStatus" json:"status,omitempty"`
+	Action        AvatarControl_AvatarAction `protobuf:"varint,3,opt,name=action,proto3,enum=avatar.AvatarControl_AvatarAction" json:"action,omitempty"`
+	CurrentStep   int32                      `protobuf:"varint,4,opt,name=current_step,json=currentStep,proto3" json:"current_step,omitempty"`
+	StepStatuses  []*StepStatus              `protobuf:"bytes,5,rep,name=stepStatuses,proto3" json:"stepStatuses,omitempty"`
+	CreatedAt     *conscious.Timestamp       `protobuf:"bytes,11,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	CompletedAt   *conscious.Timestamp       `protobuf:"bytes,12,opt,name=completed_at,json=completedAt,proto3" json:"completed_at,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AvatarControl) Reset() {
+	*x = AvatarControl{}
+	mi := &file_v1_avatar_avatar_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AvatarControl) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AvatarControl) ProtoMessage() {}
+
+func (x *AvatarControl) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_avatar_avatar_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AvatarControl.ProtoReflect.Descriptor instead.
+func (*AvatarControl) Descriptor() ([]byte, []int) {
+	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *AvatarControl) GetMeta() *AvatarMeta {
+	if x != nil {
+		return x.Meta
+	}
+	return nil
+}
+
+func (x *AvatarControl) GetStatus() AvatarControl_AvatarStatus {
+	if x != nil {
+		return x.Status
+	}
+	return AvatarControl_AvatarActionStatusIgnore
+}
+
+func (x *AvatarControl) GetAction() AvatarControl_AvatarAction {
+	if x != nil {
+		return x.Action
+	}
+	return AvatarControl_AvatarActionIgnore
+}
+
+func (x *AvatarControl) GetCurrentStep() int32 {
+	if x != nil {
+		return x.CurrentStep
+	}
+	return 0
+}
+
+func (x *AvatarControl) GetStepStatuses() []*StepStatus {
+	if x != nil {
+		return x.StepStatuses
+	}
+	return nil
+}
+
+func (x *AvatarControl) GetCreatedAt() *conscious.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *AvatarControl) GetCompletedAt() *conscious.Timestamp {
+	if x != nil {
+		return x.CompletedAt
+	}
+	return nil
+}
+
 var File_v1_avatar_avatar_proto protoreflect.FileDescriptor
 
 const file_v1_avatar_avatar_proto_rawDesc = "" +
 	"\n" +
-	"\x16v1/avatar/avatar.proto\x12\x06avatar\x1a!v1/conscious/contextMessage.proto\x1a\x1cv1/quantumUI/quantumUI.proto\"r\n" +
+	"\x16v1/avatar/avatar.proto\x12\x06avatar\x1a\x19v1/conscious/common.proto\x1a!v1/conscious/contextMessage.proto\x1a\x1cv1/quantumUI/quantumUI.proto\"r\n" +
 	"\n" +
 	"ToolParams\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x12\n" +
@@ -870,36 +911,7 @@ const file_v1_avatar_avatar_proto_rawDesc = "" +
 	"parameters\x1aQ\n" +
 	"\x0fParametersEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12(\n" +
-	"\x05value\x18\x02 \x01(\v2\x12.avatar.ToolParamsR\x05value:\x028\x01\"\xe2\x03\n" +
-	"\fAvatarAction\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
-	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x16\n" +
-	"\x06action\x18\x03 \x01(\tR\x06action\x12\x1a\n" +
-	"\bdisabled\x18\x04 \x01(\bR\bdisabled\x12,\n" +
-	"\x04type\x18\x05 \x01(\x0e2\x18.avatar.AvatarActionTypeR\x04type\x123\n" +
-	"\a_status\x18\x06 \x01(\x0e2\x1a.avatar.AvatarActionStatusR\x06Status\x12'\n" +
-	"\x0fcompleted_logic\x18\a \x01(\tR\x0ecompletedLogic\x12#\n" +
-	"\rsuccess_logic\x18\b \x01(\tR\fsuccessLogic\x12\x1d\n" +
-	"\n" +
-	"fail_logic\x18\t \x01(\tR\tfailLogic\x12\x14\n" +
-	"\x05model\x18\v \x01(\tR\x05model\x12\x16\n" +
-	"\x06prompt\x18\f \x01(\tR\x06prompt\x12\"\n" +
-	"\fsystemPrompt\x18\r \x01(\tR\fsystemPrompt\x12!\n" +
-	"\x03_in\x18\x15 \x01(\v2\x10.ContextMesssageR\x02In\x12#\n" +
-	"\x04_out\x18\x16 \x01(\v2\x10.ContextMesssageR\x03Out\"\x80\x02\n" +
-	"\n" +
-	"AvatarLoop\x12\x12\n" +
-	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
-	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x14\n" +
-	"\x05model\x18\x03 \x01(\tR\x05model\x12\x16\n" +
-	"\x06prompt\x18\x04 \x01(\tR\x06prompt\x12\"\n" +
-	"\fsystemPrompt\x18\x05 \x01(\tR\fsystemPrompt\x124\n" +
-	"\n" +
-	"runActions\x18\x06 \x03(\v2\x14.avatar.AvatarActionR\n" +
-	"runActions\x124\n" +
-	"\n" +
-	"loopAction\x18\b \x01(\v2\x14.avatar.AvatarActionR\n" +
-	"loopAction\"\x97\x01\n" +
+	"\x05value\x18\x02 \x01(\v2\x12.avatar.ToolParamsR\x05value:\x028\x01\"\x97\x01\n" +
 	"\n" +
 	"AvatarMeta\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
@@ -912,13 +924,62 @@ const file_v1_avatar_avatar_proto_rawDesc = "" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x16\n" +
 	"\x06prompt\x18\x03 \x01(\tR\x06prompt\"+\n" +
 	"\x05Steps\x12\"\n" +
-	"\x05steps\x18\x01 \x03(\v2\f.avatar.StepR\x05steps\"\xc8\x01\n" +
+	"\x05steps\x18\x01 \x03(\v2\f.avatar.StepR\x05steps\"\xa0\x02\n" +
+	"\n" +
+	"StepStatus\x12;\n" +
+	"\x06status\x18\x01 \x01(\x0e2#.avatar.StepStatus.AvatarStepStatusR\x06status\x12)\n" +
+	"\n" +
+	"created_at\x18\x02 \x01(\v2\n" +
+	".TimestampR\tcreatedAt\x12-\n" +
+	"\fcompleted_at\x18\x03 \x01(\v2\n" +
+	".TimestampR\vcompletedAt\"{\n" +
+	"\x10AvatarStepStatus\x12\x1c\n" +
+	"\x18AvatarActionStatusIgnore\x10\x00\x12\v\n" +
+	"\aSuccess\x10\x01\x12\n" +
+	"\n" +
+	"\x06Active\x10\x02\x12\t\n" +
+	"\x05Rerun\x10\x03\x12\n" +
+	"\n" +
+	"\x06Failed\x10\x04\x12\t\n" +
+	"\x05Fatal\x10\x05\x12\x0e\n" +
+	"\n" +
+	"NotStarted\x10\x06\"\xc8\x01\n" +
 	"\x06Avatar\x12&\n" +
 	"\x04meta\x18\x01 \x01(\v2\x12.avatar.AvatarMetaR\x04meta\x124\n" +
 	"\vpermissions\x18\x04 \x01(\x0e2\x12.avatar.PermissionR\vpermissions\x12\"\n" +
 	"\fsystemPrompt\x18\x05 \x01(\tR\fsystemPrompt\x12\"\n" +
 	"\x05steps\x18\x06 \x03(\v2\f.avatar.StepR\x05steps\x12\x18\n" +
-	"\acontent\x18\a \x01(\tR\acontent*e\n" +
+	"\acontent\x18\n" +
+	" \x01(\tR\acontent\"\xc0\x04\n" +
+	"\rAvatarControl\x12&\n" +
+	"\x04meta\x18\x01 \x01(\v2\x12.avatar.AvatarMetaR\x04meta\x12:\n" +
+	"\x06status\x18\x02 \x01(\x0e2\".avatar.AvatarControl.AvatarStatusR\x06status\x12:\n" +
+	"\x06action\x18\x03 \x01(\x0e2\".avatar.AvatarControl.AvatarActionR\x06action\x12!\n" +
+	"\fcurrent_step\x18\x04 \x01(\x05R\vcurrentStep\x126\n" +
+	"\fstepStatuses\x18\x05 \x03(\v2\x12.avatar.StepStatusR\fstepStatuses\x12)\n" +
+	"\n" +
+	"created_at\x18\v \x01(\v2\n" +
+	".TimestampR\tcreatedAt\x12-\n" +
+	"\fcompleted_at\x18\f \x01(\v2\n" +
+	".TimestampR\vcompletedAt\"t\n" +
+	"\fAvatarStatus\x12\x1c\n" +
+	"\x18AvatarActionStatusIgnore\x10\x00\x12\v\n" +
+	"\aSuccess\x10\x01\x12\n" +
+	"\n" +
+	"\x06Active\x10\x02\x12\t\n" +
+	"\x05Rerun\x10\x03\x12\n" +
+	"\n" +
+	"\x06Failed\x10\x04\x12\t\n" +
+	"\x05Fatal\x10\x05\x12\v\n" +
+	"\aStopped\x10\x06\"d\n" +
+	"\fAvatarAction\x12\x16\n" +
+	"\x12AvatarActionIgnore\x10\x00\x12\a\n" +
+	"\x03Run\x10\x01\x12\x0e\n" +
+	"\n" +
+	"StartDebug\x10\x02\x12\b\n" +
+	"\x04Stop\x10\x03\x12\v\n" +
+	"\aRunStep\x10\x04\x12\f\n" +
+	"\bStopStep\x10\x05*e\n" +
 	"\n" +
 	"Permission\x12\x15\n" +
 	"\x11PERMISSION_IGNORE\x10\x00\x12\r\n" +
@@ -937,16 +998,7 @@ const file_v1_avatar_avatar_proto_rawDesc = "" +
 	"\x02IO\x10\x05\x12\v\n" +
 	"\aAiQuery\x10\x06\x12\x13\n" +
 	"\x0fAiImageDescribe\x10\a\x12\x15\n" +
-	"\x11AiImageGeneration\x10\b*m\n" +
-	"\x12AvatarActionStatus\x12\x1c\n" +
-	"\x18AvatarActionStatusIgnore\x10\x00\x12\v\n" +
-	"\aSuccess\x10\x01\x12\n" +
-	"\n" +
-	"\x06Active\x10\x02\x12\t\n" +
-	"\x05Rerun\x10\x03\x12\n" +
-	"\n" +
-	"\x06Failed\x10\x04\x12\t\n" +
-	"\x05Fatal\x10\x05B5Z3github.com/binuud/avatar-conscious/gen/go/v1/avatarb\x06proto3"
+	"\x11AiImageGeneration\x10\bB5Z3github.com/binuud/avatar-conscious/gen/go/v1/avatarb\x06proto3"
 
 var (
 	file_v1_avatar_avatar_proto_rawDescOnce sync.Once
@@ -960,43 +1012,48 @@ func file_v1_avatar_avatar_proto_rawDescGZIP() []byte {
 	return file_v1_avatar_avatar_proto_rawDescData
 }
 
-var file_v1_avatar_avatar_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
+var file_v1_avatar_avatar_proto_enumTypes = make([]protoimpl.EnumInfo, 5)
 var file_v1_avatar_avatar_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_v1_avatar_avatar_proto_goTypes = []any{
-	(Permission)(0),                   // 0: avatar.Permission
-	(AvatarActionType)(0),             // 1: avatar.AvatarActionType
-	(AvatarActionStatus)(0),           // 2: avatar.AvatarActionStatus
-	(*ToolParams)(nil),                // 3: avatar.ToolParams
-	(*Tool)(nil),                      // 4: avatar.Tool
-	(*AvatarAction)(nil),              // 5: avatar.AvatarAction
-	(*AvatarLoop)(nil),                // 6: avatar.AvatarLoop
-	(*AvatarMeta)(nil),                // 7: avatar.AvatarMeta
-	(*Step)(nil),                      // 8: avatar.Step
-	(*Steps)(nil),                     // 9: avatar.Steps
-	(*Avatar)(nil),                    // 10: avatar.Avatar
-	nil,                               // 11: avatar.Tool.ParametersEntry
-	(*conscious.ContextMesssage)(nil), // 12: ContextMesssage
-	(*quantumUI.QuantumUI)(nil),       // 13: quatumUI.QuantumUI
+	(Permission)(0),                  // 0: avatar.Permission
+	(AvatarActionType)(0),            // 1: avatar.AvatarActionType
+	(StepStatus_AvatarStepStatus)(0), // 2: avatar.StepStatus.AvatarStepStatus
+	(AvatarControl_AvatarStatus)(0),  // 3: avatar.AvatarControl.AvatarStatus
+	(AvatarControl_AvatarAction)(0),  // 4: avatar.AvatarControl.AvatarAction
+	(*ToolParams)(nil),               // 5: avatar.ToolParams
+	(*Tool)(nil),                     // 6: avatar.Tool
+	(*AvatarMeta)(nil),               // 7: avatar.AvatarMeta
+	(*Step)(nil),                     // 8: avatar.Step
+	(*Steps)(nil),                    // 9: avatar.Steps
+	(*StepStatus)(nil),               // 10: avatar.StepStatus
+	(*Avatar)(nil),                   // 11: avatar.Avatar
+	(*AvatarControl)(nil),            // 12: avatar.AvatarControl
+	nil,                              // 13: avatar.Tool.ParametersEntry
+	(*quantumUI.QuantumUI)(nil),      // 14: quatumUI.QuantumUI
+	(*conscious.Timestamp)(nil),      // 15: Timestamp
 }
 var file_v1_avatar_avatar_proto_depIdxs = []int32{
-	11, // 0: avatar.Tool.parameters:type_name -> avatar.Tool.ParametersEntry
-	1,  // 1: avatar.AvatarAction.type:type_name -> avatar.AvatarActionType
-	2,  // 2: avatar.AvatarAction._status:type_name -> avatar.AvatarActionStatus
-	12, // 3: avatar.AvatarAction._in:type_name -> ContextMesssage
-	12, // 4: avatar.AvatarAction._out:type_name -> ContextMesssage
-	5,  // 5: avatar.AvatarLoop.runActions:type_name -> avatar.AvatarAction
-	5,  // 6: avatar.AvatarLoop.loopAction:type_name -> avatar.AvatarAction
-	13, // 7: avatar.AvatarMeta.ui:type_name -> quatumUI.QuantumUI
-	8,  // 8: avatar.Steps.steps:type_name -> avatar.Step
-	7,  // 9: avatar.Avatar.meta:type_name -> avatar.AvatarMeta
-	0,  // 10: avatar.Avatar.permissions:type_name -> avatar.Permission
-	8,  // 11: avatar.Avatar.steps:type_name -> avatar.Step
-	3,  // 12: avatar.Tool.ParametersEntry.value:type_name -> avatar.ToolParams
-	13, // [13:13] is the sub-list for method output_type
-	13, // [13:13] is the sub-list for method input_type
-	13, // [13:13] is the sub-list for extension type_name
-	13, // [13:13] is the sub-list for extension extendee
-	0,  // [0:13] is the sub-list for field type_name
+	13, // 0: avatar.Tool.parameters:type_name -> avatar.Tool.ParametersEntry
+	14, // 1: avatar.AvatarMeta.ui:type_name -> quatumUI.QuantumUI
+	8,  // 2: avatar.Steps.steps:type_name -> avatar.Step
+	2,  // 3: avatar.StepStatus.status:type_name -> avatar.StepStatus.AvatarStepStatus
+	15, // 4: avatar.StepStatus.created_at:type_name -> Timestamp
+	15, // 5: avatar.StepStatus.completed_at:type_name -> Timestamp
+	7,  // 6: avatar.Avatar.meta:type_name -> avatar.AvatarMeta
+	0,  // 7: avatar.Avatar.permissions:type_name -> avatar.Permission
+	8,  // 8: avatar.Avatar.steps:type_name -> avatar.Step
+	7,  // 9: avatar.AvatarControl.meta:type_name -> avatar.AvatarMeta
+	3,  // 10: avatar.AvatarControl.status:type_name -> avatar.AvatarControl.AvatarStatus
+	4,  // 11: avatar.AvatarControl.action:type_name -> avatar.AvatarControl.AvatarAction
+	10, // 12: avatar.AvatarControl.stepStatuses:type_name -> avatar.StepStatus
+	15, // 13: avatar.AvatarControl.created_at:type_name -> Timestamp
+	15, // 14: avatar.AvatarControl.completed_at:type_name -> Timestamp
+	5,  // 15: avatar.Tool.ParametersEntry.value:type_name -> avatar.ToolParams
+	16, // [16:16] is the sub-list for method output_type
+	16, // [16:16] is the sub-list for method input_type
+	16, // [16:16] is the sub-list for extension type_name
+	16, // [16:16] is the sub-list for extension extendee
+	0,  // [0:16] is the sub-list for field type_name
 }
 
 func init() { file_v1_avatar_avatar_proto_init() }
@@ -1009,7 +1066,7 @@ func file_v1_avatar_avatar_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_v1_avatar_avatar_proto_rawDesc), len(file_v1_avatar_avatar_proto_rawDesc)),
-			NumEnums:      3,
+			NumEnums:      5,
 			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   0,
