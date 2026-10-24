@@ -24,6 +24,7 @@ import (
 	"github.com/binuud/avatar-conscious/pkg/llm"
 	"github.com/binuud/avatar-conscious/pkg/memory"
 	"github.com/binuud/avatar-conscious/pkg/slashCommands"
+	"github.com/binuud/avatar-conscious/pkg/tools"
 	"github.com/binuud/avatar-conscious/pkg/utils"
 	grpc "google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -79,7 +80,8 @@ func NewGrpcConsciousServer() *grpcConsciousServer {
 		memory:       memory,
 		openAiClient: &client,
 	}
-	grpcServer.commonTools = grpcServer.addCommonToolsRoute()
+	grpcServer.commonTools = tools.GlobalCommonTools.GetCommonTools()
+	//grpcServer.addCommonToolsRoute()
 
 	datalayer.SaveJSON(datalayer.GetFileAbsolutePath("configs", "config.json"), grpcServer.commonTools)
 
@@ -241,7 +243,7 @@ func (s *grpcConsciousServer) InStream(in *pb.ContextMesssage, stream grpc.Serve
 // Generate()
 // Calls toools first with no memory, to decide if image generation or description or tts has to be called
 // Then calls the appropriate function
-func (s *grpcConsciousServer) Generate(in *pb.ContextMesssage, stream grpc.ServerStreamingServer[pb.ContextMesssage]) error {
+func (s *grpcConsciousServer) GenerateOld(in *pb.ContextMesssage, stream grpc.ServerStreamingServer[pb.ContextMesssage]) error {
 
 	in.CreatedAt = utils.GetTimeStamp()
 	logrus.Infof("Generate Received -> Request: %s", in.Prompt)
@@ -271,7 +273,7 @@ func (s *grpcConsciousServer) Generate(in *pb.ContextMesssage, stream grpc.Serve
 	// make a tool request
 	// LLM will decide if the user wants to create image, create tts,
 	// describe image or chat stream
-	logrus.Infof("Tools %v\n", s.commonTools)
+	// logrus.Infof("Tools %v\n", s.commonTools)
 
 	tool, err := llm.GetLLMToolName([]openai.ChatCompletionMessageParamUnion{openai.UserMessage(in.Prompt)},
 		in.Model,
@@ -343,6 +345,85 @@ func (s *grpcConsciousServer) Generate(in *pb.ContextMesssage, stream grpc.Serve
 			in.Model = utils.GetEnv("VISION_MODEL", "lmstudio-community/Qwen3.5-9B-MLX-4bit")
 		}
 
+	}
+
+	// this is a normal chat streaming call
+	// user has not asked for any tools
+	return s.InStream(in, stream)
+
+}
+
+// Generate()
+// uses new tool handler
+// Calls toools first with no memory, to decide if image generation or description or tts has to be called
+// Then calls the appropriate function
+func (s *grpcConsciousServer) Generate(in *pb.ContextMesssage, stream grpc.ServerStreamingServer[pb.ContextMesssage]) error {
+
+	in.CreatedAt = utils.GetTimeStamp()
+	logrus.Infof("Generate Received -> Request: %s", in.Prompt)
+
+	// do not add to memory
+	if strings.HasPrefix(in.Prompt, "/") {
+		// if prompt starts with a "/" treat is as a command, and not a prompt
+		var buf bytes.Buffer
+		// remove the first slash and handle the command
+
+		slashCommands.SetStream(&buf)
+		slashCommands.HandleSlashCommand(in.Prompt[1:])
+		out := &pb.ContextMesssage{
+			Response: buf.String(),
+		}
+
+		s.memory.AppendOutMessage(out)
+		if err := stream.Send(out); err != nil {
+			return err
+		}
+		return nil
+
+	}
+
+	// #TODO Binu hot fix shitty hack
+	// should be removed and cleaner implementation done
+	if in.Data != "" {
+		// add the attached file name to the prompt
+		in.Prompt = in.Prompt + " . And the attached or uploaded file is " + in.Data
+	}
+	s.memory.AppendInMessage(in)
+	// s.memory.Messages = append(s.memory.Messages, openai.UserMessage(in.Prompt))
+	completions, err := llm.MakeLLMSingleToolRequest(s.memory.Messages,
+		s.memory.Model,
+		s.commonTools,
+		s.memory.Temperature)
+	if err != nil {
+		logrus.Errorf("client: error llm chat request: %v \n", err)
+		return err
+	}
+
+	msg := completions.Choices[0].Message
+	if len(msg.ToolCalls) > 0 {
+		out, err := tools.GlobalCommonTools.HandleToolCalls(msg.ToolCalls)
+		if err != nil {
+			logrus.Errorf("HandleToolCalls: %v \n", err)
+			return err
+		}
+		// s.memory.Messages = append(s.memory.Messages, openai.AssistantMessage(toolMessage))
+
+		logrus.Infof("Out Msg : %s", out)
+		s.memory.AppendOutMessage(out)
+		if err := stream.Send(out); err != nil {
+			return err
+		}
+		return nil
+	} else {
+
+		logrus.Infof("Tool function NOT selected\n")
+		logrus.Infof("Out Msg : %s", msg.Content)
+
+		if in.Data != "" {
+			// if an image is in the attachment, do a describe image
+			in.Type = pb.ContextMesssage_LLM_IMAGE_DESCRIBE
+			in.Model = utils.GetEnv("VISION_MODEL", "lmstudio-community/Qwen3.5-9B-MLX-4bit")
+		}
 	}
 
 	// this is a normal chat streaming call

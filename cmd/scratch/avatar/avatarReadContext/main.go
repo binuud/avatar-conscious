@@ -180,7 +180,7 @@ func runAvatar() {
 				logrus.Errorf("HandleToolCalls: %v \n", err)
 				return
 			}
-			memory.Messages = append(memory.Messages, openai.AssistantMessage(out))
+			memory.AppendOutMessage(out)
 		}
 	}
 

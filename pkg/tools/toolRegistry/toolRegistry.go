@@ -15,7 +15,9 @@ package toolRegistry
 import (
 	"fmt"
 
+	pb "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	"github.com/binuud/avatar-conscious/pkg/tools/toolMeta"
+	"github.com/binuud/avatar-conscious/pkg/utils"
 	"github.com/openai/openai-go/v3"
 	"github.com/sirupsen/logrus"
 )
@@ -77,9 +79,9 @@ func (t *ToolRegistry) GetCommonTools() []openai.ChatCompletionToolUnionParam {
 // HandleToolCalls()
 // When LLM returns a set of tools to be handled,
 // the handler runs each of the tool calls, with the arguments given by LLM
-func (t *ToolRegistry) HandleToolCalls(toolCalls []openai.ChatCompletionMessageToolCallUnion) (string, error) {
+func (t *ToolRegistry) HandleToolCalls(toolCalls []openai.ChatCompletionMessageToolCallUnion) (*pb.ContextMesssage, error) {
 	if len(toolCalls) < 1 {
-		return "", fmt.Errorf("No tools to be handled")
+		return nil, fmt.Errorf("No tools to be handled")
 	}
 
 	logrus.Infof("LLM has returned tool calls. Handling them...")
@@ -90,7 +92,11 @@ func (t *ToolRegistry) HandleToolCalls(toolCalls []openai.ChatCompletionMessageT
 	logrus.Infof("Args %+v", toolCall.Function.Arguments)
 	myTool, err := t.GetTool(toolCall.Function.Name)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return myTool.Handler(toolCall.Function.Arguments)
+	in := &pb.ContextMesssage{
+		Uuid:   utils.GenerateUUID(),
+		Prompt: toolCall.Function.Arguments,
+	}
+	return myTool.Handler(in)
 }

@@ -1,12 +1,55 @@
 [
   {
     "function": {
-      "name": "get_image",
-      "description": "Retreive or create an image",
+      "name": "get_file_contents",
+      "description": "Get the contents of the file, from the given path",
+      "parameters": {
+        "properties": {
+          "path": {
+            "description": "The relative path of the file.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      }
+    },
+    "type": "function"
+  },
+  {
+    "function": {
+      "name": "get_http_request",
+      "description": "Use the api call and get response from http or https api server",
+      "parameters": {
+        "properties": {
+          "endpoint": {
+            "description": "The endpoint of the api server with http or https schema, eg: https://www.example.com, http://localhost:9080",
+            "type": "string"
+          },
+          "querystring": {
+            "description": "The query string used for the api get request",
+            "type": "string"
+          }
+        },
+        "required": [
+          "endpoint",
+          "querystring"
+        ],
+        "type": "object"
+      }
+    },
+    "type": "function"
+  },
+  {
+    "function": {
+      "name": "get_ai_generated_image",
+      "description": "Create or Modify an image using ai.",
       "parameters": {
         "properties": {
           "text": {
-            "description": "A description of the image",
+            "description": "A refined and amplified description of the image or photograph",
             "type": "string"
           }
         },
@@ -20,17 +63,22 @@
   },
   {
     "function": {
-      "name": "get_image_description",
-      "description": "Describe a given image or photo.",
+      "name": "describe_image",
+      "description": "Describe the given image or photograph, and collect some data from it.",
       "parameters": {
         "properties": {
-          "text": {
-            "description": "A question about the image",
+          "imagefile": {
+            "description": "The file which has to be described using ai",
+            "type": "string"
+          },
+          "prompt": {
+            "description": "The original prompt given by the user, do not change the user prompt, with instructions on return object",
             "type": "string"
           }
         },
         "required": [
-          "text"
+          "imagefile",
+          "prompt"
         ],
         "type": "object"
       }

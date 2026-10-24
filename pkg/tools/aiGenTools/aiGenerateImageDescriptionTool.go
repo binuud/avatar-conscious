@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 
+	pb "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	"github.com/binuud/avatar-conscious/pkg/llm"
 	"github.com/binuud/avatar-conscious/pkg/memory"
 	"github.com/binuud/avatar-conscious/pkg/tools/toolMeta"
@@ -68,14 +69,22 @@ func (t AiGenerateImageDescriptionTool) InputSchemaAsOpenAiParam() openai.Functi
 	}
 }
 
-func (t AiGenerateImageDescriptionTool) Handler(args string) (string, error) {
-	logrus.Infof("Arguments received %v", args)
-	var in AiGenerateImageDescriptionTool_Input
-	if err := json.Unmarshal([]byte(args), &in); err != nil {
-		return "", err
+func (t AiGenerateImageDescriptionTool) Handler(in *pb.ContextMesssage) (*pb.ContextMesssage, error) {
+	logrus.Infof("AiGenerateImageTool Handler Arguments received %v", in.Prompt)
+	var inpObj AiGenerateImageDescriptionTool_Input
+	if err := json.Unmarshal([]byte(in.Prompt), &inpObj); err != nil {
+		return nil, err
 	}
 	logrus.Infof("Arguments parsed into input structure %v", in)
-	return DescribeImage(in.Prompt, in.ImageFile)
+	outMsg, err := DescribeImage(inpObj.Prompt, inpObj.ImageFile)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.ContextMesssage{
+		Uuid:     in.Uuid,
+		Prompt:   in.Prompt,
+		Response: outMsg,
+	}, nil
 
 }
 
@@ -87,7 +96,7 @@ func DescribeImage(prompt string, fileName string) (string, error) {
 
 	logrus.Infof("DescribeImage -> %s, %s", memory.Model, prompt)
 
-	imageFileName := utils.GetSamplesFolder() + fileName
+	imageFileName := utils.GetUploadsFolder() + fileName
 	image, err := os.ReadFile(imageFileName)
 	if err != nil {
 		return "", fmt.Errorf("Failed to read image file: %v", err)

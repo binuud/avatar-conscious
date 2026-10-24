@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"os"
 
+	pb "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	"github.com/binuud/avatar-conscious/pkg/llm"
 	"github.com/binuud/avatar-conscious/pkg/memory"
 	"github.com/binuud/avatar-conscious/pkg/tools/toolMeta"
@@ -61,14 +62,23 @@ func (t AiGenerateImageTool) InputSchemaAsOpenAiParam() openai.FunctionParameter
 	}
 }
 
-func (t AiGenerateImageTool) Handler(args string) (string, error) {
-	logrus.Infof("Arguments received %v", args)
-	var in AiGenerateImageTool_Input
-	if err := json.Unmarshal([]byte(args), &in); err != nil {
-		return "", err
+func (t AiGenerateImageTool) Handler(in *pb.ContextMesssage) (*pb.ContextMesssage, error) {
+	logrus.Infof("AiGenerateImageTool Handler Arguments received %v", in.Prompt)
+	var inpObj AiGenerateImageTool_Input
+	if err := json.Unmarshal([]byte(in.Prompt), &inpObj); err != nil {
+		return nil, err
 	}
 	logrus.Infof("Arguments parsed into input structure %v", in)
-	return GetAiImage(in.Text)
+
+	outMsg, err := GetAiImage(inpObj.Text)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.ContextMesssage{
+		Uuid:          in.Uuid,
+		Prompt:        in.Prompt,
+		ResponseImage: outMsg,
+	}, nil
 }
 
 func GetAiImage(prompt string) (string, error) {

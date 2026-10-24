@@ -232,7 +232,7 @@ func (a *AvatarWrapper) Run() {
 				return
 			}
 			logrus.Infof("Out Msg : %s", out)
-			memory.Messages = append(memory.Messages, openai.AssistantMessage(out))
+			memory.Messages = append(memory.Messages, openai.AssistantMessage(out.Response))
 		} else {
 			logrus.Infof("Out Msg : %s", msg.Content)
 		}

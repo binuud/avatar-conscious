@@ -6,7 +6,10 @@ package toolMeta
 // All tools which will be registered to Avatar
 // needs to implement this interface
 
-import "github.com/openai/openai-go/v3"
+import (
+	pb "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
+	"github.com/openai/openai-go/v3"
+)
 
 type CommonToolInterface interface {
 
@@ -28,9 +31,9 @@ type CommonToolInterface interface {
 	// returns the openai function schema object for this tool's input object.
 	InputSchemaAsOpenAiParam() openai.FunctionParameters
 
-	// Handler(string)
+	// Handler(pb.ContextMesssage)
 	// makes the required call, bash, web fetch, curl etc,
 	// this has to be implemented by the tool
 	// please validated the input before making the tool call
-	Handler(string) (string, error)
+	Handler(*pb.ContextMesssage) (*pb.ContextMesssage, error)
 }
