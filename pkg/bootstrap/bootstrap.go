@@ -6,12 +6,17 @@ import (
 	pbSettings "github.com/binuud/avatar-conscious/gen/go/v1/settings"
 	"github.com/binuud/avatar-conscious/pkg/settings"
 	"github.com/binuud/avatar-conscious/pkg/slashCommands"
+	"github.com/binuud/avatar-conscious/pkg/tools"
 	"github.com/binuud/avatar-conscious/pkg/utils"
 )
 
 var __IsDarwin = false
 var __IsGpuMetricsAvailable = false
 
+// BootStrap()
+// calls Bootstrap in each package as required
+// #TODO, check if this can be replaced by init
+// #BINU - this gives more control than init, but need to explore init in packages
 func Bootstrap() {
 
 	if runtime.GOOS == "darwin" {
@@ -19,7 +24,11 @@ func Bootstrap() {
 		__IsDarwin = true
 	}
 
+	// initiate all slash commands
 	slashCommands.Bootstrap()
+
+	// create a GlobalCommonTools, for LLM to use
+	tools.Bootstrap()
 
 	// set global settings
 	settings.Global.Set(&pbSettings.Config{

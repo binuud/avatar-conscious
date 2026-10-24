@@ -163,6 +163,7 @@ func runAvatar() {
 
 	for i, step := range in.Steps {
 		logrus.Infof("Step %d : %s", i, step.Name)
+		logrus.Infof("Model : %s", memory.Model)
 		logrus.Infof("Prompt %s", step.Prompt)
 		memory.Messages = append(memory.Messages, openai.UserMessage(step.Prompt))
 

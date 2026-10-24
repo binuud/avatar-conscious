@@ -11,6 +11,7 @@ import (
 	"github.com/binuud/avatar-conscious/pkg/llm"
 	"github.com/binuud/avatar-conscious/pkg/memory"
 	"github.com/binuud/avatar-conscious/pkg/servers/avatarStoreServer"
+	"github.com/binuud/avatar-conscious/pkg/tools"
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/openai/openai-go/v3"
 	"github.com/sirupsen/logrus"
@@ -20,7 +21,8 @@ const (
 	AVATAR_DIRECTORY       = "avatars"
 	AVATAR_STORE_DIRECTORY = "avatarStore"
 	SYSTEM_PROMPT          = `Review the provided instruction structure and extract a JSON list of all steps with prompts if needed,
-														do not parse any other properties not mentioned in the schema`
+														do not parse any other properties not mentioned in the schema. Keep instructions in prompt field intact, 
+														since llm will have to use the prompts as is, to complete the task later.`
 )
 
 type AvatarWrapper struct {
@@ -135,7 +137,7 @@ func (a *AvatarWrapper) Build() error {
 		return err
 	}
 
-	logrus.Infof("Complete prompt : %s ", completePrompt)
+	// logrus.Infof("Complete prompt : %s ", completePrompt)
 	// logrus.Infof("StepsSchema : %v", stepsSchema)
 
 	// now use LLM to get the steps, that this avatar needs to run
@@ -148,8 +150,8 @@ func (a *AvatarWrapper) Build() error {
 		return err
 	}
 
-	fmt.Println("\n output:")
-	fmt.Println(output)
+	// fmt.Println("\n output:")
+	// fmt.Println(output)
 
 	stepsFromLLM := &pb.Steps{
 		Steps: make([]*pb.Step, 0),
@@ -161,10 +163,10 @@ func (a *AvatarWrapper) Build() error {
 	}
 
 	fmt.Printf("Struct %+v", stepsFromLLM)
-	if stepsFromLLM != nil {
-		a.Avatar.Steps = stepsFromLLM.Steps
-	} else {
+	if len(stepsFromLLM.Steps) == 0 {
 		logrus.Errorf("llm not able to build steps from %s.md", a.Meta.Name)
+	} else {
+		a.Avatar.Steps = stepsFromLLM.Steps
 	}
 
 	return nil
@@ -186,7 +188,7 @@ func (a *AvatarWrapper) getAvatarStepsJsonSchemaMap() (map[string]any, error) {
 	if err != nil {
 		log.Fatalf("Failed to marshal schema: %v", err)
 	}
-	fmt.Println(string(output))
+	// fmt.Println(string(output))
 	// Unmarshal the JSON bytes into your map
 	err = json.Unmarshal(output, &schemaMap)
 	if err != nil {
@@ -196,13 +198,46 @@ func (a *AvatarWrapper) getAvatarStepsJsonSchemaMap() (map[string]any, error) {
 	return schemaMap, nil
 }
 
+// Run()
+// iterates throught the steps, using llm
+// updates the memory with user and assistant messages
+// so tools down the chain understand the context
 func (a *AvatarWrapper) Run() {
-	logrus.Infof(" >> Running Avatar %s \n", a.Meta.Name)
-	logrus.Infof("		Description %s \n", a.Meta.Description)
-	for _, item := range a.Avatar.Steps {
-		logrus.Infof(" >>>> Running Step %s \n", item.Name)
-		logrus.Infof("			Description %s \n", item.Description)
+
+	// create an use and throw memory
+	memory := memory.NewMemory("")
+	memory.Tools = tools.GlobalCommonTools.GetCommonTools()
+
+	logrus.Infof("Tools %v", memory.Tools)
+
+	logrus.Infof("Running Avatar %s, with Model : %s", a.Meta.Name, memory.Model)
+	logrus.Infof("Description %s", a.Meta.Description)
+
+	// iterate over the steps, as per instructctions on the avatar md file
+	for i, step := range a.Avatar.Steps {
+		logrus.Infof("%s (%d) : %s", step.Name, i+1, step.Prompt)
+		memory.Messages = append(memory.Messages, openai.UserMessage(step.Prompt))
+
+		completions, err := llm.MakeLLMSingleToolRequest(memory.Messages, memory.Model, memory.Tools, memory.Temperature)
+		if err != nil {
+			logrus.Errorf("client: error llm chat request: %v \n", err)
+			return
+		}
+
+		msg := completions.Choices[0].Message
+		if len(msg.ToolCalls) > 0 {
+			out, err := tools.GlobalCommonTools.HandleToolCalls(msg.ToolCalls)
+			if err != nil {
+				logrus.Errorf("HandleToolCalls: %v \n", err)
+				return
+			}
+			logrus.Infof("Out Msg : %s", out)
+			memory.Messages = append(memory.Messages, openai.AssistantMessage(out))
+		} else {
+			logrus.Infof("Out Msg : %s", msg.Content)
+		}
 	}
+
 }
 
 func (a *AvatarWrapper) Print(w io.Writer) {
@@ -212,7 +247,7 @@ func (a *AvatarWrapper) Print(w io.Writer) {
 	str := fmt.Sprintf("Name: %s\nDescription %s\n\n", a.Meta.Name, a.Meta.Description)
 
 	for _, item := range a.Avatar.Steps {
-		str += fmt.Sprintf("%s Description : %s\nPrompt: %s\n\n", item.Name, item.Description, item.Prompt)
+		str = str + fmt.Sprintf("%s Description : %s\nPrompt: %s\n\n", item.Name, item.Description, item.Prompt)
 	}
 	w.Write([]byte(str))
 }

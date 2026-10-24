@@ -44,11 +44,11 @@ func (t ApiGetTool) Name() string {
 // which is used by LLM, to decide if this tool has to be called,
 // for the given prompt
 func (t ApiGetTool) Description() string {
-	return "Get the response from a http server, using get request to an endpoint"
+	return "Use the api call and get response from http or https api server"
 }
 
 func (t ApiGetTool) InputSchema() string {
-	return "Get the contents of the file, from the given path"
+	return "Use the api call and get response from http or https api server"
 }
 
 func (t ApiGetTool) InputSchemaAsOpenAiParam() openai.FunctionParameters {
@@ -57,7 +57,7 @@ func (t ApiGetTool) InputSchemaAsOpenAiParam() openai.FunctionParameters {
 		"properties": map[string]any{
 			"endpoint": map[string]string{
 				"type":        "string",
-				"description": "The endpoint of the server with http or https schema, eg: https://www.example.com, http://localhost:9080",
+				"description": "The endpoint of the api server with http or https schema, eg: https://www.example.com, http://localhost:9080",
 			},
 			"querystring": map[string]string{
 				"type":        "string",
