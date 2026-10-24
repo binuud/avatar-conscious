@@ -6,7 +6,7 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-func Test_Avatar(t *testing.T) {
+func Test_Avatar_Election_Officer(t *testing.T) {
 	t.Logf("Test_Avatar")
 	a := NewAvatarFromStore("election-officer")
 	a.Build()

@@ -6,8 +6,6 @@
 export FILE_STORE_PATH=${HOME}/Code/avatar/avatar-avatarconscious/dataVolume/
 export SERVABLE_DIRECTORY=${HOME}/Code/avatar/avatar-avatarconscious/dataVolume/gen/
 
-
-
 export LLM_HOST="http://localhost:11234"
 export MQTT_HOST="tcp://localhost:1883"
 
@@ -18,9 +16,11 @@ export VISION_MODEL="lmstudio-community/Qwen3.5-9B-MLX-4bit"
 export FILE_STORE_PATH=$PWD/dataVolume
 export SERVABLE_DIRECTORY=$PWD/dataVolume/gen
 
-## read an avatar file, and have llm generate instructions from it
-go run cmd/scratch/avatar/avatarReadContext/main.go
+## run avatar election officer
+go run cmd/scratch/avatar/avatarTest/main.go
 
+## read an avatar file, and have llm generate instructions from it
+# go run cmd/scratch/avatar/avatarReadContext/main.go
 ## To check tool calling
 # go run cmd/scratch/toolCalling/main.go
 

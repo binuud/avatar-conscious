@@ -15,7 +15,7 @@ triggers:
 
 Use the following prompt, to get information from the image
 ```prompt
-Describe the image from file sampleLicense.jpg, and get the license number and driver name, in format {'license': [LICENCE NUMBER],'name':'[NAME OF PERSON']}
+Describe the image from file sampleLicense.jpg, and get the license number and driver name, remove spaces from the license number, and return data in format {'license': [LICENCE NUMBER],'name':'[NAME OF PERSON']}
 ```
 
 ## Step 3: Verify that the uploaded document is valid, by verifying it against an api call
