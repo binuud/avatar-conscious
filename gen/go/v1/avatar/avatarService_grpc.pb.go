@@ -21,7 +21,7 @@ const _ = grpc.SupportPackageIsVersion9
 const (
 	AvatarService_Get_FullMethodName     = "/avatar.AvatarService/Get"
 	AvatarService_Start_FullMethodName   = "/avatar.AvatarService/Start"
-	AvatarService_Connect_FullMethodName = "/avatar.AvatarService/Connect"
+	AvatarService_Control_FullMethodName = "/avatar.AvatarService/Control"
 	AvatarService_Stop_FullMethodName    = "/avatar.AvatarService/Stop"
 )
 
@@ -32,7 +32,7 @@ type AvatarServiceClient interface {
 	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error)
 	// Start the avatar, avatar is a long running process
 	Start(ctx context.Context, in *StartRequest, opts ...grpc.CallOption) (*StartResponse, error)
-	Connect(ctx context.Context, in *ConnectRequest, opts ...grpc.CallOption) (*ConnectResponse, error)
+	Control(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[ControlRequest, ControlResponse], error)
 	Stop(ctx context.Context, in *StopRequest, opts ...grpc.CallOption) (*StopResponse, error)
 }
 
@@ -64,15 +64,18 @@ func (c *avatarServiceClient) Start(ctx context.Context, in *StartRequest, opts 
 	return out, nil
 }
 
-func (c *avatarServiceClient) Connect(ctx context.Context, in *ConnectRequest, opts ...grpc.CallOption) (*ConnectResponse, error) {
+func (c *avatarServiceClient) Control(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[ControlRequest, ControlResponse], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(ConnectResponse)
-	err := c.cc.Invoke(ctx, AvatarService_Connect_FullMethodName, in, out, cOpts...)
+	stream, err := c.cc.NewStream(ctx, &AvatarService_ServiceDesc.Streams[0], AvatarService_Control_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &grpc.GenericClientStream[ControlRequest, ControlResponse]{ClientStream: stream}
+	return x, nil
 }
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type AvatarService_ControlClient = grpc.BidiStreamingClient[ControlRequest, ControlResponse]
 
 func (c *avatarServiceClient) Stop(ctx context.Context, in *StopRequest, opts ...grpc.CallOption) (*StopResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
@@ -91,7 +94,7 @@ type AvatarServiceServer interface {
 	Get(context.Context, *GetRequest) (*GetResponse, error)
 	// Start the avatar, avatar is a long running process
 	Start(context.Context, *StartRequest) (*StartResponse, error)
-	Connect(context.Context, *ConnectRequest) (*ConnectResponse, error)
+	Control(grpc.BidiStreamingServer[ControlRequest, ControlResponse]) error
 	Stop(context.Context, *StopRequest) (*StopResponse, error)
 	mustEmbedUnimplementedAvatarServiceServer()
 }
@@ -109,8 +112,8 @@ func (UnimplementedAvatarServiceServer) Get(context.Context, *GetRequest) (*GetR
 func (UnimplementedAvatarServiceServer) Start(context.Context, *StartRequest) (*StartResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Start not implemented")
 }
-func (UnimplementedAvatarServiceServer) Connect(context.Context, *ConnectRequest) (*ConnectResponse, error) {
-	return nil, status.Error(codes.Unimplemented, "method Connect not implemented")
+func (UnimplementedAvatarServiceServer) Control(grpc.BidiStreamingServer[ControlRequest, ControlResponse]) error {
+	return status.Error(codes.Unimplemented, "method Control not implemented")
 }
 func (UnimplementedAvatarServiceServer) Stop(context.Context, *StopRequest) (*StopResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Stop not implemented")
@@ -172,23 +175,12 @@ func _AvatarService_Start_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AvatarService_Connect_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ConnectRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(AvatarServiceServer).Connect(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: AvatarService_Connect_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AvatarServiceServer).Connect(ctx, req.(*ConnectRequest))
-	}
-	return interceptor(ctx, in, info, handler)
+func _AvatarService_Control_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(AvatarServiceServer).Control(&grpc.GenericServerStream[ControlRequest, ControlResponse]{ServerStream: stream})
 }
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type AvatarService_ControlServer = grpc.BidiStreamingServer[ControlRequest, ControlResponse]
 
 func _AvatarService_Stop_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(StopRequest)
@@ -224,14 +216,17 @@ var AvatarService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AvatarService_Start_Handler,
 		},
 		{
-			MethodName: "Connect",
-			Handler:    _AvatarService_Connect_Handler,
-		},
-		{
 			MethodName: "Stop",
 			Handler:    _AvatarService_Stop_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "Control",
+			Handler:       _AvatarService_Control_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "v1/avatar/avatarService.proto",
 }

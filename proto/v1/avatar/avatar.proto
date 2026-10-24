@@ -3,6 +3,7 @@ package avatar;
 
 option go_package = "github.com/binuud/avatar-conscious/gen/go/v1/avatar";
 
+import "v1/conscious/common.proto";
 import "v1/conscious/contextMessage.proto";
 import "v1/quantumUI/quantumUI.proto";
 
@@ -43,44 +44,6 @@ enum AvatarActionType {
   AiImageGeneration = 8;
 }
 
-enum AvatarActionStatus {
-  AvatarActionStatusIgnore = 0;
-  Success = 1;
-  Active = 2;
-  Rerun = 3;
-  Failed = 4;
-  Fatal = 5;
-}
-
-message AvatarAction {
-  string name = 1;
-  string description = 2;
-  string action = 3;
-  bool disabled = 4;
-  AvatarActionType type = 5;
-  AvatarActionStatus _status = 6;
-  // the logic to check to know that the action has completed
-  string completed_logic = 7;
-  string success_logic = 8;
-  string fail_logic = 9;
-
-  string model = 11;
-  string prompt = 12;
-  string systemPrompt = 13;
-
-  ContextMesssage _in = 21;
-  ContextMesssage _out = 22;
-}
-
-message AvatarLoop {
-  string name = 1;
-  string description =  2;
-  string model = 3;
-  string prompt = 4;
-  string systemPrompt = 5;
-  repeated AvatarAction runActions = 6;
-  AvatarAction loopAction = 8;
-}
 
 // from the front matter
 message AvatarMeta {
@@ -112,6 +75,24 @@ message Steps {
   repeated Step steps = 1;
 }
 
+// Step status is kept seperate from Steps
+// LLM will generate the Steps
+// StepStatus is updated by Avatar Handler
+message StepStatus {
+  enum AvatarStepStatus {
+    AvatarActionStatusIgnore = 0;
+    Success = 1;
+    Active = 2;
+    Rerun = 3;
+    Failed = 4;
+    Fatal = 5;
+    NotStarted = 6;
+  }
+  AvatarStepStatus status = 1;
+  Timestamp created_at = 2;
+  Timestamp completed_at = 3;
+}
+
 // Avatar message representing a robot or avatar entity
 message Avatar {
 
@@ -126,6 +107,40 @@ message Avatar {
   repeated Step steps = 6;
 
   // the complete data of the Avatar file
-  string content = 7;
+  string content = 10;
 
+}
+
+// for control the avatar
+// bidirectional stream control can be used
+message AvatarControl {
+  enum AvatarStatus {
+    AvatarActionStatusIgnore = 0;
+    Success = 1;
+    Active = 2;
+    Rerun = 3;
+    Failed = 4;
+    Fatal = 5;
+    Stopped = 6;
+  }
+
+  enum AvatarAction {
+    AvatarActionIgnore = 0;
+    // Run the avatar to completion
+    Run = 1;
+    // Start the avatar in step by step mode
+    StartDebug = 2;
+    Stop = 3;
+    // Run a particular step
+    RunStep = 4;
+    StopStep = 5;
+  }
+
+  AvatarMeta meta = 1;
+  AvatarStatus status = 2;
+  AvatarAction action = 3;
+  int32 current_step = 4;
+  repeated StepStatus stepStatuses = 5;
+  Timestamp created_at = 11;
+  Timestamp completed_at = 12;
 }

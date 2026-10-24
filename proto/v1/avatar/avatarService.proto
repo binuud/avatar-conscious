@@ -24,9 +24,9 @@ service AvatarService {
     };
   }
 
-  rpc Connect(ConnectRequest) returns (ConnectResponse) {
+  rpc Control(stream ControlRequest) returns (stream ControlResponse) {
     option (google.api.http) = {
-      post : "/v1/avatar/Connect"
+      post : "/v1/avatarlive/connect"
     };
   }
 
@@ -55,13 +55,12 @@ message StartResponse {
   Avatar avatar = 1;
 }
 
-message ConnectRequest {
-  string uuid = 1;
-  string name = 2;
+message ControlRequest {
+  AvatarControl control = 1;
 }
 
-message ConnectResponse {
-  Avatar avatar = 1;
+message ControlResponse {
+  AvatarControl control = 1;
 }
 
 message StopRequest {

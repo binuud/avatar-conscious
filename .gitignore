@@ -36,3 +36,6 @@ outdir/*
 dataVolume/memories/*
 dataVolume/gen/*
 dataVolume/uploads/*
+
+dataVolume/*/life-*
+dataVolume/*/ig-*

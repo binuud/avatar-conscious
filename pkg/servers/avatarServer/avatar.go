@@ -27,9 +27,11 @@ const (
 
 type AvatarWrapper struct {
 	*pb.Avatar
-	FileName     string
-	SystemPrompt string
-	Memory       *memory.Memory
+	FileName          string
+	SystemPrompt      string
+	Memory            *memory.Memory
+	CurrentStep       *pb.Step
+	CurrentStepNumber int
 }
 
 func NewAvatar(name string) *AvatarWrapper {
@@ -202,42 +204,67 @@ func (a *AvatarWrapper) getAvatarStepsJsonSchemaMap() (map[string]any, error) {
 // iterates throught the steps, using llm
 // updates the memory with user and assistant messages
 // so tools down the chain understand the context
-func (a *AvatarWrapper) Run() {
-
-	// create an use and throw memory
-	memory := memory.NewMemory("")
-	memory.Tools = tools.GlobalCommonTools.GetCommonTools()
-
-	logrus.Infof("Tools %v", memory.Tools)
-
-	logrus.Infof("Running Avatar %s, with Model : %s", a.Meta.Name, memory.Model)
-	logrus.Infof("Description %s", a.Meta.Description)
+func (a *AvatarWrapper) Run() error {
 
 	// iterate over the steps, as per instructctions on the avatar md file
 	for i, step := range a.Avatar.Steps {
-		logrus.Infof("%s (%d) : %s", step.Name, i+1, step.Prompt)
-		memory.Messages = append(memory.Messages, openai.UserMessage(step.Prompt))
-
-		completions, err := llm.MakeLLMSingleToolRequest(memory.Messages, memory.Model, memory.Tools, memory.Temperature)
+		err := a.RunStep(i, step)
 		if err != nil {
-			logrus.Errorf("client: error llm chat request: %v \n", err)
-			return
-		}
-
-		msg := completions.Choices[0].Message
-		if len(msg.ToolCalls) > 0 {
-			out, err := tools.GlobalCommonTools.HandleToolCalls(msg.ToolCalls)
-			if err != nil {
-				logrus.Errorf("HandleToolCalls: %v \n", err)
-				return
-			}
-			logrus.Infof("Out Msg : %s", out)
-			memory.Messages = append(memory.Messages, openai.AssistantMessage(out.Response))
-		} else {
-			logrus.Infof("Out Msg : %s", msg.Content)
+			return err
 		}
 	}
+	return nil
+}
 
+// Start
+// start the avatar, creates the memory
+// waits for run by step command
+func (a *AvatarWrapper) Start() {
+	// create an use and throw memory
+	a.Memory = memory.NewMemory("")
+	a.Memory.Tools = tools.GlobalCommonTools.GetCommonTools()
+	logrus.Infof("Running Avatar %s, with Model : %s", a.Meta.Name, a.Memory.Model)
+	logrus.Infof("Description %s", a.Meta.Description)
+}
+
+// RunStep
+// run a particular step
+func (a *AvatarWrapper) RunStep(i int, step *pb.Step) error {
+	logrus.Infof("%s (%d) : %s", step.Name, i+1, step.Prompt)
+	a.Memory.Messages = append(a.Memory.Messages, openai.UserMessage(step.Prompt))
+
+	completions, err := llm.MakeLLMSingleToolRequest(a.Memory.Messages, a.Memory.Model,
+		a.Memory.Tools, a.Memory.Temperature)
+	if err != nil {
+		logrus.Errorf("client: error llm chat request: %v \n", err)
+		return err
+	}
+
+	msg := completions.Choices[0].Message
+	if len(msg.ToolCalls) > 0 {
+		out, err := tools.GlobalCommonTools.HandleToolCalls(msg.ToolCalls)
+		if err != nil {
+			logrus.Errorf("HandleToolCalls: %v \n", err)
+			return err
+		}
+		logrus.Infof("Out Msg : %s", out)
+		a.Memory.Messages = append(a.Memory.Messages, openai.AssistantMessage(out.Response))
+	} else {
+		logrus.Infof("Out Msg : %s", msg.Content)
+	}
+	return nil
+}
+
+// GetStepStatusesObj()
+// creates an array of StepStatus, this is for running avatar
+// and tracking the status
+func (a *AvatarWrapper) GetStepStatusesObj() []*pb.StepStatus {
+	numSteps := len(a.Avatar.Steps)
+	stepStatuses := make([]*pb.StepStatus, 0)
+	for i := 0; i < numSteps; i++ {
+		stepStatuses = append(stepStatuses, &pb.StepStatus{Status: pb.StepStatus_NotStarted})
+	}
+	return stepStatuses
 }
 
 func (a *AvatarWrapper) Print(w io.Writer) {

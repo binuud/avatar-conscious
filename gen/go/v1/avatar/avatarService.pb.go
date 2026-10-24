@@ -214,28 +214,27 @@ func (x *StartResponse) GetAvatar() *Avatar {
 	return nil
 }
 
-type ConnectRequest struct {
+type ControlRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Uuid          string                 `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
-	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Control       *AvatarControl         `protobuf:"bytes,1,opt,name=control,proto3" json:"control,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ConnectRequest) Reset() {
-	*x = ConnectRequest{}
+func (x *ControlRequest) Reset() {
+	*x = ControlRequest{}
 	mi := &file_v1_avatar_avatarService_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ConnectRequest) String() string {
+func (x *ControlRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ConnectRequest) ProtoMessage() {}
+func (*ControlRequest) ProtoMessage() {}
 
-func (x *ConnectRequest) ProtoReflect() protoreflect.Message {
+func (x *ControlRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_v1_avatar_avatarService_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -247,46 +246,39 @@ func (x *ConnectRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ConnectRequest.ProtoReflect.Descriptor instead.
-func (*ConnectRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use ControlRequest.ProtoReflect.Descriptor instead.
+func (*ControlRequest) Descriptor() ([]byte, []int) {
 	return file_v1_avatar_avatarService_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *ConnectRequest) GetUuid() string {
+func (x *ControlRequest) GetControl() *AvatarControl {
 	if x != nil {
-		return x.Uuid
+		return x.Control
 	}
-	return ""
+	return nil
 }
 
-func (x *ConnectRequest) GetName() string {
-	if x != nil {
-		return x.Name
-	}
-	return ""
-}
-
-type ConnectResponse struct {
+type ControlResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Avatar        *Avatar                `protobuf:"bytes,1,opt,name=avatar,proto3" json:"avatar,omitempty"`
+	Control       *AvatarControl         `protobuf:"bytes,1,opt,name=control,proto3" json:"control,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *ConnectResponse) Reset() {
-	*x = ConnectResponse{}
+func (x *ControlResponse) Reset() {
+	*x = ControlResponse{}
 	mi := &file_v1_avatar_avatarService_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *ConnectResponse) String() string {
+func (x *ControlResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ConnectResponse) ProtoMessage() {}
+func (*ControlResponse) ProtoMessage() {}
 
-func (x *ConnectResponse) ProtoReflect() protoreflect.Message {
+func (x *ControlResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_v1_avatar_avatarService_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -298,14 +290,14 @@ func (x *ConnectResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ConnectResponse.ProtoReflect.Descriptor instead.
-func (*ConnectResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use ControlResponse.ProtoReflect.Descriptor instead.
+func (*ControlResponse) Descriptor() ([]byte, []int) {
 	return file_v1_avatar_avatarService_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *ConnectResponse) GetAvatar() *Avatar {
+func (x *ControlResponse) GetControl() *AvatarControl {
 	if x != nil {
-		return x.Avatar
+		return x.Control
 	}
 	return nil
 }
@@ -421,21 +413,20 @@ const file_v1_avatar_avatarService_proto_rawDesc = "" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\"7\n" +
 	"\rStartResponse\x12&\n" +
-	"\x06avatar\x18\x01 \x01(\v2\x0e.avatar.AvatarR\x06avatar\"8\n" +
-	"\x0eConnectRequest\x12\x12\n" +
-	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\"9\n" +
-	"\x0fConnectResponse\x12&\n" +
-	"\x06avatar\x18\x01 \x01(\v2\x0e.avatar.AvatarR\x06avatar\"5\n" +
+	"\x06avatar\x18\x01 \x01(\v2\x0e.avatar.AvatarR\x06avatar\"A\n" +
+	"\x0eControlRequest\x12/\n" +
+	"\acontrol\x18\x01 \x01(\v2\x15.avatar.AvatarControlR\acontrol\"B\n" +
+	"\x0fControlResponse\x12/\n" +
+	"\acontrol\x18\x01 \x01(\v2\x15.avatar.AvatarControlR\acontrol\"5\n" +
 	"\vStopRequest\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\"6\n" +
 	"\fStopResponse\x12&\n" +
-	"\x06avatar\x18\x01 \x01(\v2\x0e.avatar.AvatarR\x06avatar2\xcb\x02\n" +
+	"\x06avatar\x18\x01 \x01(\v2\x0e.avatar.AvatarR\x06avatar2\xd3\x02\n" +
 	"\rAvatarService\x12F\n" +
 	"\x03Get\x12\x12.avatar.GetRequest\x1a\x13.avatar.GetResponse\"\x16\x82\xd3\xe4\x93\x02\x10\x12\x0e/v1/avatar/get\x12N\n" +
-	"\x05Start\x12\x14.avatar.StartRequest\x1a\x15.avatar.StartResponse\"\x18\x82\xd3\xe4\x93\x02\x12\"\x10/v1/avatar/start\x12V\n" +
-	"\aConnect\x12\x16.avatar.ConnectRequest\x1a\x17.avatar.ConnectResponse\"\x1a\x82\xd3\xe4\x93\x02\x14\"\x12/v1/avatar/Connect\x12J\n" +
+	"\x05Start\x12\x14.avatar.StartRequest\x1a\x15.avatar.StartResponse\"\x18\x82\xd3\xe4\x93\x02\x12\"\x10/v1/avatar/start\x12^\n" +
+	"\aControl\x12\x16.avatar.ControlRequest\x1a\x17.avatar.ControlResponse\"\x1e\x82\xd3\xe4\x93\x02\x18\"\x16/v1/avatarlive/connect(\x010\x01\x12J\n" +
 	"\x04Stop\x12\x13.avatar.StopRequest\x1a\x14.avatar.StopResponse\"\x17\x82\xd3\xe4\x93\x02\x11\"\x0f/v1/avatar/stopB5Z3github.com/binuud/avatar-conscious/gen/go/v1/avatarb\x06proto3"
 
 var (
@@ -456,30 +447,32 @@ var file_v1_avatar_avatarService_proto_goTypes = []any{
 	(*GetResponse)(nil),     // 1: avatar.GetResponse
 	(*StartRequest)(nil),    // 2: avatar.StartRequest
 	(*StartResponse)(nil),   // 3: avatar.StartResponse
-	(*ConnectRequest)(nil),  // 4: avatar.ConnectRequest
-	(*ConnectResponse)(nil), // 5: avatar.ConnectResponse
+	(*ControlRequest)(nil),  // 4: avatar.ControlRequest
+	(*ControlResponse)(nil), // 5: avatar.ControlResponse
 	(*StopRequest)(nil),     // 6: avatar.StopRequest
 	(*StopResponse)(nil),    // 7: avatar.StopResponse
 	(*Avatar)(nil),          // 8: avatar.Avatar
+	(*AvatarControl)(nil),   // 9: avatar.AvatarControl
 }
 var file_v1_avatar_avatarService_proto_depIdxs = []int32{
 	8, // 0: avatar.GetResponse.avatar:type_name -> avatar.Avatar
 	8, // 1: avatar.StartResponse.avatar:type_name -> avatar.Avatar
-	8, // 2: avatar.ConnectResponse.avatar:type_name -> avatar.Avatar
-	8, // 3: avatar.StopResponse.avatar:type_name -> avatar.Avatar
-	0, // 4: avatar.AvatarService.Get:input_type -> avatar.GetRequest
-	2, // 5: avatar.AvatarService.Start:input_type -> avatar.StartRequest
-	4, // 6: avatar.AvatarService.Connect:input_type -> avatar.ConnectRequest
-	6, // 7: avatar.AvatarService.Stop:input_type -> avatar.StopRequest
-	1, // 8: avatar.AvatarService.Get:output_type -> avatar.GetResponse
-	3, // 9: avatar.AvatarService.Start:output_type -> avatar.StartResponse
-	5, // 10: avatar.AvatarService.Connect:output_type -> avatar.ConnectResponse
-	7, // 11: avatar.AvatarService.Stop:output_type -> avatar.StopResponse
-	8, // [8:12] is the sub-list for method output_type
-	4, // [4:8] is the sub-list for method input_type
-	4, // [4:4] is the sub-list for extension type_name
-	4, // [4:4] is the sub-list for extension extendee
-	0, // [0:4] is the sub-list for field type_name
+	9, // 2: avatar.ControlRequest.control:type_name -> avatar.AvatarControl
+	9, // 3: avatar.ControlResponse.control:type_name -> avatar.AvatarControl
+	8, // 4: avatar.StopResponse.avatar:type_name -> avatar.Avatar
+	0, // 5: avatar.AvatarService.Get:input_type -> avatar.GetRequest
+	2, // 6: avatar.AvatarService.Start:input_type -> avatar.StartRequest
+	4, // 7: avatar.AvatarService.Control:input_type -> avatar.ControlRequest
+	6, // 8: avatar.AvatarService.Stop:input_type -> avatar.StopRequest
+	1, // 9: avatar.AvatarService.Get:output_type -> avatar.GetResponse
+	3, // 10: avatar.AvatarService.Start:output_type -> avatar.StartResponse
+	5, // 11: avatar.AvatarService.Control:output_type -> avatar.ControlResponse
+	7, // 12: avatar.AvatarService.Stop:output_type -> avatar.StopResponse
+	9, // [9:13] is the sub-list for method output_type
+	5, // [5:9] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_v1_avatar_avatarService_proto_init() }
