@@ -1,30 +1,6 @@
 [
   {
     "function": {
-      "name": "describe_image",
-      "description": "Describe the given image or photograph, and collect some data from it.",
-      "parameters": {
-        "properties": {
-          "imagefile": {
-            "description": "The file which has to be described using ai",
-            "type": "string"
-          },
-          "prompt": {
-            "description": "The original prompt given by the user, do not change the user prompt, with instructions on return object",
-            "type": "string"
-          }
-        },
-        "required": [
-          "imagefile",
-          "prompt"
-        ],
-        "type": "object"
-      }
-    },
-    "type": "function"
-  },
-  {
-    "function": {
       "name": "get_file_contents",
       "description": "Get the contents of the file, from the given path",
       "parameters": {
@@ -79,6 +55,30 @@
         },
         "required": [
           "text"
+        ],
+        "type": "object"
+      }
+    },
+    "type": "function"
+  },
+  {
+    "function": {
+      "name": "describe_image",
+      "description": "Describe the given image or photograph, and collect some data from it.",
+      "parameters": {
+        "properties": {
+          "imagefile": {
+            "description": "The file which has to be described using ai",
+            "type": "string"
+          },
+          "prompt": {
+            "description": "The original prompt given by the user, do not change the user prompt, with instructions on return object",
+            "type": "string"
+          }
+        },
+        "required": [
+          "imagefile",
+          "prompt"
         ],
         "type": "object"
       }

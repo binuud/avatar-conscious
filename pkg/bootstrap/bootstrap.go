@@ -8,6 +8,7 @@ import (
 	"github.com/binuud/avatar-conscious/pkg/slashCommands"
 	"github.com/binuud/avatar-conscious/pkg/tools"
 	"github.com/binuud/avatar-conscious/pkg/utils"
+	"github.com/sirupsen/logrus"
 )
 
 var __IsDarwin = false
@@ -24,6 +25,7 @@ func Bootstrap() {
 		__IsDarwin = true
 	}
 
+	logrus.Infof("Runtime OS %s", runtime.GOARCH)
 	// initiate all slash commands
 	slashCommands.Bootstrap()
 
