@@ -12,14 +12,15 @@ import (
 
 	pbAvatar "github.com/binuud/avatar-conscious/gen/go/v1/avatar"
 	pbConscious "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
+	pbSettings "github.com/binuud/avatar-conscious/gen/go/v1/settings"
 	"github.com/binuud/avatar-conscious/pkg/bootstrap"
 	"github.com/binuud/avatar-conscious/pkg/servers/avatarServer"
 	"github.com/binuud/avatar-conscious/pkg/servers/avatarStoreServer"
 	"github.com/binuud/avatar-conscious/pkg/servers/consciousServer"
 	llmProxyServer "github.com/binuud/avatar-conscious/pkg/servers/llmProxyServer"
+	"github.com/binuud/avatar-conscious/pkg/servers/settingsServer"
 	"github.com/binuud/avatar-conscious/pkg/servers/staticFileServer"
 	"github.com/binuud/avatar-conscious/pkg/servers/systemMetricsServer"
-
 	"github.com/binuud/avatar-conscious/pkg/utils"
 
 	// mqttServer "github.com/dronasys-com/brain-nodes/pkg/servers/mqttBridge"
@@ -99,6 +100,12 @@ func runHtppServer() {
 		log.Fatalln(err)
 	}
 
+	// settings server
+	err = pbSettings.RegisterSettingsHandler(ctx, gwMux, conn)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
 	// systemMetricsServer
 	err = pbConscious.RegisterMetricsHandler(ctx, gwMux, conn)
 	if err != nil {
@@ -108,7 +115,6 @@ func runHtppServer() {
 	httpMux := serveStaticPaths()
 
 	// for bidirectional stream on avatar live server
-
 	httpMux.HandleFunc("/api/avatar/ws", avatarServer.WebsocketHandler)
 	// mqttServer.InitMQTT()
 
@@ -125,6 +131,7 @@ func runHtppServer() {
 	logrus.Infof("Server directory %s -> %s", "/api/", "conscious server")
 	logrus.Infof("Server directory %s -> %s", "/api/", "metrics server")
 	logrus.Infof("Server directory %s -> %s", "/api/", "avatar store server")
+	logrus.Infof("Server directory %s -> %s", "/api/", "settings server")
 
 	// Configure CORS options as needed
 	corsEnabledMux := cors.New(cors.Options{
@@ -167,6 +174,9 @@ func runGRPCServer() {
 
 	// GRPC SystemMetrics Server
 	pbConscious.RegisterMetricsServer(insecureServer, systemMetricsServer.NewGrpcSystemMetricsServer())
+
+	// GRPC Settings Server
+	pbSettings.RegisterSettingsServer(insecureServer, settingsServer.NewSettingsGrpcServer())
 
 	// Register reflection service on gRPC server.
 	reflection.Register(insecureServer)

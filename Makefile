@@ -149,7 +149,8 @@ protos-settings: ## Build Go and Web Proto for settings module
 	--grpc-gateway-ts_opt paths=source_relative \
 	--grpc-gateway-ts_opt generate_unbound_methods=true \
 	--oas_out ./gen/web/v1/settings/ \
-	proto/v1/settings/settings.proto 
+	proto/v1/settings/settings.proto \
+	proto/v1/settings/settingsService.proto 
 	yq eval ./gen/web/v1/settings/openapi.yaml -o=json -P > ./gen/web/v1/settings/openapi.json
 
 protos-quantum-ui: ## Build Go and Web Proto for quantum-ui module

@@ -11,41 +11,41 @@ import "v1/settings/settings.proto";
 import "google/api/annotations.proto";
 
 
-service Preferences {
+service Settings {
 
-  // get a preference by name or key
-  rpc Get(GetRequest) returns (GetResponse) {
+  // get a Settings by name or key
+  rpc Get(SettingsGetRequest) returns (SettingsGetResponse) {
     option (google.api.http) = {
-      get : "/v1/preferences/get"
+      get : "/v1/Settings/get"
     };
   }
 
-  // get all non internal preferences
-  rpc List(ListRequest) returns (ListResponse) {
+  // get all non internal Settings
+  rpc List(SettingsListRequest) returns (SettingsListResponse) {
     option (google.api.http) = {
-      get : "/v1/preferences/list"
+      get : "/v1/Settings/list"
     };
   }
 
-  // set a preference by name or key
-  rpc Set(SetRequest) returns (SetResponse) {
+  // set a Settings by name or key
+  rpc Set(SettingsSetRequest) returns (SettingsSetResponse) {
     option (google.api.http) = {
-      post : "/v1/preferences/set"
+      post : "/v1/Settings/set"
       body : "*"
     };
   }
 
 }
 
-message GetRequest {
+message SettingsGetRequest {
   string name = 1;
 }
 
-message GetResponse {
+message SettingsGetResponse {
   Config entry = 1;
 }
 
-message ListRequest {
+message SettingsListRequest {
   string name = 1;
 }
 
@@ -53,15 +53,16 @@ message ListRequest {
 // each group can have an array of config entries
 // so settings can be group like LLM, UI, DATABASE etc
 // this makes UI effort easier
-message ListResponse {
+message SettingsListResponse {
+  
   map<string, ConfigList> groups = 1;
 }
 
-message SetRequest {
+message SettingsSetRequest {
   string name = 1;
   Config entry = 2;
 }
 
-message SetResponse {
+message SettingsSetResponse {
   Config entry = 1;
 }

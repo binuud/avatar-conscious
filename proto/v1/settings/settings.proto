@@ -23,6 +23,6 @@ message ConfigList {
   repeated Config configs = 1;
 }
 
-message Settings {
+message Configs {
   map<string, Config> entry = 1;
 }

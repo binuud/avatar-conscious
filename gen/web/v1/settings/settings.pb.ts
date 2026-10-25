@@ -24,6 +24,6 @@ export type ConfigList = {
   configs?: Config[]
 }
 
-export type Settings = {
+export type Configs = {
   entry?: {[key: string]: Config}
 }

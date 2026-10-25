@@ -55,7 +55,7 @@ go install github.com/cespare/reflex@latest
 ## Remember
 
 * Avoid using containers during development, since metrics, needs macos access
-* replace same with dummy binary, when running via docker
+* Running in docker container, might not show relevant metrics
 
 ## Credits
 
