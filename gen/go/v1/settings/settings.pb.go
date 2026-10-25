@@ -196,27 +196,27 @@ func (x *ConfigList) GetConfigs() []*Config {
 	return nil
 }
 
-type Settings struct {
+type Configs struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Entry         map[string]*Config     `protobuf:"bytes,1,rep,name=entry,proto3" json:"entry,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *Settings) Reset() {
-	*x = Settings{}
+func (x *Configs) Reset() {
+	*x = Configs{}
 	mi := &file_v1_settings_settings_proto_msgTypes[2]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *Settings) String() string {
+func (x *Configs) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*Settings) ProtoMessage() {}
+func (*Configs) ProtoMessage() {}
 
-func (x *Settings) ProtoReflect() protoreflect.Message {
+func (x *Configs) ProtoReflect() protoreflect.Message {
 	mi := &file_v1_settings_settings_proto_msgTypes[2]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -228,12 +228,12 @@ func (x *Settings) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use Settings.ProtoReflect.Descriptor instead.
-func (*Settings) Descriptor() ([]byte, []int) {
+// Deprecated: Use Configs.ProtoReflect.Descriptor instead.
+func (*Configs) Descriptor() ([]byte, []int) {
 	return file_v1_settings_settings_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *Settings) GetEntry() map[string]*Config {
+func (x *Configs) GetEntry() map[string]*Config {
 	if x != nil {
 		return x.Entry
 	}
@@ -261,9 +261,9 @@ const file_v1_settings_settings_proto_rawDesc = "" +
 	"\aBOOLEAN\x10\x04\"8\n" +
 	"\n" +
 	"ConfigList\x12*\n" +
-	"\aconfigs\x18\x01 \x03(\v2\x10.settings.ConfigR\aconfigs\"\x8b\x01\n" +
-	"\bSettings\x123\n" +
-	"\x05entry\x18\x01 \x03(\v2\x1d.settings.Settings.EntryEntryR\x05entry\x1aJ\n" +
+	"\aconfigs\x18\x01 \x03(\v2\x10.settings.ConfigR\aconfigs\"\x89\x01\n" +
+	"\aConfigs\x122\n" +
+	"\x05entry\x18\x01 \x03(\v2\x1c.settings.Configs.EntryEntryR\x05entry\x1aJ\n" +
 	"\n" +
 	"EntryEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12&\n" +
@@ -287,14 +287,14 @@ var file_v1_settings_settings_proto_goTypes = []any{
 	(Config_Type)(0),   // 0: settings.Config.Type
 	(*Config)(nil),     // 1: settings.Config
 	(*ConfigList)(nil), // 2: settings.ConfigList
-	(*Settings)(nil),   // 3: settings.Settings
-	nil,                // 4: settings.Settings.EntryEntry
+	(*Configs)(nil),    // 3: settings.Configs
+	nil,                // 4: settings.Configs.EntryEntry
 }
 var file_v1_settings_settings_proto_depIdxs = []int32{
 	0, // 0: settings.Config.type:type_name -> settings.Config.Type
 	1, // 1: settings.ConfigList.configs:type_name -> settings.Config
-	4, // 2: settings.Settings.entry:type_name -> settings.Settings.EntryEntry
-	1, // 3: settings.Settings.EntryEntry.value:type_name -> settings.Config
+	4, // 2: settings.Configs.entry:type_name -> settings.Configs.EntryEntry
+	1, // 3: settings.Configs.EntryEntry.value:type_name -> settings.Config
 	4, // [4:4] is the sub-list for method output_type
 	4, // [4:4] is the sub-list for method input_type
 	4, // [4:4] is the sub-list for extension type_name

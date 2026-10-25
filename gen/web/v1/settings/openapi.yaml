@@ -4,4 +4,104 @@ openapi: 3.1.0
 info:
   title: ""
   version: ""
-components: {}
+paths:
+  /v1/Settings/get:
+    get:
+      operationId: get
+      parameters:
+        - name: name
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: settings.Settings.Get response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SettingsGetResponse'
+  /v1/Settings/list:
+    get:
+      operationId: list
+      parameters:
+        - name: name
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: settings.Settings.List response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SettingsListResponse'
+  /v1/Settings/set:
+    post:
+      operationId: set
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SettingsSetRequest'
+        required: true
+      responses:
+        "200":
+          description: settings.Settings.Set response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SettingsSetResponse'
+components:
+  schemas:
+    Config:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        value:
+          type: string
+        group:
+          type: string
+        type:
+          $ref: '#/components/schemas/Config.Type'
+    Config.Type:
+      type: string
+      enum:
+        - "DATA_IGNORE"
+        - "STRING"
+        - "NUMBER"
+        - "FLOAT"
+        - "BOOLEAN"
+    ConfigList:
+      type: object
+      properties:
+        configs:
+          type: array
+          items:
+            $ref: '#/components/schemas/Config'
+    SettingsGetResponse:
+      type: object
+      properties:
+        entry:
+          $ref: '#/components/schemas/Config'
+    SettingsListResponse:
+      type: object
+      properties:
+        groups:
+          type: object
+          additionalProperties:
+            $ref: '#/components/schemas/ConfigList'
+    SettingsSetRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        entry:
+          $ref: '#/components/schemas/Config'
+    SettingsSetResponse:
+      type: object
+      properties:
+        entry:
+          $ref: '#/components/schemas/Config'

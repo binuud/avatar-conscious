@@ -15,7 +15,7 @@ const (
 )
 
 type settings struct {
-	Configs *pb.Settings
+	Configs *pb.Configs
 	Name    string
 }
 
@@ -23,7 +23,7 @@ var Global = NewSettings("global")
 
 func NewSettings(name string) *settings {
 	mySettings := &settings{
-		Configs: &pb.Settings{
+		Configs: &pb.Configs{
 			Entry: make(map[string]*pb.Config, 0),
 		},
 		Name: name,
@@ -106,6 +106,6 @@ func (s *settings) Load() error {
 	}
 
 	// deep clone object, to avoid mutex copy issues
-	s.Configs = proto.Clone(mySettings.Configs).(*pb.Settings)
+	s.Configs = proto.Clone(mySettings.Configs).(*pb.Configs)
 	return nil
 }
