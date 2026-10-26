@@ -105,9 +105,3 @@ func Test_Settings_Save(t *testing.T) {
 	}
 
 }
-
-func Test_Settings_SaveInternal(t *testing.T) {
-
-	t.Logf("Test_Settings_SaveInternal")
-	// TODO
-}

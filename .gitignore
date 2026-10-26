@@ -34,8 +34,10 @@ go.work.sum
 
 outdir/*
 dataVolume/memories/*
-dataVolume/gen/*
+dataVolume/static/gen/*
 dataVolume/uploads/*
 
-dataVolume/*/life-*
-dataVolume/*/ig-*
+dataVolume/avatarStore/life-*
+dataVolume/avatarStore/ig-*
+dataVolume/avatars/life-*
+dataVolume/avatars/ig-*

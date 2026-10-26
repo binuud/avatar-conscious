@@ -1,0 +1,22 @@
+name: test-settings
+entry:
+  enabled:
+    name: enabled
+    value: "true"
+    group: llm
+    type: BOOLEAN
+  endpoint:
+    name: endpoint
+    value: localhost:9090
+    group: database
+    type: STRING
+  llm-origin:
+    name: llm-origin
+    value: local
+    group: llm
+    type: STRING
+  user:
+    name: user
+    value: test-user
+    group: llm
+    type: STRING
