@@ -5,15 +5,20 @@ import (
 	apitools "github.com/binuud/avatar-conscious/pkg/tools/apiTools"
 	"github.com/binuud/avatar-conscious/pkg/tools/commonTools"
 	"github.com/binuud/avatar-conscious/pkg/tools/toolRegistry"
+	"github.com/openai/openai-go/v3"
 )
 
-var GlobalCommonTools = toolRegistry.NewToolRegistry()
+var GlobalCommonToolsRegistry = toolRegistry.NewToolRegistry()
+var GlobalCommonTools []openai.ChatCompletionToolUnionParam
 
 func Bootstrap() {
 
-	GlobalCommonTools.AddTool(commonTools.NewToolFileContents())
-	GlobalCommonTools.AddTool(apitools.NewApiGetTool())
-	GlobalCommonTools.AddTool(aiGenTools.NewAiGenerateImageTool())
-	GlobalCommonTools.AddTool(aiGenTools.NewAiGenerateImageDescriptionTool())
+	GlobalCommonToolsRegistry.AddTool(commonTools.NewToolFileContents())
+	GlobalCommonToolsRegistry.AddTool(apitools.NewApiGetTool())
+	GlobalCommonToolsRegistry.AddTool(aiGenTools.NewAiGenerateImageTool())
+	GlobalCommonToolsRegistry.AddTool(aiGenTools.NewAiGenerateImageDescriptionTool())
+	GlobalCommonToolsRegistry.AddTool(aiGenTools.NewUiLaunchTool())
+
+	GlobalCommonTools = GlobalCommonToolsRegistry.GetCommonTools()
 
 }

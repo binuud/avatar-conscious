@@ -157,7 +157,7 @@ func (s *avatarGrpcServer) handleAvatarRun(in *pb.ControlRequest,
 		Control: in.Control,
 	}
 	out.Control.CreatedAt = utils.GetTimeStamp()
-	out.Control.CurrentStep = 0
+	out.Control.CurrentStep = in.Control.CurrentStep
 	out.Control.StepStatuses = s.avatar.GetStepStatusesObj()
 
 	s.avatar.Start()
@@ -169,7 +169,9 @@ func (s *avatarGrpcServer) handleAvatarRun(in *pb.ControlRequest,
 		return err
 	}
 
-	for i, step := range s.avatar.Avatar.Steps {
+	for i := int(in.Control.CurrentStep); i < len(s.avatar.Avatar.Steps); i++ {
+		step := s.avatar.Avatar.Steps[i]
+		// for i, step := range s.avatar.Avatar.Steps {
 
 		// intimate client on the step completed and its status
 		out.Control.CurrentStep = int32(i)
@@ -180,20 +182,27 @@ func (s *avatarGrpcServer) handleAvatarRun(in *pb.ControlRequest,
 			return err
 		}
 
-		err := s.avatar.RunStep(i, step)
+		outContextMsg, err := s.avatar.RunStep(i, step)
 
 		out.Control.StepStatuses[i].CompletedAt = utils.GetTimeStamp()
 		if err != nil {
 			out.Control.StepStatuses[i].Status = pb.AvatarStatus_STATUS_FAILED
 			out.Control.Status = pb.AvatarStatus_STATUS_FATAL
+		} else {
+			out.Control.StepStatuses[i].Status = pb.AvatarStatus_STATUS_SUCCESS
+		}
+
+		if outContextMsg.Action == "get_ui_launch_tool" {
+			// we need to launch an UI in avatar
+			out.Control.StepStatuses[i].Status = pb.AvatarStatus_STATUS_UI_WAITING
+			out.Control.Status = pb.AvatarStatus_STATUS_UI_WAITING
 			if err := stream.Send(out); err != nil {
 				logrus.Errorf("Connect: Failed to send message: %v", err)
 				return err
 			}
-			return err
+			return nil
 		}
 
-		out.Control.StepStatuses[i].Status = pb.AvatarStatus_STATUS_SUCCESS
 		if err := stream.Send(out); err != nil {
 			logrus.Errorf("Connect: Failed to send message: %v", err)
 			return err

@@ -153,18 +153,20 @@ type AvatarStatus int32
 const (
 	AvatarStatus_AvatarActionStatusIgnore AvatarStatus = 0
 	// initialized and ready to accept commands
-	AvatarStatus_STATUS_INIT    AvatarStatus = 1
-	AvatarStatus_STATUS_SUCCESS AvatarStatus = 2
-	AvatarStatus_STATUS_ACTIVE  AvatarStatus = 3
-	// waiting for user input
-	// or some io
-	AvatarStatus_STATUS_WAITING     AvatarStatus = 4
-	AvatarStatus_STATUS_RERUN       AvatarStatus = 5
-	AvatarStatus_STATUS_ERROR       AvatarStatus = 6
-	AvatarStatus_STATUS_FAILED      AvatarStatus = 7
-	AvatarStatus_STATUS_FATAL       AvatarStatus = 8
-	AvatarStatus_STATUS_STOPPED     AvatarStatus = 9
-	AvatarStatus_STATUS_NOT_STARTED AvatarStatus = 10
+	AvatarStatus_STATUS_INIT        AvatarStatus = 1
+	AvatarStatus_STATUS_SUCCESS     AvatarStatus = 2
+	AvatarStatus_STATUS_ACTIVE      AvatarStatus = 3
+	AvatarStatus_STATUS_RERUN       AvatarStatus = 4
+	AvatarStatus_STATUS_ERROR       AvatarStatus = 5
+	AvatarStatus_STATUS_FAILED      AvatarStatus = 6
+	AvatarStatus_STATUS_FATAL       AvatarStatus = 7
+	AvatarStatus_STATUS_STOPPED     AvatarStatus = 8
+	AvatarStatus_STATUS_NOT_STARTED AvatarStatus = 9
+	// Avatar is waiting for some input or IO
+	// or an event
+	AvatarStatus_STATUS_WAITING    AvatarStatus = 10
+	AvatarStatus_STATUS_UI_WAITING AvatarStatus = 11
+	AvatarStatus_STATUS_IO_WAITING AvatarStatus = 12
 )
 
 // Enum value maps for AvatarStatus.
@@ -174,26 +176,30 @@ var (
 		1:  "STATUS_INIT",
 		2:  "STATUS_SUCCESS",
 		3:  "STATUS_ACTIVE",
-		4:  "STATUS_WAITING",
-		5:  "STATUS_RERUN",
-		6:  "STATUS_ERROR",
-		7:  "STATUS_FAILED",
-		8:  "STATUS_FATAL",
-		9:  "STATUS_STOPPED",
-		10: "STATUS_NOT_STARTED",
+		4:  "STATUS_RERUN",
+		5:  "STATUS_ERROR",
+		6:  "STATUS_FAILED",
+		7:  "STATUS_FATAL",
+		8:  "STATUS_STOPPED",
+		9:  "STATUS_NOT_STARTED",
+		10: "STATUS_WAITING",
+		11: "STATUS_UI_WAITING",
+		12: "STATUS_IO_WAITING",
 	}
 	AvatarStatus_value = map[string]int32{
 		"AvatarActionStatusIgnore": 0,
 		"STATUS_INIT":              1,
 		"STATUS_SUCCESS":           2,
 		"STATUS_ACTIVE":            3,
-		"STATUS_WAITING":           4,
-		"STATUS_RERUN":             5,
-		"STATUS_ERROR":             6,
-		"STATUS_FAILED":            7,
-		"STATUS_FATAL":             8,
-		"STATUS_STOPPED":           9,
-		"STATUS_NOT_STARTED":       10,
+		"STATUS_RERUN":             4,
+		"STATUS_ERROR":             5,
+		"STATUS_FAILED":            6,
+		"STATUS_FATAL":             7,
+		"STATUS_STOPPED":           8,
+		"STATUS_NOT_STARTED":       9,
+		"STATUS_WAITING":           10,
+		"STATUS_UI_WAITING":        11,
+		"STATUS_IO_WAITING":        12,
 	}
 )
 
@@ -949,20 +955,22 @@ const file_v1_avatar_avatar_proto_rawDesc = "" +
 	"\x02IO\x10\x05\x12\v\n" +
 	"\aAiQuery\x10\x06\x12\x13\n" +
 	"\x0fAiImageDescribe\x10\a\x12\x15\n" +
-	"\x11AiImageGeneration\x10\b*\xed\x01\n" +
+	"\x11AiImageGeneration\x10\b*\x9b\x02\n" +
 	"\fAvatarStatus\x12\x1c\n" +
 	"\x18AvatarActionStatusIgnore\x10\x00\x12\x0f\n" +
 	"\vSTATUS_INIT\x10\x01\x12\x12\n" +
 	"\x0eSTATUS_SUCCESS\x10\x02\x12\x11\n" +
-	"\rSTATUS_ACTIVE\x10\x03\x12\x12\n" +
-	"\x0eSTATUS_WAITING\x10\x04\x12\x10\n" +
-	"\fSTATUS_RERUN\x10\x05\x12\x10\n" +
-	"\fSTATUS_ERROR\x10\x06\x12\x11\n" +
-	"\rSTATUS_FAILED\x10\a\x12\x10\n" +
-	"\fSTATUS_FATAL\x10\b\x12\x12\n" +
-	"\x0eSTATUS_STOPPED\x10\t\x12\x16\n" +
-	"\x12STATUS_NOT_STARTED\x10\n" +
-	"B5Z3github.com/binuud/avatar-conscious/gen/go/v1/avatarb\x06proto3"
+	"\rSTATUS_ACTIVE\x10\x03\x12\x10\n" +
+	"\fSTATUS_RERUN\x10\x04\x12\x10\n" +
+	"\fSTATUS_ERROR\x10\x05\x12\x11\n" +
+	"\rSTATUS_FAILED\x10\x06\x12\x10\n" +
+	"\fSTATUS_FATAL\x10\a\x12\x12\n" +
+	"\x0eSTATUS_STOPPED\x10\b\x12\x16\n" +
+	"\x12STATUS_NOT_STARTED\x10\t\x12\x12\n" +
+	"\x0eSTATUS_WAITING\x10\n" +
+	"\x12\x15\n" +
+	"\x11STATUS_UI_WAITING\x10\v\x12\x15\n" +
+	"\x11STATUS_IO_WAITING\x10\fB5Z3github.com/binuud/avatar-conscious/gen/go/v1/avatarb\x06proto3"
 
 var (
 	file_v1_avatar_avatar_proto_rawDescOnce sync.Once

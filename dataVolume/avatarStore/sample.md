@@ -52,7 +52,12 @@ ui:
 
 # Sample
 
-## Step 1: Prompt user to enter his First Name and Last name via the UI
+## Step 1: Launch an Avatar UI interface.
+
+Use the following prompt, to launch ui
+```prompt
+Launch an Avatar UI interface. And get the firstname and lastname of user.
+```
 
 ## Step 2: Try guessing the place of origin or country of the user
 

@@ -62,6 +62,7 @@ export type ContextMesssage = {
   vision?: Uint8Array
   audio?: Uint8Array
   text?: Uint8Array
+  action?: string
   status?: ContextMesssageContextStatus
   statusMessage?: string
   errorMessage?: string

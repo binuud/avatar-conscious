@@ -85,13 +85,18 @@ enum AvatarStatus {
   STATUS_ACTIVE = 3;
   // waiting for user input
   // or some io
-  STATUS_WAITING = 4;
-  STATUS_RERUN = 5;
-  STATUS_ERROR = 6;
-  STATUS_FAILED = 7;
-  STATUS_FATAL = 8;
-  STATUS_STOPPED = 9;
-  STATUS_NOT_STARTED = 10;
+
+  STATUS_RERUN = 4;
+  STATUS_ERROR = 5;
+  STATUS_FAILED = 6;
+  STATUS_FATAL = 7;
+  STATUS_STOPPED = 8;
+  STATUS_NOT_STARTED = 9;
+  // Avatar is waiting for some input or IO
+  // or an event
+  STATUS_WAITING = 10;
+  STATUS_UI_WAITING = 11;
+  STATUS_IO_WAITING = 12;
 }
 
 // Step status is kept seperate from Steps
