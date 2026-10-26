@@ -75,6 +75,7 @@ export type AvatarMeta = {
   uuid?: string
   name?: string
   description?: string
+  image?: string
   triggers?: string[]
   ui?: QuatumUIQuantumUI.QuantumUI
 }

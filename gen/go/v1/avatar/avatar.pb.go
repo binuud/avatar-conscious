@@ -476,8 +476,9 @@ type AvatarMeta struct {
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// Description of the avatar
 	Description   string               `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
-	Triggers      []string             `protobuf:"bytes,4,rep,name=triggers,proto3" json:"triggers,omitempty"`
-	Ui            *quantumUI.QuantumUI `protobuf:"bytes,5,opt,name=ui,proto3" json:"ui,omitempty"`
+	Image         string               `protobuf:"bytes,4,opt,name=image,proto3" json:"image,omitempty"`
+	Triggers      []string             `protobuf:"bytes,5,rep,name=triggers,proto3" json:"triggers,omitempty"`
+	Ui            *quantumUI.QuantumUI `protobuf:"bytes,6,opt,name=ui,proto3" json:"ui,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -529,6 +530,13 @@ func (x *AvatarMeta) GetName() string {
 func (x *AvatarMeta) GetDescription() string {
 	if x != nil {
 		return x.Description
+	}
+	return ""
+}
+
+func (x *AvatarMeta) GetImage() string {
+	if x != nil {
+		return x.Image
 	}
 	return ""
 }
@@ -911,14 +919,15 @@ const file_v1_avatar_avatar_proto_rawDesc = "" +
 	"parameters\x1aQ\n" +
 	"\x0fParametersEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12(\n" +
-	"\x05value\x18\x02 \x01(\v2\x12.avatar.ToolParamsR\x05value:\x028\x01\"\x97\x01\n" +
+	"\x05value\x18\x02 \x01(\v2\x12.avatar.ToolParamsR\x05value:\x028\x01\"\xad\x01\n" +
 	"\n" +
 	"AvatarMeta\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
-	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x1a\n" +
-	"\btriggers\x18\x04 \x03(\tR\btriggers\x12#\n" +
-	"\x02ui\x18\x05 \x01(\v2\x13.quatumUI.QuantumUIR\x02ui\"T\n" +
+	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x14\n" +
+	"\x05image\x18\x04 \x01(\tR\x05image\x12\x1a\n" +
+	"\btriggers\x18\x05 \x03(\tR\btriggers\x12#\n" +
+	"\x02ui\x18\x06 \x01(\v2\x13.quatumUI.QuantumUIR\x02ui\"T\n" +
 	"\x04Step\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x16\n" +

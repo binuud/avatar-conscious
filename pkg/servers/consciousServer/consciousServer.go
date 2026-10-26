@@ -81,46 +81,10 @@ func NewGrpcConsciousServer() *grpcConsciousServer {
 		openAiClient: &client,
 	}
 	grpcServer.commonTools = tools.GlobalCommonTools.GetCommonTools()
-	//grpcServer.addCommonToolsRoute()
 
 	datalayer.SaveJSON(datalayer.GetFileAbsolutePath("configs", "config.json"), grpcServer.commonTools)
 
 	return grpcServer
-}
-
-func (s *grpcConsciousServer) addCommonToolsRoute() []openai.ChatCompletionToolUnionParam {
-	return []openai.ChatCompletionToolUnionParam{
-		// tool case for image generation
-		openai.ChatCompletionFunctionTool(openai.FunctionDefinitionParam{
-			Name:        "get_image",
-			Description: openai.String("Retreive or create an image"),
-			Parameters: openai.FunctionParameters{
-				"type": "object",
-				"properties": map[string]any{
-					"text": map[string]string{
-						"type":        "string",
-						"description": "A description of the image",
-					},
-				},
-				"required": []string{"text"},
-			},
-		}),
-		// tool case for image description
-		openai.ChatCompletionFunctionTool(openai.FunctionDefinitionParam{
-			Name:        "get_image_description",
-			Description: openai.String("Describe a given image or photo."),
-			Parameters: openai.FunctionParameters{
-				"type": "object",
-				"properties": map[string]any{
-					"text": map[string]string{
-						"type":        "string",
-						"description": "A question about the image",
-					},
-				},
-				"required": []string{"text"},
-			},
-		}),
-	}
 }
 
 func (s *grpcConsciousServer) GetModels(ctx context.Context, in *pb.ModelRequest) (*pb.ModelResponse, error) {
@@ -408,6 +372,10 @@ func (s *grpcConsciousServer) Generate(in *pb.ContextMesssage, stream grpc.Serve
 		}
 		// s.memory.Messages = append(s.memory.Messages, openai.AssistantMessage(toolMessage))
 
+		// for metrics, populate the time stamps
+		out.CreatedAt = in.CreatedAt
+		out.CompletedAt = utils.GetTimeStamp()
+
 		logrus.Infof("Out Msg : %s", out)
 		s.memory.AppendOutMessage(out)
 		if err := stream.Send(out); err != nil {
@@ -418,7 +386,6 @@ func (s *grpcConsciousServer) Generate(in *pb.ContextMesssage, stream grpc.Serve
 
 		logrus.Infof("Tool function NOT selected\n")
 		logrus.Infof("Out Msg : %s", msg.Content)
-
 		if in.Data != "" {
 			// if an image is in the attachment, do a describe image
 			in.Type = pb.ContextMesssage_LLM_IMAGE_DESCRIBE

@@ -5,7 +5,6 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"net"
 	"net/http"
 	"os"
 	"strings"
@@ -15,12 +14,8 @@ import (
 	pbSettings "github.com/binuud/avatar-conscious/gen/go/v1/settings"
 	"github.com/binuud/avatar-conscious/pkg/bootstrap"
 	"github.com/binuud/avatar-conscious/pkg/servers/avatarServer"
-	"github.com/binuud/avatar-conscious/pkg/servers/avatarStoreServer"
-	"github.com/binuud/avatar-conscious/pkg/servers/consciousServer"
 	llmProxyServer "github.com/binuud/avatar-conscious/pkg/servers/llmProxyServer"
-	"github.com/binuud/avatar-conscious/pkg/servers/settingsServer"
 	"github.com/binuud/avatar-conscious/pkg/servers/staticFileServer"
-	"github.com/binuud/avatar-conscious/pkg/servers/systemMetricsServer"
 	"github.com/binuud/avatar-conscious/pkg/utils"
 
 	// mqttServer "github.com/dronasys-com/brain-nodes/pkg/servers/mqttBridge"
@@ -30,7 +25,6 @@ import (
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"google.golang.org/grpc/reflection"
 )
 
 var (
@@ -43,9 +37,9 @@ func serveStaticPaths() *http.ServeMux {
 	httpMux := http.NewServeMux()
 
 	// OPEN_API_FILES_PATH is the folder where the swagger files for apps are stored
-	SERVABLE_DIRECTORY := utils.GetEnv("SERVABLE_DIRECTORY", "/dataVolume/gen")
+	SERVABLE_DIRECTORY := utils.GetEnv("SERVABLE_DIRECTORY", "/dataVolume/static")
 
-	if !strings.Contains(SERVABLE_DIRECTORY, "/dataVolume/gen") {
+	if !strings.Contains(SERVABLE_DIRECTORY, "/dataVolume/static") {
 		logrus.Panic("Protection fail, only directory having /dataVolume/gen can be served")
 	}
 
@@ -154,38 +148,6 @@ func runHtppServer() {
 	log.Fatalln(gwServer.ListenAndServe())
 }
 
-func runGRPCServer() {
-
-	insecureConn, err := net.Listen("tcp", fmt.Sprintf(":%d", *server_grpc_port))
-	if err != nil {
-		log.Fatalf("failed to listen: %v", err)
-	}
-
-	insecureServer := grpc.NewServer()
-
-	// GRPC Conscious Server
-	pbConscious.RegisterConsciousServer(insecureServer, consciousServer.NewGrpcConsciousServer())
-
-	// GRPC Avatar Server
-	pbAvatar.RegisterAvatarServiceServer(insecureServer, avatarServer.NewAvatarGrpcServer())
-
-	// GRPC Avatar Store Server
-	pbAvatar.RegisterAvatarStoreServiceServer(insecureServer, avatarStoreServer.NewAvatarStoreGrpcServer())
-
-	// GRPC SystemMetrics Server
-	pbConscious.RegisterMetricsServer(insecureServer, systemMetricsServer.NewGrpcSystemMetricsServer())
-
-	// GRPC Settings Server
-	pbSettings.RegisterSettingsServer(insecureServer, settingsServer.NewSettingsGrpcServer())
-
-	// Register reflection service on gRPC server.
-	reflection.Register(insecureServer)
-
-	logrus.Infof("GRPC server starting  :(%d)", *server_grpc_port)
-	logrus.Fatalln(insecureServer.Serve(insecureConn))
-
-}
-
 func main() {
 	logrus.Println("Welcome to life")
 	bootstrap.Bootstrap()
@@ -194,7 +156,7 @@ func main() {
 
 	logrus.Printf("LLM Endpoint %v", LLM_HOST)
 	go func() {
-		runGRPCServer()
+		bootstrap.Bootstrap_GRPC_Services(*server_grpc_port)
 	}()
 
 	runHtppServer()

@@ -1,6 +1,7 @@
 ---
 name: election-officer
 uuid: 6401896d-dd4c-4acf-8503-ab9d37d8446f
+image: /static/avatarStore/election-officer.png
 description: Verifies if the user is a valid voter by checking the voter id with a database
 triggers:
   - election
