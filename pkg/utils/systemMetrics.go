@@ -10,44 +10,35 @@ import (
 	"time"
 
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
-	"github.com/shirou/gopsutil/cpu"
-	"github.com/shirou/gopsutil/mem"
 	"github.com/sirupsen/logrus"
 )
 
 func NewSystemMetrics() (*pb.SystemMetrics, error) {
 	// Sample CPU usage over 250ms so we get a meaningful percentage.
-	pcts, err := cpu.Percent(250*time.Millisecond, false)
+	if runtime.GOOS != "darwin" {
+		return nil, fmt.Errorf("Metrics not implemented on non macos operating systems")
+	}
+
+	cpuUsage, err := GetCpuUsage()
 	if err != nil {
-		return nil, err
-	}
-	cpuPct := 0.0
-	if len(pcts) > 0 {
-		cpuPct = pcts[0]
+		logrus.Fatalf("Cannot parse Cpu metrics output: %v\n", err)
 	}
 
-	vm, err := mem.VirtualMemory()
+	memUsage, err := GetCpuUsage()
 	if err != nil {
-		return nil, err
+		logrus.Fatalf("Cannot parse Cpu metrics output: %v\n", err)
 	}
 
-	ramUsage := (float64(vm.Used) / float64(vm.Total) * 100)
-
-	gpuUsage := 0
-	gpuMem := 0
-
-	if runtime.GOOS == "darwin" {
-		gpuUsage, gpuMem, err = GetGpuMetrics()
-		if err != nil {
-			logrus.Fatalf("Cannot parse GetGpuMetrics output: %v\n", err)
-		}
+	gpuUsage, gpuMem, err := GetGpuMetrics()
+	if err != nil {
+		logrus.Fatalf("Cannot parse GetGpuMetrics output: %v\n", err)
 	}
 
 	return &pb.SystemMetrics{
-		CpuUsage:      cpuPct,
-		TotalRamBytes: uint64(vm.Used),
-		UsedRamBytes:  uint64(vm.Total),
-		RamUsage:      ramUsage,
+		CpuUsage:      cpuUsage,
+		TotalRamBytes: 0,
+		UsedRamBytes:  0,
+		RamUsage:      memUsage,
 		GpuUsage:      float64(gpuUsage),
 		GpuMemUsed:    int64(gpuMem),
 		CreatedAt:     time.Now().Unix(),
@@ -97,6 +88,65 @@ func GetGpuMetrics() (gpuUsage int, gpuMem int, err error) {
 	if err != nil {
 		return
 	}
+
+	return
+}
+
+func GetMemPressure() (memPressure float64, err error) {
+
+	memPressure = 0.0
+
+	cmd := exec.Command("memory_pressure", "-Q")
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	if err = cmd.Run(); err != nil {
+		return
+	}
+
+	// Regex to extract the "Device Utilization %" integer value
+	re := regexp.MustCompile(`free percentage: (\d+)%`)
+	matches := re.FindStringSubmatch(out.String())
+	if len(matches) < 2 {
+		err = fmt.Errorf("could not parse memory pressure; confirm this is an Apple Silicon Mac")
+		return
+	}
+
+	// Convert parsed string back to an float
+	memPressure, err = strconv.ParseFloat(matches[1], 64)
+	if err != nil {
+		return
+	}
+	memPressure = 100 - memPressure
+
+	return
+
+}
+
+func GetCpuUsage() (cpuUsage float64, err error) {
+
+	cpuUsage = 0.0
+	cmd := exec.Command("top", "-l", "1", "-n", "0", "-s", "1")
+	var out bytes.Buffer
+	cmd.Stdout = &out
+	if err = cmd.Run(); err != nil {
+		return
+	}
+	// logrus.Infof("Received output %s", out.String())
+	// Regex to extract the "Device Utilization %" integer value
+	re := regexp.MustCompile(`CPU usage:.*, (\d+.\d+)% idle`)
+	matches := re.FindStringSubmatch(out.String())
+
+	if len(matches) < 2 {
+		err = fmt.Errorf("could not parse CPU utilization; confirm this is an Apple Silicon Mac")
+		return
+	}
+
+	// Convert parsed string back to an float
+	cpuUsage, err = strconv.ParseFloat(matches[1], 64)
+	if err != nil {
+		return
+	}
+	cpuUsage = 100 - cpuUsage
 
 	return
 }
