@@ -5,6 +5,7 @@ import (
 
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	"github.com/binuud/avatar-conscious/pkg/utils"
+	"github.com/sirupsen/logrus"
 )
 
 const defaultInterval = 2 * time.Second
@@ -19,6 +20,8 @@ func NewGrpcSystemMetricsServer() *grpcMetricsServer {
 
 // WatchHealth streams periodic health snapshots until the client cancels.
 func (s *grpcMetricsServer) GetSystemMetrics(req *pb.GetSystemMetricsRequest, stream pb.Metrics_GetSystemMetricsServer) error {
+
+	logrus.Info("Received metrics stream request")
 	interval := defaultInterval
 	// interval seconds cannot be less than 2
 	if req.GetIntervalSeconds() > 2 {
