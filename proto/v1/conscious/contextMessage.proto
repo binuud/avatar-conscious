@@ -93,6 +93,10 @@ message ContextMesssage {
   bytes audio = 26;
   bytes text = 27;
 
+  // if any action has to be launched
+  // like ui 
+  string action = 28;
+
   enum ContextStatus {
     STATUS_IGNORE = 0;
     SUCCESS = 1;

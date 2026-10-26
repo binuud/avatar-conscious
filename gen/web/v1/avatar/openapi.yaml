@@ -385,13 +385,15 @@ components:
         - "STATUS_INIT"
         - "STATUS_SUCCESS"
         - "STATUS_ACTIVE"
-        - "STATUS_WAITING"
         - "STATUS_RERUN"
         - "STATUS_ERROR"
         - "STATUS_FAILED"
         - "STATUS_FATAL"
         - "STATUS_STOPPED"
         - "STATUS_NOT_STARTED"
+        - "STATUS_WAITING"
+        - "STATUS_UI_WAITING"
+        - "STATUS_IO_WAITING"
     AvatarStoreCreateRequest:
       type: object
       properties:

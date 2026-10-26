@@ -22,7 +22,7 @@ func Test_Avatar_By_Step_Election_Officer(t *testing.T) {
 	a.Save()
 	a.Start()
 	for i, step := range a.Avatar.Steps {
-		err := a.RunStep(i, step)
+		_, err := a.RunStep(i, step)
 		if err != nil {
 			t.Errorf("Test_Avatar_By_Step_Election_Officer failed %v", err)
 		}

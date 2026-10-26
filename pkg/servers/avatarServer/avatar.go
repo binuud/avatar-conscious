@@ -7,6 +7,7 @@ import (
 	"log"
 
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/avatar"
+	pbConcsious "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	datalayer "github.com/binuud/avatar-conscious/pkg/dataLayer"
 	"github.com/binuud/avatar-conscious/pkg/llm"
 	"github.com/binuud/avatar-conscious/pkg/memory"
@@ -208,7 +209,7 @@ func (a *AvatarWrapper) Run() error {
 
 	// iterate over the steps, as per instructctions on the avatar md file
 	for i, step := range a.Avatar.Steps {
-		err := a.RunStep(i, step)
+		_, err := a.RunStep(i, step)
 		if err != nil {
 			return err
 		}
@@ -222,14 +223,17 @@ func (a *AvatarWrapper) Run() error {
 func (a *AvatarWrapper) Start() {
 	// create an use and throw memory
 	a.Memory = memory.NewMemory("")
-	a.Memory.Tools = tools.GlobalCommonTools.GetCommonTools()
+	a.Memory.Tools = tools.GlobalCommonTools
 	logrus.Infof("Running Avatar %s, with Model : %s", a.Meta.Name, a.Memory.Model)
 	logrus.Infof("Description %s", a.Meta.Description)
 }
 
 // RunStep
-// run a particular step
-func (a *AvatarWrapper) RunStep(i int, step *pb.Step) error {
+// run a particular step, returns the outContext message
+// update memory
+func (a *AvatarWrapper) RunStep(i int, step *pb.Step) (*pbConcsious.ContextMesssage, error) {
+
+	out := &pbConcsious.ContextMesssage{}
 	logrus.Infof("%s (%d) : %s", step.Name, i+1, step.Prompt)
 	a.Memory.Messages = append(a.Memory.Messages, openai.UserMessage(step.Prompt))
 
@@ -237,22 +241,26 @@ func (a *AvatarWrapper) RunStep(i int, step *pb.Step) error {
 		a.Memory.Tools, a.Memory.Temperature)
 	if err != nil {
 		logrus.Errorf("client: error llm chat request: %v \n", err)
-		return err
+		return nil, err
 	}
 
+	// check if any tool has to be called
+	// if so call hanldle the tool and return the output response
 	msg := completions.Choices[0].Message
 	if len(msg.ToolCalls) > 0 {
-		out, err := tools.GlobalCommonTools.HandleToolCalls(msg.ToolCalls)
+		out, err = tools.GlobalCommonToolsRegistry.HandleToolCalls(msg.ToolCalls)
 		if err != nil {
 			logrus.Errorf("HandleToolCalls: %v \n", err)
-			return err
+			return nil, err
 		}
-		logrus.Infof("Out Msg : %s", out)
-		a.Memory.Messages = append(a.Memory.Messages, openai.AssistantMessage(out.Response))
+		logrus.Infof("Tool %s called, Out Msg : %s", msg.ToolCalls[0].Function.Name, out)
+		// handle special case ui launch tool
+		out.Action = "get_ui_launch_tool"
 	} else {
+		out.Response = msg.Content
 		logrus.Infof("Out Msg : %s", msg.Content)
 	}
-	return nil
+	return out, nil
 }
 
 // GetStepStatusesObj()

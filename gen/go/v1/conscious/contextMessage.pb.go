@@ -349,13 +349,16 @@ type ContextMesssage struct {
 	Temperature  float32 `protobuf:"fixed32,14,opt,name=temperature,proto3" json:"temperature,omitempty"`
 	// each element of the form as a corresponding Display Element
 	// this is to save the state of form elements that have to be displayed on
-	Data          string                        `protobuf:"bytes,21,opt,name=data,proto3" json:"data,omitempty"`
-	BodyText      string                        `protobuf:"bytes,22,opt,name=bodyText,proto3" json:"bodyText,omitempty"`
-	Schema        string                        `protobuf:"bytes,23,opt,name=schema,proto3" json:"schema,omitempty"`
-	BodyBytes     []byte                        `protobuf:"bytes,24,opt,name=bodyBytes,proto3" json:"bodyBytes,omitempty"`
-	Vision        []byte                        `protobuf:"bytes,25,opt,name=vision,proto3" json:"vision,omitempty"`
-	Audio         []byte                        `protobuf:"bytes,26,opt,name=audio,proto3" json:"audio,omitempty"`
-	Text          []byte                        `protobuf:"bytes,27,opt,name=text,proto3" json:"text,omitempty"`
+	Data      string `protobuf:"bytes,21,opt,name=data,proto3" json:"data,omitempty"`
+	BodyText  string `protobuf:"bytes,22,opt,name=bodyText,proto3" json:"bodyText,omitempty"`
+	Schema    string `protobuf:"bytes,23,opt,name=schema,proto3" json:"schema,omitempty"`
+	BodyBytes []byte `protobuf:"bytes,24,opt,name=bodyBytes,proto3" json:"bodyBytes,omitempty"`
+	Vision    []byte `protobuf:"bytes,25,opt,name=vision,proto3" json:"vision,omitempty"`
+	Audio     []byte `protobuf:"bytes,26,opt,name=audio,proto3" json:"audio,omitempty"`
+	Text      []byte `protobuf:"bytes,27,opt,name=text,proto3" json:"text,omitempty"`
+	// if any action has to be launched
+	// like ui
+	Action        string                        `protobuf:"bytes,28,opt,name=action,proto3" json:"action,omitempty"`
 	Status        ContextMesssage_ContextStatus `protobuf:"varint,31,opt,name=status,proto3,enum=ContextMesssage_ContextStatus" json:"status,omitempty"`
 	StatusMessage string                        `protobuf:"bytes,32,opt,name=statusMessage,proto3" json:"statusMessage,omitempty"`
 	ErrorMessage  string                        `protobuf:"bytes,33,opt,name=errorMessage,proto3" json:"errorMessage,omitempty"`
@@ -525,6 +528,13 @@ func (x *ContextMesssage) GetText() []byte {
 	return nil
 }
 
+func (x *ContextMesssage) GetAction() string {
+	if x != nil {
+		return x.Action
+	}
+	return ""
+}
+
 func (x *ContextMesssage) GetStatus() ContextMesssage_ContextStatus {
 	if x != nil {
 		return x.Status
@@ -600,7 +610,7 @@ const file_v1_conscious_contextMessage_proto_rawDesc = "" +
 	"\x0eUploadResponse\x12\x1b\n" +
 	"\tupload_id\x18\x01 \x01(\tR\buploadId\x12\x16\n" +
 	"\x06status\x18\x02 \x01(\tR\x06status\x12#\n" +
-	"\rerror_message\x18\x03 \x01(\tR\ferrorMessage\"\x85\t\n" +
+	"\rerror_message\x18\x03 \x01(\tR\ferrorMessage\"\x9d\t\n" +
 	"\x0fContextMesssage\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
@@ -619,7 +629,8 @@ const file_v1_conscious_contextMessage_proto_rawDesc = "" +
 	"\tbodyBytes\x18\x18 \x01(\fR\tbodyBytes\x12\x16\n" +
 	"\x06vision\x18\x19 \x01(\fR\x06vision\x12\x14\n" +
 	"\x05audio\x18\x1a \x01(\fR\x05audio\x12\x12\n" +
-	"\x04text\x18\x1b \x01(\fR\x04text\x126\n" +
+	"\x04text\x18\x1b \x01(\fR\x04text\x12\x16\n" +
+	"\x06action\x18\x1c \x01(\tR\x06action\x126\n" +
 	"\x06status\x18\x1f \x01(\x0e2\x1e.ContextMesssage.ContextStatusR\x06status\x12$\n" +
 	"\rstatusMessage\x18  \x01(\tR\rstatusMessage\x12\"\n" +
 	"\ferrorMessage\x18! \x01(\tR\ferrorMessage\x12\x1a\n" +

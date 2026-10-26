@@ -24,9 +24,9 @@ export SERVABLE_DIRECTORY=${PWD}/dataVolume/gen
 
 ## test run for running avatar step by step, control via bidirectional server
 #go test -v  --run Test_AvatarServer_Control ./pkg/servers/avatarServer
-
+go test -v --run  Test_Tool_Registry ./pkg/tools/testTools/
 # go test -v  ./pkg/servers/avatarStoreServer
-go test -v  ./pkg/settings/
+# go test -v  ./pkg/settings/
 # go test -v --run Test_Memory ./pkg/servers/consciousServer
 # go test ./pkg/... -v -run "Test_RouterViaTool"
 # go test -v --run Test_LLM_TOOL ./pkg/servers/consciousServer

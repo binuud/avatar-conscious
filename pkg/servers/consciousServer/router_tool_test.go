@@ -79,6 +79,13 @@ func Test_LLM_TOOL(t *testing.T) {
 			want_param: "",
 			want_error: true,
 		},
+		{
+			name:       "UILaunchTool",
+			prompt:     "Launch an UI on Avatar to get some details",
+			want_tool:  "",
+			want_param: "",
+			want_error: true,
+		},
 	}
 
 	// test case for checking tools,

@@ -157,6 +157,8 @@ components:
         text:
           type: string
           format: base64
+        action:
+          type: string
         status:
           $ref: '#/components/schemas/ContextMesssage.ContextStatus'
         statusMessage:

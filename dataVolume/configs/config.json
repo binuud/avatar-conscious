@@ -1,6 +1,25 @@
 [
   {
     "function": {
+      "name": "get_ui_launch_tool",
+      "description": "Launch an Avatar UI interface.",
+      "parameters": {
+        "properties": {
+          "text": {
+            "description": "Launch an Avatar UI interface. Instructions from the prompt is saved here.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "type": "object"
+      }
+    },
+    "type": "function"
+  },
+  {
+    "function": {
       "name": "get_file_contents",
       "description": "Get the contents of the file, from the given path",
       "parameters": {
