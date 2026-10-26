@@ -1,0 +1,38 @@
+name: global
+entry:
+  IMAGE_MODEL:
+    name: IMAGE_MODEL
+    description: Default model used for Image Generation
+    value: Runpod/FLUX.2-klein-4B-mflux-4bit
+    group: MODELS
+    type: STRING
+  LLM_API_KEY:
+    name: LLM_API_KEY
+    description: LLM API Key, use use third party llm providers
+    value: dummy
+    group: LLM
+    type: STRING
+  LLM_ENDPOINT:
+    name: LLM_ENDPOINT
+    description: LLM Endpoint, can be local or cloud, no trailing slash
+    value: http://localhost:11234
+    group: LLM
+    type: STRING
+  LLM_MODEL:
+    name: LLM_MODEL
+    description: Default model used for Chat Generation, Avatars, Tools and Agents
+    value: lmstudio-community/Qwen3.5-9B-MLX-4bit
+    group: MODELS
+    type: STRING
+  MQTT_ENDPOINT:
+    name: MQTT_ENDPOINT
+    description: Default mqtt broker used for messaging and events
+    value: tcp://localhost:1883
+    group: EVENTS
+    type: STRING
+  VISION_MODEL:
+    name: VISION_MODEL
+    description: Default model used for Image Description Query
+    value: lmstudio-community/Qwen3.5-9B-MLX-4bit
+    group: MODELS
+    type: STRING

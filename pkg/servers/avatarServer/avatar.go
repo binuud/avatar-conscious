@@ -262,7 +262,7 @@ func (a *AvatarWrapper) GetStepStatusesObj() []*pb.StepStatus {
 	numSteps := len(a.Avatar.Steps)
 	stepStatuses := make([]*pb.StepStatus, 0)
 	for i := 0; i < numSteps; i++ {
-		stepStatuses = append(stepStatuses, &pb.StepStatus{Status: pb.StepStatus_NotStarted})
+		stepStatuses = append(stepStatuses, &pb.StepStatus{Status: pb.AvatarStatus_STATUS_NOT_STARTED})
 	}
 	return stepStatuses
 }

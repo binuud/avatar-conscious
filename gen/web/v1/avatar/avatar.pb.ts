@@ -28,33 +28,29 @@ export enum AvatarActionType {
   AiImageGeneration = "AiImageGeneration",
 }
 
-export enum StepStatusAvatarStepStatus {
+export enum AvatarStatus {
   AvatarActionStatusIgnore = "AvatarActionStatusIgnore",
-  Success = "Success",
-  Active = "Active",
-  Rerun = "Rerun",
-  Failed = "Failed",
-  Fatal = "Fatal",
-  NotStarted = "NotStarted",
-}
-
-export enum AvatarControlAvatarStatus {
-  AvatarActionStatusIgnore = "AvatarActionStatusIgnore",
-  Success = "Success",
-  Active = "Active",
-  Rerun = "Rerun",
-  Failed = "Failed",
-  Fatal = "Fatal",
-  Stopped = "Stopped",
+  STATUS_INIT = "STATUS_INIT",
+  STATUS_SUCCESS = "STATUS_SUCCESS",
+  STATUS_ACTIVE = "STATUS_ACTIVE",
+  STATUS_WAITING = "STATUS_WAITING",
+  STATUS_RERUN = "STATUS_RERUN",
+  STATUS_ERROR = "STATUS_ERROR",
+  STATUS_FAILED = "STATUS_FAILED",
+  STATUS_FATAL = "STATUS_FATAL",
+  STATUS_STOPPED = "STATUS_STOPPED",
+  STATUS_NOT_STARTED = "STATUS_NOT_STARTED",
 }
 
 export enum AvatarControlAvatarAction {
-  AvatarActionIgnore = "AvatarActionIgnore",
-  Run = "Run",
-  StartDebug = "StartDebug",
-  Stop = "Stop",
-  RunStep = "RunStep",
-  StopStep = "StopStep",
+  AVATAR_ACTION_IGNORE = "AVATAR_ACTION_IGNORE",
+  INIT = "INIT",
+  RUN = "RUN",
+  START_DEBUG = "START_DEBUG",
+  STOP = "STOP",
+  RUN_STEP = "RUN_STEP",
+  STOP_STEP = "STOP_STEP",
+  SEND_DATA = "SEND_DATA",
 }
 
 export type ToolParams = {
@@ -91,7 +87,7 @@ export type Steps = {
 }
 
 export type StepStatus = {
-  status?: StepStatusAvatarStepStatus
+  status?: AvatarStatus
   createdAt?: Common.Timestamp
   completedAt?: Common.Timestamp
 }
@@ -106,7 +102,7 @@ export type Avatar = {
 
 export type AvatarControl = {
   meta?: AvatarMeta
-  status?: AvatarControlAvatarStatus
+  status?: AvatarStatus
   action?: AvatarControlAvatarAction
   currentStep?: number
   stepStatuses?: StepStatus[]
