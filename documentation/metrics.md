@@ -2,7 +2,7 @@
 top -l 1 -n 0 | grep PhysMem
 
 # System-wide pressure and free percentage
-memory_pressure
+memory_pressure -Q
 
 # Page-level breakdown (page size is 16384 on Apple Silicon, 4096 on Intel)
 vm_stat
@@ -27,6 +27,8 @@ ioreg -r -d 1 -w 0 -c IOAccelerator
 
 ioreg -r -d 1 -w 0 -c IOAccelerator | grep -o '"Device Utilization %"=[0-9]*\|"In use system memory"=[0-9]*'
 
+
+# Commands checked in macos to get some useful live metrics
 
 system_profiler SPDisplaysDataType
 

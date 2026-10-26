@@ -305,6 +305,13 @@
             }
           },
           {
+            "name": "control.meta.image",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "name": "control.meta.name",
             "in": "query",
             "schema": {
@@ -602,6 +609,9 @@
             "type": "string"
           },
           "description": {
+            "type": "string"
+          },
+          "image": {
             "type": "string"
           },
           "triggers": {

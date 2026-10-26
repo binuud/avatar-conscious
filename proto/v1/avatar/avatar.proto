@@ -56,9 +56,11 @@ message AvatarMeta {
   // Description of the avatar
   string description = 3;
 
-  repeated string triggers = 4;
+  string image = 4;
 
-  quatumUI.QuantumUI ui = 5;
+  repeated string triggers = 5;
+
+  quatumUI.QuantumUI ui = 6;
 }
 
 

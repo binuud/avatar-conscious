@@ -42,8 +42,16 @@ func Bootstrap() {
 	})
 
 	settings.Global.Set(&pbSettings.Config{
-		Name:        "LLM_MODEL",
+		Name:        "LLM_API_KEY",
 		Group:       "LLM",
+		Value:       utils.GetEnv("LLM_API_KEY", "dummy"),
+		Description: "LLM API Key, use use third party llm providers",
+		Type:        pbSettings.Config_STRING,
+	})
+
+	settings.Global.Set(&pbSettings.Config{
+		Name:        "LLM_MODEL",
+		Group:       "MODELS",
 		Value:       utils.GetEnv("LLM_MODEL", "lmstudio-community/Qwen3.5-9B-MLX-4bit"),
 		Description: "Default model used for Chat Generation, Avatars, Tools and Agents",
 		Type:        pbSettings.Config_STRING,
@@ -51,7 +59,7 @@ func Bootstrap() {
 
 	settings.Global.Set(&pbSettings.Config{
 		Name:        "VISION_MODEL",
-		Group:       "LLM",
+		Group:       "MODELS",
 		Value:       utils.GetEnv("VISION_MODEL", "lmstudio-community/Qwen3.5-9B-MLX-4bit"),
 		Description: "Default model used for Image Description Query",
 		Type:        pbSettings.Config_STRING,
@@ -59,7 +67,7 @@ func Bootstrap() {
 
 	settings.Global.Set(&pbSettings.Config{
 		Name:        "IMAGE_MODEL",
-		Group:       "LLM",
+		Group:       "MODELS",
 		Value:       utils.GetEnv("IMAGE_MODEL", "Runpod/FLUX.2-klein-4B-mflux-4bit"),
 		Description: "Default model used for Image Generation",
 		Type:        pbSettings.Config_STRING,

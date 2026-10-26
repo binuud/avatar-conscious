@@ -70,21 +70,24 @@ func (t AiGenerateImageTool) Handler(in *pb.ContextMesssage) (*pb.ContextMesssag
 	}
 	logrus.Infof("Arguments parsed into input structure %v", in)
 
-	outMsg, err := GetAiImage(inpObj.Text)
+	imageModel := utils.GetEnv("IMAGE_MODEL", "Runpod/FLUX.2-klein-4B-mflux-4bit")
+
+	outMsg, err := GetAiImage(inpObj.Text, imageModel)
 	if err != nil {
 		return nil, err
 	}
 	return &pb.ContextMesssage{
 		Uuid:          in.Uuid,
 		Prompt:        in.Prompt,
+		Model:         imageModel,
 		ResponseImage: outMsg,
 	}, nil
 }
 
-func GetAiImage(prompt string) (string, error) {
+func GetAiImage(prompt string, model string) (string, error) {
 
 	memory := memory.NewMemory("")
-	memory.Model = utils.GetEnv("IMAGE_MODEL", "Runpod/FLUX.2-klein-4B-mflux-4bit")
+	memory.Model = model
 	memory.AppendMemory(openai.UserMessage(prompt))
 
 	logrus.Infof("GetAiImage -> %s, %s", memory.Model, prompt)
@@ -100,10 +103,10 @@ func GetAiImage(prompt string) (string, error) {
 		panic(err)
 	}
 
-	FILE_STORE_PATH := utils.GetEnv("FILE_STORE_PATH", "./dataVolume")
+	SERVABLE_DIRECTORY := utils.GetEnv("SERVABLE_DIRECTORY", "./dataVolume/static")
 	// servable file path from static server
-	servableFile := utils.GenerateUUID() + ".png"
-	imageFileName := FILE_STORE_PATH + "/gen/" + servableFile
+	servableFile := "/gen/images/" + utils.GenerateUUID() + ".png"
+	imageFileName := SERVABLE_DIRECTORY + servableFile
 
 	logrus.Infof("GetAiImage -> %s, %s, %s", memory.Model, prompt, imageFileName)
 	if err := os.WriteFile(imageFileName, image, 0o600); err != nil {

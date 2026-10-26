@@ -76,22 +76,24 @@ func (t AiGenerateImageDescriptionTool) Handler(in *pb.ContextMesssage) (*pb.Con
 		return nil, err
 	}
 	logrus.Infof("Arguments parsed into input structure %v", in)
-	outMsg, err := DescribeImage(inpObj.Prompt, inpObj.ImageFile)
+	visionModel := utils.GetEnv("VISION_MODEL", "lmstudio-community/Qwen3.5-9B-MLX-4bit")
+	outMsg, err := DescribeImage(inpObj.Prompt, visionModel, inpObj.ImageFile)
 	if err != nil {
 		return nil, err
 	}
 	return &pb.ContextMesssage{
 		Uuid:     in.Uuid,
 		Prompt:   in.Prompt,
+		Model:    visionModel,
 		Response: outMsg,
 	}, nil
 
 }
 
-func DescribeImage(prompt string, fileName string) (string, error) {
+func DescribeImage(prompt string, model string, fileName string) (string, error) {
 
 	memory := memory.NewMemory("")
-	memory.Model = utils.GetEnv("VISION_MODEL", "lmstudio-community/Qwen3.5-9B-MLX-4bit")
+	memory.Model = model
 	memory.AppendMemory(openai.UserMessage(prompt))
 
 	logrus.Infof("DescribeImage -> %s, %s", memory.Model, prompt)

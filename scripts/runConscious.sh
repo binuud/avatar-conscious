@@ -11,7 +11,7 @@ export IMAGE_MODEL="Runpod/FLUX.2-klein-4B-mflux-4bit"
 export VISION_MODEL="lmstudio-community/Qwen3.5-9B-MLX-4bit"
 
 export FILE_STORE_PATH=$PWD/dataVolume
-export SERVABLE_DIRECTORY=$PWD/dataVolume/gen
+export SERVABLE_DIRECTORY=$PWD/dataVolume/static
 
 reflex $(cat .reflex) -- go run cmd/conscious/main.go
 # go run cmd/conscious/main.go

@@ -1,49 +1,6 @@
 [
   {
     "function": {
-      "name": "get_file_contents",
-      "description": "Get the contents of the file, from the given path",
-      "parameters": {
-        "properties": {
-          "path": {
-            "description": "The relative path of the file.",
-            "type": "string"
-          }
-        },
-        "required": [
-          "path"
-        ],
-        "type": "object"
-      }
-    },
-    "type": "function"
-  },
-  {
-    "function": {
-      "name": "get_http_request",
-      "description": "Use the api call and get response from http or https api server",
-      "parameters": {
-        "properties": {
-          "endpoint": {
-            "description": "The endpoint of the api server with http or https schema, eg: https://www.example.com, http://localhost:9080",
-            "type": "string"
-          },
-          "querystring": {
-            "description": "The query string used for the api get request",
-            "type": "string"
-          }
-        },
-        "required": [
-          "endpoint",
-          "querystring"
-        ],
-        "type": "object"
-      }
-    },
-    "type": "function"
-  },
-  {
-    "function": {
       "name": "get_ai_generated_image",
       "description": "Create or Modify an image using ai.",
       "parameters": {
@@ -79,6 +36,49 @@
         "required": [
           "imagefile",
           "prompt"
+        ],
+        "type": "object"
+      }
+    },
+    "type": "function"
+  },
+  {
+    "function": {
+      "name": "get_file_contents",
+      "description": "Get the contents of the file, from the given path",
+      "parameters": {
+        "properties": {
+          "path": {
+            "description": "The relative path of the file.",
+            "type": "string"
+          }
+        },
+        "required": [
+          "path"
+        ],
+        "type": "object"
+      }
+    },
+    "type": "function"
+  },
+  {
+    "function": {
+      "name": "get_http_request",
+      "description": "Use the api call and get response from http or https api server",
+      "parameters": {
+        "properties": {
+          "endpoint": {
+            "description": "The endpoint of the api server with http or https schema, eg: https://www.example.com, http://localhost:9080",
+            "type": "string"
+          },
+          "querystring": {
+            "description": "The query string used for the api get request",
+            "type": "string"
+          }
+        },
+        "required": [
+          "endpoint",
+          "querystring"
         ],
         "type": "object"
       }

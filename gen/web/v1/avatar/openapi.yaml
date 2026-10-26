@@ -183,6 +183,10 @@ paths:
           in: query
           schema:
             type: string
+        - name: control.meta.image
+          in: query
+          schema:
+            type: string
         - name: control.meta.name
           in: query
           schema:
@@ -373,6 +377,8 @@ components:
         name:
           type: string
         description:
+          type: string
+        image:
           type: string
         triggers:
           type: array
