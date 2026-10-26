@@ -198,7 +198,8 @@ func (x *ConfigList) GetConfigs() []*Config {
 
 type Configs struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Entry         map[string]*Config     `protobuf:"bytes,1,rep,name=entry,proto3" json:"entry,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Entry         map[string]*Config     `protobuf:"bytes,2,rep,name=entry,proto3" json:"entry,omitempty" protobuf_key:"bytes,1,opt,name=key" protobuf_val:"bytes,2,opt,name=value"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -233,6 +234,13 @@ func (*Configs) Descriptor() ([]byte, []int) {
 	return file_v1_settings_settings_proto_rawDescGZIP(), []int{2}
 }
 
+func (x *Configs) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
 func (x *Configs) GetEntry() map[string]*Config {
 	if x != nil {
 		return x.Entry
@@ -261,9 +269,10 @@ const file_v1_settings_settings_proto_rawDesc = "" +
 	"\aBOOLEAN\x10\x04\"8\n" +
 	"\n" +
 	"ConfigList\x12*\n" +
-	"\aconfigs\x18\x01 \x03(\v2\x10.settings.ConfigR\aconfigs\"\x89\x01\n" +
-	"\aConfigs\x122\n" +
-	"\x05entry\x18\x01 \x03(\v2\x1c.settings.Configs.EntryEntryR\x05entry\x1aJ\n" +
+	"\aconfigs\x18\x01 \x03(\v2\x10.settings.ConfigR\aconfigs\"\x9d\x01\n" +
+	"\aConfigs\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x122\n" +
+	"\x05entry\x18\x02 \x03(\v2\x1c.settings.Configs.EntryEntryR\x05entry\x1aJ\n" +
 	"\n" +
 	"EntryEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12&\n" +

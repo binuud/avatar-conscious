@@ -7,7 +7,6 @@ import (
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/settings"
 	datalayer "github.com/binuud/avatar-conscious/pkg/dataLayer"
 	"github.com/sirupsen/logrus"
-	"google.golang.org/protobuf/proto"
 )
 
 const (
@@ -15,22 +14,24 @@ const (
 )
 
 type settings struct {
-	Configs *pb.Configs
-	Name    string
+	*pb.Configs
 }
 
 var Global = NewSettings("global")
 
 func NewSettings(name string) *settings {
 	mySettings := &settings{
-		Configs: &pb.Configs{
+		&pb.Configs{
 			Entry: make(map[string]*pb.Config, 0),
+			Name:  name,
 		},
-		Name: name,
 	}
 	// check if settings file present
 	// then load the same
-	mySettings.Load()
+	err := mySettings.Load()
+	if err != nil {
+		logrus.Errorf("config file is missing %v", err)
+	}
 	return mySettings
 }
 
@@ -86,26 +87,28 @@ func (s *settings) Save() error {
 		return fmt.Errorf("Internal settings cannot be saved")
 	}
 
-	filePath := datalayer.GetFileAbsolutePath(SETTINGS_DIRECTORY, s.Name+".config")
+	configFileName := s.Name + ".config.yaml"
+	filePath := datalayer.GetFileAbsolutePath(SETTINGS_DIRECTORY, configFileName)
 	// Save list of configs
-	if err := datalayer.SaveBinary(filePath, s); err != nil {
+	if err := datalayer.SaveProtoYAML(filePath, s); err != nil {
 		logrus.Errorf("Cannot save avatar file %s %v", filePath, err)
 		return err
 	}
-	logrus.Infof("Saved Settings to file %s", filePath)
+	logrus.Infof("Saved Settings to file %s", configFileName)
 	return nil
 }
 
 func (s *settings) Load() error {
-	filePath := datalayer.GetFileAbsolutePath(SETTINGS_DIRECTORY, s.Name+".config")
+	filePath := datalayer.GetFileAbsolutePath(SETTINGS_DIRECTORY, s.Name+".config.yaml")
+	mySettings := &pb.Configs{}
 
-	// Read AvatarWrapper back (Go automatically infers type T from your variable assignment)
-	mySettings, err := datalayer.ReadBinary[settings](filePath)
+	// note: only the proto msg has to be sent, not the wrapper
+	err := datalayer.ReadProtoYAML(filePath, mySettings)
 	if err != nil {
 		return err
 	}
 
 	// deep clone object, to avoid mutex copy issues
-	s.Configs = proto.Clone(mySettings.Configs).(*pb.Configs)
+	s.Configs = mySettings
 	return nil
 }

@@ -24,5 +24,6 @@ message ConfigList {
 }
 
 message Configs {
-  map<string, Config> entry = 1;
+  string name = 1;
+  map<string, Config> entry = 2;
 }
