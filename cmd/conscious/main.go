@@ -100,14 +100,14 @@ func runHtppServer() {
 		log.Fatalln(err)
 	}
 
-	// settings server
-	err = pbSettings.RegisterSettingsHandler(ctx, gwMux, conn)
+	// systemMetricsServer
+	err = pbConscious.RegisterMetricsHandler(ctx, gwMux, conn)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
-	// systemMetricsServer
-	err = pbConscious.RegisterMetricsHandler(ctx, gwMux, conn)
+	// settings server
+	err = pbSettings.RegisterSettingsHandler(ctx, gwMux, conn)
 	if err != nil {
 		log.Fatalln(err)
 	}
