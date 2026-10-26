@@ -269,7 +269,7 @@ paths:
         - name: control.status
           in: query
           schema:
-            $ref: '#/components/schemas/AvatarControl.AvatarStatus'
+            $ref: '#/components/schemas/AvatarStatus'
         - name: control.stepStatuses.completedAt.nanos
           in: query
           schema:
@@ -293,7 +293,7 @@ paths:
         - name: control.stepStatuses.status
           in: query
           schema:
-            $ref: '#/components/schemas/StepStatus.AvatarStepStatus'
+            $ref: '#/components/schemas/AvatarStatus'
       responses:
         "200":
           description: avatar.AvatarService.Control response
@@ -336,7 +336,7 @@ components:
         meta:
           $ref: '#/components/schemas/AvatarMeta'
         status:
-          $ref: '#/components/schemas/AvatarControl.AvatarStatus'
+          $ref: '#/components/schemas/AvatarStatus'
         action:
           $ref: '#/components/schemas/AvatarControl.AvatarAction'
         currentStep:
@@ -353,22 +353,14 @@ components:
     AvatarControl.AvatarAction:
       type: string
       enum:
-        - "AvatarActionIgnore"
-        - "Run"
-        - "StartDebug"
-        - "Stop"
-        - "RunStep"
-        - "StopStep"
-    AvatarControl.AvatarStatus:
-      type: string
-      enum:
-        - "AvatarActionStatusIgnore"
-        - "Success"
-        - "Active"
-        - "Rerun"
-        - "Failed"
-        - "Fatal"
-        - "Stopped"
+        - "AVATAR_ACTION_IGNORE"
+        - "INIT"
+        - "RUN"
+        - "START_DEBUG"
+        - "STOP"
+        - "RUN_STEP"
+        - "STOP_STEP"
+        - "SEND_DATA"
     AvatarMeta:
       type: object
       properties:
@@ -386,6 +378,20 @@ components:
             type: string
         ui:
           $ref: '#/components/schemas/QuantumUI'
+    AvatarStatus:
+      type: string
+      enum:
+        - "AvatarActionStatusIgnore"
+        - "STATUS_INIT"
+        - "STATUS_SUCCESS"
+        - "STATUS_ACTIVE"
+        - "STATUS_WAITING"
+        - "STATUS_RERUN"
+        - "STATUS_ERROR"
+        - "STATUS_FAILED"
+        - "STATUS_FATAL"
+        - "STATUS_STOPPED"
+        - "STATUS_NOT_STARTED"
     AvatarStoreCreateRequest:
       type: object
       properties:
@@ -482,21 +488,11 @@ components:
       type: object
       properties:
         status:
-          $ref: '#/components/schemas/StepStatus.AvatarStepStatus'
+          $ref: '#/components/schemas/AvatarStatus'
         createdAt:
           $ref: '#/components/schemas/Timestamp'
         completedAt:
           $ref: '#/components/schemas/Timestamp'
-    StepStatus.AvatarStepStatus:
-      type: string
-      enum:
-        - "AvatarActionStatusIgnore"
-        - "Success"
-        - "Active"
-        - "Rerun"
-        - "Failed"
-        - "Fatal"
-        - "NotStarted"
     StopResponse:
       type: object
       properties:

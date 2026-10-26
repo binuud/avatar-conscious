@@ -77,20 +77,28 @@ message Steps {
   repeated Step steps = 1;
 }
 
+enum AvatarStatus {
+  AvatarActionStatusIgnore = 0;
+  // initialized and ready to accept commands
+  STATUS_INIT = 1;
+  STATUS_SUCCESS = 2;
+  STATUS_ACTIVE = 3;
+  // waiting for user input
+  // or some io
+  STATUS_WAITING = 4;
+  STATUS_RERUN = 5;
+  STATUS_ERROR = 6;
+  STATUS_FAILED = 7;
+  STATUS_FATAL = 8;
+  STATUS_STOPPED = 9;
+  STATUS_NOT_STARTED = 10;
+}
+
 // Step status is kept seperate from Steps
 // LLM will generate the Steps
 // StepStatus is updated by Avatar Handler
 message StepStatus {
-  enum AvatarStepStatus {
-    AvatarActionStatusIgnore = 0;
-    Success = 1;
-    Active = 2;
-    Rerun = 3;
-    Failed = 4;
-    Fatal = 5;
-    NotStarted = 6;
-  }
-  AvatarStepStatus status = 1;
+  AvatarStatus status = 1;
   Timestamp created_at = 2;
   Timestamp completed_at = 3;
 }
@@ -116,26 +124,20 @@ message Avatar {
 // for control the avatar
 // bidirectional stream control can be used
 message AvatarControl {
-  enum AvatarStatus {
-    AvatarActionStatusIgnore = 0;
-    Success = 1;
-    Active = 2;
-    Rerun = 3;
-    Failed = 4;
-    Fatal = 5;
-    Stopped = 6;
-  }
-
   enum AvatarAction {
-    AvatarActionIgnore = 0;
+    AVATAR_ACTION_IGNORE = 0;
+    // initialize the avatar
+    // making it ready to accept control actions like run, start debug etc
+    INIT = 1;
     // Run the avatar to completion
-    Run = 1;
+    RUN = 2;
     // Start the avatar in step by step mode
-    StartDebug = 2;
-    Stop = 3;
+    START_DEBUG = 3;
+    STOP = 4;
     // Run a particular step
-    RunStep = 4;
-    StopStep = 5;
+    RUN_STEP = 5;
+    STOP_STEP = 6;
+    SEND_DATA = 7;
   }
 
   AvatarMeta meta = 1;

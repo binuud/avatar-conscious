@@ -79,7 +79,7 @@ func Test_AvatarServer_Control(t *testing.T) {
 	// send start request
 	req := &pb.ControlRequest{
 		Control: &pb.AvatarControl{
-			Action: pb.AvatarControl_Run,
+			Action: pb.AvatarControl_RUN,
 			Meta: &pb.AvatarMeta{
 				Name: "election-officer",
 			},
@@ -103,7 +103,7 @@ func Test_AvatarServer_Control(t *testing.T) {
 			t.Fatalf("Unexpected error on Recv during start send : %v", err)
 		}
 		logrus.Infof("Step run %d, stepStatus: %v status: %v", resp.Control.CurrentStep, resp.Control.StepStatuses[resp.Control.CurrentStep].Status, resp.Control.Status)
-		if resp.Control.Status != pb.AvatarControl_Active {
+		if resp.Control.Status != pb.AvatarStatus_STATUS_ACTIVE {
 			// avatar run probably over
 			logrus.Infof("Avatar run complete")
 			close(waitc)

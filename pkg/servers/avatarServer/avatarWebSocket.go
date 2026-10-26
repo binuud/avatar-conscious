@@ -71,7 +71,7 @@ func WebsocketHandler(w http.ResponseWriter, r *http.Request) {
 				logrus.Errorf("Error reading from gRPC server stream: %v", err)
 				return
 			}
-			logrus.Info("Websocket - Received data from grpc")
+			logrus.Info("Websocket <-- Received data from grpc")
 			jsonBytes, err := protojson.Marshal(grpcMsg)
 			if err != nil {
 				logrus.Errorf("Failed to marshal gRPC proto to JSON: %v", err)

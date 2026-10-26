@@ -52,11 +52,11 @@ ui:
 
 # Sample
 
-## Step 1: Prompt user to enter his First Name and Last name
+## Step 1: Prompt user to enter his First Name and Last name via the UI
 
 ## Step 2: Try guessing the place of origin or country of the user
 
 Use the following prompt, to get information about the user name
 ```prompt
-The name of the user is [firstName] [lastName], which country does he belong to
+The name of the user is [firstName] [lastName], which country does he belong to. Answer in a few words.
 ```
