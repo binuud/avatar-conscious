@@ -25,7 +25,7 @@ func Bootstrap() {
 		__IsDarwin = true
 	}
 
-	logrus.Infof("Runtime OS %s", runtime.GOARCH)
+	logrus.Infof("Runtime OS %s : %s", runtime.GOOS, runtime.GOARCH)
 	// initiate all slash commands
 	slashCommands.Bootstrap()
 
