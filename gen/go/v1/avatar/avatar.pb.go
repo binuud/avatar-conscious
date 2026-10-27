@@ -638,6 +638,8 @@ type StepStatus struct {
 	Status        AvatarStatus           `protobuf:"varint,1,opt,name=status,proto3,enum=avatar.AvatarStatus" json:"status,omitempty"`
 	CreatedAt     *conscious.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	CompletedAt   *conscious.Timestamp   `protobuf:"bytes,3,opt,name=completed_at,json=completedAt,proto3" json:"completed_at,omitempty"`
+	Reqeust       string                 `protobuf:"bytes,4,opt,name=reqeust,proto3" json:"reqeust,omitempty"`
+	Response      string                 `protobuf:"bytes,5,opt,name=response,proto3" json:"response,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -691,6 +693,20 @@ func (x *StepStatus) GetCompletedAt() *conscious.Timestamp {
 		return x.CompletedAt
 	}
 	return nil
+}
+
+func (x *StepStatus) GetReqeust() string {
+	if x != nil {
+		return x.Reqeust
+	}
+	return ""
+}
+
+func (x *StepStatus) GetResponse() string {
+	if x != nil {
+		return x.Response
+	}
+	return ""
 }
 
 // Avatar message representing a robot or avatar entity
@@ -782,6 +798,7 @@ type AvatarControl struct {
 	Action        AvatarControl_AvatarAction `protobuf:"varint,3,opt,name=action,proto3,enum=avatar.AvatarControl_AvatarAction" json:"action,omitempty"`
 	CurrentStep   int32                      `protobuf:"varint,4,opt,name=current_step,json=currentStep,proto3" json:"current_step,omitempty"`
 	StepStatuses  []*StepStatus              `protobuf:"bytes,5,rep,name=stepStatuses,proto3" json:"stepStatuses,omitempty"`
+	Response      string                     `protobuf:"bytes,6,opt,name=response,proto3" json:"response,omitempty"`
 	CreatedAt     *conscious.Timestamp       `protobuf:"bytes,11,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	CompletedAt   *conscious.Timestamp       `protobuf:"bytes,12,opt,name=completed_at,json=completedAt,proto3" json:"completed_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -853,6 +870,13 @@ func (x *AvatarControl) GetStepStatuses() []*StepStatus {
 	return nil
 }
 
+func (x *AvatarControl) GetResponse() string {
+	if x != nil {
+		return x.Response
+	}
+	return ""
+}
+
 func (x *AvatarControl) GetCreatedAt() *conscious.Timestamp {
 	if x != nil {
 		return x.CreatedAt
@@ -901,7 +925,7 @@ const file_v1_avatar_avatar_proto_rawDesc = "" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x16\n" +
 	"\x06prompt\x18\x03 \x01(\tR\x06prompt\"+\n" +
 	"\x05Steps\x12\"\n" +
-	"\x05steps\x18\x01 \x03(\v2\f.avatar.StepR\x05steps\"\x94\x01\n" +
+	"\x05steps\x18\x01 \x03(\v2\f.avatar.StepR\x05steps\"\xca\x01\n" +
 	"\n" +
 	"StepStatus\x12,\n" +
 	"\x06status\x18\x01 \x01(\x0e2\x14.avatar.AvatarStatusR\x06status\x12)\n" +
@@ -909,20 +933,23 @@ const file_v1_avatar_avatar_proto_rawDesc = "" +
 	"created_at\x18\x02 \x01(\v2\n" +
 	".TimestampR\tcreatedAt\x12-\n" +
 	"\fcompleted_at\x18\x03 \x01(\v2\n" +
-	".TimestampR\vcompletedAt\"\xc8\x01\n" +
+	".TimestampR\vcompletedAt\x12\x18\n" +
+	"\areqeust\x18\x04 \x01(\tR\areqeust\x12\x1a\n" +
+	"\bresponse\x18\x05 \x01(\tR\bresponse\"\xc8\x01\n" +
 	"\x06Avatar\x12&\n" +
 	"\x04meta\x18\x01 \x01(\v2\x12.avatar.AvatarMetaR\x04meta\x124\n" +
 	"\vpermissions\x18\x04 \x01(\x0e2\x12.avatar.PermissionR\vpermissions\x12\"\n" +
 	"\fsystemPrompt\x18\x05 \x01(\tR\fsystemPrompt\x12\"\n" +
 	"\x05steps\x18\x06 \x03(\v2\f.avatar.StepR\x05steps\x12\x18\n" +
 	"\acontent\x18\n" +
-	" \x01(\tR\acontent\"\xdb\x03\n" +
+	" \x01(\tR\acontent\"\xf7\x03\n" +
 	"\rAvatarControl\x12&\n" +
 	"\x04meta\x18\x01 \x01(\v2\x12.avatar.AvatarMetaR\x04meta\x12,\n" +
 	"\x06status\x18\x02 \x01(\x0e2\x14.avatar.AvatarStatusR\x06status\x12:\n" +
 	"\x06action\x18\x03 \x01(\x0e2\".avatar.AvatarControl.AvatarActionR\x06action\x12!\n" +
 	"\fcurrent_step\x18\x04 \x01(\x05R\vcurrentStep\x126\n" +
-	"\fstepStatuses\x18\x05 \x03(\v2\x12.avatar.StepStatusR\fstepStatuses\x12)\n" +
+	"\fstepStatuses\x18\x05 \x03(\v2\x12.avatar.StepStatusR\fstepStatuses\x12\x1a\n" +
+	"\bresponse\x18\x06 \x01(\tR\bresponse\x12)\n" +
 	"\n" +
 	"created_at\x18\v \x01(\v2\n" +
 	".TimestampR\tcreatedAt\x12-\n" +

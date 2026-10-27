@@ -106,6 +106,8 @@ message StepStatus {
   AvatarStatus status = 1;
   Timestamp created_at = 2;
   Timestamp completed_at = 3;
+  string reqeust = 4;
+  string response = 5;
 }
 
 // Avatar message representing a robot or avatar entity
@@ -150,6 +152,7 @@ message AvatarControl {
   AvatarAction action = 3;
   int32 current_step = 4;
   repeated StepStatus stepStatuses = 5;
+  string response = 6;
   Timestamp created_at = 11;
   Timestamp completed_at = 12;
 }
