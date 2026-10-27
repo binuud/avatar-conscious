@@ -92,6 +92,8 @@ export type StepStatus = {
   status?: AvatarStatus
   createdAt?: Common.Timestamp
   completedAt?: Common.Timestamp
+  reqeust?: string
+  response?: string
 }
 
 export type Avatar = {
@@ -108,6 +110,7 @@ export type AvatarControl = {
   action?: AvatarControlAvatarAction
   currentStep?: number
   stepStatuses?: StepStatus[]
+  response?: string
   createdAt?: Common.Timestamp
   completedAt?: Common.Timestamp
 }

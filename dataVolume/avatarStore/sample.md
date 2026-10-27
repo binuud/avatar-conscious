@@ -36,11 +36,7 @@ ui:
   - id: ''
     class: ''
     label: ''
-    value: lorem ipsum dolor sit amet consectetur adipiscing elit optio ducimus temporibus
-      ullamco ipsum dolor omnis aut et fugiat fugiat et voluptas et vero est autem minim
-      possimus et libero facere imperdiet nihil consequatur eiusmod nostrud voluptas
-      vero aliquip possimus duis qui dolorum et cupiditate elit minus quas ea voluptas
-      consequatur
+    value: Avatar will try to guess the country of origin of the name and the gender of the name.
     placeHolder: ''
     help: ''
     style: ''
@@ -63,5 +59,5 @@ Launch an Avatar UI interface. And get the firstname and lastname of user.
 
 Use the following prompt, to get information about the user name
 ```prompt
-The name of the user is [firstName] [lastName], which country does he belong to. Answer in a few words.
+The name of the user is [firstName] [lastName], try your best to guess the country of the name and the gender of the name.
 ```

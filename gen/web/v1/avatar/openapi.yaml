@@ -266,6 +266,10 @@ paths:
           in: query
           schema:
             type: string
+        - name: control.response
+          in: query
+          schema:
+            type: string
         - name: control.status
           in: query
           schema:
@@ -290,6 +294,14 @@ paths:
           schema:
             type: integer
             format: int64
+        - name: control.stepStatuses.reqeust
+          in: query
+          schema:
+            type: string
+        - name: control.stepStatuses.response
+          in: query
+          schema:
+            type: string
         - name: control.stepStatuses.status
           in: query
           schema:
@@ -346,6 +358,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/StepStatus'
+        response:
+          type: string
         createdAt:
           $ref: '#/components/schemas/Timestamp'
         completedAt:
@@ -495,6 +509,10 @@ components:
           $ref: '#/components/schemas/Timestamp'
         completedAt:
           $ref: '#/components/schemas/Timestamp'
+        reqeust:
+          type: string
+        response:
+          type: string
     StopResponse:
       type: object
       properties:
