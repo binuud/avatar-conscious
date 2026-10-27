@@ -36,7 +36,6 @@ outdir/*
 dataVolume/memories/*
 dataVolume/static/gen/*
 dataVolume/uploads/*
-
 dataVolume/configs/*
 dataVolume/avatarStore/life-*
 dataVolume/avatarStore/ig-*

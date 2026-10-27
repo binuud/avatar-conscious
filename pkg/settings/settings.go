@@ -17,7 +17,7 @@ type settings struct {
 	*pb.Configs
 }
 
-var Global = NewSettings("global")
+var Global *settings
 
 func NewSettings(name string) *settings {
 	mySettings := &settings{

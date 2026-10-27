@@ -26,6 +26,13 @@ func Bootstrap() {
 	}
 
 	logrus.Infof("Runtime OS %s : %s", runtime.GOOS, runtime.GOARCH)
+
+	// create the required storage directorues
+	CreateStorageDirStructure()
+
+	// initialize the global settings
+	settings.Global = settings.NewSettings("global")
+
 	// initiate all slash commands
 	slashCommands.Bootstrap()
 
