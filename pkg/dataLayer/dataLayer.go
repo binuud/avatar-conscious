@@ -183,7 +183,6 @@ func ReadProtoYAML[T proto.Message](filePath string, data T) error {
 		logrus.Errorf("config file not found %v", err)
 		return err
 	}
-	logrus.Infof("Yaml contents %s", yamlContents)
 	// Unmarshal the YAML data into the struct pointer
 	err = protoyaml.UnmarshalOptions{DiscardUnknown: true}.Unmarshal(yamlContents, data)
 	if err != nil {

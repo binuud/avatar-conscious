@@ -40,7 +40,7 @@ func serveStaticPaths() *http.ServeMux {
 	SERVABLE_DIRECTORY := utils.GetEnv("SERVABLE_DIRECTORY", "/dataVolume/static")
 
 	if !strings.Contains(SERVABLE_DIRECTORY, "/dataVolume/static") {
-		logrus.Panic("Protection fail, only directory having /dataVolume/gen can be served")
+		logrus.Panic("Protection fail, only directory having /dataVolume/static can be served")
 	}
 
 	SERVABLE_UI_DIRECTORY := os.Getenv("SERVABLE_UI_DIRECTORY")
