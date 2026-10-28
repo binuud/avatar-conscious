@@ -44,6 +44,12 @@ export enum AvatarStatus {
   STATUS_IO_WAITING = "STATUS_IO_WAITING",
 }
 
+export enum StepStatusResponseType {
+  RESPONSE_TYPE_IGNORE = "RESPONSE_TYPE_IGNORE",
+  IMAGEDATA = "IMAGEDATA",
+  TEXT = "TEXT",
+}
+
 export enum AvatarControlAvatarAction {
   AVATAR_ACTION_IGNORE = "AVATAR_ACTION_IGNORE",
   INIT = "INIT",
@@ -92,6 +98,7 @@ export type StepStatus = {
   status?: AvatarStatus
   createdAt?: Common.Timestamp
   completedAt?: Common.Timestamp
+  responseType?: StepStatusResponseType
   reqeust?: string
   response?: string
 }

@@ -302,6 +302,10 @@ paths:
           in: query
           schema:
             type: string
+        - name: control.stepStatuses.responseType
+          in: query
+          schema:
+            $ref: '#/components/schemas/StepStatus.ResponseType'
         - name: control.stepStatuses.status
           in: query
           schema:
@@ -509,10 +513,18 @@ components:
           $ref: '#/components/schemas/Timestamp'
         completedAt:
           $ref: '#/components/schemas/Timestamp'
+        responseType:
+          $ref: '#/components/schemas/StepStatus.ResponseType'
         reqeust:
           type: string
         response:
           type: string
+    StepStatus.ResponseType:
+      type: string
+      enum:
+        - "RESPONSE_TYPE_IGNORE"
+        - "IMAGEDATA"
+        - "TEXT"
     StopResponse:
       type: object
       properties:

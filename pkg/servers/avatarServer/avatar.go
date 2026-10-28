@@ -237,6 +237,8 @@ func (a *AvatarWrapper) RunStep(i int, step *pb.Step) (*pbConcsious.ContextMesss
 	logrus.Infof("%s (%d) : %s", step.Name, i+1, step.Prompt)
 	a.Memory.Messages = append(a.Memory.Messages, openai.UserMessage(step.Prompt))
 
+	a.Memory.DumpMemory(nil)
+
 	completions, err := llm.MakeLLMSingleToolRequest(a.Memory.Messages, a.Memory.Model,
 		a.Memory.Tools, a.Memory.Temperature)
 	if err != nil {
@@ -255,7 +257,10 @@ func (a *AvatarWrapper) RunStep(i int, step *pb.Step) (*pbConcsious.ContextMesss
 		}
 		logrus.Infof("Tool %s called, Out Msg : %s", msg.ToolCalls[0].Function.Name, out)
 		// handle special case ui launch tool
-		out.Action = "get_ui_launch_tool"
+		if msg.ToolCalls[0].Function.Name == "get_ui_launch_tool" {
+			out.Action = "get_ui_launch_tool"
+		}
+
 	} else {
 		out.Response = msg.Content
 		logrus.Infof("Out Msg : %s", msg.Content)

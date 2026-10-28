@@ -106,8 +106,15 @@ message StepStatus {
   AvatarStatus status = 1;
   Timestamp created_at = 2;
   Timestamp completed_at = 3;
-  string reqeust = 4;
-  string response = 5;
+
+  enum ResponseType {
+    RESPONSE_TYPE_IGNORE = 0;
+    IMAGEDATA = 1;
+    TEXT = 2;
+  }
+  ResponseType response_type = 5; 
+  string reqeust = 6;
+  string response = 7;
 }
 
 // Avatar message representing a robot or avatar entity
