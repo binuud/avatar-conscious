@@ -3,7 +3,9 @@ package avatarServer
 import (
 	"context"
 	"errors"
+	"fmt"
 	"io"
+	"uuid"
 
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/avatar"
 	"github.com/binuud/avatar-conscious/pkg/utils"
@@ -174,13 +176,30 @@ func (s *avatarGrpcServer) handleAvatarRun(in *pb.ControlRequest,
 	// check if this is an restart from UI
 	currentStep := in.Control.CurrentStep
 	if currentStep >= 0 && currentStep < int32(len(in.Control.StepStatuses)) {
-		if in.Control.StepStatuses[currentStep].Status == pb.AvatarStatus_STATUS_SUCCESS {
+		currentStepObj := in.Control.StepStatuses[currentStep]
+		if currentStepObj.Status == pb.AvatarStatus_STATUS_SUCCESS {
 			logrus.Infof("Continue from step %d", currentStep+1)
-			logrus.Infof("Response from UI %s", in.Control.StepStatuses[currentStep].Response)
+			logrus.Infof("Response from UI %s", currentStepObj.Response)
 			// check if response is set
-			if in.Control.StepStatuses[currentStep].Response != "" {
+
+			if currentStepObj.Response != "" {
 				// mutate the context, so LLM knows what the user sent
-				s.avatar.Memory.Messages = append(s.avatar.Memory.Messages, openai.UserMessage(in.Control.StepStatuses[currentStep].Response))
+				if currentStepObj.ResponseType == pb.StepStatus_IMAGEDATA {
+
+					// if the response type is IMAGEDATA
+					// save the file to uploads folder
+					// and push the filename into llm memory context
+
+					newFileName := fmt.Sprintf("%s.%s", uuid.New().String(), "png")
+					err := utils.SaveImageDataToFile(newFileName, currentStepObj.Response)
+					if err != nil {
+						return err
+					}
+					s.avatar.Memory.Messages = append(s.avatar.Memory.Messages, openai.UserMessage("image is stored in filename ```"+newFileName+"```"))
+				} else {
+					s.avatar.Memory.Messages = append(s.avatar.Memory.Messages, openai.UserMessage(currentStepObj.Response))
+				}
+
 			}
 			in.Control.CurrentStep++
 		}

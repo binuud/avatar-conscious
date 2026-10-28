@@ -149,6 +149,8 @@ func runHtppServer() {
 }
 
 func main() {
+
+	flag.Parse()
 	logrus.Println("Welcome to life")
 	bootstrap.Bootstrap()
 

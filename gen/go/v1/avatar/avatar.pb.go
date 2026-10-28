@@ -230,6 +230,55 @@ func (AvatarStatus) EnumDescriptor() ([]byte, []int) {
 	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{2}
 }
 
+type StepStatus_ResponseType int32
+
+const (
+	StepStatus_RESPONSE_TYPE_IGNORE StepStatus_ResponseType = 0
+	StepStatus_IMAGEDATA            StepStatus_ResponseType = 1
+	StepStatus_TEXT                 StepStatus_ResponseType = 2
+)
+
+// Enum value maps for StepStatus_ResponseType.
+var (
+	StepStatus_ResponseType_name = map[int32]string{
+		0: "RESPONSE_TYPE_IGNORE",
+		1: "IMAGEDATA",
+		2: "TEXT",
+	}
+	StepStatus_ResponseType_value = map[string]int32{
+		"RESPONSE_TYPE_IGNORE": 0,
+		"IMAGEDATA":            1,
+		"TEXT":                 2,
+	}
+)
+
+func (x StepStatus_ResponseType) Enum() *StepStatus_ResponseType {
+	p := new(StepStatus_ResponseType)
+	*p = x
+	return p
+}
+
+func (x StepStatus_ResponseType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (StepStatus_ResponseType) Descriptor() protoreflect.EnumDescriptor {
+	return file_v1_avatar_avatar_proto_enumTypes[3].Descriptor()
+}
+
+func (StepStatus_ResponseType) Type() protoreflect.EnumType {
+	return &file_v1_avatar_avatar_proto_enumTypes[3]
+}
+
+func (x StepStatus_ResponseType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use StepStatus_ResponseType.Descriptor instead.
+func (StepStatus_ResponseType) EnumDescriptor() ([]byte, []int) {
+	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{5, 0}
+}
+
 type AvatarControl_AvatarAction int32
 
 const (
@@ -283,11 +332,11 @@ func (x AvatarControl_AvatarAction) String() string {
 }
 
 func (AvatarControl_AvatarAction) Descriptor() protoreflect.EnumDescriptor {
-	return file_v1_avatar_avatar_proto_enumTypes[3].Descriptor()
+	return file_v1_avatar_avatar_proto_enumTypes[4].Descriptor()
 }
 
 func (AvatarControl_AvatarAction) Type() protoreflect.EnumType {
-	return &file_v1_avatar_avatar_proto_enumTypes[3]
+	return &file_v1_avatar_avatar_proto_enumTypes[4]
 }
 
 func (x AvatarControl_AvatarAction) Number() protoreflect.EnumNumber {
@@ -634,12 +683,13 @@ func (x *Steps) GetSteps() []*Step {
 // LLM will generate the Steps
 // StepStatus is updated by Avatar Handler
 type StepStatus struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Status        AvatarStatus           `protobuf:"varint,1,opt,name=status,proto3,enum=avatar.AvatarStatus" json:"status,omitempty"`
-	CreatedAt     *conscious.Timestamp   `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	CompletedAt   *conscious.Timestamp   `protobuf:"bytes,3,opt,name=completed_at,json=completedAt,proto3" json:"completed_at,omitempty"`
-	Reqeust       string                 `protobuf:"bytes,4,opt,name=reqeust,proto3" json:"reqeust,omitempty"`
-	Response      string                 `protobuf:"bytes,5,opt,name=response,proto3" json:"response,omitempty"`
+	state         protoimpl.MessageState  `protogen:"open.v1"`
+	Status        AvatarStatus            `protobuf:"varint,1,opt,name=status,proto3,enum=avatar.AvatarStatus" json:"status,omitempty"`
+	CreatedAt     *conscious.Timestamp    `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	CompletedAt   *conscious.Timestamp    `protobuf:"bytes,3,opt,name=completed_at,json=completedAt,proto3" json:"completed_at,omitempty"`
+	ResponseType  StepStatus_ResponseType `protobuf:"varint,5,opt,name=response_type,json=responseType,proto3,enum=avatar.StepStatus_ResponseType" json:"response_type,omitempty"`
+	Reqeust       string                  `protobuf:"bytes,6,opt,name=reqeust,proto3" json:"reqeust,omitempty"`
+	Response      string                  `protobuf:"bytes,7,opt,name=response,proto3" json:"response,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -693,6 +743,13 @@ func (x *StepStatus) GetCompletedAt() *conscious.Timestamp {
 		return x.CompletedAt
 	}
 	return nil
+}
+
+func (x *StepStatus) GetResponseType() StepStatus_ResponseType {
+	if x != nil {
+		return x.ResponseType
+	}
+	return StepStatus_RESPONSE_TYPE_IGNORE
 }
 
 func (x *StepStatus) GetReqeust() string {
@@ -925,7 +982,7 @@ const file_v1_avatar_avatar_proto_rawDesc = "" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x16\n" +
 	"\x06prompt\x18\x03 \x01(\tR\x06prompt\"+\n" +
 	"\x05Steps\x12\"\n" +
-	"\x05steps\x18\x01 \x03(\v2\f.avatar.StepR\x05steps\"\xca\x01\n" +
+	"\x05steps\x18\x01 \x03(\v2\f.avatar.StepR\x05steps\"\xd3\x02\n" +
 	"\n" +
 	"StepStatus\x12,\n" +
 	"\x06status\x18\x01 \x01(\x0e2\x14.avatar.AvatarStatusR\x06status\x12)\n" +
@@ -933,9 +990,14 @@ const file_v1_avatar_avatar_proto_rawDesc = "" +
 	"created_at\x18\x02 \x01(\v2\n" +
 	".TimestampR\tcreatedAt\x12-\n" +
 	"\fcompleted_at\x18\x03 \x01(\v2\n" +
-	".TimestampR\vcompletedAt\x12\x18\n" +
-	"\areqeust\x18\x04 \x01(\tR\areqeust\x12\x1a\n" +
-	"\bresponse\x18\x05 \x01(\tR\bresponse\"\xc8\x01\n" +
+	".TimestampR\vcompletedAt\x12D\n" +
+	"\rresponse_type\x18\x05 \x01(\x0e2\x1f.avatar.StepStatus.ResponseTypeR\fresponseType\x12\x18\n" +
+	"\areqeust\x18\x06 \x01(\tR\areqeust\x12\x1a\n" +
+	"\bresponse\x18\a \x01(\tR\bresponse\"A\n" +
+	"\fResponseType\x12\x18\n" +
+	"\x14RESPONSE_TYPE_IGNORE\x10\x00\x12\r\n" +
+	"\tIMAGEDATA\x10\x01\x12\b\n" +
+	"\x04TEXT\x10\x02\"\xc8\x01\n" +
 	"\x06Avatar\x12&\n" +
 	"\x04meta\x18\x01 \x01(\v2\x12.avatar.AvatarMetaR\x04meta\x124\n" +
 	"\vpermissions\x18\x04 \x01(\x0e2\x12.avatar.PermissionR\vpermissions\x12\"\n" +
@@ -1011,47 +1073,49 @@ func file_v1_avatar_avatar_proto_rawDescGZIP() []byte {
 	return file_v1_avatar_avatar_proto_rawDescData
 }
 
-var file_v1_avatar_avatar_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
+var file_v1_avatar_avatar_proto_enumTypes = make([]protoimpl.EnumInfo, 5)
 var file_v1_avatar_avatar_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_v1_avatar_avatar_proto_goTypes = []any{
 	(Permission)(0),                 // 0: avatar.Permission
 	(AvatarActionType)(0),           // 1: avatar.AvatarActionType
 	(AvatarStatus)(0),               // 2: avatar.AvatarStatus
-	(AvatarControl_AvatarAction)(0), // 3: avatar.AvatarControl.AvatarAction
-	(*ToolParams)(nil),              // 4: avatar.ToolParams
-	(*Tool)(nil),                    // 5: avatar.Tool
-	(*AvatarMeta)(nil),              // 6: avatar.AvatarMeta
-	(*Step)(nil),                    // 7: avatar.Step
-	(*Steps)(nil),                   // 8: avatar.Steps
-	(*StepStatus)(nil),              // 9: avatar.StepStatus
-	(*Avatar)(nil),                  // 10: avatar.Avatar
-	(*AvatarControl)(nil),           // 11: avatar.AvatarControl
-	nil,                             // 12: avatar.Tool.ParametersEntry
-	(*quantumUI.QuantumUI)(nil),     // 13: quatumUI.QuantumUI
-	(*conscious.Timestamp)(nil),     // 14: Timestamp
+	(StepStatus_ResponseType)(0),    // 3: avatar.StepStatus.ResponseType
+	(AvatarControl_AvatarAction)(0), // 4: avatar.AvatarControl.AvatarAction
+	(*ToolParams)(nil),              // 5: avatar.ToolParams
+	(*Tool)(nil),                    // 6: avatar.Tool
+	(*AvatarMeta)(nil),              // 7: avatar.AvatarMeta
+	(*Step)(nil),                    // 8: avatar.Step
+	(*Steps)(nil),                   // 9: avatar.Steps
+	(*StepStatus)(nil),              // 10: avatar.StepStatus
+	(*Avatar)(nil),                  // 11: avatar.Avatar
+	(*AvatarControl)(nil),           // 12: avatar.AvatarControl
+	nil,                             // 13: avatar.Tool.ParametersEntry
+	(*quantumUI.QuantumUI)(nil),     // 14: quatumUI.QuantumUI
+	(*conscious.Timestamp)(nil),     // 15: Timestamp
 }
 var file_v1_avatar_avatar_proto_depIdxs = []int32{
-	12, // 0: avatar.Tool.parameters:type_name -> avatar.Tool.ParametersEntry
-	13, // 1: avatar.AvatarMeta.ui:type_name -> quatumUI.QuantumUI
-	7,  // 2: avatar.Steps.steps:type_name -> avatar.Step
+	13, // 0: avatar.Tool.parameters:type_name -> avatar.Tool.ParametersEntry
+	14, // 1: avatar.AvatarMeta.ui:type_name -> quatumUI.QuantumUI
+	8,  // 2: avatar.Steps.steps:type_name -> avatar.Step
 	2,  // 3: avatar.StepStatus.status:type_name -> avatar.AvatarStatus
-	14, // 4: avatar.StepStatus.created_at:type_name -> Timestamp
-	14, // 5: avatar.StepStatus.completed_at:type_name -> Timestamp
-	6,  // 6: avatar.Avatar.meta:type_name -> avatar.AvatarMeta
-	0,  // 7: avatar.Avatar.permissions:type_name -> avatar.Permission
-	7,  // 8: avatar.Avatar.steps:type_name -> avatar.Step
-	6,  // 9: avatar.AvatarControl.meta:type_name -> avatar.AvatarMeta
-	2,  // 10: avatar.AvatarControl.status:type_name -> avatar.AvatarStatus
-	3,  // 11: avatar.AvatarControl.action:type_name -> avatar.AvatarControl.AvatarAction
-	9,  // 12: avatar.AvatarControl.stepStatuses:type_name -> avatar.StepStatus
-	14, // 13: avatar.AvatarControl.created_at:type_name -> Timestamp
-	14, // 14: avatar.AvatarControl.completed_at:type_name -> Timestamp
-	4,  // 15: avatar.Tool.ParametersEntry.value:type_name -> avatar.ToolParams
-	16, // [16:16] is the sub-list for method output_type
-	16, // [16:16] is the sub-list for method input_type
-	16, // [16:16] is the sub-list for extension type_name
-	16, // [16:16] is the sub-list for extension extendee
-	0,  // [0:16] is the sub-list for field type_name
+	15, // 4: avatar.StepStatus.created_at:type_name -> Timestamp
+	15, // 5: avatar.StepStatus.completed_at:type_name -> Timestamp
+	3,  // 6: avatar.StepStatus.response_type:type_name -> avatar.StepStatus.ResponseType
+	7,  // 7: avatar.Avatar.meta:type_name -> avatar.AvatarMeta
+	0,  // 8: avatar.Avatar.permissions:type_name -> avatar.Permission
+	8,  // 9: avatar.Avatar.steps:type_name -> avatar.Step
+	7,  // 10: avatar.AvatarControl.meta:type_name -> avatar.AvatarMeta
+	2,  // 11: avatar.AvatarControl.status:type_name -> avatar.AvatarStatus
+	4,  // 12: avatar.AvatarControl.action:type_name -> avatar.AvatarControl.AvatarAction
+	10, // 13: avatar.AvatarControl.stepStatuses:type_name -> avatar.StepStatus
+	15, // 14: avatar.AvatarControl.created_at:type_name -> Timestamp
+	15, // 15: avatar.AvatarControl.completed_at:type_name -> Timestamp
+	5,  // 16: avatar.Tool.ParametersEntry.value:type_name -> avatar.ToolParams
+	17, // [17:17] is the sub-list for method output_type
+	17, // [17:17] is the sub-list for method input_type
+	17, // [17:17] is the sub-list for extension type_name
+	17, // [17:17] is the sub-list for extension extendee
+	0,  // [0:17] is the sub-list for field type_name
 }
 
 func init() { file_v1_avatar_avatar_proto_init() }
@@ -1064,7 +1128,7 @@ func file_v1_avatar_avatar_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_v1_avatar_avatar_proto_rawDesc), len(file_v1_avatar_avatar_proto_rawDesc)),
-			NumEnums:      4,
+			NumEnums:      5,
 			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   0,

@@ -11,7 +11,6 @@ package consciousServer
 import (
 	"bytes"
 	"context"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -412,35 +411,17 @@ func (s *grpcConsciousServer) FileUpload(ctx context.Context, in *pb.UploadReque
 		in.ContentType = "application/octet-stream"
 	}
 
-	rawBase64 := in.FileData
-
-	// 1. Fix Corruption: Locate and strip the "data:image/png;base64," prefix if it exists
-	if idx := strings.Index(rawBase64, ","); idx != -1 {
-		rawBase64 = rawBase64[idx+1:]
-	}
-
-	// 2. Decode the clean, sanitized base64 payload string
-	decodedBytes, err := base64.StdEncoding.DecodeString(rawBase64)
-	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, "cannot decode file: "+err.Error())
-	}
-
-	if len(decodedBytes) == 0 {
-		return nil, status.Error(codes.InvalidArgument, "file empty")
-	}
-
+	// get the extension of the file and add to the UUID
+	// so new file is save as [uuid].png etc.
 	ext := filepath.Ext(in.FileName)
 	ext = strings.ToLower(ext)
 	// Remove the dot from extension for the new filename
 	ext = strings.TrimPrefix(ext, ".")
 	newFileName := fmt.Sprintf("%s.%s", uuid.New().String(), ext)
 
-	destinationPath := utils.GetEnv("FILE_STORE_PATH", ".") + "/uploads/" + newFileName
-	logrus.Infof("Uplaoded file to be saveed under -> %s", destinationPath)
-
-	err = os.WriteFile(destinationPath, decodedBytes, 0644)
+	err = utils.SaveImageDataToFile(newFileName, in.FileData)
 	if err != nil {
-		return nil, status.Error(codes.InvalidArgument, "cannot write file to server: "+err.Error())
+		return nil, err
 	}
 
 	return &pb.UploadResponse{
