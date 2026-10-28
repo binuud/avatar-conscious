@@ -195,4 +195,4 @@ run-scratch: ## run scratch folder, temp staging go files
 	./scripts/runScratch.sh
 
 run-mock-server: ## run the mock server, mocks http get, post requests, without an actual server
-	go run github.com/smeshkov/gomock/cmd/app@latest -mock ./dataVolume/mockServer/mock.json
+	go run github.com/smeshkov/gomock/cmd/app@latest -mock ./mock/mockServer/mock.json
