@@ -159,7 +159,7 @@ message AvatarControl {
   AvatarAction action = 3;
   int32 current_step = 4;
   repeated StepStatus stepStatuses = 5;
-  string response = 6;
+  ContextMesssage response = 6;
   Timestamp created_at = 11;
   Timestamp completed_at = 12;
 }

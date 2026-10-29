@@ -375,7 +375,7 @@ func (s *grpcConsciousServer) Generate(in *pb.ContextMesssage, stream grpc.Serve
 		out.CreatedAt = in.CreatedAt
 		out.CompletedAt = utils.GetTimeStamp()
 
-		logrus.Infof("Out Msg : %s", out)
+		logrus.Infof("Generate Out Msg : %s", out)
 		s.memory.AppendOutMessage(out)
 		if err := stream.Send(out); err != nil {
 			return err
@@ -383,8 +383,8 @@ func (s *grpcConsciousServer) Generate(in *pb.ContextMesssage, stream grpc.Serve
 		return nil
 	} else {
 
-		logrus.Infof("Tool function NOT selected\n")
-		logrus.Infof("Out Msg : %s", msg.Content)
+		logrus.Infof("Generate Tool function NOT selected\n")
+		logrus.Infof("Generate Out Msg : %s", msg.Content)
 		if in.Data != "" {
 			// if an image is in the attachment, do a describe image
 			in.Type = pb.ContextMesssage_LLM_IMAGE_DESCRIBE

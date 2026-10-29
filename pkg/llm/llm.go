@@ -234,6 +234,30 @@ func MakeOpenAiImageGenerationRequest(prompt string, model string) (*openai.Imag
 
 }
 
+func MakeOpenAiImageEditRequest(prompt string, model string, imageFileName string) (*openai.ImagesResponse, error) {
+
+	client := openai.NewClient(
+		option.WithBaseURL(GetLLMEndpoint()),
+		option.WithAPIKey(""), // No API key needed for Model Runner
+	)
+
+	sampleFile, err := os.Open(imageFileName)
+	if err != nil {
+		return nil, fmt.Errorf("Error reading sample file: %v\n", err)
+	}
+	defer sampleFile.Close()
+
+	return client.Images.Edit(context.Background(), openai.ImageEditParams{
+		Image:          openai.ImageEditParamsImageUnion{OfFile: io.Reader(sampleFile)},
+		Model:          openai.ImageModel(model),
+		Prompt:         prompt,
+		N:              openai.Int(1),
+		ResponseFormat: openai.ImageEditParamsResponseFormatB64JSON,
+		Size:           openai.ImageEditParamsSize1024x1024,
+	})
+
+}
+
 func MakeImageGenerationRequest(prompt string, model string, fileName string) error {
 
 	options := sd.DefaultOptions

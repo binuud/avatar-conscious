@@ -1,0 +1,33 @@
+
+func MakeOpenAiImageGenerationWithSourceRequest(prompt string, model string, imageDataUrl string) (*responses.Response, error) {
+
+	client := openai.NewClient(
+		option.WithBaseURL(GetLLMEndpoint()),
+		option.WithAPIKey(""), // No API key needed for Model Runner
+	)
+
+	response, err := client.Responses.New(context.Background(), responses.ResponseNewParams{
+		Model: model,
+		Input: responses.ResponseNewParamsInputUnion{OfInputItemList: responses.ResponseInputParam{
+			responses.ResponseInputItemParamOfMessage(
+				responses.ResponseInputMessageContentListParam{
+					responses.ResponseInputContentParamOfInputText(prompt),
+					{OfInputImage: &responses.ResponseInputImageParam{
+						ImageURL: openai.String(imageDataUrl),
+						Detail:   responses.ResponseInputImageDetailAuto,
+					}},
+				},
+				responses.EasyInputMessageRoleUser,
+			),
+		}},
+		Tools: []responses.ToolUnionParam{{OfImageGeneration: &responses.ToolImageGenerationParam{Model: model}}},
+	})
+
+	if err != nil {
+		logrus.Fatalf("panic MakeOpenAiImageGenerationWithSourceRequest %s", err)
+	}
+
+	fmt.Println(response.OutputText())
+	return response, nil
+
+}
