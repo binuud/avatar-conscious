@@ -1,7 +1,8 @@
 ---
 name: camera-describer
 uuid: 10f15989-26f7-4264-9add-0fc46cf9049e
-description: This is a simple demo, that uses LLM to describe the scene visible in the camera.
+image: /static/avatarStore/camera-describer.png
+description: This is a simple demo, that uses LLM to describe the scene visible in the web camera.
 triggers:
   - webcam
 ui:  

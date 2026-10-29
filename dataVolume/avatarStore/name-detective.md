@@ -1,7 +1,8 @@
 ---
-name: sample
+name: name-detective
 uuid: aef82d62-a5d2-4f27-8502-e7dea7735ed3
-description: This is a sample avatar file for reference. It prompts the user to enter a first and last name.
+image: /static/avatarStore/name-detective.png
+description: This is a sample avatar agent file for reference. It prompts the user to enter a first and last name. Then tries to guess the country of origin and gender.
 triggers:
   - election
   - sir

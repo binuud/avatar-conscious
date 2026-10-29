@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"buf.build/go/protoyaml"
@@ -23,10 +24,15 @@ func ListAvatarsFromStore() ([]*pb.Avatar, error) {
 	for _, entry := range entries {
 		// Filter out directories if you only want files
 		if !entry.IsDir() {
-			avatar, err := ReadAvatarFromStore(entry.Name())
-			if err == nil {
-				items = append(items, avatar)
+			// Filter for .md extension (filepath.Ext returns strings like ".md")
+			if filepath.Ext(entry.Name()) == ".md" {
+				// Construct the full path or just use entry.Name() depending on your needs
+				avatar, err := ReadAvatarFromStore(entry.Name())
+				if err == nil {
+					items = append(items, avatar)
+				}
 			}
+
 		}
 	}
 	return items, nil
