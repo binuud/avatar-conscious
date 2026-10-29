@@ -8,6 +8,7 @@ import (
 	"uuid"
 
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/avatar"
+	pbConscious "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	"github.com/binuud/avatar-conscious/pkg/utils"
 	"github.com/openai/openai-go/v3"
 	"github.com/sirupsen/logrus"
@@ -212,7 +213,9 @@ func (s *avatarGrpcServer) handleAvatarRun(in *pb.ControlRequest,
 		return err
 	}
 
-	lastResponse := ""
+	lastResponse := &pbConscious.ContextMesssage{
+		Uuid: in.Control.Meta.Uuid,
+	}
 
 	for i := int(in.Control.CurrentStep); i < len(s.avatar.Avatar.Steps); i++ {
 		step := s.avatar.Avatar.Steps[i]
@@ -249,8 +252,14 @@ func (s *avatarGrpcServer) handleAvatarRun(in *pb.ControlRequest,
 			return nil
 		}
 
-		lastResponse = outContextMsg.Response
-		out.Control.StepStatuses[i].Response = lastResponse
+		if outContextMsg.ResponseImage != "" {
+			lastResponse.ResponseImage = outContextMsg.ResponseImage
+			out.Control.StepStatuses[i].Response = outContextMsg.ResponseImage
+		} else {
+			lastResponse.Response = outContextMsg.Response
+			out.Control.StepStatuses[i].Response = outContextMsg.Response
+		}
+
 		if err := stream.Send(out); err != nil {
 			logrus.Errorf("Connect: Failed to send message: %v", err)
 			return err

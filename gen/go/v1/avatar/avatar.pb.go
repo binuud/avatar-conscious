@@ -855,7 +855,7 @@ type AvatarControl struct {
 	Action        AvatarControl_AvatarAction `protobuf:"varint,3,opt,name=action,proto3,enum=avatar.AvatarControl_AvatarAction" json:"action,omitempty"`
 	CurrentStep   int32                      `protobuf:"varint,4,opt,name=current_step,json=currentStep,proto3" json:"current_step,omitempty"`
 	StepStatuses  []*StepStatus              `protobuf:"bytes,5,rep,name=stepStatuses,proto3" json:"stepStatuses,omitempty"`
-	Response      string                     `protobuf:"bytes,6,opt,name=response,proto3" json:"response,omitempty"`
+	Response      *conscious.ContextMesssage `protobuf:"bytes,6,opt,name=response,proto3" json:"response,omitempty"`
 	CreatedAt     *conscious.Timestamp       `protobuf:"bytes,11,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	CompletedAt   *conscious.Timestamp       `protobuf:"bytes,12,opt,name=completed_at,json=completedAt,proto3" json:"completed_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -927,11 +927,11 @@ func (x *AvatarControl) GetStepStatuses() []*StepStatus {
 	return nil
 }
 
-func (x *AvatarControl) GetResponse() string {
+func (x *AvatarControl) GetResponse() *conscious.ContextMesssage {
 	if x != nil {
 		return x.Response
 	}
-	return ""
+	return nil
 }
 
 func (x *AvatarControl) GetCreatedAt() *conscious.Timestamp {
@@ -1004,14 +1004,14 @@ const file_v1_avatar_avatar_proto_rawDesc = "" +
 	"\fsystemPrompt\x18\x05 \x01(\tR\fsystemPrompt\x12\"\n" +
 	"\x05steps\x18\x06 \x03(\v2\f.avatar.StepR\x05steps\x12\x18\n" +
 	"\acontent\x18\n" +
-	" \x01(\tR\acontent\"\xf7\x03\n" +
+	" \x01(\tR\acontent\"\x89\x04\n" +
 	"\rAvatarControl\x12&\n" +
 	"\x04meta\x18\x01 \x01(\v2\x12.avatar.AvatarMetaR\x04meta\x12,\n" +
 	"\x06status\x18\x02 \x01(\x0e2\x14.avatar.AvatarStatusR\x06status\x12:\n" +
 	"\x06action\x18\x03 \x01(\x0e2\".avatar.AvatarControl.AvatarActionR\x06action\x12!\n" +
 	"\fcurrent_step\x18\x04 \x01(\x05R\vcurrentStep\x126\n" +
-	"\fstepStatuses\x18\x05 \x03(\v2\x12.avatar.StepStatusR\fstepStatuses\x12\x1a\n" +
-	"\bresponse\x18\x06 \x01(\tR\bresponse\x12)\n" +
+	"\fstepStatuses\x18\x05 \x03(\v2\x12.avatar.StepStatusR\fstepStatuses\x12,\n" +
+	"\bresponse\x18\x06 \x01(\v2\x10.ContextMesssageR\bresponse\x12)\n" +
 	"\n" +
 	"created_at\x18\v \x01(\v2\n" +
 	".TimestampR\tcreatedAt\x12-\n" +
@@ -1076,22 +1076,23 @@ func file_v1_avatar_avatar_proto_rawDescGZIP() []byte {
 var file_v1_avatar_avatar_proto_enumTypes = make([]protoimpl.EnumInfo, 5)
 var file_v1_avatar_avatar_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_v1_avatar_avatar_proto_goTypes = []any{
-	(Permission)(0),                 // 0: avatar.Permission
-	(AvatarActionType)(0),           // 1: avatar.AvatarActionType
-	(AvatarStatus)(0),               // 2: avatar.AvatarStatus
-	(StepStatus_ResponseType)(0),    // 3: avatar.StepStatus.ResponseType
-	(AvatarControl_AvatarAction)(0), // 4: avatar.AvatarControl.AvatarAction
-	(*ToolParams)(nil),              // 5: avatar.ToolParams
-	(*Tool)(nil),                    // 6: avatar.Tool
-	(*AvatarMeta)(nil),              // 7: avatar.AvatarMeta
-	(*Step)(nil),                    // 8: avatar.Step
-	(*Steps)(nil),                   // 9: avatar.Steps
-	(*StepStatus)(nil),              // 10: avatar.StepStatus
-	(*Avatar)(nil),                  // 11: avatar.Avatar
-	(*AvatarControl)(nil),           // 12: avatar.AvatarControl
-	nil,                             // 13: avatar.Tool.ParametersEntry
-	(*quantumUI.QuantumUI)(nil),     // 14: quatumUI.QuantumUI
-	(*conscious.Timestamp)(nil),     // 15: Timestamp
+	(Permission)(0),                   // 0: avatar.Permission
+	(AvatarActionType)(0),             // 1: avatar.AvatarActionType
+	(AvatarStatus)(0),                 // 2: avatar.AvatarStatus
+	(StepStatus_ResponseType)(0),      // 3: avatar.StepStatus.ResponseType
+	(AvatarControl_AvatarAction)(0),   // 4: avatar.AvatarControl.AvatarAction
+	(*ToolParams)(nil),                // 5: avatar.ToolParams
+	(*Tool)(nil),                      // 6: avatar.Tool
+	(*AvatarMeta)(nil),                // 7: avatar.AvatarMeta
+	(*Step)(nil),                      // 8: avatar.Step
+	(*Steps)(nil),                     // 9: avatar.Steps
+	(*StepStatus)(nil),                // 10: avatar.StepStatus
+	(*Avatar)(nil),                    // 11: avatar.Avatar
+	(*AvatarControl)(nil),             // 12: avatar.AvatarControl
+	nil,                               // 13: avatar.Tool.ParametersEntry
+	(*quantumUI.QuantumUI)(nil),       // 14: quatumUI.QuantumUI
+	(*conscious.Timestamp)(nil),       // 15: Timestamp
+	(*conscious.ContextMesssage)(nil), // 16: ContextMesssage
 }
 var file_v1_avatar_avatar_proto_depIdxs = []int32{
 	13, // 0: avatar.Tool.parameters:type_name -> avatar.Tool.ParametersEntry
@@ -1108,14 +1109,15 @@ var file_v1_avatar_avatar_proto_depIdxs = []int32{
 	2,  // 11: avatar.AvatarControl.status:type_name -> avatar.AvatarStatus
 	4,  // 12: avatar.AvatarControl.action:type_name -> avatar.AvatarControl.AvatarAction
 	10, // 13: avatar.AvatarControl.stepStatuses:type_name -> avatar.StepStatus
-	15, // 14: avatar.AvatarControl.created_at:type_name -> Timestamp
-	15, // 15: avatar.AvatarControl.completed_at:type_name -> Timestamp
-	5,  // 16: avatar.Tool.ParametersEntry.value:type_name -> avatar.ToolParams
-	17, // [17:17] is the sub-list for method output_type
-	17, // [17:17] is the sub-list for method input_type
-	17, // [17:17] is the sub-list for extension type_name
-	17, // [17:17] is the sub-list for extension extendee
-	0,  // [0:17] is the sub-list for field type_name
+	16, // 14: avatar.AvatarControl.response:type_name -> ContextMesssage
+	15, // 15: avatar.AvatarControl.created_at:type_name -> Timestamp
+	15, // 16: avatar.AvatarControl.completed_at:type_name -> Timestamp
+	5,  // 17: avatar.Tool.ParametersEntry.value:type_name -> avatar.ToolParams
+	18, // [18:18] is the sub-list for method output_type
+	18, // [18:18] is the sub-list for method input_type
+	18, // [18:18] is the sub-list for extension type_name
+	18, // [18:18] is the sub-list for extension extendee
+	0,  // [0:18] is the sub-list for field type_name
 }
 
 func init() { file_v1_avatar_avatar_proto_init() }

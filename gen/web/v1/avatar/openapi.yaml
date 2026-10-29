@@ -266,10 +266,136 @@ paths:
           in: query
           schema:
             type: string
-        - name: control.response
+        - name: control.response.action
           in: query
           schema:
             type: string
+        - name: control.response.audio
+          in: query
+          schema:
+            type: string
+            format: base64
+        - name: control.response.bodyBytes
+          in: query
+          schema:
+            type: string
+            format: base64
+        - name: control.response.bodyText
+          in: query
+          schema:
+            type: string
+        - name: control.response.completedAt.nanos
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: control.response.completedAt.seconds
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: control.response.createdAt.nanos
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: control.response.createdAt.seconds
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: control.response.data
+          in: query
+          schema:
+            type: string
+        - name: control.response.description
+          in: query
+          schema:
+            type: string
+        - name: control.response.errorMessage
+          in: query
+          schema:
+            type: string
+        - name: control.response.model
+          in: query
+          schema:
+            type: string
+        - name: control.response.name
+          in: query
+          schema:
+            type: string
+        - name: control.response.prompt
+          in: query
+          schema:
+            type: string
+        - name: control.response.reasoning
+          in: query
+          schema:
+            type: string
+        - name: control.response.response
+          in: query
+          schema:
+            type: string
+        - name: control.response.responseImage
+          in: query
+          schema:
+            type: string
+        - name: control.response.role
+          in: query
+          schema:
+            $ref: '#/components/schemas/ContextMesssage.ContextRole'
+        - name: control.response.schema
+          in: query
+          schema:
+            type: string
+        - name: control.response.seed
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: control.response.status
+          in: query
+          schema:
+            $ref: '#/components/schemas/ContextMesssage.ContextStatus'
+        - name: control.response.statusMessage
+          in: query
+          schema:
+            type: string
+        - name: control.response.stream
+          in: query
+          schema:
+            type: boolean
+        - name: control.response.systemPrompt
+          in: query
+          schema:
+            type: string
+        - name: control.response.temperature
+          in: query
+          schema:
+            type: number
+            format: float
+        - name: control.response.text
+          in: query
+          schema:
+            type: string
+            format: base64
+        - name: control.response.thinking
+          in: query
+          schema:
+            type: string
+        - name: control.response.type
+          in: query
+          schema:
+            $ref: '#/components/schemas/ContextMesssage.ContextType'
+        - name: control.response.uuid
+          in: query
+          schema:
+            type: string
+        - name: control.response.vision
+          in: query
+          schema:
+            type: string
+            format: base64
         - name: control.status
           in: query
           schema:
@@ -363,7 +489,7 @@ components:
           items:
             $ref: '#/components/schemas/StepStatus'
         response:
-          type: string
+          $ref: '#/components/schemas/ContextMesssage'
         createdAt:
           $ref: '#/components/schemas/Timestamp'
         completedAt:
@@ -471,6 +597,31 @@ components:
       properties:
         avatar:
           $ref: '#/components/schemas/Avatar'
+    ContextMesssage.ContextRole:
+      type: string
+      enum:
+        - "ROLE_IGNORE"
+        - "USER"
+        - "ASSISTANT"
+        - "SYSTEM"
+        - "AGENT"
+    ContextMesssage.ContextStatus:
+      type: string
+      enum:
+        - "STATUS_IGNORE"
+        - "SUCCESS"
+        - "FAIL"
+        - "ONGOING"
+        - "FATAL"
+    ContextMesssage.ContextType:
+      type: string
+      enum:
+        - "CONTEXT_TYPE_IGNORE"
+        - "LLM_STREAM_QUERY"
+        - "LLM_QUERY"
+        - "LLM_IMAGE_DESCRIBE"
+        - "IMAGE_GENERATION"
+        - "TTS"
     ControlResponse:
       type: object
       properties:

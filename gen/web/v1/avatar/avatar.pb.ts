@@ -5,6 +5,7 @@
 */
 
 import * as Common from "../conscious/common.pb"
+import * as ContextMessage from "../conscious/contextMessage.pb"
 import * as QuatumUIQuantumUI from "../quantumUI/quantumUI.pb"
 
 export enum Permission {
@@ -117,7 +118,7 @@ export type AvatarControl = {
   action?: AvatarControlAvatarAction
   currentStep?: number
   stepStatuses?: StepStatus[]
-  response?: string
+  response?: ContextMessage.ContextMesssage
   createdAt?: Common.Timestamp
   completedAt?: Common.Timestamp
 }
