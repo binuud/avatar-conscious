@@ -16,6 +16,7 @@ func Bootstrap() {
 	GlobalCommonToolsRegistry.AddTool(commonTools.NewToolFileContents())
 	GlobalCommonToolsRegistry.AddTool(apitools.NewApiGetTool())
 	GlobalCommonToolsRegistry.AddTool(aiGenTools.NewAiGenerateImageTool())
+	GlobalCommonToolsRegistry.AddTool(aiGenTools.NewAiGenerateImageEditTool())
 	GlobalCommonToolsRegistry.AddTool(aiGenTools.NewAiGenerateImageDescriptionTool())
 	GlobalCommonToolsRegistry.AddTool(aiGenTools.NewUiLaunchTool())
 
