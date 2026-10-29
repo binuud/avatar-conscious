@@ -164,30 +164,30 @@ func (s *grpcConsciousServer) RouteOpenAiImageGenerationRequest(in *protoV1.Cont
 
 }
 
-func (s *grpcConsciousServer) RouteImageCreateRequest(in *protoV1.ContextMesssage) (*protoV1.ContextMesssage, error) {
+// func (s *grpcConsciousServer) RouteImageCreateRequest(in *protoV1.ContextMesssage) (*protoV1.ContextMesssage, error) {
 
-	s.memory.Messages = append(s.memory.Messages, openai.UserMessage(in.Prompt))
+// 	s.memory.Messages = append(s.memory.Messages, openai.UserMessage(in.Prompt))
 
-	FILE_STORE_PATH := utils.GetEnv("FILE_STORE_PATH", "./dataVolume")
+// 	FILE_STORE_PATH := utils.GetEnv("FILE_STORE_PATH", "./dataVolume")
 
-	// servable file path from static server
-	servableFile := in.Uuid + ".png"
-	filename := FILE_STORE_PATH + "/gen/" + servableFile
-	logrus.Infof("RouteImageCreateRequest -> %s, %s, %s", in.Model, in.Prompt, filename)
-	// servableFile = "fa23d376-bc55-4ad6-94a0-dfc1ec04c6bf.png"
-	err := llm.MakeImageGenerationRequest(in.Prompt, in.Model, filename)
-	if err != nil {
-		logrus.Errorf("RouteImageCreateRequest -> MakeImageGenerationRequest %v", err)
-		return nil, err
-	}
+// 	// servable file path from static server
+// 	servableFile := in.Uuid + ".png"
+// 	filename := FILE_STORE_PATH + "/gen/" + servableFile
+// 	logrus.Infof("RouteImageCreateRequest -> %s, %s, %s", in.Model, in.Prompt, filename)
+// 	// servableFile = "fa23d376-bc55-4ad6-94a0-dfc1ec04c6bf.png"
+// 	err := llm.MakeImageGenerationRequest(in.Prompt, in.Model, filename)
+// 	if err != nil {
+// 		logrus.Errorf("RouteImageCreateRequest -> MakeImageGenerationRequest %v", err)
+// 		return nil, err
+// 	}
 
-	return &protoV1.ContextMesssage{
-		Uuid:          in.Uuid,
-		Model:         in.Model,
-		Prompt:        in.Prompt,
-		CreatedAt:     in.CreatedAt,
-		CompletedAt:   utils.GetTimeStamp(),
-		ResponseImage: servableFile,
-	}, nil
+// 	return &protoV1.ContextMesssage{
+// 		Uuid:          in.Uuid,
+// 		Model:         in.Model,
+// 		Prompt:        in.Prompt,
+// 		CreatedAt:     in.CreatedAt,
+// 		CompletedAt:   utils.GetTimeStamp(),
+// 		ResponseImage: servableFile,
+// 	}, nil
 
-}
+// }

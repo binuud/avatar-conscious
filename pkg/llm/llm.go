@@ -10,8 +10,7 @@ import (
 	"github.com/openai/openai-go/v3"
 	"github.com/openai/openai-go/v3/option"
 	"github.com/openai/openai-go/v3/responses"
-	"github.com/seasonjs/hf-hub/api"
-	sd "github.com/seasonjs/stable-diffusion"
+
 	"github.com/sirupsen/logrus"
 )
 
@@ -256,50 +255,4 @@ func MakeOpenAiImageEditRequest(prompt string, model string, imageFileName strin
 		Size:           openai.ImageEditParamsSize1024x1024,
 	})
 
-}
-
-func MakeImageGenerationRequest(prompt string, model string, fileName string) error {
-
-	options := sd.DefaultOptions
-
-	imageModel, err := sd.NewAutoModel(options)
-	if err != nil {
-		print(err.Error())
-		return err
-	}
-	defer imageModel.Close()
-
-	hapi, err := api.NewApi()
-	if err != nil {
-		return err
-	}
-
-	modelPath, err := hapi.Model("justinpinkney/miniSD").Get("miniSD.ckpt")
-	if err != nil {
-		return err
-	}
-
-	logrus.Infof("MakeImageGenerationRequest -> loadfile %s", modelPath)
-	err = imageModel.LoadFromFile(modelPath)
-	if err != nil {
-		return err
-	}
-	var writers []io.Writer
-	filenames := []string{
-		fileName,
-	}
-	for _, filename := range filenames {
-		file, err := os.Create(filename)
-		if err != nil {
-			return err
-		}
-		defer file.Close()
-		writers = append(writers, file)
-	}
-	logrus.Info("MakeImageGenerationRequest -> start inference")
-	err = imageModel.Predict(prompt, sd.DefaultFullParams, writers)
-	if err != nil {
-		return err
-	}
-	return nil
 }
