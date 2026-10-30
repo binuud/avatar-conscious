@@ -4,6 +4,7 @@ import (
 	"runtime"
 
 	pbSettings "github.com/binuud/avatar-conscious/gen/go/v1/settings"
+	"github.com/binuud/avatar-conscious/pkg/global"
 	"github.com/binuud/avatar-conscious/pkg/settings"
 	"github.com/binuud/avatar-conscious/pkg/slashCommands"
 	"github.com/binuud/avatar-conscious/pkg/tools"
@@ -11,39 +12,41 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-var __IsDarwin = false
-var __IsGpuMetricsAvailable = false
-
 // BootStrap()
 // calls Bootstrap in each package as required
 // #TODO, check if this can be replaced by init
 // #BINU - this gives more control than init, but need to explore init in packages
-func Bootstrap() {
+func Bootstrap(buildEnv ...string) {
+
+	if len(buildEnv) > 0 && buildEnv[0] == "docker" {
+		global.IsDocker = true
+	}
 
 	if runtime.GOOS == "darwin" {
-		__IsGpuMetricsAvailable = true
-		__IsDarwin = true
+		global.IsGpuMetricsAvailable = true
+		global.IsDarwin = true
 	}
 
 	logrus.Infof("Runtime OS %s : %s", runtime.GOOS, runtime.GOARCH)
 
-	// create the required storage directorues
-	CreateStorageDirStructure()
+	// override defaults localhost
+	// when run from within docker
+	localhost := "localhost"
+	if global.IsDocker {
+		localhost = "host.docker.internal"
+		logrus.Infof("build for docker, using localhost : %s", localhost)
+	} else {
+		logrus.Infof("build for non docker, using localhost : %s", localhost)
+	}
 
 	// initialize the global settings
 	settings.Global = settings.NewSettings("global")
-
-	// initiate all slash commands
-	slashCommands.Bootstrap()
-
-	// create a GlobalCommonTools, for LLM to use
-	tools.Bootstrap()
 
 	// set global settings
 	settings.Global.Set(&pbSettings.Config{
 		Name:        "LLM_ENDPOINT",
 		Group:       "LLM",
-		Value:       utils.GetEnv("LLM_HOST", "http://localhost:11234"),
+		Value:       utils.GetEnv("LLM_HOST", "http://"+localhost+":11234"),
 		Description: "LLM Endpoint, can be local or cloud, no trailing slash",
 		Type:        pbSettings.Config_STRING,
 	})
@@ -83,10 +86,19 @@ func Bootstrap() {
 	settings.Global.Set(&pbSettings.Config{
 		Name:        "MQTT_ENDPOINT",
 		Group:       "EVENTS",
-		Value:       utils.GetEnv("MQTT_HOST", "tcp://localhost:1883"),
+		Value:       utils.GetEnv("MQTT_HOST", "tcp://"+localhost+":1883"),
 		Description: "Default mqtt broker used for messaging and events",
 		Type:        pbSettings.Config_STRING,
 	})
 
 	settings.Global.Save()
+
+	// create the required storage directorues
+	CreateStorageDirStructure()
+
+	// initiate all slash commands
+	slashCommands.Bootstrap()
+
+	// create a GlobalCommonTools, for LLM to use
+	tools.Bootstrap()
 }
