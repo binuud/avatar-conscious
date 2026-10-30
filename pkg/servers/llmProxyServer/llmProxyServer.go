@@ -6,7 +6,7 @@ import (
 	"net/http/httputil"
 	"net/url"
 
-	"github.com/binuud/avatar-conscious/pkg/utils"
+	"github.com/binuud/avatar-conscious/pkg/settings"
 	"github.com/sirupsen/logrus"
 )
 
@@ -31,7 +31,7 @@ func isPathAllowed(needle string) bool {
 // and proxies the llm request, by sending same to LLM_HOST
 func GetLlmProxyHandler() *http.HandlerFunc {
 
-	LLM_HOST := utils.GetEnv("LLM_HOST", "http://localhost:11434")
+	LLM_HOST := settings.Global.GetValue("LLM_ENDPOINT")
 	logrus.Infof("Handling LLM Proxy for : %s", LLM_HOST)
 
 	targetURLSanitized, err := url.Parse(LLM_HOST)

@@ -22,6 +22,7 @@ import (
 	datalayer "github.com/binuud/avatar-conscious/pkg/dataLayer"
 	"github.com/binuud/avatar-conscious/pkg/llm"
 	"github.com/binuud/avatar-conscious/pkg/memory"
+	"github.com/binuud/avatar-conscious/pkg/settings"
 	"github.com/binuud/avatar-conscious/pkg/slashCommands"
 	"github.com/binuud/avatar-conscious/pkg/tools"
 	"github.com/binuud/avatar-conscious/pkg/utils"
@@ -255,10 +256,10 @@ func (s *grpcConsciousServer) GenerateOld(in *pb.ContextMesssage, stream grpc.Se
 		switch tool.Function.Name {
 		case "get_image":
 			in.Type = pb.ContextMesssage_IMAGE_GENERATION
-			in.Model = utils.GetEnv("IMAGE_MODEL", "Runpod/FLUX.2-klein-4B-mflux-4bit")
+			in.Model = settings.Global.GetValue("IMAGE_MODEL")
 		case "get_image_description":
 			in.Type = pb.ContextMesssage_LLM_IMAGE_DESCRIBE
-			in.Model = utils.GetEnv("VISION_MODEL", "lmstudio-community/Qwen3.5-9B-MLX-4bit")
+			in.Model = settings.Global.GetValue("VISION_MODEL")
 		default:
 			logrus.Errorf("Invalid tool name selected by llm model %s", tool.Function.Name)
 			return fmt.Errorf("Invalid tool selected by llm model %s", tool.Function.Name)
@@ -305,7 +306,7 @@ func (s *grpcConsciousServer) GenerateOld(in *pb.ContextMesssage, stream grpc.Se
 		if in.Data != "" {
 			// if an image is in the attachment, do a describe image
 			in.Type = pb.ContextMesssage_LLM_IMAGE_DESCRIBE
-			in.Model = utils.GetEnv("VISION_MODEL", "lmstudio-community/Qwen3.5-9B-MLX-4bit")
+			in.Model = settings.Global.GetValue("VISION_MODEL")
 		}
 
 	}
@@ -388,7 +389,7 @@ func (s *grpcConsciousServer) Generate(in *pb.ContextMesssage, stream grpc.Serve
 		if in.Data != "" {
 			// if an image is in the attachment, do a describe image
 			in.Type = pb.ContextMesssage_LLM_IMAGE_DESCRIBE
-			in.Model = utils.GetEnv("VISION_MODEL", "lmstudio-community/Qwen3.5-9B-MLX-4bit")
+			in.Model = settings.Global.GetValue("VISION_MODEL")
 		}
 	}
 

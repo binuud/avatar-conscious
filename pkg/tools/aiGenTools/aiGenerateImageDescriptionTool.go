@@ -9,6 +9,7 @@ import (
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	"github.com/binuud/avatar-conscious/pkg/llm"
 	"github.com/binuud/avatar-conscious/pkg/memory"
+	"github.com/binuud/avatar-conscious/pkg/settings"
 	"github.com/binuud/avatar-conscious/pkg/tools/toolMeta"
 	"github.com/binuud/avatar-conscious/pkg/utils"
 	"github.com/openai/openai-go/v3"
@@ -76,7 +77,7 @@ func (t AiGenerateImageDescriptionTool) Handler(in *pb.ContextMesssage) (*pb.Con
 		return nil, err
 	}
 	logrus.Infof("Arguments parsed into input structure %v", in)
-	visionModel := utils.GetEnv("VISION_MODEL", "lmstudio-community/Qwen3.5-9B-MLX-4bit")
+	visionModel := settings.Global.GetValue("VISION_MODEL")
 	outMsg, err := DescribeImage(inpObj.Prompt, visionModel, inpObj.ImageFile)
 	if err != nil {
 		return nil, err

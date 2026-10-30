@@ -6,7 +6,7 @@ import (
 
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	datalayer "github.com/binuud/avatar-conscious/pkg/dataLayer"
-	"github.com/binuud/avatar-conscious/pkg/utils"
+	"github.com/binuud/avatar-conscious/pkg/settings"
 
 	"github.com/openai/openai-go/v3"
 	"github.com/sirupsen/logrus"
@@ -24,7 +24,11 @@ type Memory struct {
 	CurrentContext *pb.SingleContext
 }
 
-func NewMemory(name string) *Memory {
+// NewMemory
+// if name is provided, it will be persisted
+// emtpy name will be used as scratch memory
+// which will be removed after the session
+func NewMemory(name ...string) *Memory {
 
 	systemPrompt := "You are a helpful assistant. You must use the tools provided to answer questions. Very polite, friendly with children. Do not use curse words. Do not use bad words. Do not use any smilies, emojis, or symbols in your responses from now on."
 
@@ -32,10 +36,15 @@ func NewMemory(name string) *Memory {
 		openai.SystemMessage(systemPrompt),
 	}
 
-	model := utils.GetEnv("LLM_MODEL", "lmstudio-community/Qwen3.5-9B-MLX-4bit")
+	model := settings.Global.GetValue("LLM_MODEL")
+
+	memoryName := ""
+	if len(name) > 0 {
+		memoryName = name[0]
+	}
 
 	memory := &Memory{
-		Name:         name,
+		Name:         memoryName,
 		Model:        model,
 		SystemPrompt: systemPrompt,
 		Temperature:  0.8,
@@ -44,12 +53,12 @@ func NewMemory(name string) *Memory {
 		Contexts:     make([]*pb.SingleContext, 0),
 	}
 
-	if name == "" {
+	if memoryName == "" {
 		// unnamed memory is use and throw, they are not saved
 	} else {
 		// if memory is named, try to load it from cache
 		// memory with names _, is use and throw memory, ignore same
-		memory.Load(name)
+		memory.Load(memoryName)
 	}
 
 	return memory

@@ -57,6 +57,16 @@ func (s *settings) Get(name string) *pb.Config {
 	return nil
 }
 
+// Get()
+// gets the config entry's value by name
+// if the entry is absent returns a empty string
+func (s *settings) GetValue(name string) string {
+	if entry, ok := s.Configs.Entry[name]; ok {
+		return entry.Value
+	}
+	return ""
+}
+
 // GetAllByGroup()
 // group all config entries, by their group name
 // return the new map, this can be used for rendering
