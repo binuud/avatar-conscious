@@ -7,6 +7,8 @@ import (
 	"os"
 
 	protoV1 "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
+	"github.com/binuud/avatar-conscious/pkg/settings"
+
 	"github.com/openai/openai-go/v3"
 	"github.com/openai/openai-go/v3/option"
 	"github.com/openai/openai-go/v3/responses"
@@ -15,16 +17,23 @@ import (
 )
 
 func GetLLMEndpoint() string {
-	return os.Getenv("LLM_HOST") + "/v1/"
+	llmHost := settings.Global.GetValue("LLM_ENDPOINT")
+	if llmHost == "" {
+		logrus.Fatalf("llm endpoint is not set, please check env LLM_HOST variable")
+	}
+	return llmHost + "/v1/"
+}
+
+func GetLLMClient() openai.Client {
+	return openai.NewClient(
+		option.WithBaseURL(GetLLMEndpoint()),
+		option.WithAPIKey(settings.Global.GetValue("LLM_ENDPOINT")), // No API key needed for Model Runner
+	)
 }
 
 func MakeLLMGetModels() ([]*protoV1.Model, error) {
 
-	client := openai.NewClient(
-		option.WithBaseURL(GetLLMEndpoint()),
-		option.WithAPIKey(""), // No API key needed for Model Runner
-	)
-
+	client := GetLLMClient()
 	// var models []protoV1.Model
 	models := make([]*protoV1.Model, 0)
 
@@ -52,11 +61,7 @@ func MakeLLMGetModels() ([]*protoV1.Model, error) {
 
 func MakeImageDescribeRequest(prompt string, systemPrompt string, model string, imageDataUrl string) (*responses.Response, error) {
 
-	client := openai.NewClient(
-		option.WithBaseURL(GetLLMEndpoint()),
-		option.WithAPIKey(""), // No API key needed for Model Runner
-	)
-
+	client := GetLLMClient()
 	response, err := client.Responses.New(context.Background(), responses.ResponseNewParams{
 		Model: model,
 		Input: responses.ResponseNewParamsInputUnion{
@@ -86,10 +91,7 @@ func MakeImageDescribeRequest(prompt string, systemPrompt string, model string, 
 
 func MakeLLMChatRequest(messages []openai.ChatCompletionMessageParamUnion, tools []openai.ChatCompletionToolUnionParam, model string, temperature float64) (*openai.ChatCompletion, error) {
 
-	client := openai.NewClient(
-		option.WithBaseURL(GetLLMEndpoint()),
-		option.WithAPIKey(""), // No API key needed for Model Runner
-	)
+	client := GetLLMClient()
 
 	ctx := context.Background()
 
@@ -114,10 +116,7 @@ func MakeLLMChatRequest(messages []openai.ChatCompletionMessageParamUnion, tools
 
 func MakeLLMSingleRequest(prompt string, systemPrompt string, model string, temperature float64) (string, error) {
 
-	client := openai.NewClient(
-		option.WithBaseURL(GetLLMEndpoint()),
-		option.WithAPIKey(""), // No API key needed for Model Runner
-	)
+	client := GetLLMClient()
 
 	ctx := context.Background()
 
@@ -147,10 +146,7 @@ func MakeLLMSingleRequest(prompt string, systemPrompt string, model string, temp
 
 func MakeLLMSchemaResponseRequest(prompt string, systemPrompt string, model string, schema map[string]any) (string, error) {
 
-	client := openai.NewClient(
-		option.WithBaseURL(GetLLMEndpoint()),
-		option.WithAPIKey(""), // No API key needed for Model Runner
-	)
+	client := GetLLMClient()
 
 	response, err := client.Responses.New(context.Background(), responses.ResponseNewParams{
 		Model: model,
@@ -178,10 +174,7 @@ func MakeLLMSchemaResponseRequest(prompt string, systemPrompt string, model stri
 
 func MakeLLMSingleToolRequest(messages []openai.ChatCompletionMessageParamUnion, model string, tools []openai.ChatCompletionToolUnionParam, temperature float64) (*openai.ChatCompletion, error) {
 
-	client := openai.NewClient(
-		option.WithBaseURL(GetLLMEndpoint()),
-		option.WithAPIKey(""), // No API key needed for Model Runner
-	)
+	client := GetLLMClient()
 
 	ctx := context.Background()
 
@@ -218,10 +211,7 @@ func GetLLMToolName(messages []openai.ChatCompletionMessageParamUnion, model str
 
 func MakeOpenAiImageGenerationRequest(prompt string, model string) (*openai.ImagesResponse, error) {
 
-	client := openai.NewClient(
-		option.WithBaseURL(GetLLMEndpoint()),
-		option.WithAPIKey(""), // No API key needed for Model Runner
-	)
+	client := GetLLMClient()
 
 	return client.Images.Generate(context.Background(), openai.ImageGenerateParams{
 		Model:          openai.ImageModel(model),
@@ -235,10 +225,7 @@ func MakeOpenAiImageGenerationRequest(prompt string, model string) (*openai.Imag
 
 func MakeOpenAiImageEditRequest(prompt string, model string, imageFileName string) (*openai.ImagesResponse, error) {
 
-	client := openai.NewClient(
-		option.WithBaseURL(GetLLMEndpoint()),
-		option.WithAPIKey(""), // No API key needed for Model Runner
-	)
+	client := GetLLMClient()
 
 	sampleFile, err := os.Open(imageFileName)
 	if err != nil {

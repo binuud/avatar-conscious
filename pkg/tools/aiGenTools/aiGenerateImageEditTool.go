@@ -8,6 +8,7 @@ import (
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	"github.com/binuud/avatar-conscious/pkg/llm"
 	"github.com/binuud/avatar-conscious/pkg/memory"
+	"github.com/binuud/avatar-conscious/pkg/settings"
 	"github.com/binuud/avatar-conscious/pkg/tools/toolMeta"
 	"github.com/binuud/avatar-conscious/pkg/utils"
 	"github.com/openai/openai-go/v3"
@@ -76,7 +77,7 @@ func (t AiGenerateImageEditTool) Handler(in *pb.ContextMesssage) (*pb.ContextMes
 	}
 	logrus.Infof("Arguments parsed into input structure %v", in)
 
-	imageModel := utils.GetEnv("IMAGE_MODEL", "Runpod/FLUX.2-klein-4B-mflux-4bit")
+	imageModel := settings.Global.GetValue("IMAGE_MODEL")
 
 	outMsg, err := GetAiImageEdit(in.Prompt, imageModel, inpObj.ImageFile)
 	if err != nil {
@@ -110,7 +111,7 @@ func GetAiImageEdit(prompt string, model string, fileName string) (string, error
 		panic(err)
 	}
 
-	SERVABLE_DIRECTORY := utils.GetEnv("SERVABLE_DIRECTORY", "./dataVolume/static")
+	SERVABLE_DIRECTORY := settings.Global.GetValue("SERVABLE_DIRECTORY")
 	// servable file path from static server
 	servableFile := "/gen/images/" + utils.GenerateUUID() + ".png"
 	newImageFileName := SERVABLE_DIRECTORY + servableFile

@@ -9,6 +9,7 @@ import (
 
 	protoV1 "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	"github.com/binuud/avatar-conscious/pkg/llm"
+	"github.com/binuud/avatar-conscious/pkg/settings"
 	"github.com/binuud/avatar-conscious/pkg/utils"
 	"github.com/openai/openai-go/v3"
 	"github.com/sirupsen/logrus"
@@ -140,7 +141,7 @@ func (s *grpcConsciousServer) RouteOpenAiImageGenerationRequest(in *protoV1.Cont
 		panic(err)
 	}
 
-	FILE_STORE_PATH := utils.GetEnv("FILE_STORE_PATH", "./dataVolume")
+	FILE_STORE_PATH := settings.Global.GetValue("FILE_STORE_PATH")
 	// servable file path from static server
 	servableFile := in.Uuid + ".png"
 	imageFileName := FILE_STORE_PATH + "/gen/" + servableFile
@@ -168,7 +169,7 @@ func (s *grpcConsciousServer) RouteOpenAiImageGenerationRequest(in *protoV1.Cont
 
 // 	s.memory.Messages = append(s.memory.Messages, openai.UserMessage(in.Prompt))
 
-// 	FILE_STORE_PATH := utils.GetEnv("FILE_STORE_PATH", "./dataVolume")
+// 	FILE_STORE_PATH := settings.Global.GetValue("FILE_STORE_PATH")
 
 // 	// servable file path from static server
 // 	servableFile := in.Uuid + ".png"

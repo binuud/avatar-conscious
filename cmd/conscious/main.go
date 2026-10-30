@@ -16,7 +16,7 @@ import (
 	"github.com/binuud/avatar-conscious/pkg/servers/avatarServer"
 	llmProxyServer "github.com/binuud/avatar-conscious/pkg/servers/llmProxyServer"
 	"github.com/binuud/avatar-conscious/pkg/servers/staticFileServer"
-	"github.com/binuud/avatar-conscious/pkg/utils"
+	"github.com/binuud/avatar-conscious/pkg/settings"
 
 	// mqttServer "github.com/dronasys-com/brain-nodes/pkg/servers/mqttBridge"
 
@@ -40,7 +40,7 @@ func serveStaticPaths() *http.ServeMux {
 	httpMux := http.NewServeMux()
 
 	// OPEN_API_FILES_PATH is the folder where the swagger files for apps are stored
-	SERVABLE_DIRECTORY := utils.GetEnv("SERVABLE_DIRECTORY", "/dataVolume/static")
+	SERVABLE_DIRECTORY := settings.Global.GetValue("SERVABLE_DIRECTORY")
 
 	if !strings.Contains(SERVABLE_DIRECTORY, "/dataVolume/static") {
 		logrus.Panic("Protection fail, only directory having /dataVolume/static can be served")

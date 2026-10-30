@@ -29,6 +29,22 @@ func Bootstrap(buildEnv ...string) {
 
 	logrus.Infof("Runtime OS %s : %s", runtime.GOOS, runtime.GOARCH)
 
+	// initialize settings to default values
+	// read from env and change config
+	initSettings()
+
+	// create the required storage directorues
+	CreateStorageDirStructure()
+
+	// initiate all slash commands
+	slashCommands.Bootstrap()
+
+	// create a GlobalCommonTools, for LLM to use
+	tools.Bootstrap()
+}
+
+func initSettings() {
+
 	// override defaults localhost
 	// when run from within docker
 	localhost := "localhost"
@@ -38,7 +54,6 @@ func Bootstrap(buildEnv ...string) {
 	} else {
 		logrus.Infof("build for non docker, using localhost : %s", localhost)
 	}
-
 	// initialize the global settings
 	settings.Global = settings.NewSettings("global")
 
@@ -91,14 +106,21 @@ func Bootstrap(buildEnv ...string) {
 		Type:        pbSettings.Config_STRING,
 	})
 
+	settings.Global.Set(&pbSettings.Config{
+		Name:        "SERVABLE_DIRECTORY",
+		Group:       "SERVER",
+		Value:       utils.GetEnv("SERVABLE_DIRECTORY", "/dataVolume/static"),
+		Description: "The folder containing assets, which can be served by the static http server",
+		Type:        pbSettings.Config_STRING,
+	})
+
+	settings.Global.Set(&pbSettings.Config{
+		Name:        "FILE_STORE_PATH",
+		Group:       "SERVER",
+		Value:       utils.GetEnv("FILE_STORE_PATH", "/dataVolume"),
+		Description: "The folder containing assets, which can be served by the static http server",
+		Type:        pbSettings.Config_STRING,
+	})
+
 	settings.Global.Save()
-
-	// create the required storage directorues
-	CreateStorageDirStructure()
-
-	// initiate all slash commands
-	slashCommands.Bootstrap()
-
-	// create a GlobalCommonTools, for LLM to use
-	tools.Bootstrap()
 }
