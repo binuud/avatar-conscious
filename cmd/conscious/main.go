@@ -27,6 +27,9 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
+// to know that the binary is running within a docker container
+var buildEnv = "local" // "local" - for normal builds || "docker" - for docker builds
+
 var (
 	server_grpc_port = flag.Int("grpc_port", 9090, "The Brain Backend Server GRPC port, no token required unsecured")
 	server_http_port = flag.Int("http_port", 9080, "The Brain Backend Server HTTP port, no token required unsecured")
@@ -152,11 +155,8 @@ func main() {
 
 	flag.Parse()
 	logrus.Println("Welcome to life")
-	bootstrap.Bootstrap()
+	bootstrap.Bootstrap(buildEnv)
 
-	LLM_HOST := utils.GetEnv("LLM_HOST", "http://localhost:12434")
-
-	logrus.Printf("LLM Endpoint %v", LLM_HOST)
 	go func() {
 		bootstrap.Bootstrap_GRPC_Services(*server_grpc_port)
 	}()

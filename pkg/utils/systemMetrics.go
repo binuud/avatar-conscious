@@ -10,6 +10,7 @@ import (
 	"time"
 
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
+	"github.com/binuud/avatar-conscious/pkg/global"
 	"github.com/sirupsen/logrus"
 )
 
@@ -17,6 +18,10 @@ func NewSystemMetrics() (*pb.SystemMetrics, error) {
 	// Sample CPU usage over 250ms so we get a meaningful percentage.
 	if runtime.GOOS != "darwin" {
 		return nil, fmt.Errorf("Metrics not implemented on non macos operating systems")
+	}
+
+	if global.IsDocker {
+		return nil, fmt.Errorf("Metrics not implemented on docker container")
 	}
 
 	cpuUsage, err := GetCpuUsage()
