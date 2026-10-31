@@ -75,8 +75,8 @@ func (s *settings) GetAllByGroup() map[string]*pb.ConfigList {
 
 	var groups = make(map[string]*pb.ConfigList, 0)
 
-	for key, value := range s.Configs.Entry {
-		logrus.Printf("%s - %s, %s", value.Group, key, value.Description)
+	for _, value := range s.Configs.Entry {
+		// logrus.Printf("%s - %s, %s", value.Group, key, value.Description)
 
 		if _, ok := groups[value.Group]; ok {
 			groups[value.Group].Configs = append(groups[value.Group].Configs, value)

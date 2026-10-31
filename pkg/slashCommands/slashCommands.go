@@ -10,7 +10,6 @@ package slashCommands
 
 import (
 	"bytes"
-	"fmt"
 	"os"
 	"strings"
 
@@ -19,6 +18,7 @@ import (
 	"github.com/binuud/avatar-conscious/pkg/servers/avatarServer"
 	"github.com/binuud/avatar-conscious/pkg/settings"
 	"github.com/binuud/avatar-conscious/pkg/testbed"
+	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -61,7 +61,7 @@ func HandleSlashCommand(input string) {
 
 	// 7. Execute! If it returns an error, catch it and print it locally
 	if err := SlashCommands.Execute(); err != nil {
-		fmt.Printf("Error: %v\n", err)
+		logrus.Infof("Error: %v\n", err)
 	}
 }
 

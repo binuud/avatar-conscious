@@ -41,3 +41,9 @@ export type ModelRequest = {
 export type ModelResponse = {
   models?: Model[]
 }
+
+export type ClearMemoryRequest = {
+}
+
+export type ClearMemoryResponse = {
+}

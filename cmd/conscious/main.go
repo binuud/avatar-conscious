@@ -13,6 +13,7 @@ import (
 	pbConscious "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	pbSettings "github.com/binuud/avatar-conscious/gen/go/v1/settings"
 	"github.com/binuud/avatar-conscious/pkg/bootstrap"
+	"github.com/binuud/avatar-conscious/pkg/servers"
 	"github.com/binuud/avatar-conscious/pkg/servers/avatarServer"
 	llmProxyServer "github.com/binuud/avatar-conscious/pkg/servers/llmProxyServer"
 	"github.com/binuud/avatar-conscious/pkg/servers/staticFileServer"
@@ -33,6 +34,7 @@ var buildEnv = "local" // "local" - for normal builds || "docker" - for docker b
 var (
 	server_grpc_port = flag.Int("grpc_port", 9090, "The Brain Backend Server GRPC port, no token required unsecured")
 	server_http_port = flag.Int("http_port", 9080, "The Brain Backend Server HTTP port, no token required unsecured")
+	verbose          = flag.Bool("v", false, "Enable verbose (debug) output")
 )
 
 func serveStaticPaths() *http.ServeMux {
@@ -154,11 +156,19 @@ func runHtppServer() {
 func main() {
 
 	flag.Parse()
+
+	if *verbose {
+		logrus.SetLevel(logrus.DebugLevel)
+	} else {
+		logrus.SetLevel(logrus.InfoLevel)
+	}
+
+	flag.Parse()
 	logrus.Println("Welcome to life")
 	bootstrap.Bootstrap(buildEnv)
 
 	go func() {
-		bootstrap.Bootstrap_GRPC_Services(*server_grpc_port)
+		servers.Bootstrap_GRPC_Services(*server_grpc_port)
 	}()
 
 	runHtppServer()

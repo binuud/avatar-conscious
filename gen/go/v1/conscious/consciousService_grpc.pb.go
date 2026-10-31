@@ -24,12 +24,13 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Conscious_In_FullMethodName         = "/conscious.Conscious/In"
-	Conscious_Generate_FullMethodName   = "/conscious.Conscious/Generate"
-	Conscious_InStream_FullMethodName   = "/conscious.Conscious/InStream"
-	Conscious_GetModels_FullMethodName  = "/conscious.Conscious/GetModels"
-	Conscious_FileUpload_FullMethodName = "/conscious.Conscious/FileUpload"
-	Conscious_Health_FullMethodName     = "/conscious.Conscious/Health"
+	Conscious_In_FullMethodName          = "/conscious.Conscious/In"
+	Conscious_Generate_FullMethodName    = "/conscious.Conscious/Generate"
+	Conscious_InStream_FullMethodName    = "/conscious.Conscious/InStream"
+	Conscious_GetModels_FullMethodName   = "/conscious.Conscious/GetModels"
+	Conscious_FileUpload_FullMethodName  = "/conscious.Conscious/FileUpload"
+	Conscious_ClearMemory_FullMethodName = "/conscious.Conscious/ClearMemory"
+	Conscious_Health_FullMethodName      = "/conscious.Conscious/Health"
 )
 
 // ConsciousClient is the client API for Conscious service.
@@ -43,6 +44,8 @@ type ConsciousClient interface {
 	InStream(ctx context.Context, in *ContextMesssage, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ContextMesssage], error)
 	GetModels(ctx context.Context, in *ModelRequest, opts ...grpc.CallOption) (*ModelResponse, error)
 	FileUpload(ctx context.Context, in *UploadRequest, opts ...grpc.CallOption) (*UploadResponse, error)
+	// Clears the memory
+	ClearMemory(ctx context.Context, in *ClearMemoryRequest, opts ...grpc.CallOption) (*ClearMemoryResponse, error)
 	// Get the current Health Status of the AI Module
 	Health(ctx context.Context, in *HealthRequest, opts ...grpc.CallOption) (*HealthResponse, error)
 }
@@ -123,6 +126,16 @@ func (c *consciousClient) FileUpload(ctx context.Context, in *UploadRequest, opt
 	return out, nil
 }
 
+func (c *consciousClient) ClearMemory(ctx context.Context, in *ClearMemoryRequest, opts ...grpc.CallOption) (*ClearMemoryResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ClearMemoryResponse)
+	err := c.cc.Invoke(ctx, Conscious_ClearMemory_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *consciousClient) Health(ctx context.Context, in *HealthRequest, opts ...grpc.CallOption) (*HealthResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(HealthResponse)
@@ -144,6 +157,8 @@ type ConsciousServer interface {
 	InStream(*ContextMesssage, grpc.ServerStreamingServer[ContextMesssage]) error
 	GetModels(context.Context, *ModelRequest) (*ModelResponse, error)
 	FileUpload(context.Context, *UploadRequest) (*UploadResponse, error)
+	// Clears the memory
+	ClearMemory(context.Context, *ClearMemoryRequest) (*ClearMemoryResponse, error)
 	// Get the current Health Status of the AI Module
 	Health(context.Context, *HealthRequest) (*HealthResponse, error)
 	mustEmbedUnimplementedConsciousServer()
@@ -170,6 +185,9 @@ func (UnimplementedConsciousServer) GetModels(context.Context, *ModelRequest) (*
 }
 func (UnimplementedConsciousServer) FileUpload(context.Context, *UploadRequest) (*UploadResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method FileUpload not implemented")
+}
+func (UnimplementedConsciousServer) ClearMemory(context.Context, *ClearMemoryRequest) (*ClearMemoryResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ClearMemory not implemented")
 }
 func (UnimplementedConsciousServer) Health(context.Context, *HealthRequest) (*HealthResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Health not implemented")
@@ -271,6 +289,24 @@ func _Conscious_FileUpload_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Conscious_ClearMemory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ClearMemoryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConsciousServer).ClearMemory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Conscious_ClearMemory_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConsciousServer).ClearMemory(ctx, req.(*ClearMemoryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Conscious_Health_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(HealthRequest)
 	if err := dec(in); err != nil {
@@ -307,6 +343,10 @@ var Conscious_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "FileUpload",
 			Handler:    _Conscious_FileUpload_Handler,
+		},
+		{
+			MethodName: "ClearMemory",
+			Handler:    _Conscious_ClearMemory_Handler,
 		},
 		{
 			MethodName: "Health",

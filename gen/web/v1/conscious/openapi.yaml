@@ -5,6 +5,22 @@ info:
   title: ""
   version: ""
 paths:
+  /v1/conscious/clearMeroy:
+    post:
+      operationId: clearMemory
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClearMemoryRequest'
+        required: true
+      responses:
+        "200":
+          description: conscious.Conscious.ClearMemory response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClearMemoryResponse'
   /v1/conscious/fileUpload:
     post:
       operationId: fileUpload
@@ -112,6 +128,10 @@ paths:
                 $ref: '#/components/schemas/HealthResponse'
 components:
   schemas:
+    ClearMemoryRequest:
+      type: object
+    ClearMemoryResponse:
+      type: object
     ContextMesssage:
       type: object
       properties:
