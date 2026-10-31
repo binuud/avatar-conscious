@@ -23,6 +23,9 @@ export class Conscious {
   static FileUpload(req: ContextMessage.UploadRequest, initReq?: fm.InitReq): Promise<ContextMessage.UploadResponse> {
     return fm.fetchReq<ContextMessage.UploadRequest, ContextMessage.UploadResponse>(`/v1/conscious/fileUpload`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
   }
+  static ClearMemory(req: Common.ClearMemoryRequest, initReq?: fm.InitReq): Promise<Common.ClearMemoryResponse> {
+    return fm.fetchReq<Common.ClearMemoryRequest, Common.ClearMemoryResponse>(`/v1/conscious/clearMeroy`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
+  }
   static Health(req: Common.HealthRequest, initReq?: fm.InitReq): Promise<Common.HealthResponse> {
     return fm.fetchReq<Common.HealthRequest, Common.HealthResponse>(`/v1/health?${fm.renderURLSearchParams(req, [])}`, {...initReq, method: "GET"})
   }

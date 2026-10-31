@@ -11,6 +11,7 @@ import (
 
 	"github.com/openai/openai-go/v3"
 	"github.com/openai/openai-go/v3/option"
+	"github.com/openai/openai-go/v3/packages/ssestream"
 	"github.com/openai/openai-go/v3/responses"
 
 	"github.com/sirupsen/logrus"
@@ -89,6 +90,34 @@ func MakeImageDescribeRequest(prompt string, systemPrompt string, model string, 
 	return response, nil
 }
 
+// MakeLLMChatStreamingChatRequest
+// Create a streaming request, this returns a stream
+// this requests also maintians history
+func MakeLLMChatStreamingChatRequest(messages []openai.ChatCompletionMessageParamUnion, tools []openai.ChatCompletionToolUnionParam, model string, temperature float64) *ssestream.Stream[openai.ChatCompletionChunk] {
+
+	client := GetLLMClient()
+
+	ctx := context.Background()
+
+	// logrus.Infof("MakeLLMChatRequest :%s:%s", model, prompt)
+	param := openai.ChatCompletionNewParams{
+		Messages:        messages,
+		Model:           model,
+		Temperature:     openai.Opt(temperature),
+		Tools:           tools,
+		ReasoningEffort: "none",
+	}
+
+	// Create the streaming request
+	stream := client.Chat.Completions.NewStreaming(ctx, param)
+
+	return stream
+
+}
+
+// MakeLLMChatRequest
+// Create a NON streaming request with history, this returns a completed response
+// this requests also maintians history
 func MakeLLMChatRequest(messages []openai.ChatCompletionMessageParamUnion, tools []openai.ChatCompletionToolUnionParam, model string, temperature float64) (*openai.ChatCompletion, error) {
 
 	client := GetLLMClient()
@@ -114,6 +143,9 @@ func MakeLLMChatRequest(messages []openai.ChatCompletionMessageParamUnion, tools
 
 }
 
+// MakeLLMSingleRequest
+// Create a NON streaming request with out history, this returns a completed response
+// this requests DOES NOT maintian history
 func MakeLLMSingleRequest(prompt string, systemPrompt string, model string, temperature float64) (string, error) {
 
 	client := GetLLMClient()

@@ -10,6 +10,7 @@ import (
 	"testing"
 
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
+	"github.com/binuud/avatar-conscious/pkg/bootstrap"
 	"github.com/binuud/avatar-conscious/pkg/llm"
 	"github.com/binuud/avatar-conscious/pkg/memory"
 	"github.com/binuud/avatar-conscious/pkg/utils"
@@ -17,6 +18,23 @@ import (
 	"github.com/openai/openai-go/v3"
 )
 
+func setup() {
+	bootstrap.Bootstrap()
+}
+
+func TestMain(m *testing.M) {
+	// 1. Bootstrap / Setup code here (e.g., start database, load config)
+	setup()
+
+	// 2. Run all tests in the package
+	code := m.Run()
+
+	// 3. Teardown / Cleanup code here (optional)
+	// teardown()
+
+	// 4. Exit with the test result code
+	os.Exit(code)
+}
 func TestConsciousServer_LLMChat(t *testing.T) {
 
 	memory := memory.NewMemory("test-memory")
@@ -26,11 +44,38 @@ func TestConsciousServer_LLMChat(t *testing.T) {
 	memory.Messages = append(memory.Messages, openai.UserMessage(prompt))
 	completions, err := llm.MakeLLMChatRequest(memory.Messages, memory.Tools, memory.Model, memory.Temperature)
 	if err != nil {
+		t.Fatalf("client: error llm chat request: %v \n", err)
+	}
+
+	got := completions.Choices[0].Message.Content
+	t.Logf("Received Response: %s", got)
+
+	prompt = "My name is RumpleStutskin"
+	t.Logf("LLM Prompt: %s", prompt)
+	memory.Messages = append(memory.Messages, openai.UserMessage(prompt))
+	completions, err = llm.MakeLLMChatRequest(memory.Messages, memory.Tools, memory.Model, memory.Temperature)
+	if err != nil {
 		t.Errorf("client: error llm chat request: %v \n", err)
 	}
 
-	assistantMsgContent := completions.Choices[0].Message.Content
-	t.Logf("Received Response: %s", assistantMsgContent)
+	got = completions.Choices[0].Message.Content
+	t.Logf("Received Response: %s", got)
+
+	prompt = "What is my name"
+	t.Logf("LLM Prompt: %s", prompt)
+	memory.Messages = append(memory.Messages, openai.UserMessage(prompt))
+	completions, err = llm.MakeLLMChatRequest(memory.Messages, memory.Tools, memory.Model, memory.Temperature)
+	if err != nil {
+		t.Errorf("client: error llm chat request: %v \n", err)
+	}
+
+	got = completions.Choices[0].Message.Content
+	expected := "RumpleStutskin"
+	t.Logf("Response image request %s", got)
+	if !strings.Contains(got, expected) {
+		t.Errorf("expected output to contain %q", expected)
+	}
+	t.Logf("Received Response: %s", got)
 
 }
 

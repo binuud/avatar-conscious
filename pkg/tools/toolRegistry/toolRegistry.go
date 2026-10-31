@@ -40,7 +40,7 @@ func NewToolRegistry() *ToolRegistry {
 // Tools have to be defined and added to registry
 // Even skills can only call tools already registered with tool registry
 func (t *ToolRegistry) AddTool(tool toolMeta.CommonToolInterface) {
-	logrus.Infof("AddedTool %s to ToolRegistry", tool.Name())
+	logrus.Debugf("AddedTool %s to ToolRegistry", tool.Name())
 	t.Tools[tool.Name()] = tool
 }
 
@@ -62,8 +62,8 @@ func (t *ToolRegistry) GetCommonTools() []openai.ChatCompletionToolUnionParam {
 	myTools := make([]openai.ChatCompletionToolUnionParam, 0)
 
 	for name, tool := range t.Tools {
-		logrus.Infof("Build tool - %s, %s", name, tool.Name())
-		logrus.Infof("Description - %s, %s", name, tool.Description())
+		logrus.Debugf("Build tool - %s, %s", name, tool.Name())
+		logrus.Debugf("Description - %s, %s", name, tool.Description())
 
 		newToolFunction := openai.ChatCompletionFunctionTool(openai.FunctionDefinitionParam{
 			Name:        tool.Name(),

@@ -54,6 +54,13 @@ service Conscious {
     };
   }
 
+  // Clears the memory
+  rpc ClearMemory(ClearMemoryRequest) returns (ClearMemoryResponse) {
+    option (google.api.http) = {
+      post : "/v1/conscious/clearMeroy"
+      body : "*"
+    };
+  }
 
   // Get the current Health Status of the AI Module
   rpc Health(HealthRequest) returns (HealthResponse) {

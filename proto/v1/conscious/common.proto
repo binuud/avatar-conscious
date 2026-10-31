@@ -47,3 +47,7 @@ message ModelRequest{}
 message ModelResponse {
   repeated Model models = 1;
 }
+
+message ClearMemoryRequest{}
+
+message ClearMemoryResponse{}
