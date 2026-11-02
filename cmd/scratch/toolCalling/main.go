@@ -34,7 +34,7 @@ func CheckImageDescriber() string {
 
 	msg := completions.Choices[0].Message
 	if len(msg.ToolCalls) > 0 {
-		out, err := tools.GlobalCommonToolsRegistry.HandleToolCalls(msg.ToolCalls)
+		out, err := tools.GlobalCommonToolsRegistry.HandleToolCalls(msg.ToolCalls, prompt)
 		if err != nil {
 			logrus.Errorf("HandleToolCalls: %v \n", err)
 			return ""
@@ -65,7 +65,7 @@ func CheckImageGeneration() string {
 
 	msg := completions.Choices[0].Message
 	if len(msg.ToolCalls) > 0 {
-		out, err := tools.GlobalCommonToolsRegistry.HandleToolCalls(msg.ToolCalls)
+		out, err := tools.GlobalCommonToolsRegistry.HandleToolCalls(msg.ToolCalls, prompt)
 		if err == nil {
 			logrus.Infof("Output received %s", out)
 			return out.Response
@@ -93,7 +93,7 @@ func CheckImageUpgradeGeneration() {
 
 	msg := completions.Choices[0].Message
 	if len(msg.ToolCalls) > 0 {
-		out, err := tools.GlobalCommonToolsRegistry.HandleToolCalls(msg.ToolCalls)
+		out, err := tools.GlobalCommonToolsRegistry.HandleToolCalls(msg.ToolCalls, prompt)
 		if err == nil {
 			logrus.Infof("Output received %s", out)
 
@@ -153,7 +153,7 @@ func CheckWebFetch(systemPrompt string) string {
 
 	msg := completions.Choices[0].Message
 	if len(msg.ToolCalls) > 0 {
-		out, err := tools.GlobalCommonToolsRegistry.HandleToolCalls(msg.ToolCalls)
+		out, err := tools.GlobalCommonToolsRegistry.HandleToolCalls(msg.ToolCalls, prompt)
 		if err == nil {
 			logrus.Infof("Output received %s", out)
 			return out.Response
@@ -181,7 +181,7 @@ func CheckFileContents() string {
 
 	msg := completions.Choices[0].Message
 	if len(msg.ToolCalls) > 0 {
-		out, err := tools.GlobalCommonToolsRegistry.HandleToolCalls(msg.ToolCalls)
+		out, err := tools.GlobalCommonToolsRegistry.HandleToolCalls(msg.ToolCalls, prompt)
 		if err == nil {
 			logrus.Infof("Output received %s", out)
 			return out.Response

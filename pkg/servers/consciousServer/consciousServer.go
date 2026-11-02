@@ -278,7 +278,7 @@ func (s *grpcConsciousServer) Generate(in *pb.ContextMesssage, stream grpc.Serve
 	msg := completions.Choices[0].Message
 	if len(msg.ToolCalls) > 0 {
 		s.memory.AppendInMessage(in)
-		out, err := tools.GlobalCommonToolsRegistry.HandleToolCalls(msg.ToolCalls)
+		out, err := tools.GlobalCommonToolsRegistry.HandleToolCalls(msg.ToolCalls, in.Prompt)
 		if err != nil {
 			logrus.Errorf("HandleToolCalls: %v \n", err)
 			return err
