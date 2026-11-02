@@ -250,7 +250,7 @@ func (a *AvatarWrapper) RunStep(i int, step *pb.Step) (*pbConcsious.ContextMesss
 	// if so call hanldle the tool and return the output response
 	msg := completions.Choices[0].Message
 	if len(msg.ToolCalls) > 0 {
-		out, err = tools.GlobalCommonToolsRegistry.HandleToolCalls(msg.ToolCalls)
+		out, err = tools.GlobalCommonToolsRegistry.HandleToolCalls(msg.ToolCalls, step.Prompt)
 		if err != nil {
 			logrus.Errorf("HandleToolCalls: %v \n", err)
 			return nil, err

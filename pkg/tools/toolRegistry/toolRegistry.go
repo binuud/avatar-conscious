@@ -79,7 +79,7 @@ func (t *ToolRegistry) GetCommonTools() []openai.ChatCompletionToolUnionParam {
 // HandleToolCalls()
 // When LLM returns a set of tools to be handled,
 // the handler runs each of the tool calls, with the arguments given by LLM
-func (t *ToolRegistry) HandleToolCalls(toolCalls []openai.ChatCompletionMessageToolCallUnion) (*pb.ContextMesssage, error) {
+func (t *ToolRegistry) HandleToolCalls(toolCalls []openai.ChatCompletionMessageToolCallUnion, originalPrompt string) (*pb.ContextMesssage, error) {
 	if len(toolCalls) < 1 {
 		return nil, fmt.Errorf("No tools to be handled")
 	}
@@ -96,6 +96,7 @@ func (t *ToolRegistry) HandleToolCalls(toolCalls []openai.ChatCompletionMessageT
 	}
 	in := &pb.ContextMesssage{
 		Uuid:   utils.GenerateUUID(),
+		Data:   originalPrompt,
 		Prompt: toolCall.Function.Arguments,
 	}
 	return myTool.Handler(in)

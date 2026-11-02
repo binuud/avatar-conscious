@@ -30,7 +30,7 @@ func SaveImageDataToFile(fileName string, rawBase64 string) error {
 	}
 
 	destinationPath := GetEnv("FILE_STORE_PATH", ".") + "/uploads/" + fileName
-	logrus.Infof("Uplaoded file to be saveed under -> %s", destinationPath)
+	logrus.Infof("Uplaoded file to be saved under -> %s", destinationPath)
 
 	err = os.WriteFile(destinationPath, decodedBytes, 0644)
 	if err != nil {

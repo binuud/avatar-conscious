@@ -175,7 +175,7 @@ func runAvatar() {
 
 		msg := completions.Choices[0].Message
 		if len(msg.ToolCalls) > 0 {
-			out, err := tools.HandleToolCalls(msg.ToolCalls)
+			out, err := tools.HandleToolCalls(msg.ToolCalls, step.Prompt)
 			if err != nil {
 				logrus.Errorf("HandleToolCalls: %v \n", err)
 				return

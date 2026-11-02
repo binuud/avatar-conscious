@@ -1,0 +1,54 @@
+---
+name: passport-photo
+uuid: 066c61f2-7caa-480e-8c55-948404469a3a
+image: /static/avatarStore/passport-photo.png
+description: This is a reference demo, to showcase webcamera, external utility pipeline.
+triggers:
+  - webcam
+ui:  
+  uuid: ''
+  name: First Pane
+  description: Passport Photo Maker
+  title: Passport Photo Maker
+  components:
+  - id: webcamview
+    class: ''
+    label: WebCamera
+    value: ''
+    placeHolder: ''
+    help: ''
+    style: ''
+    width: 100
+    rows: 0
+    cols: 0
+    type: WEBCAM
+  - id: ''
+    class: ''
+    label: ''
+    value: Avatar will try to generate a passport style photo of you.
+    placeHolder: ''
+    help: ''
+    style: ''
+    width: 100
+    rows: 0
+    cols: 0
+    type: PLAINTEXT  
+---
+# Camera Describer
+
+## Step 1: Launch an Avatar UI webcamera interface.
+
+Use the following prompt, to launch ui with webcamera
+```prompt
+Launch an Avatar UI interface, and get an image from the webcamera, that will be used by LLM to create a passport style photo
+```
+
+## Step 2: Generate an passport style image using the image from web camera as reference
+
+Use the following prompt to describe the image
+```prompt
+Edit the given image, remove the background, change it to blue, make a passport photo of the person in the image, wearing suit, do not change skin tone, do not smoothen skin.
+```
+
+
+
