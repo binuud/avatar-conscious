@@ -21,7 +21,15 @@ func NewGrpcSystemMetricsServer() *grpcMetricsServer {
 // WatchHealth streams periodic health snapshots until the client cancels.
 func (s *grpcMetricsServer) GetSystemMetrics(req *pb.GetSystemMetricsRequest, stream pb.Metrics_GetSystemMetricsServer) error {
 
-	logrus.Info("Received metrics stream request")
+	// check if metrics implemented
+	_, err := utils.NewSystemMetrics()
+	if err != nil {
+		logrus.Errorf("Metrics not supported %v", err)
+		return err
+	} else {
+		logrus.Info("Streaming metrics stream request")
+	}
+
 	interval := defaultInterval
 	// interval seconds cannot be less than 2
 	if req.GetIntervalSeconds() > 2 {
@@ -34,13 +42,15 @@ func (s *grpcMetricsServer) GetSystemMetrics(req *pb.GetSystemMetricsRequest, st
 	for {
 		select {
 		case <-stream.Context().Done():
+			logrus.Infof("metrics sse closed from client")
 			return stream.Context().Err()
 		case <-ticker.C:
-			rep, err := utils.NewSystemMetrics()
+			resp, err := utils.NewSystemMetrics()
 			if err != nil {
 				return err
 			}
-			if err := stream.Send(rep); err != nil {
+			// logrus.Infof("metrics response %v", resp)
+			if err := stream.Send(resp); err != nil {
 				return err
 			}
 		}

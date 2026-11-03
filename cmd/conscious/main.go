@@ -163,7 +163,6 @@ func main() {
 		logrus.SetLevel(logrus.InfoLevel)
 	}
 
-	flag.Parse()
 	logrus.Println("Welcome to life")
 	bootstrap.Bootstrap(buildEnv)
 
