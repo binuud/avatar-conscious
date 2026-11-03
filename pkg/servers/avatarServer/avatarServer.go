@@ -36,6 +36,19 @@ func (s *avatarGrpcServer) Get(ctx context.Context, in *pb.GetRequest) (*pb.GetR
 	}, nil
 }
 
+func (s *avatarGrpcServer) Build(ctx context.Context, in *pb.BuildRequest) (*pb.BuildResponse, error) {
+	logrus.Infof("Avatar Get called with %s:%s", in.Uuid, in.Name)
+
+	a := NewAvatar(in.Name)
+	err := a.Build()
+	if err != nil {
+		return nil, err
+	}
+	return &pb.BuildResponse{
+		Avatar: a.Avatar,
+	}, nil
+}
+
 func (s *avatarGrpcServer) Start(ctx context.Context, in *pb.StartRequest) (*pb.StartResponse, error) {
 	logrus.Infof("Avatar start called with %s:%s", in.Uuid, in.Name)
 

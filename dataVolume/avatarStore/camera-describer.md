@@ -34,17 +34,24 @@ ui:
     cols: 0
     type: PLAINTEXT  
 ---
-
 # Camera Describer
 
-## Step 1: Launch an Avatar UI webcamera interface.
+## Step 1: 
+
+```Description
+Launch an Avatar UI webcamera interface.
+```
 
 Use the following prompt, to launch ui with webcamera
 ```prompt
 Launch an Avatar UI interface, and get an image from the webcamera, that will be used by LLM to describe the image.
 ```
 
-## Step 2: Describe the image using a vision model
+## Step 2: 
+
+```Description
+Describe the image using a vision model
+```
 
 Use the following prompt to describe the image
 ```prompt

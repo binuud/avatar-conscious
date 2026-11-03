@@ -5,6 +5,39 @@
     "version": ""
   },
   "paths": {
+    "/v1/avatar/build": {
+      "get": {
+        "operationId": "build",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "uuid",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "avatar.AvatarService.Build response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BuildResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/avatar/get": {
       "get": {
         "operationId": "get",
@@ -962,6 +995,14 @@
         }
       },
       "AvatarStoreUpdateResponse": {
+        "type": "object",
+        "properties": {
+          "avatar": {
+            "$ref": "#/components/schemas/Avatar"
+          }
+        }
+      },
+      "BuildResponse": {
         "type": "object",
         "properties": {
           "avatar": {

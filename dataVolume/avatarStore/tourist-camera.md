@@ -35,16 +35,24 @@ ui:
     type: PLAINTEXT  
 ---
 
-# Camera Describer
+# Tourist Photographer
 
-## Step 1: Launch an Avatar UI webcamera interface.
+## Step 1:
+
+```Description
+Launch an Avatar UI webcamera interface.
+```
 
 Use the following prompt, to launch ui with webcamera
 ```prompt
 Launch an Avatar UI interface, and get an image from the webcamera, that will be used by LLM to create a tourist photo
 ```
 
-## Step 2: Generate an image using the image from web camera as reference
+## Step 2:
+
+```Description
+Generate an image using the image from web camera as reference
+```
 
 Use the following prompt to describe the image
 ```prompt
