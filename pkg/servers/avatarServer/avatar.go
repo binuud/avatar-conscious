@@ -23,7 +23,8 @@ const (
 	AVATAR_STORE_DIRECTORY = "avatarStore"
 	SYSTEM_PROMPT          = `Review the provided instruction structure and extract a JSON list of all steps with prompts if needed,
 														do not parse any other properties not mentioned in the schema. Keep instructions in prompt field intact, 
-														since llm will have to use the prompts as is, to complete the task later.`
+														since llm will have to use the prompts as is, to complete the task later. Steps are in format "Step [num]:"
+														`
 )
 
 type AvatarWrapper struct {
@@ -85,10 +86,6 @@ func NewAvatarFromStore(name string) *AvatarWrapper {
 	return avatar
 }
 
-func (a *AvatarWrapper) GetStepsFromLLM() error {
-	return a.Build()
-}
-
 func (a *AvatarWrapper) Load(name string) error {
 
 	filePath := datalayer.GetFileAbsolutePath(AVATAR_DIRECTORY, name+".avatar")
@@ -123,13 +120,16 @@ func (a *AvatarWrapper) Save() error {
 // to run the avatar using llm and the avatar with the steps
 func (a *AvatarWrapper) Build() error {
 
+	logrus.Infof("Building avatar %s", a.FileName)
 	completePrompt := fmt.Sprintf(
 		"Here is the avatar context file (%s):\n\n```markdown\n%s\n```\n\n",
 		a.FileName,
 		a.Content,
 	)
 
-	a.Memory.Messages = []openai.ChatCompletionMessageParamUnion{
+	buildMemory := memory.NewMemory()
+
+	buildMemory.Messages = []openai.ChatCompletionMessageParamUnion{
 		openai.SystemMessage(a.SystemPrompt),
 		openai.UserMessage(completePrompt),
 	}
@@ -146,7 +146,7 @@ func (a *AvatarWrapper) Build() error {
 	// now use LLM to get the steps, that this avatar needs to run
 	output, err := llm.MakeLLMSchemaResponseRequest(completePrompt,
 		a.SystemPrompt,
-		a.Memory.Model,
+		buildMemory.Model,
 		stepsSchema)
 	if err != nil {
 		logrus.Errorf("client: error llm chat request: %v \n", err)
@@ -171,7 +171,7 @@ func (a *AvatarWrapper) Build() error {
 	} else {
 		a.Avatar.Steps = stepsFromLLM.Steps
 	}
-
+	a.Save()
 	return nil
 }
 

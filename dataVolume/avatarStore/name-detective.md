@@ -47,16 +47,24 @@ ui:
     type: PLAINTEXT  
 ---
 
-# Sample
+# Country Guesser
 
-## Step 1: Launch an Avatar UI interface.
+## Step 1: 
+
+```Description
+Launch an Avatar UI interface.
+```
 
 Use the following prompt, to launch ui
 ```prompt
 Launch an Avatar UI interface. And get the firstname and lastname of user.
 ```
 
-## Step 2: Try guessing the place of origin or country of the user
+## Step 2:
+
+```Description
+Try guessing the place of origin or country of the user
+```
 
 Use the following prompt, to get information about the user name
 ```prompt

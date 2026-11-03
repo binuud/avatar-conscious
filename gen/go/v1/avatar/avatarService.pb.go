@@ -118,6 +118,102 @@ func (x *GetResponse) GetAvatar() *Avatar {
 	return nil
 }
 
+type BuildRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Uuid          string                 `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BuildRequest) Reset() {
+	*x = BuildRequest{}
+	mi := &file_v1_avatar_avatarService_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BuildRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BuildRequest) ProtoMessage() {}
+
+func (x *BuildRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_avatar_avatarService_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BuildRequest.ProtoReflect.Descriptor instead.
+func (*BuildRequest) Descriptor() ([]byte, []int) {
+	return file_v1_avatar_avatarService_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *BuildRequest) GetUuid() string {
+	if x != nil {
+		return x.Uuid
+	}
+	return ""
+}
+
+func (x *BuildRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+type BuildResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Avatar        *Avatar                `protobuf:"bytes,1,opt,name=avatar,proto3" json:"avatar,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *BuildResponse) Reset() {
+	*x = BuildResponse{}
+	mi := &file_v1_avatar_avatarService_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *BuildResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*BuildResponse) ProtoMessage() {}
+
+func (x *BuildResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_avatar_avatarService_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use BuildResponse.ProtoReflect.Descriptor instead.
+func (*BuildResponse) Descriptor() ([]byte, []int) {
+	return file_v1_avatar_avatarService_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *BuildResponse) GetAvatar() *Avatar {
+	if x != nil {
+		return x.Avatar
+	}
+	return nil
+}
+
 type StartRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Uuid          string                 `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
@@ -128,7 +224,7 @@ type StartRequest struct {
 
 func (x *StartRequest) Reset() {
 	*x = StartRequest{}
-	mi := &file_v1_avatar_avatarService_proto_msgTypes[2]
+	mi := &file_v1_avatar_avatarService_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -140,7 +236,7 @@ func (x *StartRequest) String() string {
 func (*StartRequest) ProtoMessage() {}
 
 func (x *StartRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_avatar_avatarService_proto_msgTypes[2]
+	mi := &file_v1_avatar_avatarService_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -153,7 +249,7 @@ func (x *StartRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StartRequest.ProtoReflect.Descriptor instead.
 func (*StartRequest) Descriptor() ([]byte, []int) {
-	return file_v1_avatar_avatarService_proto_rawDescGZIP(), []int{2}
+	return file_v1_avatar_avatarService_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *StartRequest) GetUuid() string {
@@ -179,7 +275,7 @@ type StartResponse struct {
 
 func (x *StartResponse) Reset() {
 	*x = StartResponse{}
-	mi := &file_v1_avatar_avatarService_proto_msgTypes[3]
+	mi := &file_v1_avatar_avatarService_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -191,7 +287,7 @@ func (x *StartResponse) String() string {
 func (*StartResponse) ProtoMessage() {}
 
 func (x *StartResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_avatar_avatarService_proto_msgTypes[3]
+	mi := &file_v1_avatar_avatarService_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -204,7 +300,7 @@ func (x *StartResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StartResponse.ProtoReflect.Descriptor instead.
 func (*StartResponse) Descriptor() ([]byte, []int) {
-	return file_v1_avatar_avatarService_proto_rawDescGZIP(), []int{3}
+	return file_v1_avatar_avatarService_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *StartResponse) GetAvatar() *Avatar {
@@ -223,7 +319,7 @@ type ControlRequest struct {
 
 func (x *ControlRequest) Reset() {
 	*x = ControlRequest{}
-	mi := &file_v1_avatar_avatarService_proto_msgTypes[4]
+	mi := &file_v1_avatar_avatarService_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -235,7 +331,7 @@ func (x *ControlRequest) String() string {
 func (*ControlRequest) ProtoMessage() {}
 
 func (x *ControlRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_avatar_avatarService_proto_msgTypes[4]
+	mi := &file_v1_avatar_avatarService_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -248,7 +344,7 @@ func (x *ControlRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ControlRequest.ProtoReflect.Descriptor instead.
 func (*ControlRequest) Descriptor() ([]byte, []int) {
-	return file_v1_avatar_avatarService_proto_rawDescGZIP(), []int{4}
+	return file_v1_avatar_avatarService_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *ControlRequest) GetControl() *AvatarControl {
@@ -267,7 +363,7 @@ type ControlResponse struct {
 
 func (x *ControlResponse) Reset() {
 	*x = ControlResponse{}
-	mi := &file_v1_avatar_avatarService_proto_msgTypes[5]
+	mi := &file_v1_avatar_avatarService_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -279,7 +375,7 @@ func (x *ControlResponse) String() string {
 func (*ControlResponse) ProtoMessage() {}
 
 func (x *ControlResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_avatar_avatarService_proto_msgTypes[5]
+	mi := &file_v1_avatar_avatarService_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -292,7 +388,7 @@ func (x *ControlResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ControlResponse.ProtoReflect.Descriptor instead.
 func (*ControlResponse) Descriptor() ([]byte, []int) {
-	return file_v1_avatar_avatarService_proto_rawDescGZIP(), []int{5}
+	return file_v1_avatar_avatarService_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *ControlResponse) GetControl() *AvatarControl {
@@ -312,7 +408,7 @@ type StopRequest struct {
 
 func (x *StopRequest) Reset() {
 	*x = StopRequest{}
-	mi := &file_v1_avatar_avatarService_proto_msgTypes[6]
+	mi := &file_v1_avatar_avatarService_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -324,7 +420,7 @@ func (x *StopRequest) String() string {
 func (*StopRequest) ProtoMessage() {}
 
 func (x *StopRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_avatar_avatarService_proto_msgTypes[6]
+	mi := &file_v1_avatar_avatarService_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -337,7 +433,7 @@ func (x *StopRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StopRequest.ProtoReflect.Descriptor instead.
 func (*StopRequest) Descriptor() ([]byte, []int) {
-	return file_v1_avatar_avatarService_proto_rawDescGZIP(), []int{6}
+	return file_v1_avatar_avatarService_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *StopRequest) GetUuid() string {
@@ -363,7 +459,7 @@ type StopResponse struct {
 
 func (x *StopResponse) Reset() {
 	*x = StopResponse{}
-	mi := &file_v1_avatar_avatarService_proto_msgTypes[7]
+	mi := &file_v1_avatar_avatarService_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -375,7 +471,7 @@ func (x *StopResponse) String() string {
 func (*StopResponse) ProtoMessage() {}
 
 func (x *StopResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_avatar_avatarService_proto_msgTypes[7]
+	mi := &file_v1_avatar_avatarService_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -388,7 +484,7 @@ func (x *StopResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StopResponse.ProtoReflect.Descriptor instead.
 func (*StopResponse) Descriptor() ([]byte, []int) {
-	return file_v1_avatar_avatarService_proto_rawDescGZIP(), []int{7}
+	return file_v1_avatar_avatarService_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *StopResponse) GetAvatar() *Avatar {
@@ -409,6 +505,11 @@ const file_v1_avatar_avatarService_proto_rawDesc = "" +
 	"\x04name\x18\x02 \x01(\tR\x04name\"5\n" +
 	"\vGetResponse\x12&\n" +
 	"\x06avatar\x18\x01 \x01(\v2\x0e.avatar.AvatarR\x06avatar\"6\n" +
+	"\fBuildRequest\x12\x12\n" +
+	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\"7\n" +
+	"\rBuildResponse\x12&\n" +
+	"\x06avatar\x18\x01 \x01(\v2\x0e.avatar.AvatarR\x06avatar\"6\n" +
 	"\fStartRequest\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\"7\n" +
@@ -422,9 +523,10 @@ const file_v1_avatar_avatarService_proto_rawDesc = "" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\"6\n" +
 	"\fStopResponse\x12&\n" +
-	"\x06avatar\x18\x01 \x01(\v2\x0e.avatar.AvatarR\x06avatar2\xd3\x02\n" +
+	"\x06avatar\x18\x01 \x01(\v2\x0e.avatar.AvatarR\x06avatar2\xa3\x03\n" +
 	"\rAvatarService\x12F\n" +
 	"\x03Get\x12\x12.avatar.GetRequest\x1a\x13.avatar.GetResponse\"\x16\x82\xd3\xe4\x93\x02\x10\x12\x0e/v1/avatar/get\x12N\n" +
+	"\x05Build\x12\x14.avatar.BuildRequest\x1a\x15.avatar.BuildResponse\"\x18\x82\xd3\xe4\x93\x02\x12\x12\x10/v1/avatar/build\x12N\n" +
 	"\x05Start\x12\x14.avatar.StartRequest\x1a\x15.avatar.StartResponse\"\x18\x82\xd3\xe4\x93\x02\x12\"\x10/v1/avatar/start\x12^\n" +
 	"\aControl\x12\x16.avatar.ControlRequest\x1a\x17.avatar.ControlResponse\"\x1e\x82\xd3\xe4\x93\x02\x18\"\x16/v1/avatarlive/connect(\x010\x01\x12J\n" +
 	"\x04Stop\x12\x13.avatar.StopRequest\x1a\x14.avatar.StopResponse\"\x17\x82\xd3\xe4\x93\x02\x11\"\x0f/v1/avatar/stopB5Z3github.com/binuud/avatar-conscious/gen/go/v1/avatarb\x06proto3"
@@ -441,38 +543,43 @@ func file_v1_avatar_avatarService_proto_rawDescGZIP() []byte {
 	return file_v1_avatar_avatarService_proto_rawDescData
 }
 
-var file_v1_avatar_avatarService_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_v1_avatar_avatarService_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_v1_avatar_avatarService_proto_goTypes = []any{
 	(*GetRequest)(nil),      // 0: avatar.GetRequest
 	(*GetResponse)(nil),     // 1: avatar.GetResponse
-	(*StartRequest)(nil),    // 2: avatar.StartRequest
-	(*StartResponse)(nil),   // 3: avatar.StartResponse
-	(*ControlRequest)(nil),  // 4: avatar.ControlRequest
-	(*ControlResponse)(nil), // 5: avatar.ControlResponse
-	(*StopRequest)(nil),     // 6: avatar.StopRequest
-	(*StopResponse)(nil),    // 7: avatar.StopResponse
-	(*Avatar)(nil),          // 8: avatar.Avatar
-	(*AvatarControl)(nil),   // 9: avatar.AvatarControl
+	(*BuildRequest)(nil),    // 2: avatar.BuildRequest
+	(*BuildResponse)(nil),   // 3: avatar.BuildResponse
+	(*StartRequest)(nil),    // 4: avatar.StartRequest
+	(*StartResponse)(nil),   // 5: avatar.StartResponse
+	(*ControlRequest)(nil),  // 6: avatar.ControlRequest
+	(*ControlResponse)(nil), // 7: avatar.ControlResponse
+	(*StopRequest)(nil),     // 8: avatar.StopRequest
+	(*StopResponse)(nil),    // 9: avatar.StopResponse
+	(*Avatar)(nil),          // 10: avatar.Avatar
+	(*AvatarControl)(nil),   // 11: avatar.AvatarControl
 }
 var file_v1_avatar_avatarService_proto_depIdxs = []int32{
-	8, // 0: avatar.GetResponse.avatar:type_name -> avatar.Avatar
-	8, // 1: avatar.StartResponse.avatar:type_name -> avatar.Avatar
-	9, // 2: avatar.ControlRequest.control:type_name -> avatar.AvatarControl
-	9, // 3: avatar.ControlResponse.control:type_name -> avatar.AvatarControl
-	8, // 4: avatar.StopResponse.avatar:type_name -> avatar.Avatar
-	0, // 5: avatar.AvatarService.Get:input_type -> avatar.GetRequest
-	2, // 6: avatar.AvatarService.Start:input_type -> avatar.StartRequest
-	4, // 7: avatar.AvatarService.Control:input_type -> avatar.ControlRequest
-	6, // 8: avatar.AvatarService.Stop:input_type -> avatar.StopRequest
-	1, // 9: avatar.AvatarService.Get:output_type -> avatar.GetResponse
-	3, // 10: avatar.AvatarService.Start:output_type -> avatar.StartResponse
-	5, // 11: avatar.AvatarService.Control:output_type -> avatar.ControlResponse
-	7, // 12: avatar.AvatarService.Stop:output_type -> avatar.StopResponse
-	9, // [9:13] is the sub-list for method output_type
-	5, // [5:9] is the sub-list for method input_type
-	5, // [5:5] is the sub-list for extension type_name
-	5, // [5:5] is the sub-list for extension extendee
-	0, // [0:5] is the sub-list for field type_name
+	10, // 0: avatar.GetResponse.avatar:type_name -> avatar.Avatar
+	10, // 1: avatar.BuildResponse.avatar:type_name -> avatar.Avatar
+	10, // 2: avatar.StartResponse.avatar:type_name -> avatar.Avatar
+	11, // 3: avatar.ControlRequest.control:type_name -> avatar.AvatarControl
+	11, // 4: avatar.ControlResponse.control:type_name -> avatar.AvatarControl
+	10, // 5: avatar.StopResponse.avatar:type_name -> avatar.Avatar
+	0,  // 6: avatar.AvatarService.Get:input_type -> avatar.GetRequest
+	2,  // 7: avatar.AvatarService.Build:input_type -> avatar.BuildRequest
+	4,  // 8: avatar.AvatarService.Start:input_type -> avatar.StartRequest
+	6,  // 9: avatar.AvatarService.Control:input_type -> avatar.ControlRequest
+	8,  // 10: avatar.AvatarService.Stop:input_type -> avatar.StopRequest
+	1,  // 11: avatar.AvatarService.Get:output_type -> avatar.GetResponse
+	3,  // 12: avatar.AvatarService.Build:output_type -> avatar.BuildResponse
+	5,  // 13: avatar.AvatarService.Start:output_type -> avatar.StartResponse
+	7,  // 14: avatar.AvatarService.Control:output_type -> avatar.ControlResponse
+	9,  // 15: avatar.AvatarService.Stop:output_type -> avatar.StopResponse
+	11, // [11:16] is the sub-list for method output_type
+	6,  // [6:11] is the sub-list for method input_type
+	6,  // [6:6] is the sub-list for extension type_name
+	6,  // [6:6] is the sub-list for extension extendee
+	0,  // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_v1_avatar_avatarService_proto_init() }
@@ -487,7 +594,7 @@ func file_v1_avatar_avatarService_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_v1_avatar_avatarService_proto_rawDesc), len(file_v1_avatar_avatarService_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   8,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

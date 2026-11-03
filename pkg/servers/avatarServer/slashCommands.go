@@ -83,7 +83,6 @@ func NewAvatarCommand() *cobra.Command {
 					cmd.Printf("Building avatar %s\n", name)
 					a := NewAvatarFromStore(name)
 					a.Build()
-					a.Save()
 				}
 			}
 		},

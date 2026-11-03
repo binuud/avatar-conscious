@@ -17,6 +17,12 @@ service AvatarService {
     };
   }
 
+  rpc Build(BuildRequest) returns (BuildResponse) {
+    option (google.api.http) = {
+      get : "/v1/avatar/build"
+    };
+  }
+
   // Start the avatar, avatar is a long running process
   rpc Start(StartRequest) returns (StartResponse) {
     option (google.api.http) = {
@@ -43,6 +49,15 @@ message GetRequest {
 }
 
 message GetResponse {
+  Avatar avatar = 1;
+}
+
+message BuildRequest {
+  string uuid = 1;
+  string name = 2;
+}
+
+message BuildResponse {
   Avatar avatar = 1;
 }
 

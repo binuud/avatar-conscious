@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	AvatarService_Get_FullMethodName     = "/avatar.AvatarService/Get"
+	AvatarService_Build_FullMethodName   = "/avatar.AvatarService/Build"
 	AvatarService_Start_FullMethodName   = "/avatar.AvatarService/Start"
 	AvatarService_Control_FullMethodName = "/avatar.AvatarService/Control"
 	AvatarService_Stop_FullMethodName    = "/avatar.AvatarService/Stop"
@@ -30,6 +31,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AvatarServiceClient interface {
 	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error)
+	Build(ctx context.Context, in *BuildRequest, opts ...grpc.CallOption) (*BuildResponse, error)
 	// Start the avatar, avatar is a long running process
 	Start(ctx context.Context, in *StartRequest, opts ...grpc.CallOption) (*StartResponse, error)
 	Control(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[ControlRequest, ControlResponse], error)
@@ -48,6 +50,16 @@ func (c *avatarServiceClient) Get(ctx context.Context, in *GetRequest, opts ...g
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetResponse)
 	err := c.cc.Invoke(ctx, AvatarService_Get_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *avatarServiceClient) Build(ctx context.Context, in *BuildRequest, opts ...grpc.CallOption) (*BuildResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(BuildResponse)
+	err := c.cc.Invoke(ctx, AvatarService_Build_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -92,6 +104,7 @@ func (c *avatarServiceClient) Stop(ctx context.Context, in *StopRequest, opts ..
 // for forward compatibility.
 type AvatarServiceServer interface {
 	Get(context.Context, *GetRequest) (*GetResponse, error)
+	Build(context.Context, *BuildRequest) (*BuildResponse, error)
 	// Start the avatar, avatar is a long running process
 	Start(context.Context, *StartRequest) (*StartResponse, error)
 	Control(grpc.BidiStreamingServer[ControlRequest, ControlResponse]) error
@@ -108,6 +121,9 @@ type UnimplementedAvatarServiceServer struct{}
 
 func (UnimplementedAvatarServiceServer) Get(context.Context, *GetRequest) (*GetResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Get not implemented")
+}
+func (UnimplementedAvatarServiceServer) Build(context.Context, *BuildRequest) (*BuildResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Build not implemented")
 }
 func (UnimplementedAvatarServiceServer) Start(context.Context, *StartRequest) (*StartResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Start not implemented")
@@ -153,6 +169,24 @@ func _AvatarService_Get_Handler(srv interface{}, ctx context.Context, dec func(i
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AvatarServiceServer).Get(ctx, req.(*GetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AvatarService_Build_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BuildRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AvatarServiceServer).Build(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AvatarService_Build_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AvatarServiceServer).Build(ctx, req.(*BuildRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -210,6 +244,10 @@ var AvatarService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Get",
 			Handler:    _AvatarService_Get_Handler,
+		},
+		{
+			MethodName: "Build",
+			Handler:    _AvatarService_Build_Handler,
 		},
 		{
 			MethodName: "Start",

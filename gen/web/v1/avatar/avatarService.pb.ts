@@ -15,6 +15,15 @@ export type GetResponse = {
   avatar?: AvatarAvatar.Avatar
 }
 
+export type BuildRequest = {
+  uuid?: string
+  name?: string
+}
+
+export type BuildResponse = {
+  avatar?: AvatarAvatar.Avatar
+}
+
 export type StartRequest = {
   uuid?: string
   name?: string
@@ -44,6 +53,9 @@ export type StopResponse = {
 export class AvatarService {
   static Get(req: GetRequest, initReq?: fm.InitReq): Promise<GetResponse> {
     return fm.fetchReq<GetRequest, GetResponse>(`/v1/avatar/get?${fm.renderURLSearchParams(req, [])}`, {...initReq, method: "GET"})
+  }
+  static Build(req: BuildRequest, initReq?: fm.InitReq): Promise<BuildResponse> {
+    return fm.fetchReq<BuildRequest, BuildResponse>(`/v1/avatar/build?${fm.renderURLSearchParams(req, [])}`, {...initReq, method: "GET"})
   }
   static Start(req: StartRequest, initReq?: fm.InitReq): Promise<StartResponse> {
     return fm.fetchReq<StartRequest, StartResponse>(`/v1/avatar/start`, {...initReq, method: "POST"})
