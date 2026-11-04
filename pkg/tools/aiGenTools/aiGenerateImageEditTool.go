@@ -80,7 +80,7 @@ func (t AiGenerateImageEditTool) Handler(in *pb.ContextMesssage) (*pb.ContextMes
 	imageModel := settings.Global.GetValue("IMAGE_MODEL")
 
 	// hotswap original prompt
-	outMsg, err := GetAiImageEdit(in.Data, imageModel, inpObj.ImageFile)
+	outMsg, err := GetAiImageEdit(in.Data+" "+in.Prompt, imageModel, inpObj.ImageFile)
 	if err != nil {
 		return nil, err
 	}

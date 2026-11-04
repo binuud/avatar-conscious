@@ -65,9 +65,9 @@ func NewMemory(name ...string) *Memory {
 }
 
 func (m *Memory) DumpMemory(w io.Writer) {
-	logrus.Info("-----------------------------------------------------------------")
-	logrus.Infof("Name: %s, Model: %s, Temp: %f", m.Name, m.Model, m.Temperature)
-	logrus.Infof("System Prompt: %s", m.SystemPrompt)
+	logrus.Debug("-----------------------------------------------------------------")
+	logrus.Debugf("Name: %s, Model: %s, Temp: %f", m.Name, m.Model, m.Temperature)
+	logrus.Debugf("System Prompt: %s", m.SystemPrompt)
 	for _, msg := range m.Messages {
 		var role string
 		var content string
@@ -97,9 +97,10 @@ func (m *Memory) DumpMemory(w io.Writer) {
 			str := fmt.Sprintf("Name: %s, content: %s", role, content)
 			w.Write([]byte(str))
 		}
-		logrus.Infof("Name: %s, content: %s", role, content)
+		logrus.Debugf("Name: %s, content: %s", role, content)
 	}
-	logrus.Info("-----------------------------------------------------------------")
+	logrus.Debug("--------------------------  END  ----------------------------------")
+
 }
 
 // AppendInMessage()
@@ -131,9 +132,7 @@ func (m *Memory) AppendOutMessage(out *pb.ContextMesssage) {
 // AppendMemory
 // append to memory, only append user and assistant message to memory
 func (m *Memory) AppendMemory(message openai.ChatCompletionMessageParamUnion) {
-	if message.OfUser != nil || message.OfAssistant != nil {
-		m.Messages = append(m.Messages, message)
-	}
+	m.Messages = append(m.Messages, message)
 	m.Save()
 }
 
