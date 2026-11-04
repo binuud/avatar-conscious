@@ -1,0 +1,28 @@
+ui:  
+- uuid: ''
+  name: web-camera
+  description: WebCamera
+  title: Tourist Photographer
+  components:
+  - id: webcamview
+    class: ''
+    label: WebCamera
+    value: ''
+    placeHolder: ''
+    help: ''
+    style: ''
+    width: 100
+    rows: 0
+    cols: 0
+    type: WEBCAM
+  - id: ''
+    class: ''
+    label: ''
+    value: Avatar will try to generate a tourist photo of you.
+    placeHolder: ''
+    help: ''
+    style: ''
+    width: 100
+    rows: 0
+    cols: 0
+    type: PLAINTEXT  

@@ -82,7 +82,6 @@ export type AvatarMeta = {
   description?: string
   image?: string
   triggers?: string[]
-  ui?: QuatumUIQuantumUI.QuantumUI
 }
 
 export type Step = {
@@ -104,11 +103,16 @@ export type StepStatus = {
   response?: string
 }
 
+export type UiCollection = {
+  ui?: QuatumUIQuantumUI.QuantumUI[]
+}
+
 export type Avatar = {
   meta?: AvatarMeta
   permissions?: Permission
   systemPrompt?: string
   steps?: Step[]
+  uiCollection?: UiCollection
   content?: string
 }
 

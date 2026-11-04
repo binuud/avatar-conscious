@@ -60,7 +60,6 @@ message AvatarMeta {
 
   repeated string triggers = 5;
 
-  quatumUI.QuantumUI ui = 6;
 }
 
 
@@ -117,6 +116,13 @@ message StepStatus {
   string response = 7;
 }
 
+// for parsing data from yaml or json,
+// we need to have a proper proto message of the format
+// which will be saved or read from
+message UiCollection {
+  repeated quatumUI.QuantumUI ui = 1;
+}
+
 // Avatar message representing a robot or avatar entity
 message Avatar {
 
@@ -130,6 +136,9 @@ message Avatar {
 
   repeated Step steps = 6;
 
+  // multiple ui elements and forms can be associated with each avatr
+  UiCollection uiCollection = 7;
+  
   // the complete data of the Avatar file
   string content = 10;
 
