@@ -49,8 +49,12 @@ message ContextMesssage {
     // for image generation
     IMAGE_GENERATION = 4;
 
+    // for image edit
+    // or image generation on reference images
+    IMAGE_EDIT = 5;
+
     // text to speech
-    TTS = 5;
+    TTS = 6;
   }
 
   ContextType type = 6;

@@ -342,6 +342,7 @@
           "LLM_QUERY",
           "LLM_IMAGE_DESCRIBE",
           "IMAGE_GENERATION",
+          "IMAGE_EDIT",
           "TTS"
         ]
       },

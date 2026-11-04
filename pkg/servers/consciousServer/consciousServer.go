@@ -84,7 +84,14 @@ func (s *grpcConsciousServer) GetModels(ctx context.Context, in *pb.ModelRequest
 
 func (s *grpcConsciousServer) In(ctx context.Context, in *pb.ContextMesssage) (*pb.ContextMesssage, error) {
 
-	logrus.Infof("In Received -> Request: %s, %s", in.Type, in.Prompt)
+	in.CreatedAt = utils.GetTimeStamp()
+	logrus.Infof("Generate Received -> Request: %s", in.Prompt)
+
+	// do not add to memory for slash commands
+	if strings.HasPrefix(in.Prompt, "/") {
+		out := handleSlashCommand(in)
+		return out, nil
+	}
 
 	out, err := s.RouteRequest(in)
 	if err != nil {
@@ -93,6 +100,7 @@ func (s *grpcConsciousServer) In(ctx context.Context, in *pb.ContextMesssage) (*
 	}
 
 	logrus.Infof("In Received -> Response: %s", out)
+	out.CompletedAt = utils.GetTimeStamp()
 	return out, nil
 
 }
@@ -254,7 +262,7 @@ func (s *grpcConsciousServer) Generate(in *pb.ContextMesssage, stream grpc.Serve
 
 	// do not add to memory for slash commands
 	if strings.HasPrefix(in.Prompt, "/") {
-		return handleSlashCommand(in, stream)
+		return handleSlashCommandStream(in, stream)
 	}
 
 	// #TODO Binu hot fix shitty hack

@@ -12,6 +12,7 @@ export enum ContextMesssageContextType {
   LLM_QUERY = "LLM_QUERY",
   LLM_IMAGE_DESCRIBE = "LLM_IMAGE_DESCRIBE",
   IMAGE_GENERATION = "IMAGE_GENERATION",
+  IMAGE_EDIT = "IMAGE_EDIT",
   TTS = "TTS",
 }
 
