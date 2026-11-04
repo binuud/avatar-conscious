@@ -218,69 +218,6 @@ paths:
             type: array
             items:
               type: string
-        - name: control.meta.ui.components.class
-          in: query
-          schema:
-            type: string
-        - name: control.meta.ui.components.cols
-          in: query
-          schema:
-            type: integer
-            format: int32
-        - name: control.meta.ui.components.help
-          in: query
-          schema:
-            type: string
-        - name: control.meta.ui.components.id
-          in: query
-          schema:
-            type: string
-        - name: control.meta.ui.components.label
-          in: query
-          schema:
-            type: string
-        - name: control.meta.ui.components.placeHolder
-          in: query
-          schema:
-            type: string
-        - name: control.meta.ui.components.rows
-          in: query
-          schema:
-            type: integer
-            format: int32
-        - name: control.meta.ui.components.style
-          in: query
-          schema:
-            type: string
-        - name: control.meta.ui.components.type
-          in: query
-          schema:
-            $ref: '#/components/schemas/UiComponent.UiType'
-        - name: control.meta.ui.components.value
-          in: query
-          schema:
-            type: string
-        - name: control.meta.ui.components.width
-          in: query
-          schema:
-            type: integer
-            format: int32
-        - name: control.meta.ui.description
-          in: query
-          schema:
-            type: string
-        - name: control.meta.ui.name
-          in: query
-          schema:
-            type: string
-        - name: control.meta.ui.title
-          in: query
-          schema:
-            type: string
-        - name: control.meta.ui.uuid
-          in: query
-          schema:
-            type: string
         - name: control.meta.uuid
           in: query
           schema:
@@ -477,6 +414,8 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Step'
+        uiCollection:
+          $ref: '#/components/schemas/UiCollection'
         content:
           type: string
     AvatarActionType:
@@ -539,8 +478,6 @@ components:
           type: array
           items:
             type: string
-        ui:
-          $ref: '#/components/schemas/QuantumUI'
     AvatarStatus:
       type: string
       enum:
@@ -666,6 +603,21 @@ components:
         - "ROVER"
         - "ARM"
         - "HOMEAUTOMATION"
+    QuantumUI:
+      type: object
+      properties:
+        uuid:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        title:
+          type: string
+        components:
+          type: array
+          items:
+            $ref: '#/components/schemas/UiComponent'
     StartResponse:
       type: object
       properties:
@@ -706,6 +658,41 @@ components:
       properties:
         avatar:
           $ref: '#/components/schemas/Avatar'
+    UiCollection:
+      type: object
+      properties:
+        ui:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuantumUI'
+    UiComponent:
+      type: object
+      properties:
+        id:
+          type: string
+        class:
+          type: string
+        label:
+          type: string
+        value:
+          type: string
+        placeHolder:
+          type: string
+        help:
+          type: string
+        style:
+          type: string
+        width:
+          type: integer
+          format: int32
+        rows:
+          type: integer
+          format: int32
+        cols:
+          type: integer
+          format: int32
+        type:
+          $ref: '#/components/schemas/UiComponent.UiType'
     UiComponent.UiType:
       type: string
       enum:

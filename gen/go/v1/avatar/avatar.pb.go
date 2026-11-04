@@ -345,7 +345,7 @@ func (x AvatarControl_AvatarAction) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use AvatarControl_AvatarAction.Descriptor instead.
 func (AvatarControl_AvatarAction) EnumDescriptor() ([]byte, []int) {
-	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{7, 0}
+	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{8, 0}
 }
 
 type ToolParams struct {
@@ -492,10 +492,9 @@ type AvatarMeta struct {
 	// Name of the avatar
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// Description of the avatar
-	Description   string               `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
-	Image         string               `protobuf:"bytes,4,opt,name=image,proto3" json:"image,omitempty"`
-	Triggers      []string             `protobuf:"bytes,5,rep,name=triggers,proto3" json:"triggers,omitempty"`
-	Ui            *quantumUI.QuantumUI `protobuf:"bytes,6,opt,name=ui,proto3" json:"ui,omitempty"`
+	Description   string   `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Image         string   `protobuf:"bytes,4,opt,name=image,proto3" json:"image,omitempty"`
+	Triggers      []string `protobuf:"bytes,5,rep,name=triggers,proto3" json:"triggers,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -561,13 +560,6 @@ func (x *AvatarMeta) GetImage() string {
 func (x *AvatarMeta) GetTriggers() []string {
 	if x != nil {
 		return x.Triggers
-	}
-	return nil
-}
-
-func (x *AvatarMeta) GetUi() *quantumUI.QuantumUI {
-	if x != nil {
-		return x.Ui
 	}
 	return nil
 }
@@ -766,6 +758,53 @@ func (x *StepStatus) GetResponse() string {
 	return ""
 }
 
+// for parsing data from yaml or json,
+// we need to have a proper proto message of the format
+// which will be saved or read from
+type UiCollection struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Ui            []*quantumUI.QuantumUI `protobuf:"bytes,1,rep,name=ui,proto3" json:"ui,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UiCollection) Reset() {
+	*x = UiCollection{}
+	mi := &file_v1_avatar_avatar_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UiCollection) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UiCollection) ProtoMessage() {}
+
+func (x *UiCollection) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_avatar_avatar_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UiCollection.ProtoReflect.Descriptor instead.
+func (*UiCollection) Descriptor() ([]byte, []int) {
+	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *UiCollection) GetUi() []*quantumUI.QuantumUI {
+	if x != nil {
+		return x.Ui
+	}
+	return nil
+}
+
 // Avatar message representing a robot or avatar entity
 type Avatar struct {
 	state protoimpl.MessageState `protogen:"open.v1"`
@@ -775,6 +814,8 @@ type Avatar struct {
 	// System prompt for the avatar
 	SystemPrompt string  `protobuf:"bytes,5,opt,name=systemPrompt,proto3" json:"systemPrompt,omitempty"`
 	Steps        []*Step `protobuf:"bytes,6,rep,name=steps,proto3" json:"steps,omitempty"`
+	// multiple ui elements and forms can be associated with each avatr
+	UiCollection *UiCollection `protobuf:"bytes,7,opt,name=uiCollection,proto3" json:"uiCollection,omitempty"`
 	// the complete data of the Avatar file
 	Content       string `protobuf:"bytes,10,opt,name=content,proto3" json:"content,omitempty"`
 	unknownFields protoimpl.UnknownFields
@@ -783,7 +824,7 @@ type Avatar struct {
 
 func (x *Avatar) Reset() {
 	*x = Avatar{}
-	mi := &file_v1_avatar_avatar_proto_msgTypes[6]
+	mi := &file_v1_avatar_avatar_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -795,7 +836,7 @@ func (x *Avatar) String() string {
 func (*Avatar) ProtoMessage() {}
 
 func (x *Avatar) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_avatar_avatar_proto_msgTypes[6]
+	mi := &file_v1_avatar_avatar_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -808,7 +849,7 @@ func (x *Avatar) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Avatar.ProtoReflect.Descriptor instead.
 func (*Avatar) Descriptor() ([]byte, []int) {
-	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{6}
+	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *Avatar) GetMeta() *AvatarMeta {
@@ -839,6 +880,13 @@ func (x *Avatar) GetSteps() []*Step {
 	return nil
 }
 
+func (x *Avatar) GetUiCollection() *UiCollection {
+	if x != nil {
+		return x.UiCollection
+	}
+	return nil
+}
+
 func (x *Avatar) GetContent() string {
 	if x != nil {
 		return x.Content
@@ -864,7 +912,7 @@ type AvatarControl struct {
 
 func (x *AvatarControl) Reset() {
 	*x = AvatarControl{}
-	mi := &file_v1_avatar_avatar_proto_msgTypes[7]
+	mi := &file_v1_avatar_avatar_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -876,7 +924,7 @@ func (x *AvatarControl) String() string {
 func (*AvatarControl) ProtoMessage() {}
 
 func (x *AvatarControl) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_avatar_avatar_proto_msgTypes[7]
+	mi := &file_v1_avatar_avatar_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -889,7 +937,7 @@ func (x *AvatarControl) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AvatarControl.ProtoReflect.Descriptor instead.
 func (*AvatarControl) Descriptor() ([]byte, []int) {
-	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{7}
+	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *AvatarControl) GetMeta() *AvatarMeta {
@@ -968,15 +1016,14 @@ const file_v1_avatar_avatar_proto_rawDesc = "" +
 	"parameters\x1aQ\n" +
 	"\x0fParametersEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12(\n" +
-	"\x05value\x18\x02 \x01(\v2\x12.avatar.ToolParamsR\x05value:\x028\x01\"\xad\x01\n" +
+	"\x05value\x18\x02 \x01(\v2\x12.avatar.ToolParamsR\x05value:\x028\x01\"\x88\x01\n" +
 	"\n" +
 	"AvatarMeta\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x14\n" +
 	"\x05image\x18\x04 \x01(\tR\x05image\x12\x1a\n" +
-	"\btriggers\x18\x05 \x03(\tR\btriggers\x12#\n" +
-	"\x02ui\x18\x06 \x01(\v2\x13.quatumUI.QuantumUIR\x02ui\"T\n" +
+	"\btriggers\x18\x05 \x03(\tR\btriggers\"T\n" +
 	"\x04Step\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x16\n" +
@@ -997,12 +1044,15 @@ const file_v1_avatar_avatar_proto_rawDesc = "" +
 	"\fResponseType\x12\x18\n" +
 	"\x14RESPONSE_TYPE_IGNORE\x10\x00\x12\r\n" +
 	"\tIMAGEDATA\x10\x01\x12\b\n" +
-	"\x04TEXT\x10\x02\"\xc8\x01\n" +
+	"\x04TEXT\x10\x02\"3\n" +
+	"\fUiCollection\x12#\n" +
+	"\x02ui\x18\x01 \x03(\v2\x13.quatumUI.QuantumUIR\x02ui\"\x82\x02\n" +
 	"\x06Avatar\x12&\n" +
 	"\x04meta\x18\x01 \x01(\v2\x12.avatar.AvatarMetaR\x04meta\x124\n" +
 	"\vpermissions\x18\x04 \x01(\x0e2\x12.avatar.PermissionR\vpermissions\x12\"\n" +
 	"\fsystemPrompt\x18\x05 \x01(\tR\fsystemPrompt\x12\"\n" +
-	"\x05steps\x18\x06 \x03(\v2\f.avatar.StepR\x05steps\x12\x18\n" +
+	"\x05steps\x18\x06 \x03(\v2\f.avatar.StepR\x05steps\x128\n" +
+	"\fuiCollection\x18\a \x01(\v2\x14.avatar.UiCollectionR\fuiCollection\x12\x18\n" +
 	"\acontent\x18\n" +
 	" \x01(\tR\acontent\"\x89\x04\n" +
 	"\rAvatarControl\x12&\n" +
@@ -1074,7 +1124,7 @@ func file_v1_avatar_avatar_proto_rawDescGZIP() []byte {
 }
 
 var file_v1_avatar_avatar_proto_enumTypes = make([]protoimpl.EnumInfo, 5)
-var file_v1_avatar_avatar_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_v1_avatar_avatar_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_v1_avatar_avatar_proto_goTypes = []any{
 	(Permission)(0),                   // 0: avatar.Permission
 	(AvatarActionType)(0),             // 1: avatar.AvatarActionType
@@ -1087,37 +1137,39 @@ var file_v1_avatar_avatar_proto_goTypes = []any{
 	(*Step)(nil),                      // 8: avatar.Step
 	(*Steps)(nil),                     // 9: avatar.Steps
 	(*StepStatus)(nil),                // 10: avatar.StepStatus
-	(*Avatar)(nil),                    // 11: avatar.Avatar
-	(*AvatarControl)(nil),             // 12: avatar.AvatarControl
-	nil,                               // 13: avatar.Tool.ParametersEntry
-	(*quantumUI.QuantumUI)(nil),       // 14: quatumUI.QuantumUI
+	(*UiCollection)(nil),              // 11: avatar.UiCollection
+	(*Avatar)(nil),                    // 12: avatar.Avatar
+	(*AvatarControl)(nil),             // 13: avatar.AvatarControl
+	nil,                               // 14: avatar.Tool.ParametersEntry
 	(*conscious.Timestamp)(nil),       // 15: Timestamp
-	(*conscious.ContextMesssage)(nil), // 16: ContextMesssage
+	(*quantumUI.QuantumUI)(nil),       // 16: quatumUI.QuantumUI
+	(*conscious.ContextMesssage)(nil), // 17: ContextMesssage
 }
 var file_v1_avatar_avatar_proto_depIdxs = []int32{
-	13, // 0: avatar.Tool.parameters:type_name -> avatar.Tool.ParametersEntry
-	14, // 1: avatar.AvatarMeta.ui:type_name -> quatumUI.QuantumUI
-	8,  // 2: avatar.Steps.steps:type_name -> avatar.Step
-	2,  // 3: avatar.StepStatus.status:type_name -> avatar.AvatarStatus
-	15, // 4: avatar.StepStatus.created_at:type_name -> Timestamp
-	15, // 5: avatar.StepStatus.completed_at:type_name -> Timestamp
-	3,  // 6: avatar.StepStatus.response_type:type_name -> avatar.StepStatus.ResponseType
+	14, // 0: avatar.Tool.parameters:type_name -> avatar.Tool.ParametersEntry
+	8,  // 1: avatar.Steps.steps:type_name -> avatar.Step
+	2,  // 2: avatar.StepStatus.status:type_name -> avatar.AvatarStatus
+	15, // 3: avatar.StepStatus.created_at:type_name -> Timestamp
+	15, // 4: avatar.StepStatus.completed_at:type_name -> Timestamp
+	3,  // 5: avatar.StepStatus.response_type:type_name -> avatar.StepStatus.ResponseType
+	16, // 6: avatar.UiCollection.ui:type_name -> quatumUI.QuantumUI
 	7,  // 7: avatar.Avatar.meta:type_name -> avatar.AvatarMeta
 	0,  // 8: avatar.Avatar.permissions:type_name -> avatar.Permission
 	8,  // 9: avatar.Avatar.steps:type_name -> avatar.Step
-	7,  // 10: avatar.AvatarControl.meta:type_name -> avatar.AvatarMeta
-	2,  // 11: avatar.AvatarControl.status:type_name -> avatar.AvatarStatus
-	4,  // 12: avatar.AvatarControl.action:type_name -> avatar.AvatarControl.AvatarAction
-	10, // 13: avatar.AvatarControl.stepStatuses:type_name -> avatar.StepStatus
-	16, // 14: avatar.AvatarControl.response:type_name -> ContextMesssage
-	15, // 15: avatar.AvatarControl.created_at:type_name -> Timestamp
-	15, // 16: avatar.AvatarControl.completed_at:type_name -> Timestamp
-	5,  // 17: avatar.Tool.ParametersEntry.value:type_name -> avatar.ToolParams
-	18, // [18:18] is the sub-list for method output_type
-	18, // [18:18] is the sub-list for method input_type
-	18, // [18:18] is the sub-list for extension type_name
-	18, // [18:18] is the sub-list for extension extendee
-	0,  // [0:18] is the sub-list for field type_name
+	11, // 10: avatar.Avatar.uiCollection:type_name -> avatar.UiCollection
+	7,  // 11: avatar.AvatarControl.meta:type_name -> avatar.AvatarMeta
+	2,  // 12: avatar.AvatarControl.status:type_name -> avatar.AvatarStatus
+	4,  // 13: avatar.AvatarControl.action:type_name -> avatar.AvatarControl.AvatarAction
+	10, // 14: avatar.AvatarControl.stepStatuses:type_name -> avatar.StepStatus
+	17, // 15: avatar.AvatarControl.response:type_name -> ContextMesssage
+	15, // 16: avatar.AvatarControl.created_at:type_name -> Timestamp
+	15, // 17: avatar.AvatarControl.completed_at:type_name -> Timestamp
+	5,  // 18: avatar.Tool.ParametersEntry.value:type_name -> avatar.ToolParams
+	19, // [19:19] is the sub-list for method output_type
+	19, // [19:19] is the sub-list for method input_type
+	19, // [19:19] is the sub-list for extension type_name
+	19, // [19:19] is the sub-list for extension extendee
+	0,  // [0:19] is the sub-list for field type_name
 }
 
 func init() { file_v1_avatar_avatar_proto_init() }
@@ -1131,7 +1183,7 @@ func file_v1_avatar_avatar_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_v1_avatar_avatar_proto_rawDesc), len(file_v1_avatar_avatar_proto_rawDesc)),
 			NumEnums:      5,
-			NumMessages:   9,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

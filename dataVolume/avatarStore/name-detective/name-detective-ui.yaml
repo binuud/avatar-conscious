@@ -1,0 +1,39 @@
+ui:  
+- uuid: ''
+  name: get-name
+  description: Country Guesser
+  title: I can guess your country
+  components:
+  - id: firstName
+    class: ''
+    label: First Name
+    value: ''
+    placeHolder: Enter your first name
+    help: ''
+    style: ''
+    width: 50
+    rows: 0
+    cols: 0
+    type: INPUT
+  - id: lastName
+    class: ''
+    label: Last Name
+    value: ''
+    placeHolder: Enter your last name
+    help: ''
+    style: ''
+    width: 50
+    rows: 0
+    cols: 0
+    type: INPUT
+  - id: ''
+    class: ''
+    label: ''
+    value: Avatar will try to guess the country of origin of the name and the gender of the name.
+    placeHolder: ''
+    help: ''
+    style: ''
+    width: 100
+    rows: 0
+    cols: 0
+    type: PLAINTEXT  

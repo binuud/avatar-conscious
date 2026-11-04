@@ -1,0 +1,28 @@
+ui:  
+- uuid: ''
+  name: First Pane
+  description: Country Guesser
+  title: I can guess your country
+  components:
+  - id: webcamview
+    class: ''
+    label: WebCamera
+    value: ''
+    placeHolder: ''
+    help: ''
+    style: ''
+    width: 100
+    rows: 0
+    cols: 0
+    type: WEBCAM
+  - id: ''
+    class: ''
+    label: ''
+    value: Avatar will try to guess in detail, what it is seeing from the webcamera.
+    placeHolder: ''
+    help: ''
+    style: ''
+    width: 100
+    rows: 0
+    cols: 0
+    type: PLAINTEXT  

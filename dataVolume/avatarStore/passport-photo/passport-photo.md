@@ -5,34 +5,6 @@ image: /static/avatarStore/passport-photo.png
 description: This is a reference demo, to showcase webcamera, external utility pipeline.
 triggers:
   - webcam
-ui:  
-  uuid: ''
-  name: First Pane
-  description: Passport Photo Maker
-  title: Passport Photo Maker
-  components:
-  - id: webcamview
-    class: ''
-    label: WebCamera
-    value: ''
-    placeHolder: ''
-    help: ''
-    style: ''
-    width: 100
-    rows: 0
-    cols: 0
-    type: WEBCAM
-  - id: ''
-    class: ''
-    label: ''
-    value: Avatar will try to generate a passport style photo of you.
-    placeHolder: ''
-    help: ''
-    style: ''
-    width: 100
-    rows: 0
-    cols: 0
-    type: PLAINTEXT  
 ---
 # Passport Photo Maker
 
