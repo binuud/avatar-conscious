@@ -18,7 +18,7 @@ Launch an Avatar UI interface.
 
 Use the following prompt, to launch ui
 ```prompt
-Launch an Avatar UI interface. And get the firstname and lastname of user.
+Launch an Avatar UI interface with id get-name. And get the firstname and lastname of user.
 ```
 
 ## Step 2:

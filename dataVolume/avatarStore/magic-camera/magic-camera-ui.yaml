@@ -1,31 +1,31 @@
 ui:
 - uuid: ''
-  name: get-style
-  description: Get prompt from User
-  title: Enter styles ideas and prompts
+  name: web-camera
+  description: WebCamera
+  title: Magic Camera
   components:
-  - id: styles
+  - id: webcamview
     class: ''
-    label: Style
+    label: WebCamera
     value: ''
-    placeHolder: Enter style keywords
-    help: ''
-    style: ''
-    width: 100
-    rows: 0
-    cols: 0
-    type: INPUT
-  - id: ''
-    class: ''
-    label: ''
-    value: Avatar will use the style keywords to modify your image
     placeHolder: ''
     help: ''
     style: ''
     width: 100
     rows: 0
     cols: 0
-    type: PLAINTEXT    
+    type: WEBCAM
+  - id: ''
+    class: ''
+    label: ''
+    value: Avatar will try to generate a photo of you, from ideas in the next prompt.
+    placeHolder: ''
+    help: ''
+    style: ''
+    width: 100
+    rows: 0
+    cols: 0
+    type: PLAINTEXT   
 - uuid: ''
   name: get-prompt
   description: Get prompt from User

@@ -1,6 +1,6 @@
 ui:  
 - uuid: ''
-  name: First Pane
+  name: web-camera
   description: Passport Photo Maker
   title: Passport Photo Maker
   components:

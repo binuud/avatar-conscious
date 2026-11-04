@@ -46,7 +46,7 @@ func (a *AvatarWrapper) RunStep(i int, step *pb.Step) (*pbConcsious.ContextMesss
 
 	out := &pbConcsious.ContextMesssage{}
 	logrus.Infof("%s (%d) : %s", step.Name, i+1, step.Prompt)
-	a.Memory.Messages = append(a.Memory.Messages, openai.UserMessage(step.Prompt))
+	a.Memory.AppendMemory(openai.UserMessage(fmt.Sprintf("Step No: %d, %s", i+1, step.Prompt)))
 
 	a.Memory.DumpMemory(nil)
 
@@ -61,6 +61,7 @@ func (a *AvatarWrapper) RunStep(i int, step *pb.Step) (*pbConcsious.ContextMesss
 	// if so call hanldle the tool and return the output response
 	msg := completions.Choices[0].Message
 	if len(msg.ToolCalls) > 0 {
+		// a.Memory.AppendMemory(openai.ToolMessage(msg.ToolCalls[0].RawJSON(), msg.ToolCalls[0].ID))
 		out, err = tools.GlobalCommonToolsRegistry.HandleToolCalls(msg.ToolCalls, step.Prompt)
 		if err != nil {
 			logrus.Errorf("HandleToolCalls: %v \n", err)
@@ -74,19 +75,18 @@ func (a *AvatarWrapper) RunStep(i int, step *pb.Step) (*pbConcsious.ContextMesss
 			// data will be id of the UI
 			out.Action = "SHOW-UI"
 			logrus.Infof("RunStep : SHOW-UI called with id %s", out.Data)
-
+			a.Memory.AppendMemory(openai.ToolMessage(fmt.Sprintf("Avatar UI Interface with id %s shown to the user by the tool function", out.Data), msg.ToolCalls[0].ID))
+			// a.Memory.AppendMemory(openai.DeveloperMessage(fmt.Sprintf("Avatar UI Interface with id %s shown to the user by the tool function", out.Data)))
 			// check if ui is present if not bail out
 			_, err := a.CheckUiExists(out.Data)
 			if err != nil {
 				logrus.Errorf("RunStep %v", err)
 				return nil, err
 			}
-
 		}
-
 	} else {
 		out.Response = msg.Content
-		logrus.Infof("Out Msg : %s", msg.Content)
+		logrus.Infof("No Tools Called !!, Out Msg : %s", msg.Content)
 	}
 	return out, nil
 }

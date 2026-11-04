@@ -16,7 +16,7 @@ Launch an Avatar UI webcamera interface.
 
 Use the following prompt, to launch ui with webcamera
 ```prompt
-Launch an Avatar UI interface, and get an image from the webcamera, that will be used by LLM to create a passport style photo
+Launch an Avatar UI interface with id web-camera, and get an image from the webcamera, that will be used by LLM to create a passport style photo
 ```
 
 ## Step 2: 

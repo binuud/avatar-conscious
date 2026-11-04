@@ -82,7 +82,7 @@ func (s *avatarGrpcServer) Control(stream grpc.BidiStreamingServer[pb.ControlReq
 			logrus.Errorf("Failed to receive message: %v", err)
 			return err
 		}
-		logrus.Infof("Received action from client %v, %v", in.Control.Action, in)
+		logrus.Infof("Received action from client %v, Step No: %d ", in.Control.Action, (in.Control.CurrentStep + 1))
 
 		switch in.Control.Action {
 		// initialize the avatar session
@@ -189,14 +189,17 @@ func (s *avatarGrpcServer) handleAvatarRun(in *pb.ControlRequest,
 	out.Control.StepStatuses = s.avatar.GetStepStatusesObj()
 	// check if this is an restart from UI
 	currentStep := in.Control.CurrentStep
+
 	if currentStep >= 0 && currentStep < int32(len(in.Control.StepStatuses)) {
 		currentStepObj := in.Control.StepStatuses[currentStep]
+		userResponse := currentStepObj.Response
+		prompt := ""
 		if currentStepObj.Status == pb.AvatarStatus_STATUS_SUCCESS {
 			logrus.Infof("Continue from step %d", currentStep+1)
-			logrus.Infof("Response from UI %s", currentStepObj.Response)
+			logrus.Infof("Response from UI %s", userResponse[:min(len(userResponse), 100)])
 			// check if response is set
 
-			if currentStepObj.Response != "" {
+			if userResponse != "" {
 				// mutate the context, so LLM knows what the user sent
 				if currentStepObj.ResponseType == pb.StepStatus_IMAGEDATA {
 
@@ -205,15 +208,18 @@ func (s *avatarGrpcServer) handleAvatarRun(in *pb.ControlRequest,
 					// and push the filename into llm memory context
 
 					newFileName := fmt.Sprintf("%s.%s", uuid.New().String(), "png")
-					err := utils.SaveImageDataToFile(newFileName, currentStepObj.Response)
+					err := utils.SaveImageDataToFile(newFileName, userResponse)
 					if err != nil {
 						return err
 					}
-					s.avatar.Memory.Messages = append(s.avatar.Memory.Messages, openai.UserMessage("image is stored in filename ```"+newFileName+"```"))
-				} else {
-					s.avatar.Memory.Messages = append(s.avatar.Memory.Messages, openai.UserMessage(currentStepObj.Response))
-				}
+					prompt = fmt.Sprintf("Step No: %d, image is stored in filename ```%s```", (currentStep + 1), newFileName)
 
+				} else {
+					prompt = fmt.Sprintf("Step No: %d, user response - %s", currentStep, currentStepObj.Response)
+
+				}
+				s.avatar.Memory.AppendMemory(openai.UserMessage(prompt))
+				s.avatar.Memory.AppendMemory(openai.AssistantMessage("Ok."))
 			}
 			in.Control.CurrentStep++
 		}

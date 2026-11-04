@@ -25,34 +25,7 @@ func Test_Tool_Registry(t *testing.T) {
 		want_param string
 		want_error bool
 	}{
-		// {
-		// 	name:       "Check tools with weather api, city chennai",
-		// 	prompt:     "What is the current weather in Chennai",
-		// 	want_tool:  "get_weather",
-		// 	want_param: "Chennai",
-		// 	want_error: false,
-		// },
-		// {
-		// 	name:       "Check tools with weather api, city delhi",
-		// 	prompt:     "What is the current weather in Delhi",
-		// 	want_tool:  "get_weather",
-		// 	want_param: "Delhi",
-		// 	want_error: false,
-		// },
-		// {
-		// 	name:       "Check price of stock of Apple",
-		// 	prompt:     "What is the latest stock price of Apple",
-		// 	want_tool:  "get_price_of_stock",
-		// 	want_param: "Apple",
-		// 	want_error: false,
-		// },
-		// {
-		// 	name:       "Check price of stock of Google",
-		// 	prompt:     "Get me the stock price for Google",
-		// 	want_tool:  "get_price_of_stock",
-		// 	want_param: "Google",
-		// 	want_error: false,
-		// },
+
 		{
 			name:       "Image generation prompt",
 			prompt:     "Create a realistic photo of a coffee cup, with steaming hot, and on a table",

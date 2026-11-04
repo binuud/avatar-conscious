@@ -1,6 +1,6 @@
 ui:  
 - uuid: ''
-  name: First Pane
+  name: web-camera
   description: Country Guesser
   title: I can guess your country
   components:

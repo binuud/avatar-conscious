@@ -31,12 +31,12 @@ func CreateStorageDirStructure() {
 	}
 
 	// Initialize the file structure
-	logrus.Println("Initializing avatar storage directory structure...")
+	logrus.Debugln("Initializing avatar storage directory structure...")
 	if err := initStorageStructure(dirsToCreate); err != nil {
 		logrus.Fatalf("Failed to initialize storage directories: %v", err)
 	}
 
-	logrus.Println("Successfully verified/created directory structure. Proceeding with application start...")
+	logrus.Debugln("Successfully verified/created directory structure. Proceeding with application start...")
 
 }
 

@@ -119,18 +119,18 @@ func runHtppServer() {
 
 	// handle llm proxt on path /llmHandler
 	httpMux.Handle("/llmHandler/", http.StripPrefix("/llmHandler", llmProxyServer.GetLlmProxyHandler()))
-	logrus.Infof("Server directory %s -> %s", "/llmHandler/", "llm proxy")
+	logrus.Debugf("Server directory %s -> %s", "/llmHandler/", "llm proxy")
 
 	// handle websocket
 	// httpMux.HandleFunc("/ws", mqttServer.WebsocketHandler)
 
 	// link the concious gateway server to httpmux
 	httpMux.Handle("/api/", http.StripPrefix("/api", gwMux))
-	logrus.Infof("Server directory %s -> %s", "/api/avatar/ws", "avatar control websocket")
-	logrus.Infof("Server directory %s -> %s", "/api/", "conscious server")
-	logrus.Infof("Server directory %s -> %s", "/api/", "metrics server")
-	logrus.Infof("Server directory %s -> %s", "/api/", "avatar store server")
-	logrus.Infof("Server directory %s -> %s", "/api/", "settings server")
+	logrus.Debugf("Server directory %s -> %s", "/api/avatar/ws", "avatar control websocket")
+	logrus.Debugf("Server directory %s -> %s", "/api/", "conscious server")
+	logrus.Debugf("Server directory %s -> %s", "/api/", "metrics server")
+	logrus.Debugf("Server directory %s -> %s", "/api/", "avatar store server")
+	logrus.Debugf("Server directory %s -> %s", "/api/", "settings server")
 
 	// Configure CORS options as needed
 	corsEnabledMux := cors.New(cors.Options{
@@ -162,7 +162,7 @@ func main() {
 	} else {
 		logrus.SetLevel(logrus.InfoLevel)
 	}
-
+	logrus.SetLevel(logrus.DebugLevel)
 	logrus.Println("Welcome to life")
 	bootstrap.Bootstrap(buildEnv)
 

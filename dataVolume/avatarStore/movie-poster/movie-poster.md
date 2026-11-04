@@ -6,40 +6,36 @@ description: This is a reference demo, to showcase multi form input
 triggers:
   - webcam
 ---
-# Magic Camera
+# Movie-Poster
 
 ## Step 1: 
 
 ```Description
-Launch an Avatar UI webcamera interface.
+Launch an Avatar UI web-camera interface
 ```
 
-Use the following prompt, to launch ui with webcamera
 ```prompt
-Launch an Avatar UI interface, and get an image from the webcamera, that will be used by LLM to create a passport style photo
+Launch an Avatar UI interface, the ui interface id is : web-camera
 ```
 
 ## Step 2: 
 
 ```Description
-Launch an Avatar UI webcamera interface.
+Launch an Avatar UI get-prompt interface
 ```
 
-Use the following prompt, to launch ui with webcamera
 ```prompt
-Launch an Avatar UI interface, and get an image from the webcamera, that will be used by LLM to create a passport style photo
+Launch an Avatar UI interface, the ui interface id is : get-prompt
 ```
+
 
 ## Step 3: 
 
 ```Description
-Generate an passport style image using the image from web camera as reference
+Generate an image with the input prompt and given image as reference
 ```
 
 Use the following prompt to describe the image
 ```prompt
-Edit the given image, remove the background, change it to blue, make a passport photo of the person in the image, wearing suit, do not change skin tone, do not smoothen skin.
+Edit the given image in step number 1, use prompt given in step 2
 ```
-
-
-

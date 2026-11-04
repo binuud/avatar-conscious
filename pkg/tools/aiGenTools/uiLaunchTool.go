@@ -14,7 +14,7 @@ import (
 // this provides the input structure
 type UiLaunchTool_Input struct {
 	// refined text prompt
-	Text string `json:"text"`
+	InterfaceId string `json:"interface_id"`
 }
 
 // implements the CommonToolInterface
@@ -37,23 +37,23 @@ func (t UiLaunchTool) Name() string {
 // which is used by LLM, to decide if this tool has to be called,
 // for the given prompt
 func (t UiLaunchTool) Description() string {
-	return "Launch an Avatar UI interface."
+	return "Launch an Avatar UI interface on browser"
 }
 
 func (t UiLaunchTool) InputSchema() string {
-	return "Launch an Avatar UI interface."
+	return "Launch an Avatar UI interface on browser"
 }
 
 func (t UiLaunchTool) InputSchemaAsOpenAiParam() openai.FunctionParameters {
 	return openai.FunctionParameters{
 		"type": "object",
 		"properties": map[string]any{
-			"text": map[string]string{
+			"interface_id": map[string]string{
 				"type":        "string",
-				"description": "Launch an Avatar UI interface. Get the ui interface id here",
+				"description": "get the Avatar UI interface to be launched",
 			},
 		},
-		"required": []string{"text"},
+		"required": []string{"interface_id"},
 	}
 }
 
@@ -63,12 +63,12 @@ func (t UiLaunchTool) Handler(in *pb.ContextMesssage) (*pb.ContextMesssage, erro
 	if err := json.Unmarshal([]byte(in.Prompt), &inpObj); err != nil {
 		return nil, err
 	}
-	logrus.Infof("UiLaunchTool Arguments parsed, launch ui tool id : %s", inpObj.Text)
+	logrus.Infof("UiLaunchTool Arguments parsed, launch ui tool id : %s", inpObj.InterfaceId)
 
 	return &pb.ContextMesssage{
 		Uuid:   in.Uuid,
 		Prompt: in.Prompt,
 		Action: "SHOW-UI",
-		Data:   inpObj.Text,
+		Data:   inpObj.InterfaceId,
 	}, nil
 }

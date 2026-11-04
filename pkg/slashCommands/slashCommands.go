@@ -74,5 +74,5 @@ func Bootstrap() {
 	SlashCommands.AddCommand(settings.NewSettingsCommand())
 	SlashCommands.AddCommand(testbed.NewTestBedCommand())
 
-	Execute()
+	// Execute()
 }
