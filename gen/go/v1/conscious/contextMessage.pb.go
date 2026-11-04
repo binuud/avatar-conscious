@@ -40,8 +40,11 @@ const (
 	ContextMesssage_LLM_IMAGE_DESCRIBE ContextMesssage_ContextType = 3
 	// for image generation
 	ContextMesssage_IMAGE_GENERATION ContextMesssage_ContextType = 4
+	// for image edit
+	// or image generation on reference images
+	ContextMesssage_IMAGE_EDIT ContextMesssage_ContextType = 5
 	// text to speech
-	ContextMesssage_TTS ContextMesssage_ContextType = 5
+	ContextMesssage_TTS ContextMesssage_ContextType = 6
 )
 
 // Enum value maps for ContextMesssage_ContextType.
@@ -52,7 +55,8 @@ var (
 		2: "LLM_QUERY",
 		3: "LLM_IMAGE_DESCRIBE",
 		4: "IMAGE_GENERATION",
-		5: "TTS",
+		5: "IMAGE_EDIT",
+		6: "TTS",
 	}
 	ContextMesssage_ContextType_value = map[string]int32{
 		"CONTEXT_TYPE_IGNORE": 0,
@@ -60,7 +64,8 @@ var (
 		"LLM_QUERY":           2,
 		"LLM_IMAGE_DESCRIBE":  3,
 		"IMAGE_GENERATION":    4,
-		"TTS":                 5,
+		"IMAGE_EDIT":          5,
+		"TTS":                 6,
 	}
 )
 
@@ -610,7 +615,7 @@ const file_v1_conscious_contextMessage_proto_rawDesc = "" +
 	"\x0eUploadResponse\x12\x1b\n" +
 	"\tupload_id\x18\x01 \x01(\tR\buploadId\x12\x16\n" +
 	"\x06status\x18\x02 \x01(\tR\x06status\x12#\n" +
-	"\rerror_message\x18\x03 \x01(\tR\ferrorMessage\"\x9d\t\n" +
+	"\rerror_message\x18\x03 \x01(\tR\ferrorMessage\"\xad\t\n" +
 	"\x0fContextMesssage\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
@@ -641,14 +646,16 @@ const file_v1_conscious_contextMessage_proto_rawDesc = "" +
 	"\tcreatedAt\x183 \x01(\v2\n" +
 	".TimestampR\tcreatedAt\x12,\n" +
 	"\vcompletedAt\x184 \x01(\v2\n" +
-	".TimestampR\vcompletedAt\"\x82\x01\n" +
+	".TimestampR\vcompletedAt\"\x92\x01\n" +
 	"\vContextType\x12\x17\n" +
 	"\x13CONTEXT_TYPE_IGNORE\x10\x00\x12\x14\n" +
 	"\x10LLM_STREAM_QUERY\x10\x01\x12\r\n" +
 	"\tLLM_QUERY\x10\x02\x12\x16\n" +
 	"\x12LLM_IMAGE_DESCRIBE\x10\x03\x12\x14\n" +
-	"\x10IMAGE_GENERATION\x10\x04\x12\a\n" +
-	"\x03TTS\x10\x05\"N\n" +
+	"\x10IMAGE_GENERATION\x10\x04\x12\x0e\n" +
+	"\n" +
+	"IMAGE_EDIT\x10\x05\x12\a\n" +
+	"\x03TTS\x10\x06\"N\n" +
 	"\vContextRole\x12\x0f\n" +
 	"\vROLE_IGNORE\x10\x00\x12\b\n" +
 	"\x04USER\x10\x01\x12\r\n" +
