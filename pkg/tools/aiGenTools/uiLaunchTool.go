@@ -50,7 +50,7 @@ func (t UiLaunchTool) InputSchemaAsOpenAiParam() openai.FunctionParameters {
 		"properties": map[string]any{
 			"text": map[string]string{
 				"type":        "string",
-				"description": "Launch an Avatar UI interface. Instructions from the prompt is saved here.",
+				"description": "Launch an Avatar UI interface. Get the ui interface id here",
 			},
 		},
 		"required": []string{"text"},
@@ -63,11 +63,12 @@ func (t UiLaunchTool) Handler(in *pb.ContextMesssage) (*pb.ContextMesssage, erro
 	if err := json.Unmarshal([]byte(in.Prompt), &inpObj); err != nil {
 		return nil, err
 	}
-	logrus.Infof("Arguments parsed into UiLaunchTool_Input structure %v", in)
+	logrus.Infof("UiLaunchTool Arguments parsed, launch ui tool id : %s", inpObj.Text)
 
 	return &pb.ContextMesssage{
 		Uuid:   in.Uuid,
 		Prompt: in.Prompt,
-		Action: inpObj.Text,
+		Action: "SHOW-UI",
+		Data:   inpObj.Text,
 	}, nil
 }

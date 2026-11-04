@@ -254,10 +254,12 @@ func (s *avatarGrpcServer) handleAvatarRun(in *pb.ControlRequest,
 			out.Control.StepStatuses[i].Status = pb.AvatarStatus_STATUS_SUCCESS
 		}
 
-		if outContextMsg.Action == "get_ui_launch_tool" {
+		if outContextMsg.Action == "SHOW-UI" {
 			// we need to launch an UI in avatar
 			out.Control.StepStatuses[i].Status = pb.AvatarStatus_STATUS_UI_WAITING
+			out.Control.StepStatuses[i].Response = outContextMsg.Data
 			out.Control.Status = pb.AvatarStatus_STATUS_UI_WAITING
+
 			if err := stream.Send(out); err != nil {
 				logrus.Errorf("Connect: Failed to send message: %v", err)
 				return err

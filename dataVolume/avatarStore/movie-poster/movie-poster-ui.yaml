@@ -1,0 +1,55 @@
+ui:
+- uuid: ''
+  name: web-camera
+  description: Magic Camera
+  title: Magic Camera
+  components:
+  - id: webcamview
+    class: ''
+    label: WebCamera
+    value: ''
+    placeHolder: ''
+    help: ''
+    style: ''
+    width: 100
+    rows: 0
+    cols: 0
+    type: WEBCAM
+  - id: ''
+    class: ''
+    label: ''
+    value: Avatar will try to generate a passport style photo of you.
+    placeHolder: ''
+    help: ''
+    style: ''
+    width: 100
+    rows: 0
+    cols: 0
+    type: PLAINTEXT    
+- uuid: ''
+  name: user-prompt
+  description: Get style prompt from User
+  title: Enter styles ideas and prompts
+  components:
+  - id: styles
+    class: ''
+    label: Style
+    value: ''
+    placeHolder: Enter style keywords
+    help: ''
+    style: ''
+    width: 100
+    rows: 0
+    cols: 0
+    type: INPUT
+  - id: ''
+    class: ''
+    label: ''
+    value: Avatar will use the style keywords to modify your image
+    placeHolder: ''
+    help: ''
+    style: ''
+    width: 100
+    rows: 0
+    cols: 0
+    type: PLAINTEXT  

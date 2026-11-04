@@ -11,35 +11,34 @@ triggers:
 ## Step 1: 
 
 ```Description
-Launch an Avatar UI webcamera interface.
+Launch an Avatar UI get-prompt interface
 ```
 
-Use the following prompt, to launch ui with webcamera
+Use the following prompt, to launch ui with get-prompt interface
 ```prompt
-Launch an Avatar UI interface, and get an image from the webcamera, that will be used by LLM to create a passport style photo
+Launch an Avatar UI interface, the interface id is get-prompt
 ```
+
 
 ## Step 2: 
 
 ```Description
-Launch an Avatar UI webcamera interface.
+Launch an Avatar UI get-style interface
 ```
 
-Use the following prompt, to launch ui with webcamera
+Use the following prompt, to launch ui with get-style interface
 ```prompt
-Launch an Avatar UI interface, and get an image from the webcamera, that will be used by LLM to create a passport style photo
+Launch an Avatar UI interface, the interface id is get-style
 ```
+
 
 ## Step 3: 
 
 ```Description
-Generate an passport style image using the image from web camera as reference
+Generate an image with the input styles as reference
 ```
 
 Use the following prompt to describe the image
 ```prompt
-Edit the given image, remove the background, change it to blue, make a passport photo of the person in the image, wearing suit, do not change skin tone, do not smoothen skin.
+Create a new image, with style and prompt, given by user in earlier prompts.
 ```
-
-
-

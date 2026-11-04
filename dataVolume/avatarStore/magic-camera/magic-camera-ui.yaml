@@ -1,24 +1,24 @@
 ui:
 - uuid: ''
-  name: web-camera
-  description: Passport Photo Maker
-  title: Passport Photo Maker
+  name: get-style
+  description: Get prompt from User
+  title: Enter styles ideas and prompts
   components:
-  - id: webcamview
+  - id: styles
     class: ''
-    label: WebCamera
+    label: Style
     value: ''
-    placeHolder: ''
+    placeHolder: Enter style keywords
     help: ''
     style: ''
     width: 100
     rows: 0
     cols: 0
-    type: WEBCAM
+    type: INPUT
   - id: ''
     class: ''
     label: ''
-    value: Avatar will try to generate a passport style photo of you.
+    value: Avatar will use the style keywords to modify your image
     placeHolder: ''
     help: ''
     style: ''
@@ -27,25 +27,25 @@ ui:
     cols: 0
     type: PLAINTEXT    
 - uuid: ''
-  name: user-prompt
-  description: Passport Photo Maker
-  title: Passport Photo Maker
+  name: get-prompt
+  description: Get prompt from User
+  title: Enter styles ideas and prompts
   components:
-  - id: webcamview
+  - id: styles
     class: ''
-    label: WebCamera
+    label: Style
     value: ''
-    placeHolder: ''
+    placeHolder: Enter style keywords
     help: ''
     style: ''
     width: 100
     rows: 0
     cols: 0
-    type: WEBCAM
+    type: INPUT
   - id: ''
     class: ''
     label: ''
-    value: Avatar will try to generate a passport style photo of you.
+    value: Avatar will use the style keywords to modify your image
     placeHolder: ''
     help: ''
     style: ''

@@ -1,7 +1,9 @@
 package avatarStoreServer
 
 import (
+	"cmp"
 	"fmt"
+	"slices"
 	"sync"
 	"time"
 
@@ -93,6 +95,11 @@ func (s *avatarStore) List(limit, offset int32) ([]*pb.Avatar, int32) {
 		avatars = append(avatars, avatar)
 		count++
 	}
+
+	// Sort by Age ascending
+	slices.SortFunc(avatars, func(a, b *pb.Avatar) int {
+		return cmp.Compare(a.Meta.Name, b.Meta.Name)
+	})
 
 	return avatars, int32(len(s.avatars))
 }
