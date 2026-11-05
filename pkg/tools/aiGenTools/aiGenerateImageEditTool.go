@@ -45,11 +45,11 @@ func (t AiGenerateImageEditTool) Name() string {
 // which is used by LLM, to decide if this tool has to be called,
 // for the given prompt
 func (t AiGenerateImageEditTool) Description() string {
-	return "Create an image using another image file as reference. No image description invovled."
+	return "Edit the given image, or use the given image as reference to create a new image"
 }
 
 func (t AiGenerateImageEditTool) InputSchema() string {
-	return "Create an image using another image file as reference. No image description invovled."
+	return "Edit the given image, or use the given image as reference to create a new image"
 }
 
 func (t AiGenerateImageEditTool) InputSchemaAsOpenAiParam() openai.FunctionParameters {
@@ -58,11 +58,11 @@ func (t AiGenerateImageEditTool) InputSchemaAsOpenAiParam() openai.FunctionParam
 		"properties": map[string]any{
 			"imagefile": map[string]string{
 				"type":        "string",
-				"description": "The image filename which has to be used as reference image during image edit or updation",
+				"description": "The web cam image or png jpeg image filename which has to be used as reference image for get_ai_edit_image",
 			},
 			"prompt": map[string]string{
 				"type":        "string",
-				"description": "The image edit or use image as reference prompt, sent by the user",
+				"description": "A refined and amplified instructions for editing the image or photograph",
 			},
 		},
 		"required": []string{"text"},

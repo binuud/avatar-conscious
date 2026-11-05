@@ -46,11 +46,11 @@ func (t AiGenerateImageDescriptionTool) Name() string {
 // which is used by LLM, to decide if this tool has to be called,
 // for the given prompt
 func (t AiGenerateImageDescriptionTool) Description() string {
-	return "Describe the given image or photograph, and collect some data from it."
+	return "Describe the given image or photograph, and collect some data from it. Do not edit the image or generate an image"
 }
 
 func (t AiGenerateImageDescriptionTool) InputSchema() string {
-	return "Describe the given image or photograph, and collect some data from it."
+	return "Describe the given image or photograph, and collect some data from it. Do not edit the image or generate an image"
 }
 
 func (t AiGenerateImageDescriptionTool) InputSchemaAsOpenAiParam() openai.FunctionParameters {
