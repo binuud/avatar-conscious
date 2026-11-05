@@ -76,7 +76,7 @@ func (a *AvatarWrapper) RunStep(i int, step *pb.Step) (*pbConcsious.ContextMesss
 			out.Action = "SHOW-UI"
 			logrus.Infof("RunStep : SHOW-UI called with id %s", out.Data)
 			a.Memory.AppendMemory(openai.ToolMessage(fmt.Sprintf("Avatar UI Interface with id %s shown to the user by the tool function", out.Data), msg.ToolCalls[0].ID))
-			// a.Memory.AppendMemory(openai.DeveloperMessage(fmt.Sprintf("Avatar UI Interface with id %s shown to the user by the tool function", out.Data)))
+			a.Memory.AppendMemory(openai.DeveloperMessage(fmt.Sprintf("Avatar UI Interface with id %s shown to the user by the tool function", out.Data)))
 			// check if ui is present if not bail out
 			_, err := a.CheckUiExists(out.Data)
 			if err != nil {

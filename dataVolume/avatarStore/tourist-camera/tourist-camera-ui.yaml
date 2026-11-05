@@ -26,3 +26,30 @@ ui:
     rows: 0
     cols: 0
     type: PLAINTEXT  
+- uuid: ''
+  name: select-place
+  description: Enter the tourist place
+  title: Enter the tourist place
+  components:
+  - id: select-place
+    class: ''
+    label: Tourist Place
+    value: ''
+    placeHolder: Enter the tourist place
+    help: ''
+    style: ''
+    width: 100
+    rows: 0
+    cols: 0
+    type: INPUT
+  - id: ''
+    class: ''
+    label: ''
+    value: Avatar will use the style keywords to modify your image
+    placeHolder: ''
+    help: ''
+    style: ''
+    width: 100
+    rows: 0
+    cols: 0
+    type: PLAINTEXT      

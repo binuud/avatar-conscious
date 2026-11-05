@@ -17,10 +17,21 @@ Launch an Avatar UI webcamera interface.
 
 Use the following prompt, to launch ui with webcamera
 ```prompt
-Launch an Avatar UI interface with id web-camera, and get an image from the webcamera, that will be used by LLM to create a tourist photo
+Launch an Avatar UI interface with id "web-camera"
+```
+## Step 2: 
+
+```Description
+Launch an Avatar UI select-place interface
 ```
 
-## Step 2:
+```prompt
+Launch an Avatar UI interface, the ui interface id is : "select-place"
+```
+
+
+
+## Step 3:
 
 ```Description
 Generate an image using the image from web camera as reference
@@ -28,5 +39,8 @@ Generate an image using the image from web camera as reference
 
 Use the following prompt to describe the image
 ```prompt
-Edit the given image, remove the background. Then create a new image, using the image of the person from webcamera as reference, the image filename is given in the context, the person should be standing facing the camera, in front of a place like any of the seven wonders, a beach, big cities, river front. Choose a place at random. Style the clothing depending on the tourist place. Do not alter the persons skin tone or facial features.
+Edit the given image, using the image of the person from webcamera as reference, the image filename is given in the context. 
+Keep the facial features of the person exactly as they are in the original image. 
+Use the tourist name as mentioned in select-place in Step No.2
+Style the clothing depending on the tourist place. 
 ```
