@@ -43,11 +43,11 @@ func (t AiGenerateImageTool) Name() string {
 // which is used by LLM, to decide if this tool has to be called,
 // for the given prompt
 func (t AiGenerateImageTool) Description() string {
-	return "Create or Modify an image using ai."
+	return "Create an image or photograph or drawing using ai."
 }
 
 func (t AiGenerateImageTool) InputSchema() string {
-	return "Create or Modify an image or photograph using ai."
+	return "Create an image or photograph or drawing using ai."
 }
 
 func (t AiGenerateImageTool) InputSchemaAsOpenAiParam() openai.FunctionParameters {

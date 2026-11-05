@@ -31,9 +31,9 @@ ui:
   description: Get prompt from User
   title: Enter styles ideas and prompts
   components:
-  - id: styles
+  - id: user-prompt
     class: ''
-    label: Style
+    label: User Prompt
     value: ''
     placeHolder: Enter style keywords
     help: ''

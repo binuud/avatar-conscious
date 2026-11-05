@@ -215,11 +215,12 @@ func (s *avatarGrpcServer) handleAvatarRun(in *pb.ControlRequest,
 					prompt = fmt.Sprintf("Step No: %d, image is stored in filename ```%s```", (currentStep + 1), newFileName)
 
 				} else {
-					prompt = fmt.Sprintf("Step No: %d, user response - %s", currentStep, currentStepObj.Response)
-
+					prompt = fmt.Sprintf("Step No: %d, %s", (currentStep + 1), currentStepObj.Response)
 				}
+
 				s.avatar.Memory.AppendMemory(openai.UserMessage(prompt))
 				s.avatar.Memory.AppendMemory(openai.AssistantMessage("Ok."))
+
 			}
 			in.Control.CurrentStep++
 		}

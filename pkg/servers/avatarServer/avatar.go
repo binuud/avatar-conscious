@@ -20,8 +20,9 @@ const (
 	AVATAR_DIRECTORY       = "avatars"
 	AVATAR_STORE_DIRECTORY = "avatarStore"
 	SYSTEM_PROMPT          = `Review the provided instruction structure and extract a JSON list of all steps with prompts if needed,
+														Steps should be prefixed in format {{Step [num]: [description]"}}
 														do not parse any other properties not mentioned in the schema. Keep instructions in prompt field intact, 
-														since llm will have to use the prompts as is, to complete the task later. Steps are in format "Step [num]:"
+														since llm will have to use the prompts as is, to complete the task later. 
 														`
 )
 
@@ -119,7 +120,7 @@ func (a *AvatarWrapper) Save() error {
 func (a *AvatarWrapper) Build() error {
 
 	logrus.Infof("Building avatar %s", a.FileName)
-	completePrompt := fmt.Sprintf(
+	userPrompt := fmt.Sprintf(
 		"Here is the avatar context file (%s):\n\n```markdown\n%s\n```\n\n",
 		a.FileName,
 		a.Content,
@@ -129,7 +130,7 @@ func (a *AvatarWrapper) Build() error {
 
 	buildMemory.Messages = []openai.ChatCompletionMessageParamUnion{
 		openai.SystemMessage(a.SystemPrompt),
-		openai.UserMessage(completePrompt),
+		openai.UserMessage(userPrompt),
 	}
 
 	stepsSchema, err := a.getAvatarStepsJsonSchemaMap()
@@ -142,7 +143,7 @@ func (a *AvatarWrapper) Build() error {
 	// logrus.Infof("StepsSchema : %v", stepsSchema)
 
 	// now use LLM to get the steps, that this avatar needs to run
-	output, err := llm.MakeLLMSchemaResponseRequest(completePrompt,
+	output, err := llm.MakeLLMSchemaResponseRequest(userPrompt,
 		a.SystemPrompt,
 		buildMemory.Model,
 		stepsSchema)
