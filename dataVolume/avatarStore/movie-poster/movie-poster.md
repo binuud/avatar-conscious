@@ -37,5 +37,8 @@ Generate an image with the selected movie name or movie plot and given image as 
 
 Use the following prompt to describe the image
 ```prompt
-Edit a image of a movie poster, using the movie name or movie plot given in select-movie in Step No.2
+Edit the given image, using the image of the person from webcamera as reference, the image filename is given in the context. 
+Keep the facial features of the person exactly as they are in the original image.
+Change dress as per the movie character. Design a movie poster with the person as the main character.
+Use the movie name or movie plot given in select-movie in Step No.2
 ```

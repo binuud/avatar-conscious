@@ -15,7 +15,7 @@ Launch an Avatar UI web-camera interface
 ```
 
 ```prompt
-Launch an Avatar UI interface, the ui interface id is : web-camera
+Launch an Avatar UI interface with interface id "web-camera"
 ```
 
 ## Step 2: 
@@ -25,7 +25,7 @@ Launch an Avatar UI get-prompt interface
 ```
 
 ```prompt
-Launch an Avatar UI interface, the ui interface id is : get-prompt
+Launch a new Avatar UI interface with interface id "get-prompt"
 ```
 
 
@@ -37,5 +37,7 @@ Generate an image with the input prompt and given image as reference
 
 Use the following prompt to describe the image
 ```prompt
-Edit the given image, using the image of the person from webcamera as reference, the image filename is given in the context. Use the prompt user-prompt given in the context Step No: 2.
+Edit the given image, using the image of the person from webcamera as reference, the image filename is given in the context. 
+Keep the facial features of the person exactly as they are in the original image.
+Use the prompt user-prompt given in the context Step No: 2.
 ```
