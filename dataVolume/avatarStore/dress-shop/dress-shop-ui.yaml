@@ -27,25 +27,31 @@ ui:
     cols: 0
     type: PLAINTEXT   
 - uuid: ''
-  name: get-prompt
-  description: Get prompt from User
-  title: Enter styles ideas and prompts
+  name: select-dress
+  description: Select Dress
+  title: Select Dress
   components:
-  - id: user-prompt
+  - id: select-dress-carousal
     class: ''
-    label: User Prompt
+    label: Select Dress
     value: ''
-    placeHolder: Enter style keywords
+    placeHolder: Select Dress
     help: ''
     style: ''
     width: 100
     rows: 0
     cols: 0
-    type: INPUT
+    type: IMAGECAROUSEL
+    items:
+    - /avatarStore/dress-shop/shirt1.png
+    - /avatarStore/dress-shop/shirt2.png
+    - /avatarStore/dress-shop/shirt3.png
+    - /avatarStore/dress-shop/shirt4.png
+    - /avatarStore/dress-shop/shirt5.png
   - id: ''
     class: ''
     label: ''
-    value: Avatar will use the style keywords to modify your image
+    value: Select any one dress of your choice
     placeHolder: ''
     help: ''
     style: ''

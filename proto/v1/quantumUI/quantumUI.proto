@@ -16,6 +16,7 @@ message UiComponent {
     PLAINTEXT = 4;
     BUTTON = 5;
     WEBCAM = 6;
+    IMAGECAROUSEL = 7;
   }
   string value = 4;
   string placeHolder = 5;
@@ -24,7 +25,8 @@ message UiComponent {
   int32 width = 8;
   int32 rows = 9;
   int32 cols = 10;
-  UiType type = 11; 
+  UiType type = 11;
+  repeated string items = 12; 
 }
 
 message QuantumUI {

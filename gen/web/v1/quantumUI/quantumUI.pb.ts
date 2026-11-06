@@ -12,6 +12,7 @@ export enum UiComponentUiType {
   PLAINTEXT = "PLAINTEXT",
   BUTTON = "BUTTON",
   WEBCAM = "WEBCAM",
+  IMAGECAROUSEL = "IMAGECAROUSEL",
 }
 
 export type UiComponent = {
@@ -26,6 +27,7 @@ export type UiComponent = {
   rows?: number
   cols?: number
   type?: UiComponentUiType
+  items?: string[]
 }
 
 export type QuantumUI = {

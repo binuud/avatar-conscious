@@ -58,7 +58,7 @@ func (t AiGenerateImageEditTool) InputSchemaAsOpenAiParam() openai.FunctionParam
 		"properties": map[string]any{
 			"imagefiles": map[string]any{
 				"type":        "array",
-				"description": "The image file names with extension png, jpg for get_ai_edit_image",
+				"description": "The image file names with extension png, jpg, with full path for get_ai_edit_image",
 				"items": map[string]any{
 					"type": "string",
 				},

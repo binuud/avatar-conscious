@@ -24,13 +24,14 @@ const (
 type UiComponent_UiType int32
 
 const (
-	UiComponent_UiTypeIgnore UiComponent_UiType = 0
-	UiComponent_TEXTAREA     UiComponent_UiType = 1
-	UiComponent_INPUT        UiComponent_UiType = 2
-	UiComponent_CHECKBOX     UiComponent_UiType = 3
-	UiComponent_PLAINTEXT    UiComponent_UiType = 4
-	UiComponent_BUTTON       UiComponent_UiType = 5
-	UiComponent_WEBCAM       UiComponent_UiType = 6
+	UiComponent_UiTypeIgnore  UiComponent_UiType = 0
+	UiComponent_TEXTAREA      UiComponent_UiType = 1
+	UiComponent_INPUT         UiComponent_UiType = 2
+	UiComponent_CHECKBOX      UiComponent_UiType = 3
+	UiComponent_PLAINTEXT     UiComponent_UiType = 4
+	UiComponent_BUTTON        UiComponent_UiType = 5
+	UiComponent_WEBCAM        UiComponent_UiType = 6
+	UiComponent_IMAGECAROUSEL UiComponent_UiType = 7
 )
 
 // Enum value maps for UiComponent_UiType.
@@ -43,15 +44,17 @@ var (
 		4: "PLAINTEXT",
 		5: "BUTTON",
 		6: "WEBCAM",
+		7: "IMAGECAROUSEL",
 	}
 	UiComponent_UiType_value = map[string]int32{
-		"UiTypeIgnore": 0,
-		"TEXTAREA":     1,
-		"INPUT":        2,
-		"CHECKBOX":     3,
-		"PLAINTEXT":    4,
-		"BUTTON":       5,
-		"WEBCAM":       6,
+		"UiTypeIgnore":  0,
+		"TEXTAREA":      1,
+		"INPUT":         2,
+		"CHECKBOX":      3,
+		"PLAINTEXT":     4,
+		"BUTTON":        5,
+		"WEBCAM":        6,
+		"IMAGECAROUSEL": 7,
 	}
 )
 
@@ -95,6 +98,7 @@ type UiComponent struct {
 	Rows          int32                  `protobuf:"varint,9,opt,name=rows,proto3" json:"rows,omitempty"`
 	Cols          int32                  `protobuf:"varint,10,opt,name=cols,proto3" json:"cols,omitempty"`
 	Type          UiComponent_UiType     `protobuf:"varint,11,opt,name=type,proto3,enum=quatumUI.UiComponent_UiType" json:"type,omitempty"`
+	Items         []string               `protobuf:"bytes,12,rep,name=items,proto3" json:"items,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -206,6 +210,13 @@ func (x *UiComponent) GetType() UiComponent_UiType {
 	return UiComponent_UiTypeIgnore
 }
 
+func (x *UiComponent) GetItems() []string {
+	if x != nil {
+		return x.Items
+	}
+	return nil
+}
+
 type QuantumUI struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Uuid          string                 `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
@@ -286,7 +297,7 @@ var File_v1_quantumUI_quantumUI_proto protoreflect.FileDescriptor
 
 const file_v1_quantumUI_quantumUI_proto_rawDesc = "" +
 	"\n" +
-	"\x1cv1/quantumUI/quantumUI.proto\x12\bquatumUI\"\x85\x03\n" +
+	"\x1cv1/quantumUI/quantumUI.proto\x12\bquatumUI\"\xae\x03\n" +
 	"\vUiComponent\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\tR\x02id\x12\x14\n" +
 	"\x05class\x18\x02 \x01(\tR\x05class\x12\x14\n" +
@@ -299,7 +310,8 @@ const file_v1_quantumUI_quantumUI_proto_rawDesc = "" +
 	"\x04rows\x18\t \x01(\x05R\x04rows\x12\x12\n" +
 	"\x04cols\x18\n" +
 	" \x01(\x05R\x04cols\x120\n" +
-	"\x04type\x18\v \x01(\x0e2\x1c.quatumUI.UiComponent.UiTypeR\x04type\"h\n" +
+	"\x04type\x18\v \x01(\x0e2\x1c.quatumUI.UiComponent.UiTypeR\x04type\x12\x14\n" +
+	"\x05items\x18\f \x03(\tR\x05items\"{\n" +
 	"\x06UiType\x12\x10\n" +
 	"\fUiTypeIgnore\x10\x00\x12\f\n" +
 	"\bTEXTAREA\x10\x01\x12\t\n" +
@@ -309,7 +321,8 @@ const file_v1_quantumUI_quantumUI_proto_rawDesc = "" +
 	"\n" +
 	"\x06BUTTON\x10\x05\x12\n" +
 	"\n" +
-	"\x06WEBCAM\x10\x06\"\xa2\x01\n" +
+	"\x06WEBCAM\x10\x06\x12\x11\n" +
+	"\rIMAGECAROUSEL\x10\a\"\xa2\x01\n" +
 	"\tQuantumUI\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
