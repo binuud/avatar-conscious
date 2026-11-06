@@ -12,9 +12,8 @@ export MQTT_HOST="tcp://localhost:1883"
 export LLM_MODEL="lmstudio-community/Qwen3.5-9B-MLX-4bit"
 export IMAGE_QUERY_MODEL="lmstudio-community/Qwen3.5-9B-MLX-4bit"
 
-export FILE_STORE_PATH=${PWD}/dataVolume
-export SERVABLE_DIRECTORY=${PWD}/dataVolume/gen
-
+export FILE_STORE_PATH=$PWD/dataVolume
+export SERVABLE_DIRECTORY=$PWD/dataVolume/static
 
 # go test ./pkg/...
 # go test ./pkg/...  -v
@@ -26,8 +25,8 @@ export SERVABLE_DIRECTORY=${PWD}/dataVolume/gen
 
 ## test run for running avatar step by step, control via bidirectional server
 #go test -v  --run Test_AvatarServer_Control ./pkg/servers/avatarServer
-go test -v --run  Test_UiLaunchTool ./pkg/tools/testTools/
-
+# go test -v --run  Test_UiLaunchTool ./pkg/tools/testTools/
+go test -v --run  Test_ImageEdit ./pkg/tools/testTools/
 # go test -v  ./pkg/servers/avatarStoreServer
 # go test -v  ./pkg/settings/
 # go test ./pkg/... -v -run "Test_RouterViaTool"

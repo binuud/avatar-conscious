@@ -1,0 +1,55 @@
+ui:
+- uuid: ''
+  name: web-camera
+  description: WebCamera
+  title: Dress Shop
+  components:
+  - id: webcamview
+    class: ''
+    label: WebCamera
+    value: ''
+    placeHolder: ''
+    help: ''
+    style: ''
+    width: 100
+    rows: 0
+    cols: 0
+    type: WEBCAM
+  - id: ''
+    class: ''
+    label: ''
+    value: Avatar will try to generate a photo of you, from ideas in the next prompt.
+    placeHolder: ''
+    help: ''
+    style: ''
+    width: 100
+    rows: 0
+    cols: 0
+    type: PLAINTEXT   
+- uuid: ''
+  name: get-prompt
+  description: Get prompt from User
+  title: Enter styles ideas and prompts
+  components:
+  - id: user-prompt
+    class: ''
+    label: User Prompt
+    value: ''
+    placeHolder: Enter style keywords
+    help: ''
+    style: ''
+    width: 100
+    rows: 0
+    cols: 0
+    type: INPUT
+  - id: ''
+    class: ''
+    label: ''
+    value: Avatar will use the style keywords to modify your image
+    placeHolder: ''
+    help: ''
+    style: ''
+    width: 100
+    rows: 0
+    cols: 0
+    type: PLAINTEXT  

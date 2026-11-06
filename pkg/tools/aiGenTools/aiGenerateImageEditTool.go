@@ -20,7 +20,7 @@ import (
 // this provides the input structure
 type AiGenerateImageEditTool_Input struct {
 	// the uploaded or reference image file
-	ImageFile string `json:"imagefile"`
+	ImageFiles []string `json:"imagefiles"`
 	// the original prompt given by the user
 	Prompt string `json:"prompt"`
 }
@@ -56,16 +56,19 @@ func (t AiGenerateImageEditTool) InputSchemaAsOpenAiParam() openai.FunctionParam
 	return openai.FunctionParameters{
 		"type": "object",
 		"properties": map[string]any{
-			"imagefile": map[string]string{
-				"type":        "string",
-				"description": "The web cam image or png jpeg image filename which has to be used as reference image for get_ai_edit_image",
+			"imagefiles": map[string]any{
+				"type":        "array",
+				"description": "The image file names with extension png, jpg for get_ai_edit_image",
+				"items": map[string]any{
+					"type": "string",
+				},
 			},
-			"prompt": map[string]string{
+			"prompt": map[string]any{
 				"type":        "string",
 				"description": "A refined and amplified instructions for editing the image or photograph",
 			},
 		},
-		"required": []string{"text"},
+		"required": []string{"imagefiles", "prompt"}, // This must be at the same level as "properties"
 	}
 }
 
@@ -75,12 +78,12 @@ func (t AiGenerateImageEditTool) Handler(in *pb.ContextMesssage) (*pb.ContextMes
 	if err := json.Unmarshal([]byte(in.Prompt), &inpObj); err != nil {
 		return nil, err
 	}
-	logrus.Infof("Arguments parsed into input structure %v", in)
+	logrus.Infof("AiGenerateImageEditTool: Arguments parsed into input structure %v", inpObj)
 
 	imageModel := settings.Global.GetValue("IMAGE_MODEL")
 
 	// hotswap original prompt
-	outMsg, err := GetAiImageEdit(inpObj.Prompt, imageModel, inpObj.ImageFile)
+	outMsg, err := GetAiImageEdit(&inpObj, imageModel)
 	if err != nil {
 		return nil, err
 	}
@@ -92,16 +95,19 @@ func (t AiGenerateImageEditTool) Handler(in *pb.ContextMesssage) (*pb.ContextMes
 	}, nil
 }
 
-func GetAiImageEdit(prompt string, model string, fileName string) (string, error) {
+func GetAiImageEdit(inpObj *AiGenerateImageEditTool_Input, model string) (string, error) {
 
 	memory := memory.NewMemory("")
 	memory.Model = model
-	memory.AppendMemory(openai.UserMessage(prompt))
+	memory.AppendMemory(openai.UserMessage(inpObj.Prompt))
+	logrus.Infof("GetAiImageEdit -> %s, %s, %s", memory.Model, inpObj.ImageFiles, inpObj.Prompt)
 
-	imageFileName := utils.GetUploadsFolder() + fileName
-	logrus.Infof("GetAiImageEdit -> %s, %s, %s", memory.Model, imageFileName, prompt)
+	imageFileNames := make([]string, 0)
+	for _, fileName := range inpObj.ImageFiles {
+		imageFileNames = append(imageFileNames, utils.GetUploadsFolder()+fileName)
+	}
 
-	result, err := llm.MakeOpenAiImageEditRequest(prompt, memory.Model, imageFileName)
+	result, err := llm.MakeOpenAiImageEditRequest(inpObj.Prompt, memory.Model, imageFileNames)
 	if err != nil {
 		return "", err
 	}
@@ -117,7 +123,7 @@ func GetAiImageEdit(prompt string, model string, fileName string) (string, error
 	servableFile := "/gen/images/" + utils.GenerateUUID() + ".png"
 	newImageFileName := SERVABLE_DIRECTORY + servableFile
 
-	logrus.Infof("GetAiImageEdit saving final image-> %s, %s, %s", memory.Model, prompt, newImageFileName)
+	logrus.Infof("GetAiImageEdit saving final image-> %s, %s, %s", memory.Model, inpObj.Prompt, newImageFileName)
 	if err := os.WriteFile(newImageFileName, image, 0o600); err != nil {
 		panic(err)
 	}

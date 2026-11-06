@@ -3,6 +3,7 @@ package consciousServer
 import (
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	protoV1 "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	"github.com/binuud/avatar-conscious/pkg/llm"
@@ -147,7 +148,12 @@ func (s *grpcConsciousServer) RouteOpenAiImageEditRequest(in *protoV1.ContextMes
 	logrus.Infof("RouteOpenAiImageEditRequest -> %s, %s", in.Model, in.Prompt)
 	s.memory.Messages = append(s.memory.Messages, openai.UserMessage(in.Prompt))
 
-	imageFileName, err := aiGenTools.GetAiImageEdit(in.Prompt, in.Model, in.Data)
+	inpObj := &aiGenTools.AiGenerateImageEditTool_Input{
+		Prompt:     in.Prompt,
+		ImageFiles: strings.Split(in.Data, ","),
+	}
+
+	imageFileName, err := aiGenTools.GetAiImageEdit(inpObj, in.Model)
 	if err != nil {
 		logrus.Errorf("RouteOpenAiImageEditRequest -> GetAiImageEdit result(%v), %v", imageFileName, err)
 		return nil, err
@@ -168,31 +174,3 @@ func (s *grpcConsciousServer) RouteOpenAiImageEditRequest(in *protoV1.ContextMes
 	}, nil
 
 }
-
-// func (s *grpcConsciousServer) RouteImageCreateRequest(in *protoV1.ContextMesssage) (*protoV1.ContextMesssage, error) {
-
-// 	s.memory.Messages = append(s.memory.Messages, openai.UserMessage(in.Prompt))
-
-// 	FILE_STORE_PATH := settings.Global.GetValue("FILE_STORE_PATH")
-
-// 	// servable file path from static server
-// 	servableFile := in.Uuid + ".png"
-// 	filename := FILE_STORE_PATH + "/gen/" + servableFile
-// 	logrus.Infof("RouteImageCreateRequest -> %s, %s, %s", in.Model, in.Prompt, filename)
-// 	// servableFile = "fa23d376-bc55-4ad6-94a0-dfc1ec04c6bf.png"
-// 	err := llm.MakeImageGenerationRequest(in.Prompt, in.Model, filename)
-// 	if err != nil {
-// 		logrus.Errorf("RouteImageCreateRequest -> MakeImageGenerationRequest %v", err)
-// 		return nil, err
-// 	}
-
-// 	return &protoV1.ContextMesssage{
-// 		Uuid:          in.Uuid,
-// 		Model:         in.Model,
-// 		Prompt:        in.Prompt,
-// 		CreatedAt:     in.CreatedAt,
-// 		CompletedAt:   utils.GetTimeStamp(),
-// 		ResponseImage: servableFile,
-// 	}, nil
-
-// }
