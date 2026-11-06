@@ -108,10 +108,12 @@ func CheckDirectImageUpgradeGeneration() {
 
 	fileName := "samplePerson.jpg"
 	imageFileName := utils.GetUploadsFolder() + fileName
+	var imageFileNames = []string{imageFileName}
 
 	imageModel := utils.GetEnv("IMAGE_MODEL", "Runpod/FLUX.2-klein-4B-mflux-4bit")
 	prompt := "Create an image of a tourist card, use the photo of the person from image samplePerson.png as reference, show the person in front of eiffel tower"
-	result, err := llm.MakeOpenAiImageEditRequest(prompt, imageModel, imageFileName)
+
+	result, err := llm.MakeOpenAiImageEditRequest(prompt, imageModel, imageFileNames)
 	if err != nil {
 		logrus.Fatalf("CheckDirectImageUpgradeGeneration err, %v", err)
 	}

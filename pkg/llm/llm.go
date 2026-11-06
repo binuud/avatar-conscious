@@ -255,18 +255,23 @@ func MakeOpenAiImageGenerationRequest(prompt string, model string) (*openai.Imag
 
 }
 
-func MakeOpenAiImageEditRequest(prompt string, model string, imageFileName string) (*openai.ImagesResponse, error) {
+func MakeOpenAiImageEditRequest(prompt string, model string, imageFileNames []string) (*openai.ImagesResponse, error) {
 
 	client := GetLLMClient()
 
-	sampleFile, err := os.Open(imageFileName)
-	if err != nil {
-		return nil, fmt.Errorf("Error reading sample file: %v\n", err)
+	readers := make([]io.Reader, len(imageFileNames))
+
+	for i, imageFile := range imageFileNames {
+		f, err := os.Open(imageFile)
+		if err != nil {
+			return nil, fmt.Errorf("Error reading reference image file:%s  %v\n", imageFile, err)
+		}
+		defer f.Close()
+		readers[i] = io.Reader(f)
 	}
-	defer sampleFile.Close()
 
 	return client.Images.Edit(context.Background(), openai.ImageEditParams{
-		Image:          openai.ImageEditParamsImageUnion{OfFile: io.Reader(sampleFile)},
+		Image:          openai.ImageEditParamsImageUnion{OfFileArray: readers}, // openai.ImageEditParamsImageUnion{OfFile: io.Reader(sampleFile)},
 		Model:          openai.ImageModel(model),
 		Prompt:         prompt,
 		N:              openai.Int(1),

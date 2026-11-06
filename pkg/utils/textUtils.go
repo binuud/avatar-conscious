@@ -52,3 +52,24 @@ func ContainsAllWords(hay string, needles []string) bool {
 
 	return true
 }
+
+func SlicesEqualUnordered(a, b []string) bool {
+	// Helper to check if a contains all elements of b (set equality)
+	if len(a) != len(b) {
+		return false
+	}
+
+	mapA := make(map[string]bool)
+	for _, item := range a {
+		mapA[item] = true
+	}
+
+	for _, item := range b {
+		if !mapA[item] {
+			return false
+		}
+		delete(mapA, item) // Remove to ensure no duplicates in b vs a
+	}
+
+	return len(mapA) == 0
+}
