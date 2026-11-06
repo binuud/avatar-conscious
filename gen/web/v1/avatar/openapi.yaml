@@ -693,6 +693,10 @@ components:
           format: int32
         type:
           $ref: '#/components/schemas/UiComponent.UiType'
+        items:
+          type: array
+          items:
+            type: string
     UiComponent.UiType:
       type: string
       enum:
@@ -703,3 +707,4 @@ components:
         - "PLAINTEXT"
         - "BUTTON"
         - "WEBCAM"
+        - "IMAGECAROUSEL"
