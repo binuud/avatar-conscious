@@ -1,18 +1,13 @@
 package avatarServer
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/avatar"
 	datalayer "github.com/binuud/avatar-conscious/pkg/dataLayer"
-	"github.com/binuud/avatar-conscious/pkg/llm"
 	"github.com/binuud/avatar-conscious/pkg/memory"
 	"github.com/binuud/avatar-conscious/pkg/servers/avatarStoreServer"
-	"github.com/google/jsonschema-go/jsonschema"
-	"github.com/openai/openai-go/v3"
 	"github.com/sirupsen/logrus"
 )
 
@@ -21,8 +16,9 @@ const (
 	AVATAR_STORE_DIRECTORY = "avatarStore"
 	SYSTEM_PROMPT          = `Review the provided instruction structure and extract a JSON list of all steps with prompts if needed,
 														Steps should be prefixed in format {{Step [num]: [description]"}}
+														Schema is provided in the context.
 														do not parse any other properties not mentioned in the schema. Keep instructions in prompt field intact, 
-														since llm will have to use the prompts as is, to complete the task later. 
+														since llm will have to use the prompts as is, to complete the task later.
 														`
 )
 
@@ -85,6 +81,27 @@ func NewAvatarFromStore(name string) *AvatarWrapper {
 	return avatar
 }
 
+func (a *AvatarWrapper) GetAvatarDir() string {
+	return datalayer.GetFileAbsolutePath(AVATAR_STORE_DIRECTORY, a.Meta.Name)
+}
+
+// Get
+// read the avatar file details from yaml files
+func (a *AvatarWrapper) Get(name string) error {
+
+	err := a.ReadAvatarUiFromYaml()
+	if err != nil {
+		logrus.Errorf("cannot parse or read ui collection yaml, %v", err)
+	}
+	err = a.ReadAvatarStepsFromYaml()
+	if err != nil {
+		logrus.Errorf("cannot parse or read steps yaml, %v", err)
+	}
+	return nil
+}
+
+// Load
+// load avatar details from cached binary file
 func (a *AvatarWrapper) Load(name string) error {
 
 	filePath := datalayer.GetFileAbsolutePath(AVATAR_DIRECTORY, name+".avatar")
@@ -94,6 +111,7 @@ func (a *AvatarWrapper) Load(name string) error {
 	if err != nil {
 		return err
 	}
+	a.Avatar.UiCollection = localAvatar.UiCollection
 	a.Avatar.Steps = localAvatar.Steps
 	return nil
 }
@@ -112,92 +130,6 @@ func (a *AvatarWrapper) Save() error {
 	}
 	logrus.Infof("Saved avatar to file %s", filePath)
 	return nil
-}
-
-// Build()
-// builds the avatar file, creates the necessary steps
-// to run the avatar using llm and the avatar with the steps
-func (a *AvatarWrapper) Build() error {
-
-	logrus.Infof("Building avatar %s", a.FileName)
-	userPrompt := fmt.Sprintf(
-		"Here is the avatar context file (%s):\n\n```markdown\n%s\n```\n\n",
-		a.FileName,
-		a.Content,
-	)
-
-	buildMemory := memory.NewMemory()
-
-	buildMemory.Messages = []openai.ChatCompletionMessageParamUnion{
-		openai.SystemMessage(a.SystemPrompt),
-		openai.UserMessage(userPrompt),
-	}
-
-	stepsSchema, err := a.getAvatarStepsJsonSchemaMap()
-	if err != nil {
-		logrus.Errorf("parseAvatar: %v", err)
-		return err
-	}
-
-	// logrus.Infof("Complete prompt : %s ", completePrompt)
-	// logrus.Infof("StepsSchema : %v", stepsSchema)
-
-	// now use LLM to get the steps, that this avatar needs to run
-	output, err := llm.MakeLLMSchemaResponseRequest(userPrompt,
-		a.SystemPrompt,
-		buildMemory.Model,
-		stepsSchema)
-	if err != nil {
-		logrus.Errorf("client: error llm chat request: %v \n", err)
-		return err
-	}
-
-	// fmt.Println("\n output:")
-	// fmt.Println(output)
-
-	stepsFromLLM := &pb.Steps{
-		Steps: make([]*pb.Step, 0),
-	}
-
-	if err := json.Unmarshal([]byte(output), stepsFromLLM); err != nil {
-		logrus.Fatalf("Avatar Build: Cannot unmarshall %v", err)
-		return err
-	}
-
-	fmt.Printf("Struct %+v", stepsFromLLM)
-	if len(stepsFromLLM.Steps) == 0 {
-		logrus.Errorf("llm not able to build steps from %s.md", a.Meta.Name)
-	} else {
-		a.Avatar.Steps = stepsFromLLM.Steps
-	}
-	a.Save()
-	return nil
-}
-
-// getAvatarStepsJsonSchemaMap()
-// converts the Avatar Struct to map[string] any
-// this is needed, because openAiAPI expects struct schema as a map object
-func (a *AvatarWrapper) getAvatarStepsJsonSchemaMap() (map[string]any, error) {
-
-	var schemaMap map[string]any
-
-	schemaJSON, err := jsonschema.For[pb.Steps](nil)
-	if err != nil {
-		log.Fatalf("Failed to run  jsonschema: %v", err)
-	}
-
-	output, err := json.MarshalIndent(schemaJSON, "", "  ")
-	if err != nil {
-		log.Fatalf("Failed to marshal schema: %v", err)
-	}
-	// fmt.Println(string(output))
-	// Unmarshal the JSON bytes into your map
-	err = json.Unmarshal(output, &schemaMap)
-	if err != nil {
-		fmt.Printf("Error unmarshalling schema: %v\n", err)
-		return nil, err
-	}
-	return schemaMap, nil
 }
 
 func (a *AvatarWrapper) Print(w io.Writer) {

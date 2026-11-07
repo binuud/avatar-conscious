@@ -2,6 +2,7 @@ package avatarServer
 
 import (
 	"fmt"
+	"strings"
 
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/avatar"
 	pbConcsious "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
@@ -50,6 +51,15 @@ func (a *AvatarWrapper) RunStep(i int, step *pb.Step) (*pbConcsious.ContextMesss
 
 	a.Memory.DumpMemory(nil)
 
+	// handle slash commands if any in the prompt
+	if strings.HasPrefix(step.Prompt, "/") {
+		err := a.RunSlashCommand(step.Prompt, out)
+		if err != nil {
+			return nil, err
+		}
+		return out, nil
+	}
+
 	completions, err := llm.MakeLLMSingleToolRequest(a.Memory.Messages, a.Memory.Model,
 		a.Memory.Tools, a.Memory.Temperature)
 	if err != nil {
@@ -89,6 +99,28 @@ func (a *AvatarWrapper) RunStep(i int, step *pb.Step) (*pbConcsious.ContextMesss
 		logrus.Infof("No Tools Called !!, Out Msg : %s", msg.Content)
 	}
 	return out, nil
+}
+
+func (a *AvatarWrapper) RunSlashCommand(prompt string, out *pbConcsious.ContextMesssage) error {
+	// split into command and params
+	result := strings.Fields(prompt)
+	if len(result) == 2 {
+		cmd := strings.ToLower(result[0])
+		if cmd == "/launch-ui" {
+			a.Memory.AppendMemory(openai.ToolMessage(fmt.Sprintf("Avatar UI Interface with id %s shown to the user by the tool function", out.Data), ""))
+			a.Memory.AppendMemory(openai.DeveloperMessage(fmt.Sprintf("Avatar UI Interface with id %s shown to the user by the tool function", out.Data)))
+			out.Action = "SHOW-UI"
+			out.Data = result[1]
+			// check if ui is present if not bail out
+			_, err := a.CheckUiExists(out.Data)
+			if err != nil {
+				logrus.Errorf("RunStep %v", err)
+				return err
+			}
+			return nil
+		}
+	}
+	return fmt.Errorf("cannot parse slash command")
 }
 
 // GetStepStatusesObj()

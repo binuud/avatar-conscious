@@ -60,6 +60,9 @@ message AvatarMeta {
 
   repeated string triggers = 5;
 
+  // white list of allowed ai_tools
+  repeated string ai_allowed_tools = 6;
+
 }
 
 
@@ -67,6 +70,13 @@ message Step {
   string name = 1;
   string description = 2;
   string prompt = 3;
+  enum StepType {
+    STEP_TYPE_ENUM_DEFAULT = 0;
+    STEP_TYPE_ENUM_AI = 1;
+    STEP_TYPE_ENUM_UI = 2;
+  }
+  // not using as enum, because of issues with parsing by AI
+  StepType step_type = 4;
 }
 
 // this is required as a seperate message

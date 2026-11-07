@@ -45,6 +45,12 @@ export enum AvatarStatus {
   STATUS_IO_WAITING = "STATUS_IO_WAITING",
 }
 
+export enum StepStepType {
+  STEP_TYPE_ENUM_DEFAULT = "STEP_TYPE_ENUM_DEFAULT",
+  STEP_TYPE_ENUM_AI = "STEP_TYPE_ENUM_AI",
+  STEP_TYPE_ENUM_UI = "STEP_TYPE_ENUM_UI",
+}
+
 export enum StepStatusResponseType {
   RESPONSE_TYPE_IGNORE = "RESPONSE_TYPE_IGNORE",
   IMAGEDATA = "IMAGEDATA",
@@ -82,12 +88,14 @@ export type AvatarMeta = {
   description?: string
   image?: string
   triggers?: string[]
+  aiAllowedTools?: string[]
 }
 
 export type Step = {
   name?: string
   description?: string
   prompt?: string
+  stepType?: StepStepType
 }
 
 export type Steps = {

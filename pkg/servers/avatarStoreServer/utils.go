@@ -63,7 +63,6 @@ func ReadAvatarFromStore(avatarName string) (*pb.Avatar, error) {
 	avatarDir := datalayer.GetFileAbsolutePath(AVATAR_STORE_DIRECTORY, avatarName)
 
 	avatarFile := fmt.Sprintf("%s/%s.md", avatarDir, avatarName)
-	avatarFormFile := fmt.Sprintf("%s/%s-ui.yaml", avatarDir, avatarName)
 
 	// read the front matter, and create the avatar object
 	fileContents, err := os.ReadFile(avatarFile)
@@ -84,15 +83,8 @@ func ReadAvatarFromStore(avatarName string) (*pb.Avatar, error) {
 		return nil, err
 	}
 
-	uiCollection := &pb.UiCollection{}
-	err = datalayer.ReadProtoYAML(avatarFormFile, uiCollection)
-	if err != nil {
-		logrus.Errorf("Failed to read file: %s", err)
-	}
-
 	return &pb.Avatar{
-		Meta:         &meta,
-		Content:      string(content),
-		UiCollection: uiCollection,
+		Meta:    &meta,
+		Content: string(content),
 	}, nil
 }

@@ -2,6 +2,7 @@ package utils
 
 import (
 	"encoding/base64"
+	"errors"
 	"os"
 	"strings"
 
@@ -37,4 +38,17 @@ func SaveImageDataToFile(fileName string, rawBase64 string) error {
 		return status.Error(codes.InvalidArgument, "cannot write file to server: "+err.Error())
 	}
 	return nil
+}
+
+func FileExists(filename string) bool {
+	_, err := os.Stat(filename)
+	if err == nil {
+		return true // File exists
+	}
+	if errors.Is(err, os.ErrNotExist) {
+		return false // File explicitly does not exist
+	}
+	// Any other error means the file might exist, but we couldn't stat it
+	// (e.g., permission denied)
+	return false
 }
