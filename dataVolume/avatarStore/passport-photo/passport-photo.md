@@ -27,7 +27,9 @@ Generate an passport style image using the image from web camera as reference
 
 Use the following prompt to describe the image
 ```prompt
-Edit the given image, remove the background, change it to blue, make a passport photo of the person in the image, wearing suit, do not change skin tone, do not smoothen skin.
+Edit the given image, remove the background, change it to blue, make a passport photo of the person in the image, wearing suit, 
+Do not change skin tone, do not smoothen skin.
+Do not change the face of the person.
 ```
 
 

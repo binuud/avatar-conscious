@@ -38,7 +38,8 @@ Generate a tourist photograph using the image from web camera as reference, and 
 Use the following prompt to describe the image
 ```prompt
 Edit the given image, using the image of the person from webcamera as reference, the image filename is given in the context. 
-Use the same person as in the provided image. Do not alter the gender or face of the person.
+Do not change the face of the person. 
+Do not alter the gender or face of the person.
 Keep the facial features of the person exactly as they are in the original image. 
 Use the tourist place as mentioned in select-place in Step No.2.
 Style the clothing depending on the tourist place. 
