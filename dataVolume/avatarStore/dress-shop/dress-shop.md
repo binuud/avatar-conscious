@@ -40,5 +40,5 @@ Use the following prompt to describe the image
 Edit the given image, using the image of the person from webcamera as reference, the image filename is given in the context. 
 Do not modify the face of the person.
 Keep the facial features, skin tone of the person exactly as they are in the original image.
-Create a new photo with the person wearing this clothes as given in Step 2, "select-dress" objec entry
+Create a new photo with the person wearing this clothes as given in Step 2, "select-dress" object entry
 ```

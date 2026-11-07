@@ -39,6 +39,7 @@ Use the following prompt to describe the image
 ```prompt
 Edit the given image, using the image of the person from webcamera as reference, the image filename is given in the context. 
 Keep the facial features of the person exactly as they are in the original image.
-Change dress as per the movie character. Design a movie poster with the person as the main character.
-Use the movie name or movie plot given in select-movie in Step No.2
+Change clothes as per the movie character. Design a movie poster with the person as the main character.
+Use the movie name or movie plot given in select-movie in Step No.2.
+Do not make mistakes in movie name, spell it correctly as given.
 ```
