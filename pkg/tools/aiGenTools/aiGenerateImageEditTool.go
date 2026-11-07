@@ -78,7 +78,6 @@ func (t AiGenerateImageEditTool) Handler(in *pb.ContextMesssage) (*pb.ContextMes
 	if err := json.Unmarshal([]byte(in.Prompt), &inpObj); err != nil {
 		return nil, err
 	}
-	logrus.Infof("AiGenerateImageEditTool: Arguments parsed into input structure %v", inpObj)
 
 	imageModel := settings.Global.GetValue("IMAGE_MODEL")
 
@@ -123,7 +122,7 @@ func GetAiImageEdit(inpObj *AiGenerateImageEditTool_Input, model string) (string
 	servableFile := "/gen/images/" + utils.GenerateUUID() + ".png"
 	newImageFileName := SERVABLE_DIRECTORY + servableFile
 
-	logrus.Infof("GetAiImageEdit saving final image-> %s, %s, %s", memory.Model, inpObj.Prompt, newImageFileName)
+	logrus.Infof("GetAiImageEdit saving final image-> %s ", newImageFileName)
 	if err := os.WriteFile(newImageFileName, image, 0o600); err != nil {
 		panic(err)
 	}
