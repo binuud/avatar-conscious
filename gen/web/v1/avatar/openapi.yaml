@@ -198,6 +198,14 @@ paths:
           schema:
             type: integer
             format: int32
+        - name: control.meta.aiAllowedTools
+          in: query
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
         - name: control.meta.description
           in: query
           schema:
@@ -478,6 +486,10 @@ components:
           type: array
           items:
             type: string
+        aiAllowedTools:
+          type: array
+          items:
+            type: string
     AvatarStatus:
       type: string
       enum:
@@ -632,6 +644,14 @@ components:
           type: string
         prompt:
           type: string
+        stepType:
+          $ref: '#/components/schemas/Step.StepType'
+    Step.StepType:
+      type: string
+      enum:
+        - "STEP_TYPE_ENUM_DEFAULT"
+        - "STEP_TYPE_ENUM_AI"
+        - "STEP_TYPE_ENUM_UI"
     StepStatus:
       type: object
       properties:

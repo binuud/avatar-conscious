@@ -32,7 +32,7 @@ func NewWebFetchTool() *WebFetchTool {
 // Name() returns the tool name
 // this is the name which is identified by LLM during tool call decision
 func (t WebFetchTool) Name() string {
-	return "get_file_contents"
+	return "get_web_contents"
 }
 
 // Description()

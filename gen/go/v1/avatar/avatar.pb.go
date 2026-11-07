@@ -230,6 +230,55 @@ func (AvatarStatus) EnumDescriptor() ([]byte, []int) {
 	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{2}
 }
 
+type Step_StepType int32
+
+const (
+	Step_STEP_TYPE_ENUM_DEFAULT Step_StepType = 0
+	Step_STEP_TYPE_ENUM_AI      Step_StepType = 1
+	Step_STEP_TYPE_ENUM_UI      Step_StepType = 2
+)
+
+// Enum value maps for Step_StepType.
+var (
+	Step_StepType_name = map[int32]string{
+		0: "STEP_TYPE_ENUM_DEFAULT",
+		1: "STEP_TYPE_ENUM_AI",
+		2: "STEP_TYPE_ENUM_UI",
+	}
+	Step_StepType_value = map[string]int32{
+		"STEP_TYPE_ENUM_DEFAULT": 0,
+		"STEP_TYPE_ENUM_AI":      1,
+		"STEP_TYPE_ENUM_UI":      2,
+	}
+)
+
+func (x Step_StepType) Enum() *Step_StepType {
+	p := new(Step_StepType)
+	*p = x
+	return p
+}
+
+func (x Step_StepType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Step_StepType) Descriptor() protoreflect.EnumDescriptor {
+	return file_v1_avatar_avatar_proto_enumTypes[3].Descriptor()
+}
+
+func (Step_StepType) Type() protoreflect.EnumType {
+	return &file_v1_avatar_avatar_proto_enumTypes[3]
+}
+
+func (x Step_StepType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Step_StepType.Descriptor instead.
+func (Step_StepType) EnumDescriptor() ([]byte, []int) {
+	return file_v1_avatar_avatar_proto_rawDescGZIP(), []int{3, 0}
+}
+
 type StepStatus_ResponseType int32
 
 const (
@@ -263,11 +312,11 @@ func (x StepStatus_ResponseType) String() string {
 }
 
 func (StepStatus_ResponseType) Descriptor() protoreflect.EnumDescriptor {
-	return file_v1_avatar_avatar_proto_enumTypes[3].Descriptor()
+	return file_v1_avatar_avatar_proto_enumTypes[4].Descriptor()
 }
 
 func (StepStatus_ResponseType) Type() protoreflect.EnumType {
-	return &file_v1_avatar_avatar_proto_enumTypes[3]
+	return &file_v1_avatar_avatar_proto_enumTypes[4]
 }
 
 func (x StepStatus_ResponseType) Number() protoreflect.EnumNumber {
@@ -332,11 +381,11 @@ func (x AvatarControl_AvatarAction) String() string {
 }
 
 func (AvatarControl_AvatarAction) Descriptor() protoreflect.EnumDescriptor {
-	return file_v1_avatar_avatar_proto_enumTypes[4].Descriptor()
+	return file_v1_avatar_avatar_proto_enumTypes[5].Descriptor()
 }
 
 func (AvatarControl_AvatarAction) Type() protoreflect.EnumType {
-	return &file_v1_avatar_avatar_proto_enumTypes[4]
+	return &file_v1_avatar_avatar_proto_enumTypes[5]
 }
 
 func (x AvatarControl_AvatarAction) Number() protoreflect.EnumNumber {
@@ -492,11 +541,13 @@ type AvatarMeta struct {
 	// Name of the avatar
 	Name string `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	// Description of the avatar
-	Description   string   `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
-	Image         string   `protobuf:"bytes,4,opt,name=image,proto3" json:"image,omitempty"`
-	Triggers      []string `protobuf:"bytes,5,rep,name=triggers,proto3" json:"triggers,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Description string   `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
+	Image       string   `protobuf:"bytes,4,opt,name=image,proto3" json:"image,omitempty"`
+	Triggers    []string `protobuf:"bytes,5,rep,name=triggers,proto3" json:"triggers,omitempty"`
+	// white list of allowed ai_tools
+	AiAllowedTools []string `protobuf:"bytes,6,rep,name=ai_allowed_tools,json=aiAllowedTools,proto3" json:"ai_allowed_tools,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *AvatarMeta) Reset() {
@@ -564,11 +615,20 @@ func (x *AvatarMeta) GetTriggers() []string {
 	return nil
 }
 
+func (x *AvatarMeta) GetAiAllowedTools() []string {
+	if x != nil {
+		return x.AiAllowedTools
+	}
+	return nil
+}
+
 type Step struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Description   string                 `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
-	Prompt        string                 `protobuf:"bytes,3,opt,name=prompt,proto3" json:"prompt,omitempty"`
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	Name        string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Description string                 `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
+	Prompt      string                 `protobuf:"bytes,3,opt,name=prompt,proto3" json:"prompt,omitempty"`
+	// not using as enum, because of issues with parsing by AI
+	StepType      Step_StepType `protobuf:"varint,4,opt,name=step_type,json=stepType,proto3,enum=avatar.Step_StepType" json:"step_type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -622,6 +682,13 @@ func (x *Step) GetPrompt() string {
 		return x.Prompt
 	}
 	return ""
+}
+
+func (x *Step) GetStepType() Step_StepType {
+	if x != nil {
+		return x.StepType
+	}
+	return Step_STEP_TYPE_ENUM_DEFAULT
 }
 
 // this is required as a seperate message
@@ -1016,18 +1083,24 @@ const file_v1_avatar_avatar_proto_rawDesc = "" +
 	"parameters\x1aQ\n" +
 	"\x0fParametersEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12(\n" +
-	"\x05value\x18\x02 \x01(\v2\x12.avatar.ToolParamsR\x05value:\x028\x01\"\x88\x01\n" +
+	"\x05value\x18\x02 \x01(\v2\x12.avatar.ToolParamsR\x05value:\x028\x01\"\xb2\x01\n" +
 	"\n" +
 	"AvatarMeta\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x14\n" +
 	"\x05image\x18\x04 \x01(\tR\x05image\x12\x1a\n" +
-	"\btriggers\x18\x05 \x03(\tR\btriggers\"T\n" +
+	"\btriggers\x18\x05 \x03(\tR\btriggers\x12(\n" +
+	"\x10ai_allowed_tools\x18\x06 \x03(\tR\x0eaiAllowedTools\"\xde\x01\n" +
 	"\x04Step\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x16\n" +
-	"\x06prompt\x18\x03 \x01(\tR\x06prompt\"+\n" +
+	"\x06prompt\x18\x03 \x01(\tR\x06prompt\x122\n" +
+	"\tstep_type\x18\x04 \x01(\x0e2\x15.avatar.Step.StepTypeR\bstepType\"T\n" +
+	"\bStepType\x12\x1a\n" +
+	"\x16STEP_TYPE_ENUM_DEFAULT\x10\x00\x12\x15\n" +
+	"\x11STEP_TYPE_ENUM_AI\x10\x01\x12\x15\n" +
+	"\x11STEP_TYPE_ENUM_UI\x10\x02\"+\n" +
 	"\x05Steps\x12\"\n" +
 	"\x05steps\x18\x01 \x03(\v2\f.avatar.StepR\x05steps\"\xd3\x02\n" +
 	"\n" +
@@ -1123,53 +1196,55 @@ func file_v1_avatar_avatar_proto_rawDescGZIP() []byte {
 	return file_v1_avatar_avatar_proto_rawDescData
 }
 
-var file_v1_avatar_avatar_proto_enumTypes = make([]protoimpl.EnumInfo, 5)
+var file_v1_avatar_avatar_proto_enumTypes = make([]protoimpl.EnumInfo, 6)
 var file_v1_avatar_avatar_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_v1_avatar_avatar_proto_goTypes = []any{
 	(Permission)(0),                   // 0: avatar.Permission
 	(AvatarActionType)(0),             // 1: avatar.AvatarActionType
 	(AvatarStatus)(0),                 // 2: avatar.AvatarStatus
-	(StepStatus_ResponseType)(0),      // 3: avatar.StepStatus.ResponseType
-	(AvatarControl_AvatarAction)(0),   // 4: avatar.AvatarControl.AvatarAction
-	(*ToolParams)(nil),                // 5: avatar.ToolParams
-	(*Tool)(nil),                      // 6: avatar.Tool
-	(*AvatarMeta)(nil),                // 7: avatar.AvatarMeta
-	(*Step)(nil),                      // 8: avatar.Step
-	(*Steps)(nil),                     // 9: avatar.Steps
-	(*StepStatus)(nil),                // 10: avatar.StepStatus
-	(*UiCollection)(nil),              // 11: avatar.UiCollection
-	(*Avatar)(nil),                    // 12: avatar.Avatar
-	(*AvatarControl)(nil),             // 13: avatar.AvatarControl
-	nil,                               // 14: avatar.Tool.ParametersEntry
-	(*conscious.Timestamp)(nil),       // 15: Timestamp
-	(*quantumUI.QuantumUI)(nil),       // 16: quatumUI.QuantumUI
-	(*conscious.ContextMesssage)(nil), // 17: ContextMesssage
+	(Step_StepType)(0),                // 3: avatar.Step.StepType
+	(StepStatus_ResponseType)(0),      // 4: avatar.StepStatus.ResponseType
+	(AvatarControl_AvatarAction)(0),   // 5: avatar.AvatarControl.AvatarAction
+	(*ToolParams)(nil),                // 6: avatar.ToolParams
+	(*Tool)(nil),                      // 7: avatar.Tool
+	(*AvatarMeta)(nil),                // 8: avatar.AvatarMeta
+	(*Step)(nil),                      // 9: avatar.Step
+	(*Steps)(nil),                     // 10: avatar.Steps
+	(*StepStatus)(nil),                // 11: avatar.StepStatus
+	(*UiCollection)(nil),              // 12: avatar.UiCollection
+	(*Avatar)(nil),                    // 13: avatar.Avatar
+	(*AvatarControl)(nil),             // 14: avatar.AvatarControl
+	nil,                               // 15: avatar.Tool.ParametersEntry
+	(*conscious.Timestamp)(nil),       // 16: Timestamp
+	(*quantumUI.QuantumUI)(nil),       // 17: quatumUI.QuantumUI
+	(*conscious.ContextMesssage)(nil), // 18: ContextMesssage
 }
 var file_v1_avatar_avatar_proto_depIdxs = []int32{
-	14, // 0: avatar.Tool.parameters:type_name -> avatar.Tool.ParametersEntry
-	8,  // 1: avatar.Steps.steps:type_name -> avatar.Step
-	2,  // 2: avatar.StepStatus.status:type_name -> avatar.AvatarStatus
-	15, // 3: avatar.StepStatus.created_at:type_name -> Timestamp
-	15, // 4: avatar.StepStatus.completed_at:type_name -> Timestamp
-	3,  // 5: avatar.StepStatus.response_type:type_name -> avatar.StepStatus.ResponseType
-	16, // 6: avatar.UiCollection.ui:type_name -> quatumUI.QuantumUI
-	7,  // 7: avatar.Avatar.meta:type_name -> avatar.AvatarMeta
-	0,  // 8: avatar.Avatar.permissions:type_name -> avatar.Permission
-	8,  // 9: avatar.Avatar.steps:type_name -> avatar.Step
-	11, // 10: avatar.Avatar.uiCollection:type_name -> avatar.UiCollection
-	7,  // 11: avatar.AvatarControl.meta:type_name -> avatar.AvatarMeta
-	2,  // 12: avatar.AvatarControl.status:type_name -> avatar.AvatarStatus
-	4,  // 13: avatar.AvatarControl.action:type_name -> avatar.AvatarControl.AvatarAction
-	10, // 14: avatar.AvatarControl.stepStatuses:type_name -> avatar.StepStatus
-	17, // 15: avatar.AvatarControl.response:type_name -> ContextMesssage
-	15, // 16: avatar.AvatarControl.created_at:type_name -> Timestamp
-	15, // 17: avatar.AvatarControl.completed_at:type_name -> Timestamp
-	5,  // 18: avatar.Tool.ParametersEntry.value:type_name -> avatar.ToolParams
-	19, // [19:19] is the sub-list for method output_type
-	19, // [19:19] is the sub-list for method input_type
-	19, // [19:19] is the sub-list for extension type_name
-	19, // [19:19] is the sub-list for extension extendee
-	0,  // [0:19] is the sub-list for field type_name
+	15, // 0: avatar.Tool.parameters:type_name -> avatar.Tool.ParametersEntry
+	3,  // 1: avatar.Step.step_type:type_name -> avatar.Step.StepType
+	9,  // 2: avatar.Steps.steps:type_name -> avatar.Step
+	2,  // 3: avatar.StepStatus.status:type_name -> avatar.AvatarStatus
+	16, // 4: avatar.StepStatus.created_at:type_name -> Timestamp
+	16, // 5: avatar.StepStatus.completed_at:type_name -> Timestamp
+	4,  // 6: avatar.StepStatus.response_type:type_name -> avatar.StepStatus.ResponseType
+	17, // 7: avatar.UiCollection.ui:type_name -> quatumUI.QuantumUI
+	8,  // 8: avatar.Avatar.meta:type_name -> avatar.AvatarMeta
+	0,  // 9: avatar.Avatar.permissions:type_name -> avatar.Permission
+	9,  // 10: avatar.Avatar.steps:type_name -> avatar.Step
+	12, // 11: avatar.Avatar.uiCollection:type_name -> avatar.UiCollection
+	8,  // 12: avatar.AvatarControl.meta:type_name -> avatar.AvatarMeta
+	2,  // 13: avatar.AvatarControl.status:type_name -> avatar.AvatarStatus
+	5,  // 14: avatar.AvatarControl.action:type_name -> avatar.AvatarControl.AvatarAction
+	11, // 15: avatar.AvatarControl.stepStatuses:type_name -> avatar.StepStatus
+	18, // 16: avatar.AvatarControl.response:type_name -> ContextMesssage
+	16, // 17: avatar.AvatarControl.created_at:type_name -> Timestamp
+	16, // 18: avatar.AvatarControl.completed_at:type_name -> Timestamp
+	6,  // 19: avatar.Tool.ParametersEntry.value:type_name -> avatar.ToolParams
+	20, // [20:20] is the sub-list for method output_type
+	20, // [20:20] is the sub-list for method input_type
+	20, // [20:20] is the sub-list for extension type_name
+	20, // [20:20] is the sub-list for extension extendee
+	0,  // [0:20] is the sub-list for field type_name
 }
 
 func init() { file_v1_avatar_avatar_proto_init() }
@@ -1182,7 +1257,7 @@ func file_v1_avatar_avatar_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_v1_avatar_avatar_proto_rawDesc), len(file_v1_avatar_avatar_proto_rawDesc)),
-			NumEnums:      5,
+			NumEnums:      6,
 			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   0,
