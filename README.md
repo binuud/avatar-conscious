@@ -57,6 +57,7 @@ go install github.com/cespare/reflex@latest
 * Avoid using containers during development, since metrics, needs macos access
 * Running in docker container, might not show relevant metrics
 
-## Credits
+## Detailed Documentation
 
+* [Environment settings for various LLM vendors](https://github.com/binuud/avatar/blob/master/documentation/env-examples.md)
 

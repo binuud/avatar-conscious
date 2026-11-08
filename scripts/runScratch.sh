@@ -6,7 +6,7 @@
 export FILE_STORE_PATH=${HOME}/Code/avatar/avatar-avatarconscious/dataVolume/
 export SERVABLE_DIRECTORY=${HOME}/Code/avatar/avatar-avatarconscious/dataVolume/gen/
 
-export LLM_ENDPOINT="http://localhost:11234"
+export LLM_ENDPOINT="http://localhost:11234/v1"
 export MQTT_ENDPOINT="tcp://localhost:1883"
 
 export LLM_MODEL="lmstudio-community/Qwen3.5-9B-MLX-4bit"

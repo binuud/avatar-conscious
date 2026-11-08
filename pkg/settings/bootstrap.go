@@ -24,7 +24,7 @@ func Bootstrap() {
 	Global.Add(&pbSettings.Config{
 		Name:        "LLM_ENDPOINT",
 		Group:       "LLM",
-		Default:     "http://" + localhost + ":11234",
+		Default:     "http://" + localhost + ":11234/v1",
 		Description: "LLM Endpoint, can be local or cloud, no trailing slash",
 		Type:        pbSettings.Config_STRING,
 	})

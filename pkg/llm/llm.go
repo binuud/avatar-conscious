@@ -1,10 +1,12 @@
 package llm
 
 import (
+	"cmp"
 	"context"
 	"fmt"
 	"io"
 	"os"
+	"slices"
 
 	protoV1 "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	"github.com/binuud/avatar-conscious/pkg/settings"
@@ -22,13 +24,14 @@ func GetLLMEndpoint() string {
 	if llmHost == "" {
 		logrus.Fatalf("llm endpoint is not set, please check env LLM_HOST variable")
 	}
-	return llmHost + "/v1/"
+	return llmHost
 }
 
 func GetLLMClient() openai.Client {
+	// logrus.Debugf("Open ai client %s: %s", GetLLMEndpoint(), settings.Global.GetValue("LLM_API_KEY"))
 	return openai.NewClient(
 		option.WithBaseURL(GetLLMEndpoint()),
-		option.WithAPIKey(settings.Global.GetValue("LLM_ENDPOINT")), // No API key needed for Model Runner
+		option.WithAPIKey(settings.Global.GetValue("LLM_API_KEY")), // No API key needed for Model Runner
 	)
 }
 
@@ -43,7 +46,7 @@ func MakeLLMGetModels() ([]*protoV1.Model, error) {
 		return nil, fmt.Errorf("cannot connect to llm server %v", err)
 	}
 
-	logrus.Println("Available Models:")
+	logrus.Debugln("Available Models:")
 	// Loop through the results automatically handled by the SDK iterator
 	for _, item := range page.Data {
 		model := &protoV1.Model{
@@ -52,9 +55,13 @@ func MakeLLMGetModels() ([]*protoV1.Model, error) {
 			Created: item.Created,
 			OwnedBy: item.OwnedBy,
 		}
-		logrus.Printf("- %s (Owned by: %s)\n", model.Id, model.OwnedBy)
+		logrus.Debugf("- %s (Owned by: %s)\n", model.Id, model.OwnedBy)
 		models = append(models, model)
 	}
+
+	slices.SortFunc(models, func(a, b *protoV1.Model) int {
+		return cmp.Compare(a.Id, b.Id)
+	})
 
 	return models, nil
 
@@ -86,7 +93,7 @@ func MakeImageDescribeRequest(prompt string, systemPrompt string, model string, 
 		panic(err)
 	}
 
-	fmt.Println(response.OutputText())
+	// fmt.Println(response.OutputText())
 	return response, nil
 }
 
@@ -171,7 +178,7 @@ func MakeLLMSingleRequest(prompt string, systemPrompt string, model string, temp
 
 	var response = completion.Choices[0].Message.Content
 
-	fmt.Println(response)
+	// fmt.Println(response)
 	return response, nil
 
 }
@@ -216,6 +223,8 @@ func MakeLLMSingleToolRequest(messages []openai.ChatCompletionMessageParamUnion,
 		Tools:       tools,
 		Temperature: openai.Opt(temperature),
 	}
+
+	// logrus.Debugf("Model: %s, Prompt: %v", model, messages)
 
 	return client.Chat.Completions.New(ctx, param)
 

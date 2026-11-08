@@ -144,7 +144,9 @@ func (m *Memory) Load(name string) error {
 	if err != nil {
 		return err
 	}
-	*m = localMemory
+	// avoid loading model details from memory
+	// model has to be from settings
+	m.Messages = localMemory.Messages
 	return nil
 }
 
