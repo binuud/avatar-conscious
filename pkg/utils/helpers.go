@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/binuud/avatar-conscious/pkg/settings"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -73,14 +74,31 @@ func IsFilenameSafe(fileName string) (bool, error) {
 	return true, nil
 }
 
+// GetFileAbsolutePath
+// if relativePath starts with /static, return the absolute path of static subfolder + relativefilepath
+// else check if file is in uploads folder, and send path, else return error
+func GetFileAbsolutePath(relativePath string) (string, error) {
+	if strings.HasPrefix(relativePath, "/static") {
+		filePath := settings.Global.GetValue("SERVABLE_DIRECTORY") + relativePath[7:] // pop the string /static from the relative path
+		if FileExists(filePath) {
+			return filePath, nil
+		}
+	}
+	filePath := GetUploadsFolder() + relativePath
+	if FileExists(filePath) {
+		return filePath, nil
+	}
+	return "", fmt.Errorf("filepath %s, not found or not accessible", relativePath)
+}
+
 func GetUploadsFolder() string {
-	return GetEnv("FILE_STORE_PATH", ".") + "/uploads/"
+	return settings.Global.GetValue("FILE_STORE_PATH") + "/uploads/"
 }
 
 func GetGeneratedFilesFolder() string {
-	return GetEnv("FILE_STORE_PATH", ".") + "/gen/"
+	return settings.Global.GetValue("FILE_STORE_PATH") + "/gen/"
 }
 
 func GetSamplesFolder() string {
-	return GetEnv("FILE_STORE_PATH", ".") + "/sampleImages/"
+	return settings.Global.GetValue("FILE_STORE_PATH") + "/sampleImages/"
 }

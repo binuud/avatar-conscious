@@ -102,8 +102,15 @@ func GetAiImageEdit(inpObj *AiGenerateImageEditTool_Input, model string) (string
 	logrus.Infof("GetAiImageEdit -> %s, %s, %s", memory.Model, inpObj.ImageFiles, inpObj.Prompt)
 
 	imageFileNames := make([]string, 0)
+	// create abosule paths of the file names provided by llm
+	// check if the filenames exists and is accessible, then add it to array of images
 	for _, fileName := range inpObj.ImageFiles {
-		imageFileNames = append(imageFileNames, utils.GetUploadsFolder()+fileName)
+		absolutePath, err := utils.GetFileAbsolutePath(fileName)
+		if err != nil {
+			logrus.Errorf("image file %s not accessible", fileName)
+		} else {
+			imageFileNames = append(imageFileNames, absolutePath)
+		}
 	}
 
 	result, err := llm.MakeOpenAiImageEditRequest(inpObj.Prompt, memory.Model, imageFileNames)

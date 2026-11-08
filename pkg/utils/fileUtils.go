@@ -41,6 +41,7 @@ func SaveImageDataToFile(fileName string, rawBase64 string) error {
 }
 
 func FileExists(filename string) bool {
+	// logrus.Infof("Checking file exists %f", filename)
 	_, err := os.Stat(filename)
 	if err == nil {
 		return true // File exists
