@@ -1,5 +1,5 @@
-export LLM_HOST="http://localhost:11234"
-export MQTT_HOST="tcp://localhost:1883"
+# export LLM_ENDPOINT="http://localhost:11234"
+# export MQTT_ENDPOINT="tcp://localhost:1883"
 
 # export LLM_HOST="http://host.docker.internal:11234"
 # export MQTT_HOST="tcp://host.docker.internal:1883"
@@ -15,6 +15,9 @@ export IMAGE_QUERY_MODEL="lmstudio-community/Qwen3.5-9B-MLX-4bit"
 export FILE_STORE_PATH=$PWD/dataVolume
 export SERVABLE_DIRECTORY=$PWD/dataVolume/static
 
+# this entry is for testing settings package
+export SETTINGS_IGNORE_TESTCASE_ENDPOINT="Sample123"
+
 # go test ./pkg/...
 # go test ./pkg/...  -v
 
@@ -26,9 +29,9 @@ export SERVABLE_DIRECTORY=$PWD/dataVolume/static
 ## test run for running avatar step by step, control via bidirectional server
 #go test -v  --run Test_AvatarServer_Control ./pkg/servers/avatarServer
 # go test -v --run  Test_UiLaunchTool ./pkg/tools/testTools/
-go test -v --run  Test_ImageEdit ./pkg/tools/testTools/
+# go test -v --run  Test_ImageEdit ./pkg/tools/testTools/
 # go test -v  ./pkg/servers/avatarStoreServer
-# go test -v  ./pkg/settings/
+go test -v  ./pkg/settings/
 # go test ./pkg/... -v -run "Test_RouterViaTool"
 # go test -v --run Test_LLM_TOOL ./pkg/servers/consciousServer
 # go test ./pkg/... -v -run "TestConsciousServer_LLMImageProcess"

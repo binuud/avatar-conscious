@@ -3,12 +3,10 @@ package bootstrap
 import (
 	"runtime"
 
-	pbSettings "github.com/binuud/avatar-conscious/gen/go/v1/settings"
 	"github.com/binuud/avatar-conscious/pkg/global"
 	"github.com/binuud/avatar-conscious/pkg/settings"
 	"github.com/binuud/avatar-conscious/pkg/slashCommands"
 	"github.com/binuud/avatar-conscious/pkg/tools"
-	"github.com/binuud/avatar-conscious/pkg/utils"
 	"github.com/sirupsen/logrus"
 )
 
@@ -29,98 +27,17 @@ func Bootstrap(buildEnv ...string) {
 
 	logrus.Infof("Runtime OS %s : %s", runtime.GOOS, runtime.GOARCH)
 
-	// initialize settings to default values
-	// read from env and change config
-	initSettings()
-
 	// create the required storage directorues
 	CreateStorageDirStructure()
+
+	// initialize settings to default values
+	// read from env and change config
+	settings.Bootstrap()
 
 	// initiate all slash commands
 	slashCommands.Bootstrap()
 
 	// create a GlobalCommonTools, for LLM to use
 	tools.Bootstrap()
-}
 
-func initSettings() {
-
-	// override defaults localhost
-	// when run from within docker
-	localhost := "localhost"
-	if global.IsDocker {
-		localhost = "host.docker.internal"
-		logrus.Infof("build for docker, using localhost : %s", localhost)
-	} else {
-		logrus.Infof("build for non docker, using localhost : %s", localhost)
-	}
-	// initialize the global settings
-	settings.Global = settings.NewSettings("global")
-
-	// set global settings
-	settings.Global.Set(&pbSettings.Config{
-		Name:        "LLM_ENDPOINT",
-		Group:       "LLM",
-		Value:       utils.GetEnv("LLM_HOST", "http://"+localhost+":11234"),
-		Description: "LLM Endpoint, can be local or cloud, no trailing slash",
-		Type:        pbSettings.Config_STRING,
-	})
-
-	settings.Global.Set(&pbSettings.Config{
-		Name:        "LLM_API_KEY",
-		Group:       "LLM",
-		Value:       utils.GetEnv("LLM_API_KEY", "dummy"),
-		Description: "LLM API Key, use use third party llm providers",
-		Type:        pbSettings.Config_STRING,
-	})
-
-	settings.Global.Set(&pbSettings.Config{
-		Name:        "LLM_MODEL",
-		Group:       "MODELS",
-		Value:       utils.GetEnv("LLM_MODEL", "lmstudio-community/Qwen3.5-9B-MLX-4bit"),
-		Description: "Default model used for Chat Generation, Avatars, Tools and Agents",
-		Type:        pbSettings.Config_STRING,
-	})
-
-	settings.Global.Set(&pbSettings.Config{
-		Name:        "VISION_MODEL",
-		Group:       "MODELS",
-		Value:       utils.GetEnv("VISION_MODEL", "lmstudio-community/Qwen3.5-9B-MLX-4bit"),
-		Description: "Default model used for Image Description Query",
-		Type:        pbSettings.Config_STRING,
-	})
-
-	settings.Global.Set(&pbSettings.Config{
-		Name:        "IMAGE_MODEL",
-		Group:       "MODELS",
-		Value:       utils.GetEnv("IMAGE_MODEL", "Runpod/FLUX.2-klein-4B-mflux-4bit"),
-		Description: "Default model used for Image Generation",
-		Type:        pbSettings.Config_STRING,
-	})
-
-	settings.Global.Set(&pbSettings.Config{
-		Name:        "MQTT_ENDPOINT",
-		Group:       "EVENTS",
-		Value:       utils.GetEnv("MQTT_HOST", "tcp://"+localhost+":1883"),
-		Description: "Default mqtt broker used for messaging and events",
-		Type:        pbSettings.Config_STRING,
-	})
-
-	settings.Global.Set(&pbSettings.Config{
-		Name:        "SERVABLE_DIRECTORY",
-		Group:       "SERVER",
-		Value:       utils.GetEnv("SERVABLE_DIRECTORY", "/dataVolume/static"),
-		Description: "The folder containing assets, which can be served by the static http server",
-		Type:        pbSettings.Config_STRING,
-	})
-
-	settings.Global.Set(&pbSettings.Config{
-		Name:        "FILE_STORE_PATH",
-		Group:       "SERVER",
-		Value:       utils.GetEnv("FILE_STORE_PATH", "/dataVolume"),
-		Description: "The folder containing assets, which can be served by the static http server",
-		Type:        pbSettings.Config_STRING,
-	})
-
-	settings.Global.Save()
 }

@@ -77,12 +77,16 @@ func (Config_Type) EnumDescriptor() ([]byte, []int) {
 }
 
 type Config struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Description   string                 `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
-	Value         string                 `protobuf:"bytes,3,opt,name=value,proto3" json:"value,omitempty"`
-	Group         string                 `protobuf:"bytes,4,opt,name=group,proto3" json:"group,omitempty"`
-	Type          Config_Type            `protobuf:"varint,5,opt,name=type,proto3,enum=settings.Config_Type" json:"type,omitempty"`
+	state       protoimpl.MessageState `protogen:"open.v1"`
+	Name        string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Description string                 `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
+	Group       string                 `protobuf:"bytes,3,opt,name=group,proto3" json:"group,omitempty"`
+	Value       string                 `protobuf:"bytes,4,opt,name=value,proto3" json:"value,omitempty"`
+	// the default value given by developers
+	Default string `protobuf:"bytes,5,opt,name=default,proto3" json:"default,omitempty"`
+	// env value set from environment, always overrides config value
+	EnvValue      string      `protobuf:"bytes,6,opt,name=envValue,proto3" json:"envValue,omitempty"`
+	Type          Config_Type `protobuf:"varint,7,opt,name=type,proto3,enum=settings.Config_Type" json:"type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -131,6 +135,13 @@ func (x *Config) GetDescription() string {
 	return ""
 }
 
+func (x *Config) GetGroup() string {
+	if x != nil {
+		return x.Group
+	}
+	return ""
+}
+
 func (x *Config) GetValue() string {
 	if x != nil {
 		return x.Value
@@ -138,9 +149,16 @@ func (x *Config) GetValue() string {
 	return ""
 }
 
-func (x *Config) GetGroup() string {
+func (x *Config) GetDefault() string {
 	if x != nil {
-		return x.Group
+		return x.Default
+	}
+	return ""
+}
+
+func (x *Config) GetEnvValue() string {
+	if x != nil {
+		return x.EnvValue
 	}
 	return ""
 }
@@ -252,13 +270,15 @@ var File_v1_settings_settings_proto protoreflect.FileDescriptor
 
 const file_v1_settings_settings_proto_rawDesc = "" +
 	"\n" +
-	"\x1av1/settings/settings.proto\x12\bsettings\"\xde\x01\n" +
+	"\x1av1/settings/settings.proto\x12\bsettings\"\x94\x02\n" +
 	"\x06Config\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x14\n" +
-	"\x05value\x18\x03 \x01(\tR\x05value\x12\x14\n" +
-	"\x05group\x18\x04 \x01(\tR\x05group\x12)\n" +
-	"\x04type\x18\x05 \x01(\x0e2\x15.settings.Config.TypeR\x04type\"G\n" +
+	"\x05group\x18\x03 \x01(\tR\x05group\x12\x14\n" +
+	"\x05value\x18\x04 \x01(\tR\x05value\x12\x18\n" +
+	"\adefault\x18\x05 \x01(\tR\adefault\x12\x1a\n" +
+	"\benvValue\x18\x06 \x01(\tR\benvValue\x12)\n" +
+	"\x04type\x18\a \x01(\x0e2\x15.settings.Config.TypeR\x04type\"G\n" +
 	"\x04Type\x12\x0f\n" +
 	"\vDATA_IGNORE\x10\x00\x12\n" +
 	"\n" +

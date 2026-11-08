@@ -96,10 +96,16 @@
           "description": {
             "type": "string"
           },
+          "group": {
+            "type": "string"
+          },
           "value": {
             "type": "string"
           },
-          "group": {
+          "default": {
+            "type": "string"
+          },
+          "envValue": {
             "type": "string"
           },
           "type": {
