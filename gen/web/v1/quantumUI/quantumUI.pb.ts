@@ -35,5 +35,6 @@ export type QuantumUI = {
   name?: string
   description?: string
   title?: string
+  showSubmit?: boolean
   components?: UiComponent[]
 }

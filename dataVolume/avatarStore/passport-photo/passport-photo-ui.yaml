@@ -3,6 +3,7 @@ ui:
   name: web-camera
   description: Passport Photo Maker
   title: Passport Photo Maker
+  showSubmit: false
   components:
   - id: webcamview
     class: ''

@@ -223,7 +223,8 @@ type QuantumUI struct {
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
 	Description   string                 `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
 	Title         string                 `protobuf:"bytes,4,opt,name=title,proto3" json:"title,omitempty"`
-	Components    []*UiComponent         `protobuf:"bytes,5,rep,name=components,proto3" json:"components,omitempty"`
+	ShowSubmit    bool                   `protobuf:"varint,5,opt,name=showSubmit,proto3" json:"showSubmit,omitempty"`
+	Components    []*UiComponent         `protobuf:"bytes,6,rep,name=components,proto3" json:"components,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -286,6 +287,13 @@ func (x *QuantumUI) GetTitle() string {
 	return ""
 }
 
+func (x *QuantumUI) GetShowSubmit() bool {
+	if x != nil {
+		return x.ShowSubmit
+	}
+	return false
+}
+
 func (x *QuantumUI) GetComponents() []*UiComponent {
 	if x != nil {
 		return x.Components
@@ -322,14 +330,17 @@ const file_v1_quantumUI_quantumUI_proto_rawDesc = "" +
 	"\x06BUTTON\x10\x05\x12\n" +
 	"\n" +
 	"\x06WEBCAM\x10\x06\x12\x11\n" +
-	"\rIMAGECAROUSEL\x10\a\"\xa2\x01\n" +
+	"\rIMAGECAROUSEL\x10\a\"\xc2\x01\n" +
 	"\tQuantumUI\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x14\n" +
-	"\x05title\x18\x04 \x01(\tR\x05title\x125\n" +
+	"\x05title\x18\x04 \x01(\tR\x05title\x12\x1e\n" +
 	"\n" +
-	"components\x18\x05 \x03(\v2\x15.quatumUI.UiComponentR\n" +
+	"showSubmit\x18\x05 \x01(\bR\n" +
+	"showSubmit\x125\n" +
+	"\n" +
+	"components\x18\x06 \x03(\v2\x15.quatumUI.UiComponentR\n" +
 	"componentsB8Z6github.com/binuud/avatar-conscious/gen/go/v1/quantumUIb\x06proto3"
 
 var (

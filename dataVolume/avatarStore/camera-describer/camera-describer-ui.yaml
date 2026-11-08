@@ -1,8 +1,9 @@
 ui:  
 - uuid: ''
   name: web-camera
-  description: Country Guesser
+  description: Camera Describer
   title: I can guess your country
+  showSubmit: false
   components:
   - id: webcamview
     class: ''

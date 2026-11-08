@@ -3,6 +3,7 @@ ui:
   name: web-camera
   description: WebCamera
   title: Tourist Photographer
+  showSubmit: false
   components:
   - id: webcamview
     class: ''
@@ -30,6 +31,7 @@ ui:
   name: select-place
   description: Enter the tourist place
   title: Enter the tourist place
+  showSubmit: true
   components:
   - id: select-place
     class: ''
