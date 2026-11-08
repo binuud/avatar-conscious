@@ -43,7 +43,8 @@ func NewSettingsCommand() *cobra.Command {
 					return cmp.Compare(a.Name, b.Name)
 				})
 				for _, item := range config.Configs {
-					cmd.Printf(" * * **%s**, %s\n", item.Name, item.Value)
+					value := Global.GetValue(item.Name)
+					cmd.Printf(" * * **%s**, %s\n", item.Name, value)
 				}
 			}
 		},
@@ -74,10 +75,11 @@ func NewSettingsCommand() *cobra.Command {
 				cmd.PrintErrln("please enter the name of the setting to be displayed")
 			}
 			entry := Global.Get(args[0])
+			value := Global.GetValue(args[0])
 			if entry == nil {
 				cmd.PrintErrln("cannot get settings entry")
 			} else {
-				cmd.Printf(" **%s** : %s\n", entry.Name, entry.Value)
+				cmd.Printf(" **%s** : %s, %s (actual)\n", entry.Name, entry.Value, value)
 				cmd.Printf(" %s\n", entry.Description)
 			}
 

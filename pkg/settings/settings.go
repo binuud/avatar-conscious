@@ -103,6 +103,7 @@ func (s *Settings) Update(name string, value string) error {
 
 func (s *Settings) UpdateEnv(name string, value string) error {
 	if _, ok := s.Configs.Entry[name]; ok {
+		logrus.Debugf("Config entry override with env %s:%s", name, value)
 		s.Configs.Entry[name].EnvValue = value
 		return nil
 	}
