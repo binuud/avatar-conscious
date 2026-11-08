@@ -15,8 +15,10 @@ export enum ConfigType {
 export type Config = {
   name?: string
   description?: string
-  value?: string
   group?: string
+  value?: string
+  default?: string
+  envValue?: string
   type?: ConfigType
 }
 
