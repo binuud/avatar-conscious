@@ -43,11 +43,11 @@ ui:
     cols: 0
     type: IMAGECAROUSEL
     items:
-    - /avatarStore/dress-shop/shirt1.png
-    - /avatarStore/dress-shop/shirt2.png
-    - /avatarStore/dress-shop/shirt3.png
-    - /avatarStore/dress-shop/shirt4.png
-    - /avatarStore/dress-shop/shirt5.png
+    - /static/avatarStore/dress-shop/shirt1.png
+    - /static/avatarStore/dress-shop/shirt2.png
+    - /static/avatarStore/dress-shop/shirt3.png
+    - /static/avatarStore/dress-shop/shirt4.png
+    - /static/avatarStore/dress-shop/shirt5.png
   - id: ''
     class: ''
     label: ''
