@@ -3,6 +3,7 @@ ui:
   name: get-name
   description: Country Guesser
   title: I can guess your country
+  showSubmit: true
   components:
   - id: firstName
     class: ''

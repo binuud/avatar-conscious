@@ -3,6 +3,7 @@ ui:
   name: web-camera
   description: WebCamera
   title: Magic Camera
+  showSubmit: false
   components:
   - id: webcamview
     class: ''
@@ -30,6 +31,7 @@ ui:
   name: get-prompt
   description: Get prompt from User
   title: Enter styles ideas and prompts
+  showSubmit: true
   components:
   - id: user-prompt
     class: ''

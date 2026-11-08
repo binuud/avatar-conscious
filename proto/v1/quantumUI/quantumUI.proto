@@ -34,5 +34,6 @@ message QuantumUI {
   string name = 2;
   string description =  3;
   string title = 4;
-  repeated UiComponent components = 5;
+  bool showSubmit = 5;
+  repeated UiComponent components = 6;
 }

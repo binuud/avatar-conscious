@@ -994,6 +994,9 @@
           "title": {
             "type": "string"
           },
+          "showSubmit": {
+            "type": "boolean"
+          },
           "components": {
             "type": "array",
             "items": {
