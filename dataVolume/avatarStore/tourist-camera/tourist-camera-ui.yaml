@@ -47,7 +47,7 @@ ui:
   - id: ''
     class: ''
     label: ''
-    value: Avatar will use the style keywords to modify your image
+    value: Enter prompts like, standing in front of Eiffel Tower, watching a beach, enjoying coffee in Misty Mountains, enjoying Taj Mahal etc
     placeHolder: ''
     help: ''
     style: ''

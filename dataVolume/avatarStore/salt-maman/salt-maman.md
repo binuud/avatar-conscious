@@ -2,7 +2,7 @@
 name: salt-maman
 uuid: 995865f9-6849-4219-935e-a5b770b7a7bf
 image: /static/avatarStore/salt-maman.png
-description: This is a reference avatar to showcase persistant memory over avatar calls.
+description: Sample Avatar, Not Completed, in progress. This is a reference avatar to showcase persistant memory over avatar calls.
 triggers:
   - election
   - sir

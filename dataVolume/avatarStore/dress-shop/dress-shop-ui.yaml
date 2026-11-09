@@ -19,7 +19,7 @@ ui:
   - id: ''
     class: ''
     label: ''
-    value: Avatar will try to generate a photo of you, from ideas in the next prompt.
+    value: Avatar will try to modify your clothes of your choice.
     placeHolder: ''
     help: ''
     style: ''

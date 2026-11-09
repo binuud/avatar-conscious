@@ -37,7 +37,7 @@ ui:
     class: ''
     label: User Prompt
     value: ''
-    placeHolder: Enter style keywords
+    placeHolder: Enter style keywords or prompt ideas to modify your image
     help: ''
     style: ''
     width: 100
@@ -47,7 +47,7 @@ ui:
   - id: ''
     class: ''
     label: ''
-    value: Avatar will use the style keywords to modify your image
+    value: Enter style keywords, like change Hairstyle, changing backgrounds, make animals appear near you, grow wings etc.
     placeHolder: ''
     help: ''
     style: ''

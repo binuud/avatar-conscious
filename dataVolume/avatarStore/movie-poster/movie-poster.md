@@ -2,7 +2,7 @@
 name: movie-poster
 uuid: e7e578aa-16d1-4095-97a0-8a4ad8a57a3f
 image: /static/avatarStore/movie-poster.png
-description: This is a reference demo, to showcase multi form input
+description: Sample Avatar, showcasing prompt amplification, with file injection at later steps
 triggers:
   - webcam
 ---

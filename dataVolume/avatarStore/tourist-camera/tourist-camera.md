@@ -2,7 +2,7 @@
 name: tourist-camera
 uuid: cf13858e-4e40-4f90-a792-ba5b09c63651
 image: /static/avatarStore/tourist-camera.png
-description: This is a reference demo, to showcase webcamera image piple line to agent. It takes a photo of a person using webcamera, and generates a tourist photo of random place.
+description: Sample Avatar, to showcase webcamera image piple line to agent. It takes a photo of a person using webcamera, and generates a tourist photo as per the users prompt.
 triggers:
   - webcam
 ---
@@ -15,7 +15,6 @@ triggers:
 Launch an Avatar UI webcamera interface.
 ```
 
-Use the following prompt, to launch ui with webcamera
 ```prompt
 Launch an Avatar UI interface with id "web-camera"
 ```
