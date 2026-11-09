@@ -2,7 +2,7 @@
 name: magic-camera
 uuid: 3d660f8b-f73b-42d2-84fc-d1cfc5daf571
 image: /static/avatarStore/magic-camera.png
-description: This is a reference demo, to showcase multi form input
+description: Sample avatar, showcasing web cam input, with prompt amplification affecting certain inputs to agents.
 triggers:
   - webcam
 ---

@@ -1,7 +1,7 @@
 ui:  
 - uuid: ''
   name: First Pane
-  description: Country Guesser
+  description: In Progress
   title: I can guess your country
   components:
   - id: firstName

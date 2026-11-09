@@ -1,8 +1,8 @@
 ui:
 - uuid: ''
   name: web-camera
-  description: Passport Photo Maker
-  title: Passport Photo Maker
+  description: Verify your ID Card
+  title: Verify your ID Card
   components:
   - id: webcamview
     class: ''
@@ -18,7 +18,7 @@ ui:
   - id: ''
     class: ''
     label: ''
-    value: Avatar will try to generate a passport style photo of you.
+    value: Avatar will try to verify your ID card, and generate a form with same.
     placeHolder: ''
     help: ''
     style: ''

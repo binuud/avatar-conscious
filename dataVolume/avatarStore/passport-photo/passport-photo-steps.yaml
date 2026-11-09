@@ -1,0 +1,10 @@
+steps:
+- name: Step 1
+  description: Launch an Avatar UI interface with interface id "web-camera"
+  prompt: /launch-ui web-camera
+- name: Step 2
+  description: Generate an passport style image using the image from web camera as reference  
+  prompt: > 
+    Edit the given image, remove the background, change it to blue, make a passport photo of the person in the image, wearing suit, 
+    Do not change skin tone, do not smoothen skin.
+    Do not change the face of the person.

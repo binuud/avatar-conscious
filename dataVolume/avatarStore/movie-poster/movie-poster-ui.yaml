@@ -19,7 +19,7 @@ ui:
   - id: ''
     class: ''
     label: ''
-    value: Avatar will try to generate a photo of you, from ideas in the next prompt.
+    value: Avatar will try to generate a movie poster from your webcam image
     placeHolder: ''
     help: ''
     style: ''
@@ -47,7 +47,7 @@ ui:
   - id: ''
     class: ''
     label: ''
-    value: Avatar will use the style keywords to modify your image
+    value: Avatar will use the plot story or movie name to generate a poster of you
     placeHolder: ''
     help: ''
     style: ''

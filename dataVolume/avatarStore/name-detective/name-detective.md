@@ -2,7 +2,7 @@
 name: name-detective
 uuid: aef82d62-a5d2-4f27-8502-e7dea7735ed3
 image: /static/avatarStore/name-detective.png
-description: This is a sample avatar agent file for reference. It prompts the user to enter a first and last name. Then tries to guess the country of origin and gender.
+description: Sample Avatar, with a simple multi field form. Form Value substitution in later steps. It prompts the user to enter a first and last name. Then tries to guess the country of origin and gender.
 triggers:
   - election
   - sir
@@ -16,7 +16,6 @@ triggers:
 Launch an Avatar UI interface.
 ```
 
-Use the following prompt, to launch ui
 ```prompt
 Launch an Avatar UI interface with id get-name. And get the firstname and lastname of user.
 ```

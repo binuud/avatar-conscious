@@ -10,7 +10,6 @@ package slashCommands
 
 import (
 	"bytes"
-	"os"
 	"strings"
 
 	"github.com/binuud/avatar-conscious/pkg/llm"
@@ -37,12 +36,6 @@ var SlashCommands = &cobra.Command{
 	},
 }
 
-func Execute() {
-	if err := SlashCommands.Execute(); err != nil {
-		os.Exit(1)
-	}
-}
-
 func SetStream(buf *bytes.Buffer) {
 	SlashCommands.SetOut(buf)
 	SlashCommands.SetErr(buf)
@@ -51,28 +44,29 @@ func SetStream(buf *bytes.Buffer) {
 func HandleSlashCommand(input string) {
 	replArgs := strings.Fields(input)
 
-	// 5. Intercept Cobra behavior for REPL context
+	// Intercept Cobra behavior for REPL context
 	// Silence errors and usage printing so a typo doesn't kill or flood your loop
 	SlashCommands.SilenceErrors = true
 	SlashCommands.SilenceUsage = true
 
-	// 6. Feed the arguments into Cobra
+	// Feed the arguments into Cobra
 	SlashCommands.SetArgs(replArgs)
 
-	// 7. Execute! If it returns an error, catch it and print it locally
+	// Execute! If it returns an error, catch it and print it locally
 	if err := SlashCommands.Execute(); err != nil {
-		logrus.Infof("Error: %v\n", err)
+		SlashCommands.Println(err)
+		logrus.Infof("error: %v\n", err)
 	}
 }
 
 // Bootstrap()
 // add all slash commands from the different packages
 func Bootstrap() {
+
 	SlashCommands.AddCommand(llm.NewModelsCommand())
 	SlashCommands.AddCommand(avatarServer.NewAvatarCommand())
 	SlashCommands.AddCommand(memory.NewMemoryCommand())
 	SlashCommands.AddCommand(settings.NewSettingsCommand())
 	SlashCommands.AddCommand(testbed.NewTestBedCommand())
 
-	// Execute()
 }
