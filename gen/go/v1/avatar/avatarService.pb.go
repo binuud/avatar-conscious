@@ -498,7 +498,7 @@ var File_v1_avatar_avatarService_proto protoreflect.FileDescriptor
 
 const file_v1_avatar_avatarService_proto_rawDesc = "" +
 	"\n" +
-	"\x1dv1/avatar/avatarService.proto\x12\x06avatar\x1a\x16v1/avatar/avatar.proto\x1a\x1cgoogle/api/annotations.proto\"4\n" +
+	"\x1dv1/avatar/avatarService.proto\x12\x06avatar\x1a\x16v1/avatar/avatar.proto\x1a\x1dv1/avatar/avatarControl.proto\x1a\x1cgoogle/api/annotations.proto\"4\n" +
 	"\n" +
 	"GetRequest\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
@@ -588,6 +588,7 @@ func file_v1_avatar_avatarService_proto_init() {
 		return
 	}
 	file_v1_avatar_avatar_proto_init()
+	file_v1_avatar_avatarControl_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

@@ -1,0 +1,97 @@
+syntax = "proto3";
+package avatar;
+
+option go_package = "github.com/binuud/avatar-conscious/gen/go/v1/avatar";
+
+import "v1/conscious/common.proto";
+
+import "v1/conscious/contextMessage.proto";
+import "v1/quantumUI/quantumUI.proto";
+
+
+enum AvatarResult {
+  RESULT_IGNORE = 0;
+  RESULT_SUCCESS = 1;
+  RESULT_ERROR = 2;
+}
+
+enum AvatarStatus {
+  STATUS_IGNORE = 0;
+  STATUS_NOT_STARTED = 1;
+  // initialized and ready to accept commands
+  STATUS_INIT = 2;
+  STATUS_ACTIVE = 3;
+  STATUS_STOPPED = 4;
+  // Everything went fine, and Avatar completed
+  STATUS_COMPLETED = 5;
+  // Avatar is waiting for some input or IO
+  // or an event
+  STATUS_WAITING = 6;
+  // Avatar run or step run complete, but error seen
+  STATUS_ERROR = 7;
+}
+
+enum AvatarAction {
+  ACTION_IGNORE = 0;
+  // initialize the avatar
+  // making it ready to accept control actions like run, start debug etc
+  ACTION_INIT = 1;
+  // Run the avatar to completion
+  ACTION_BEGIN = 2;
+  // Start the avatar in step by step mode
+  ACTION_DEBUG = 3;
+  ACTION_WAIT = 4;
+  ACTION_RESUME = 5;
+  // Run a particular step
+  ACTION_BEGIN_STEP = 6;
+  ACTION_STOP_STEP = 7;
+  ACTION_COMPLETE = 8;
+  ACTION_ERROR = 9;
+  ACTION_STOP = 10;
+}
+
+// Step status is kept seperate from Steps
+// LLM will generate the Steps
+// StepStatus is updated by Avatar Handler
+message StepStatus {
+
+  enum ResponseType {
+    RESPONSE_TYPE_IGNORE = 0;
+    IMAGEDATA = 1;
+    TEXT = 2;
+  }
+
+  AvatarStatus status = 1;
+  ResponseType response_type = 2; 
+
+  string reqeust = 3;
+  string response = 4;
+
+  AvatarResult result = 7;  
+  Timestamp created_at = 11;
+  Timestamp completed_at = 12;
+}
+
+
+// for control the avatar
+// bidirectional stream control can be used
+message AvatarControl {
+
+  
+  string uuid = 1;
+  string avatarUuid = 2;
+  string name  = 3;
+
+  AvatarStatus status = 4;
+  AvatarAction action = 5;
+
+  int32 current_step = 6;
+  repeated StepStatus stepStatuses = 7;
+  ContextMesssage response = 8;
+
+  // AvatarMeta meta = 9;
+  AvatarResult result = 9;  
+  Timestamp created_at = 11;
+  Timestamp completed_at = 12;
+
+}

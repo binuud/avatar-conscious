@@ -79,10 +79,8 @@ func Test_AvatarServer_Control(t *testing.T) {
 	// send start request
 	req := &pb.ControlRequest{
 		Control: &pb.AvatarControl{
-			Action: pb.AvatarControl_RUN,
-			Meta: &pb.AvatarMeta{
-				Name: "election-officer",
-			},
+			Action: pb.AvatarAction_ACTION_BEGIN,
+			Name:   "election-officer",
 		},
 	}
 
