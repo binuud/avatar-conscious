@@ -287,7 +287,14 @@
             "name": "control.action",
             "in": "query",
             "schema": {
-              "$ref": "#/components/schemas/AvatarControl.AvatarAction"
+              "$ref": "#/components/schemas/AvatarAction"
+            }
+          },
+          {
+            "name": "control.avatarUuid",
+            "in": "query",
+            "schema": {
+              "type": "string"
             }
           },
           {
@@ -331,52 +338,7 @@
             }
           },
           {
-            "name": "control.meta.aiAllowedTools",
-            "in": "query",
-            "style": "form",
-            "explode": true,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          },
-          {
-            "name": "control.meta.description",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "control.meta.image",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "control.meta.name",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "control.meta.triggers",
-            "in": "query",
-            "style": "form",
-            "explode": true,
-            "schema": {
-              "type": "array",
-              "items": {
-                "type": "string"
-              }
-            }
-          },
-          {
-            "name": "control.meta.uuid",
+            "name": "control.name",
             "in": "query",
             "schema": {
               "type": "string"
@@ -603,6 +565,13 @@
             }
           },
           {
+            "name": "control.result",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/AvatarResult"
+            }
+          },
+          {
             "name": "control.status",
             "in": "query",
             "schema": {
@@ -663,10 +632,24 @@
             }
           },
           {
+            "name": "control.stepStatuses.result",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/AvatarResult"
+            }
+          },
+          {
             "name": "control.stepStatuses.status",
             "in": "query",
             "schema": {
               "$ref": "#/components/schemas/AvatarStatus"
+            }
+          },
+          {
+            "name": "control.uuid",
+            "in": "query",
+            "schema": {
+              "type": "string"
             }
           }
         ],
@@ -713,6 +696,22 @@
           }
         }
       },
+      "AvatarAction": {
+        "type": "string",
+        "enum": [
+          "ACTION_IGNORE",
+          "ACTION_INIT",
+          "ACTION_BEGIN",
+          "ACTION_DEBUG",
+          "ACTION_WAIT",
+          "ACTION_RESUME",
+          "ACTION_BEGIN_STEP",
+          "ACTION_STOP_STEP",
+          "ACTION_COMPLETE",
+          "ACTION_ERROR",
+          "ACTION_STOP"
+        ]
+      },
       "AvatarActionType": {
         "type": "string",
         "enum": [
@@ -730,14 +729,20 @@
       "AvatarControl": {
         "type": "object",
         "properties": {
-          "meta": {
-            "$ref": "#/components/schemas/AvatarMeta"
+          "uuid": {
+            "type": "string"
+          },
+          "avatarUuid": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
           },
           "status": {
             "$ref": "#/components/schemas/AvatarStatus"
           },
           "action": {
-            "$ref": "#/components/schemas/AvatarControl.AvatarAction"
+            "$ref": "#/components/schemas/AvatarAction"
           },
           "currentStep": {
             "type": "integer",
@@ -752,6 +757,9 @@
           "response": {
             "$ref": "#/components/schemas/ContextMesssage"
           },
+          "result": {
+            "$ref": "#/components/schemas/AvatarResult"
+          },
           "createdAt": {
             "$ref": "#/components/schemas/Timestamp"
           },
@@ -759,19 +767,6 @@
             "$ref": "#/components/schemas/Timestamp"
           }
         }
-      },
-      "AvatarControl.AvatarAction": {
-        "type": "string",
-        "enum": [
-          "AVATAR_ACTION_IGNORE",
-          "INIT",
-          "RUN",
-          "START_DEBUG",
-          "STOP",
-          "RUN_STEP",
-          "STOP_STEP",
-          "SEND_DATA"
-        ]
       },
       "AvatarMeta": {
         "type": "object",
@@ -802,22 +797,25 @@
           }
         }
       },
+      "AvatarResult": {
+        "type": "string",
+        "enum": [
+          "RESULT_IGNORE",
+          "RESULT_SUCCESS",
+          "RESULT_ERROR"
+        ]
+      },
       "AvatarStatus": {
         "type": "string",
         "enum": [
-          "AvatarActionStatusIgnore",
-          "STATUS_INIT",
-          "STATUS_SUCCESS",
-          "STATUS_ACTIVE",
-          "STATUS_RERUN",
-          "STATUS_ERROR",
-          "STATUS_FAILED",
-          "STATUS_FATAL",
-          "STATUS_STOPPED",
+          "STATUS_IGNORE",
           "STATUS_NOT_STARTED",
+          "STATUS_INIT",
+          "STATUS_ACTIVE",
+          "STATUS_STOPPED",
+          "STATUS_COMPLETED",
           "STATUS_WAITING",
-          "STATUS_UI_WAITING",
-          "STATUS_IO_WAITING"
+          "STATUS_ERROR"
         ]
       },
       "AvatarStoreCreateRequest": {
@@ -1044,12 +1042,6 @@
           "status": {
             "$ref": "#/components/schemas/AvatarStatus"
           },
-          "createdAt": {
-            "$ref": "#/components/schemas/Timestamp"
-          },
-          "completedAt": {
-            "$ref": "#/components/schemas/Timestamp"
-          },
           "responseType": {
             "$ref": "#/components/schemas/StepStatus.ResponseType"
           },
@@ -1058,6 +1050,15 @@
           },
           "response": {
             "type": "string"
+          },
+          "result": {
+            "$ref": "#/components/schemas/AvatarResult"
+          },
+          "createdAt": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "completedAt": {
+            "$ref": "#/components/schemas/Timestamp"
           }
         }
       },

@@ -33,7 +33,10 @@ type AvatarServiceClient interface {
 	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error)
 	Build(ctx context.Context, in *BuildRequest, opts ...grpc.CallOption) (*BuildResponse, error)
 	// Start the avatar, avatar is a long running process
+	// for non interactive sessions
 	Start(ctx context.Context, in *StartRequest, opts ...grpc.CallOption) (*StartResponse, error)
+	// Start the avatar using a bidirectional stream
+	// for interactive sessions
 	Control(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[ControlRequest, ControlResponse], error)
 	Stop(ctx context.Context, in *StopRequest, opts ...grpc.CallOption) (*StopResponse, error)
 }
@@ -106,7 +109,10 @@ type AvatarServiceServer interface {
 	Get(context.Context, *GetRequest) (*GetResponse, error)
 	Build(context.Context, *BuildRequest) (*BuildResponse, error)
 	// Start the avatar, avatar is a long running process
+	// for non interactive sessions
 	Start(context.Context, *StartRequest) (*StartResponse, error)
+	// Start the avatar using a bidirectional stream
+	// for interactive sessions
 	Control(grpc.BidiStreamingServer[ControlRequest, ControlResponse]) error
 	Stop(context.Context, *StopRequest) (*StopResponse, error)
 	mustEmbedUnimplementedAvatarServiceServer()

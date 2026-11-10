@@ -6,7 +6,7 @@ option go_package = "github.com/binuud/avatar-conscious/gen/go/v1/avatar";
 import "v1/conscious/common.proto";
 import "v1/conscious/contextMessage.proto";
 import "v1/quantumUI/quantumUI.proto";
-
+// import "v1/avatar/avatarControl.proto";
 // Permission enum for the Avatar message
 
 message ToolParams {
@@ -66,6 +66,13 @@ message AvatarMeta {
 }
 
 
+// for parsing data from yaml or json,
+// we need to have a proper proto message of the format
+// which will be saved or read from
+message UiCollection {
+  repeated quatumUI.QuantumUI ui = 1;
+}
+
 message Step {
   string name = 1;
   string description = 2;
@@ -84,53 +91,6 @@ message Step {
 // this is for ai to parse steps into a known structure
 message Steps {
   repeated Step steps = 1;
-}
-
-enum AvatarStatus {
-  AvatarActionStatusIgnore = 0;
-  // initialized and ready to accept commands
-  STATUS_INIT = 1;
-  STATUS_SUCCESS = 2;
-  STATUS_ACTIVE = 3;
-  // waiting for user input
-  // or some io
-
-  STATUS_RERUN = 4;
-  STATUS_ERROR = 5;
-  STATUS_FAILED = 6;
-  STATUS_FATAL = 7;
-  STATUS_STOPPED = 8;
-  STATUS_NOT_STARTED = 9;
-  // Avatar is waiting for some input or IO
-  // or an event
-  STATUS_WAITING = 10;
-  STATUS_UI_WAITING = 11;
-  STATUS_IO_WAITING = 12;
-}
-
-// Step status is kept seperate from Steps
-// LLM will generate the Steps
-// StepStatus is updated by Avatar Handler
-message StepStatus {
-  AvatarStatus status = 1;
-  Timestamp created_at = 2;
-  Timestamp completed_at = 3;
-
-  enum ResponseType {
-    RESPONSE_TYPE_IGNORE = 0;
-    IMAGEDATA = 1;
-    TEXT = 2;
-  }
-  ResponseType response_type = 5; 
-  string reqeust = 6;
-  string response = 7;
-}
-
-// for parsing data from yaml or json,
-// we need to have a proper proto message of the format
-// which will be saved or read from
-message UiCollection {
-  repeated quatumUI.QuantumUI ui = 1;
 }
 
 // Avatar message representing a robot or avatar entity
@@ -152,33 +112,4 @@ message Avatar {
   // the complete data of the Avatar file
   string content = 10;
 
-}
-
-// for control the avatar
-// bidirectional stream control can be used
-message AvatarControl {
-  enum AvatarAction {
-    AVATAR_ACTION_IGNORE = 0;
-    // initialize the avatar
-    // making it ready to accept control actions like run, start debug etc
-    INIT = 1;
-    // Run the avatar to completion
-    RUN = 2;
-    // Start the avatar in step by step mode
-    START_DEBUG = 3;
-    STOP = 4;
-    // Run a particular step
-    RUN_STEP = 5;
-    STOP_STEP = 6;
-    SEND_DATA = 7;
-  }
-
-  AvatarMeta meta = 1;
-  AvatarStatus status = 2;
-  AvatarAction action = 3;
-  int32 current_step = 4;
-  repeated StepStatus stepStatuses = 5;
-  ContextMesssage response = 6;
-  Timestamp created_at = 11;
-  Timestamp completed_at = 12;
 }

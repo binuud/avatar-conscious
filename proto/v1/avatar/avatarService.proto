@@ -4,6 +4,7 @@ package avatar;
 option go_package = "github.com/binuud/avatar-conscious/gen/go/v1/avatar";
 
 import "v1/avatar/avatar.proto";
+import "v1/avatar/avatarControl.proto";
 
 // for http annotations
 import "google/api/annotations.proto";
@@ -24,12 +25,15 @@ service AvatarService {
   }
 
   // Start the avatar, avatar is a long running process
+  // for non interactive sessions
   rpc Start(StartRequest) returns (StartResponse) {
     option (google.api.http) = {
       post : "/v1/avatar/start"
     };
   }
 
+  // Start the avatar using a bidirectional stream
+  // for interactive sessions
   rpc Control(stream ControlRequest) returns (stream ControlResponse) {
     option (google.api.http) = {
       post : "/v1/avatarlive/connect"

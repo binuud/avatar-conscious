@@ -4,8 +4,6 @@
 * This file is a generated Typescript file for GRPC Gateway, DO NOT MODIFY
 */
 
-import * as Common from "../conscious/common.pb"
-import * as ContextMessage from "../conscious/contextMessage.pb"
 import * as QuatumUIQuantumUI from "../quantumUI/quantumUI.pb"
 
 export enum Permission {
@@ -29,43 +27,10 @@ export enum AvatarActionType {
   AiImageGeneration = "AiImageGeneration",
 }
 
-export enum AvatarStatus {
-  AvatarActionStatusIgnore = "AvatarActionStatusIgnore",
-  STATUS_INIT = "STATUS_INIT",
-  STATUS_SUCCESS = "STATUS_SUCCESS",
-  STATUS_ACTIVE = "STATUS_ACTIVE",
-  STATUS_RERUN = "STATUS_RERUN",
-  STATUS_ERROR = "STATUS_ERROR",
-  STATUS_FAILED = "STATUS_FAILED",
-  STATUS_FATAL = "STATUS_FATAL",
-  STATUS_STOPPED = "STATUS_STOPPED",
-  STATUS_NOT_STARTED = "STATUS_NOT_STARTED",
-  STATUS_WAITING = "STATUS_WAITING",
-  STATUS_UI_WAITING = "STATUS_UI_WAITING",
-  STATUS_IO_WAITING = "STATUS_IO_WAITING",
-}
-
 export enum StepStepType {
   STEP_TYPE_ENUM_DEFAULT = "STEP_TYPE_ENUM_DEFAULT",
   STEP_TYPE_ENUM_AI = "STEP_TYPE_ENUM_AI",
   STEP_TYPE_ENUM_UI = "STEP_TYPE_ENUM_UI",
-}
-
-export enum StepStatusResponseType {
-  RESPONSE_TYPE_IGNORE = "RESPONSE_TYPE_IGNORE",
-  IMAGEDATA = "IMAGEDATA",
-  TEXT = "TEXT",
-}
-
-export enum AvatarControlAvatarAction {
-  AVATAR_ACTION_IGNORE = "AVATAR_ACTION_IGNORE",
-  INIT = "INIT",
-  RUN = "RUN",
-  START_DEBUG = "START_DEBUG",
-  STOP = "STOP",
-  RUN_STEP = "RUN_STEP",
-  STOP_STEP = "STOP_STEP",
-  SEND_DATA = "SEND_DATA",
 }
 
 export type ToolParams = {
@@ -91,6 +56,10 @@ export type AvatarMeta = {
   aiAllowedTools?: string[]
 }
 
+export type UiCollection = {
+  ui?: QuatumUIQuantumUI.QuantumUI[]
+}
+
 export type Step = {
   name?: string
   description?: string
@@ -102,19 +71,6 @@ export type Steps = {
   steps?: Step[]
 }
 
-export type StepStatus = {
-  status?: AvatarStatus
-  createdAt?: Common.Timestamp
-  completedAt?: Common.Timestamp
-  responseType?: StepStatusResponseType
-  reqeust?: string
-  response?: string
-}
-
-export type UiCollection = {
-  ui?: QuatumUIQuantumUI.QuantumUI[]
-}
-
 export type Avatar = {
   meta?: AvatarMeta
   permissions?: Permission
@@ -122,15 +78,4 @@ export type Avatar = {
   steps?: Step[]
   uiCollection?: UiCollection
   content?: string
-}
-
-export type AvatarControl = {
-  meta?: AvatarMeta
-  status?: AvatarStatus
-  action?: AvatarControlAvatarAction
-  currentStep?: number
-  stepStatuses?: StepStatus[]
-  response?: ContextMessage.ContextMesssage
-  createdAt?: Common.Timestamp
-  completedAt?: Common.Timestamp
 }

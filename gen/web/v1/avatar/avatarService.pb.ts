@@ -6,6 +6,7 @@
 
 import * as fm from "../../fetch.pb"
 import * as AvatarAvatar from "./avatar.pb"
+import * as AvatarAvatarControl from "./avatarControl.pb"
 export type GetRequest = {
   uuid?: string
   name?: string
@@ -34,11 +35,11 @@ export type StartResponse = {
 }
 
 export type ControlRequest = {
-  control?: AvatarAvatar.AvatarControl
+  control?: AvatarAvatarControl.AvatarControl
 }
 
 export type ControlResponse = {
-  control?: AvatarAvatar.AvatarControl
+  control?: AvatarAvatarControl.AvatarControl
 }
 
 export type StopRequest = {

@@ -56,7 +56,7 @@ func WebsocketHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Channel to coordinate clean connection shutdown between the two loops
 	done := make(chan struct{})
-	// logrus.Infof("Handling request %v", r)
+	logrus.Infof("Handling request %v", r)
 
 	// Loop A: Read from gRPC Stream -> Write to WebSocket Client
 	go func() {
@@ -104,7 +104,7 @@ func WebsocketHandler(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Forward unmarshaled payload to backend gRPC Stream
-		logrus.Infof("Received message on websocket %s --> grpc", clientMsg.Control.Meta.Name)
+		logrus.Infof("Received message on websocket %s --> grpc", clientMsg.Control.Name)
 		if err := grpcStream.Send(&clientMsg); err != nil {
 			logrus.Errorf("Failed to send text payload to gRPC service: %v", err)
 			break
@@ -128,7 +128,7 @@ func readControlRequest(ws *websocket.Conn, clientMsg *avatar.ControlRequest) er
 
 		err := protojson.Unmarshal(payload, clientMsg)
 		if err != nil {
-			logrus.Errorf("Failed to unmarshal proto JSON: %v", err)
+			logrus.Errorf("Failed to unmarshal proto JSON: %s, %v", payload, err)
 			return err
 		}
 	}
