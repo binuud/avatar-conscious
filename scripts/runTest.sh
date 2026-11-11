@@ -28,7 +28,8 @@ export SETTINGS_IGNORE_TESTCASE_ENDPOINT="Sample123"
 # go test -v --run  Test_UiLaunchTool ./pkg/tools/testTools/
 # go test -v --run  Test_ImageEdit ./pkg/tools/testTools/
 # go test -v  ./pkg/servers/avatarStoreServer
-go test -v  ./pkg/settings/
+go test -v  ./pkg/servers/mcpManagerServer
+# go test -v  ./pkg/settings/
 # go test ./pkg/... -v -run "Test_RouterViaTool"
 # go test -v --run Test_LLM_TOOL ./pkg/servers/consciousServer
 # go test ./pkg/... -v -run "TestConsciousServer_LLMImageProcess"

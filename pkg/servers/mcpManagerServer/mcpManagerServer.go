@@ -75,7 +75,7 @@ func (s *mcpManagerGrpcServer) Register(ctx context.Context, in *pbMcp.RegisterR
 
 	found := -1
 	for i, entry := range entries.Configs {
-		if in.Config.Command == entry.Command || in.Config.Url == entry.Url {
+		if in.Config.Command == entry.Command && in.Config.Url == entry.Url {
 			found = i
 			break
 		}
@@ -120,31 +120,60 @@ func (s *mcpManagerGrpcServer) List(ctx context.Context, in *pbMcp.ListRequest) 
 
 func (s *mcpManagerGrpcServer) Get(ctx context.Context, in *pbMcp.GetRequest) (*pbMcp.GetResponse, error) {
 
-	logrus.Infof("List called on MCP Manager %v", in)
+	logrus.Infof("Get called on MCP Manager %v", in)
 	entries, err := load()
 	if err != nil {
 		logrus.Errorf("cannot read mcp server details - %v", err)
 		return nil, err
 	}
 
-	for _, entry := range entries.Configs {
+	found := -1
+	for i, entry := range entries.Configs {
 		if in.Uuid == entry.Uuid {
-
-			return &pbMcp.GetResponse{
-				Instance: &pbMcp.MCPServerInstance{
-					Config: entry,
-				},
-			}, nil
-
+			found = i
+			break
 		}
 	}
 
-	return nil, fmt.Errorf("error mcp server with uuid %s not found", in.Uuid)
+	if found == -1 {
+		return nil, fmt.Errorf("error mcp server with uuid %s not found", in.Uuid)
+	}
+
+	entry := entries.Configs[found]
+
+	mcp, err := mcpHandler.NewMcpCommandHandler(entry.Name, entry.Command, entry.Url)
+	if err != nil {
+		logrus.Errorf("cannot check mcp server, unreachable or command not found  - %v", err)
+		return nil, fmt.Errorf("error -  checking mcp server, unreachable or command not found  - %v", err)
+	}
+
+	mcpTools := make([]*pbMcp.MCPTool, 0)
+	for _, tool := range mcp.Tools {
+
+		jsonBytes, err := json.MarshalIndent(tool.InputSchema, "", "  ")
+		if err != nil {
+			logrus.Errorf("error parse input schema %v", tool.InputSchema)
+		}
+
+		mcpTools = append(mcpTools, &pbMcp.MCPTool{
+			Name:        tool.Name,
+			Description: tool.Description,
+			InputSchema: string(jsonBytes),
+		})
+	}
+
+	return &pbMcp.GetResponse{
+		Instance: &pbMcp.MCPServerInstance{
+			Config: entry,
+			Tools:  mcpTools,
+		},
+	}, nil
+
 }
 
 func (s *mcpManagerGrpcServer) Delete(ctx context.Context, in *pbMcp.DeleteRequest) (*pbMcp.DeleteResponse, error) {
 
-	logrus.Infof("List called on MCP Manager %v", in)
+	logrus.Infof("Delete called on MCP Manager %v", in)
 	entries, err := load()
 	if err != nil {
 		logrus.Errorf("cannot read mcp server details - %v", err)
