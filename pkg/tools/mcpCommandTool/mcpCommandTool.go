@@ -62,14 +62,8 @@ func (t *MCPCommandTool) InputSchema() string {
 }
 
 func (t *MCPCommandTool) InputSchemaAsOpenAiParam() openai.FunctionParameters {
-	// var schema = t.InputSchema()
-	// var resultMap map[string]any
-	// if err := json.Unmarshal([]byte(schema), &resultMap); err != nil {
-	// 	logrus.Errorf("Cannot parse input schema %v", t.InputSchema())
-	// 	logrus.Panicf("MCP convert InputSchemaAsOpenAiParam %s:%s, %v  ", t.name, t.mcpTool.Name, err)
-	// }
 
-	// 1. Safe type assertion to map[string]any
+	// Safe type assertion to map[string]any
 	resultMap, ok := t.mcpTool.InputSchema.(map[string]any)
 	if !ok {
 		logrus.Errorf("Cannot parse input schema %v", t.InputSchema())
