@@ -36,12 +36,29 @@ func NewToolRegistry() *ToolRegistry {
 	}
 }
 
+// // AddTool()
+// // Tools have to be defined and added to registry
+// // Even skills can only call tools already registered with tool registry
+// func (t *ToolRegistry) AddMcp(mcpHandler *toolMeta.CommonToolInterface) {
+// 	logrus.Debugf("AddedTool %s to ToolRegistry", tool.Name())
+// 	t.Tools[tool.Name()] = tool
+// }
+
 // AddTool()
 // Tools have to be defined and added to registry
 // Even skills can only call tools already registered with tool registry
 func (t *ToolRegistry) AddTool(tool toolMeta.CommonToolInterface) {
 	logrus.Debugf("AddedTool %s to ToolRegistry", tool.Name())
 	t.Tools[tool.Name()] = tool
+}
+
+// AddTool()
+// Tools have to be defined and added to registry
+// Even skills can only call tools already registered with tool registry
+func (t *ToolRegistry) AddMCPTool(name string, tool toolMeta.CommonToolInterface) {
+	toolName := fmt.Sprintf("MCP-%s-%s", name, tool.Name())
+	logrus.Debugf("AddedTool MCP Tool %s to ToolRegistry", toolName)
+	t.Tools[toolName] = tool
 }
 
 // AddTool()
@@ -66,7 +83,7 @@ func (t *ToolRegistry) GetCommonTools() []openai.ChatCompletionToolUnionParam {
 		logrus.Debugf("Description - %s, %s", name, tool.Description())
 
 		newToolFunction := openai.ChatCompletionFunctionTool(openai.FunctionDefinitionParam{
-			Name:        tool.Name(),
+			Name:        name, // change to support MCP tool.Name(),
 			Description: openai.String(tool.Description()),
 			Parameters:  tool.InputSchemaAsOpenAiParam(),
 		})
