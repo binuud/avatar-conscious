@@ -46,7 +46,7 @@ func NewMcpCommandHandler(mcpServerName string) (*McpCommandHandler, error) {
 	}, nil
 }
 
-func HandleMcp(mcpServerName string, mcpFunction string, mcpParams map[string]any) (string, error) {
+func HandleMcp(mcpServerName string, mcpFunction string, mcpParams any) (string, error) {
 	ctx := context.Background()
 
 	// Create a new client, with no features.

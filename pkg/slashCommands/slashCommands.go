@@ -13,6 +13,7 @@ import (
 	"strings"
 
 	"github.com/binuud/avatar-conscious/pkg/llm"
+	"github.com/binuud/avatar-conscious/pkg/mcpHandler"
 	"github.com/binuud/avatar-conscious/pkg/memory"
 	"github.com/binuud/avatar-conscious/pkg/servers/avatarServer"
 	"github.com/binuud/avatar-conscious/pkg/settings"
@@ -67,6 +68,7 @@ func Bootstrap() {
 	SlashCommands.AddCommand(avatarServer.NewAvatarCommand())
 	SlashCommands.AddCommand(memory.NewMemoryCommand())
 	SlashCommands.AddCommand(settings.NewSettingsCommand())
+	SlashCommands.AddCommand(mcpHandler.NewMCPServerCommand())
 	SlashCommands.AddCommand(testbed.NewTestBedCommand())
 
 }
