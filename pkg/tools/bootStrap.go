@@ -24,16 +24,20 @@ func Bootstrap() {
 	GlobalCommonToolsRegistry.AddTool(aiGenTools.NewUiLaunchTool())
 
 	// now add mcp tools
-	mcpName := "mcp-greet-server"
-	mcp, err := mcpHandler.NewMcpCommandHandler(mcpName)
-	if err != nil {
-		logrus.Fatalf("Cannot get tools from mcp server/commnad %s : %v", mcpName, err)
-	}
+	var mcpServers = []string{"mcp-greet-server", "mcp-weather-server"}
+	for _, mcpServer := range mcpServers {
 
-	// for each tool in mcp create an entry in GlobalTools
-	for _, tool := range mcp.Tools {
-		mcpTool := mcpCommandTool.NewMCPCommandTool(mcpName, tool)
-		GlobalCommonToolsRegistry.AddMCPTool(mcpName, mcpTool)
+		mcp, err := mcpHandler.NewMcpCommandHandler(mcpServer)
+		if err != nil {
+			logrus.Fatalf("Cannot get tools from mcp server/commnad %s : %v", mcpServer, err)
+		}
+
+		// for each tool in mcp create an entry in GlobalTools
+		for _, tool := range mcp.Tools {
+			mcpTool := mcpCommandTool.NewMCPCommandTool(mcpServer, tool)
+			GlobalCommonToolsRegistry.AddMCPTool(mcpServer, mcpTool)
+		}
+
 	}
 
 	GlobalCommonTools = GlobalCommonToolsRegistry.GetCommonTools()
