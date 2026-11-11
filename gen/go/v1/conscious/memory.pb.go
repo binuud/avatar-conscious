@@ -12,6 +12,7 @@
 package conscious
 
 import (
+	common "github.com/binuud/avatar-conscious/gen/go/v1/common"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -88,7 +89,7 @@ type Memory struct {
 	Seed          int64                  `protobuf:"varint,7,opt,name=seed,proto3" json:"seed,omitempty"`
 	Temperature   float64                `protobuf:"fixed64,8,opt,name=temperature,proto3" json:"temperature,omitempty"`
 	Contexts      []*SingleContext       `protobuf:"bytes,9,rep,name=contexts,proto3" json:"contexts,omitempty"`
-	CreatedAt     *Timestamp             `protobuf:"bytes,11,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
+	CreatedAt     *common.Timestamp      `protobuf:"bytes,11,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -179,7 +180,7 @@ func (x *Memory) GetContexts() []*SingleContext {
 	return nil
 }
 
-func (x *Memory) GetCreatedAt() *Timestamp {
+func (x *Memory) GetCreatedAt() *common.Timestamp {
 	if x != nil {
 		return x.CreatedAt
 	}
@@ -190,10 +191,10 @@ var File_v1_conscious_memory_proto protoreflect.FileDescriptor
 
 const file_v1_conscious_memory_proto_rawDesc = "" +
 	"\n" +
-	"\x19v1/conscious/memory.proto\x1a\x19v1/conscious/common.proto\x1a!v1/conscious/contextMessage.proto\"U\n" +
-	"\rSingleContext\x12 \n" +
-	"\x02In\x18\x01 \x01(\v2\x10.ContextMesssageR\x02In\x12\"\n" +
-	"\x03Out\x18\x02 \x01(\v2\x10.ContextMesssageR\x03Out\"\x98\x02\n" +
+	"\x19v1/conscious/memory.proto\x12\tconscious\x1a\x16v1/common/common.proto\x1a\x19v1/conscious/common.proto\x1a!v1/conscious/contextMessage.proto\"i\n" +
+	"\rSingleContext\x12*\n" +
+	"\x02In\x18\x01 \x01(\v2\x1a.conscious.ContextMesssageR\x02In\x12,\n" +
+	"\x03Out\x18\x02 \x01(\v2\x1a.conscious.ContextMesssageR\x03Out\"\xa9\x02\n" +
 	"\x06Memory\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
@@ -201,10 +202,9 @@ const file_v1_conscious_memory_proto_rawDesc = "" +
 	"\x05model\x18\x04 \x01(\tR\x05model\x12\"\n" +
 	"\fsystemPrompt\x18\x06 \x01(\tR\fsystemPrompt\x12\x12\n" +
 	"\x04seed\x18\a \x01(\x03R\x04seed\x12 \n" +
-	"\vtemperature\x18\b \x01(\x01R\vtemperature\x12*\n" +
-	"\bcontexts\x18\t \x03(\v2\x0e.SingleContextR\bcontexts\x12(\n" +
-	"\tcreatedAt\x18\v \x01(\v2\n" +
-	".TimestampR\tcreatedAtB8Z6github.com/binuud/avatar-conscious/gen/go/v1/consciousb\x06proto3"
+	"\vtemperature\x18\b \x01(\x01R\vtemperature\x124\n" +
+	"\bcontexts\x18\t \x03(\v2\x18.conscious.SingleContextR\bcontexts\x12/\n" +
+	"\tcreatedAt\x18\v \x01(\v2\x11.common.TimestampR\tcreatedAtB8Z6github.com/binuud/avatar-conscious/gen/go/v1/consciousb\x06proto3"
 
 var (
 	file_v1_conscious_memory_proto_rawDescOnce sync.Once
@@ -220,16 +220,16 @@ func file_v1_conscious_memory_proto_rawDescGZIP() []byte {
 
 var file_v1_conscious_memory_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
 var file_v1_conscious_memory_proto_goTypes = []any{
-	(*SingleContext)(nil),   // 0: SingleContext
-	(*Memory)(nil),          // 1: Memory
-	(*ContextMesssage)(nil), // 2: ContextMesssage
-	(*Timestamp)(nil),       // 3: Timestamp
+	(*SingleContext)(nil),    // 0: conscious.SingleContext
+	(*Memory)(nil),           // 1: conscious.Memory
+	(*ContextMesssage)(nil),  // 2: conscious.ContextMesssage
+	(*common.Timestamp)(nil), // 3: common.Timestamp
 }
 var file_v1_conscious_memory_proto_depIdxs = []int32{
-	2, // 0: SingleContext.In:type_name -> ContextMesssage
-	2, // 1: SingleContext.Out:type_name -> ContextMesssage
-	0, // 2: Memory.contexts:type_name -> SingleContext
-	3, // 3: Memory.createdAt:type_name -> Timestamp
+	2, // 0: conscious.SingleContext.In:type_name -> conscious.ContextMesssage
+	2, // 1: conscious.SingleContext.Out:type_name -> conscious.ContextMesssage
+	0, // 2: conscious.Memory.contexts:type_name -> conscious.SingleContext
+	3, // 3: conscious.Memory.createdAt:type_name -> common.Timestamp
 	4, // [4:4] is the sub-list for method output_type
 	4, // [4:4] is the sub-list for method input_type
 	4, // [4:4] is the sub-list for extension type_name

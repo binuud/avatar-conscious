@@ -301,15 +301,6 @@ components:
         createdAt:
           type: integer
           format: int64
-    Timestamp:
-      type: object
-      properties:
-        seconds:
-          type: integer
-          format: int64
-        nanos:
-          type: integer
-          format: int32
     UploadRequest:
       type: object
       properties:

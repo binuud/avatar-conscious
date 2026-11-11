@@ -11,11 +11,6 @@ export enum HealthResponseHealthStatus {
   Down = "Down",
 }
 
-export type Timestamp = {
-  seconds?: string
-  nanos?: number
-}
-
 export type Model = {
   uuid?: string
   id?: string

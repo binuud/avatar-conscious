@@ -24,10 +24,11 @@ func Bootstrap() {
 	GlobalCommonToolsRegistry.AddTool(aiGenTools.NewUiLaunchTool())
 
 	// now add mcp tools
-	var mcpServers = []string{"mcp-greet-server", "mcp-weather-server", "http://localhost:1080/mockserver/mcp"}
+	var mcpServers = []string{"mcp-greet-server", "mcp-weather-server"}
+	// "http://localhost:1080/mockserver/mcp"
 	for _, mcpServer := range mcpServers {
 
-		mcp, err := mcpHandler.NewMcpCommandHandler(mcpServer)
+		mcp, err := mcpHandler.NewMcpCommandHandler(mcpServer, mcpServer, "")
 		if err != nil {
 			logrus.Fatalf("Cannot get tools from mcp server/commnad %s : %v", mcpServer, err)
 		}

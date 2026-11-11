@@ -12,6 +12,7 @@
 package conscious
 
 import (
+	common "github.com/binuud/avatar-conscious/gen/go/v1/common"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -342,8 +343,8 @@ type ContextMesssage struct {
 	Description string `protobuf:"bytes,3,opt,name=description,proto3" json:"description,omitempty"`
 	// name of the ai model to use
 	Model string                      `protobuf:"bytes,4,opt,name=model,proto3" json:"model,omitempty"`
-	Type  ContextMesssage_ContextType `protobuf:"varint,6,opt,name=type,proto3,enum=ContextMesssage_ContextType" json:"type,omitempty"`
-	Role  ContextMesssage_ContextRole `protobuf:"varint,7,opt,name=role,proto3,enum=ContextMesssage_ContextRole" json:"role,omitempty"`
+	Type  ContextMesssage_ContextType `protobuf:"varint,6,opt,name=type,proto3,enum=conscious.ContextMesssage_ContextType" json:"type,omitempty"`
+	Role  ContextMesssage_ContextRole `protobuf:"varint,7,opt,name=role,proto3,enum=conscious.ContextMesssage_ContextRole" json:"role,omitempty"`
 	// if streaming response is required
 	Stream bool `protobuf:"varint,8,opt,name=stream,proto3" json:"stream,omitempty"`
 	// user prompt
@@ -364,15 +365,15 @@ type ContextMesssage struct {
 	// if any action has to be launched
 	// like ui
 	Action        string                        `protobuf:"bytes,28,opt,name=action,proto3" json:"action,omitempty"`
-	Status        ContextMesssage_ContextStatus `protobuf:"varint,31,opt,name=status,proto3,enum=ContextMesssage_ContextStatus" json:"status,omitempty"`
+	Status        ContextMesssage_ContextStatus `protobuf:"varint,31,opt,name=status,proto3,enum=conscious.ContextMesssage_ContextStatus" json:"status,omitempty"`
 	StatusMessage string                        `protobuf:"bytes,32,opt,name=statusMessage,proto3" json:"statusMessage,omitempty"`
 	ErrorMessage  string                        `protobuf:"bytes,33,opt,name=errorMessage,proto3" json:"errorMessage,omitempty"`
 	Response      string                        `protobuf:"bytes,41,opt,name=response,proto3" json:"response,omitempty"`
 	ResponseImage string                        `protobuf:"bytes,42,opt,name=responseImage,proto3" json:"responseImage,omitempty"`
 	Reasoning     string                        `protobuf:"bytes,43,opt,name=reasoning,proto3" json:"reasoning,omitempty"`
 	Thinking      string                        `protobuf:"bytes,44,opt,name=thinking,proto3" json:"thinking,omitempty"`
-	CreatedAt     *Timestamp                    `protobuf:"bytes,51,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
-	CompletedAt   *Timestamp                    `protobuf:"bytes,52,opt,name=completedAt,proto3" json:"completedAt,omitempty"`
+	CreatedAt     *common.Timestamp             `protobuf:"bytes,51,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
+	CompletedAt   *common.Timestamp             `protobuf:"bytes,52,opt,name=completedAt,proto3" json:"completedAt,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -589,14 +590,14 @@ func (x *ContextMesssage) GetThinking() string {
 	return ""
 }
 
-func (x *ContextMesssage) GetCreatedAt() *Timestamp {
+func (x *ContextMesssage) GetCreatedAt() *common.Timestamp {
 	if x != nil {
 		return x.CreatedAt
 	}
 	return nil
 }
 
-func (x *ContextMesssage) GetCompletedAt() *Timestamp {
+func (x *ContextMesssage) GetCompletedAt() *common.Timestamp {
 	if x != nil {
 		return x.CompletedAt
 	}
@@ -607,7 +608,7 @@ var File_v1_conscious_contextMessage_proto protoreflect.FileDescriptor
 
 const file_v1_conscious_contextMessage_proto_rawDesc = "" +
 	"\n" +
-	"!v1/conscious/contextMessage.proto\x1a\x19v1/conscious/common.proto\"l\n" +
+	"!v1/conscious/contextMessage.proto\x12\tconscious\x1a\x16v1/common/common.proto\"l\n" +
 	"\rUploadRequest\x12\x1b\n" +
 	"\tfile_name\x18\x01 \x01(\tR\bfileName\x12\x1b\n" +
 	"\tfile_data\x18\x02 \x01(\tR\bfileData\x12!\n" +
@@ -615,14 +616,14 @@ const file_v1_conscious_contextMessage_proto_rawDesc = "" +
 	"\x0eUploadResponse\x12\x1b\n" +
 	"\tupload_id\x18\x01 \x01(\tR\buploadId\x12\x16\n" +
 	"\x06status\x18\x02 \x01(\tR\x06status\x12#\n" +
-	"\rerror_message\x18\x03 \x01(\tR\ferrorMessage\"\xad\t\n" +
+	"\rerror_message\x18\x03 \x01(\tR\ferrorMessage\"\xd9\t\n" +
 	"\x0fContextMesssage\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x14\n" +
-	"\x05model\x18\x04 \x01(\tR\x05model\x120\n" +
-	"\x04type\x18\x06 \x01(\x0e2\x1c.ContextMesssage.ContextTypeR\x04type\x120\n" +
-	"\x04role\x18\a \x01(\x0e2\x1c.ContextMesssage.ContextRoleR\x04role\x12\x16\n" +
+	"\x05model\x18\x04 \x01(\tR\x05model\x12:\n" +
+	"\x04type\x18\x06 \x01(\x0e2&.conscious.ContextMesssage.ContextTypeR\x04type\x12:\n" +
+	"\x04role\x18\a \x01(\x0e2&.conscious.ContextMesssage.ContextRoleR\x04role\x12\x16\n" +
 	"\x06stream\x18\b \x01(\bR\x06stream\x12\x16\n" +
 	"\x06prompt\x18\v \x01(\tR\x06prompt\x12\"\n" +
 	"\fsystemPrompt\x18\f \x01(\tR\fsystemPrompt\x12\x12\n" +
@@ -635,18 +636,16 @@ const file_v1_conscious_contextMessage_proto_rawDesc = "" +
 	"\x06vision\x18\x19 \x01(\fR\x06vision\x12\x14\n" +
 	"\x05audio\x18\x1a \x01(\fR\x05audio\x12\x12\n" +
 	"\x04text\x18\x1b \x01(\fR\x04text\x12\x16\n" +
-	"\x06action\x18\x1c \x01(\tR\x06action\x126\n" +
-	"\x06status\x18\x1f \x01(\x0e2\x1e.ContextMesssage.ContextStatusR\x06status\x12$\n" +
+	"\x06action\x18\x1c \x01(\tR\x06action\x12@\n" +
+	"\x06status\x18\x1f \x01(\x0e2(.conscious.ContextMesssage.ContextStatusR\x06status\x12$\n" +
 	"\rstatusMessage\x18  \x01(\tR\rstatusMessage\x12\"\n" +
 	"\ferrorMessage\x18! \x01(\tR\ferrorMessage\x12\x1a\n" +
 	"\bresponse\x18) \x01(\tR\bresponse\x12$\n" +
 	"\rresponseImage\x18* \x01(\tR\rresponseImage\x12\x1c\n" +
 	"\treasoning\x18+ \x01(\tR\treasoning\x12\x1a\n" +
-	"\bthinking\x18, \x01(\tR\bthinking\x12(\n" +
-	"\tcreatedAt\x183 \x01(\v2\n" +
-	".TimestampR\tcreatedAt\x12,\n" +
-	"\vcompletedAt\x184 \x01(\v2\n" +
-	".TimestampR\vcompletedAt\"\x92\x01\n" +
+	"\bthinking\x18, \x01(\tR\bthinking\x12/\n" +
+	"\tcreatedAt\x183 \x01(\v2\x11.common.TimestampR\tcreatedAt\x123\n" +
+	"\vcompletedAt\x184 \x01(\v2\x11.common.TimestampR\vcompletedAt\"\x92\x01\n" +
 	"\vContextType\x12\x17\n" +
 	"\x13CONTEXT_TYPE_IGNORE\x10\x00\x12\x14\n" +
 	"\x10LLM_STREAM_QUERY\x10\x01\x12\r\n" +
@@ -685,20 +684,20 @@ func file_v1_conscious_contextMessage_proto_rawDescGZIP() []byte {
 var file_v1_conscious_contextMessage_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
 var file_v1_conscious_contextMessage_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_v1_conscious_contextMessage_proto_goTypes = []any{
-	(ContextMesssage_ContextType)(0),   // 0: ContextMesssage.ContextType
-	(ContextMesssage_ContextRole)(0),   // 1: ContextMesssage.ContextRole
-	(ContextMesssage_ContextStatus)(0), // 2: ContextMesssage.ContextStatus
-	(*UploadRequest)(nil),              // 3: UploadRequest
-	(*UploadResponse)(nil),             // 4: UploadResponse
-	(*ContextMesssage)(nil),            // 5: ContextMesssage
-	(*Timestamp)(nil),                  // 6: Timestamp
+	(ContextMesssage_ContextType)(0),   // 0: conscious.ContextMesssage.ContextType
+	(ContextMesssage_ContextRole)(0),   // 1: conscious.ContextMesssage.ContextRole
+	(ContextMesssage_ContextStatus)(0), // 2: conscious.ContextMesssage.ContextStatus
+	(*UploadRequest)(nil),              // 3: conscious.UploadRequest
+	(*UploadResponse)(nil),             // 4: conscious.UploadResponse
+	(*ContextMesssage)(nil),            // 5: conscious.ContextMesssage
+	(*common.Timestamp)(nil),           // 6: common.Timestamp
 }
 var file_v1_conscious_contextMessage_proto_depIdxs = []int32{
-	0, // 0: ContextMesssage.type:type_name -> ContextMesssage.ContextType
-	1, // 1: ContextMesssage.role:type_name -> ContextMesssage.ContextRole
-	2, // 2: ContextMesssage.status:type_name -> ContextMesssage.ContextStatus
-	6, // 3: ContextMesssage.createdAt:type_name -> Timestamp
-	6, // 4: ContextMesssage.completedAt:type_name -> Timestamp
+	0, // 0: conscious.ContextMesssage.type:type_name -> conscious.ContextMesssage.ContextType
+	1, // 1: conscious.ContextMesssage.role:type_name -> conscious.ContextMesssage.ContextRole
+	2, // 2: conscious.ContextMesssage.status:type_name -> conscious.ContextMesssage.ContextStatus
+	6, // 3: conscious.ContextMesssage.createdAt:type_name -> common.Timestamp
+	6, // 4: conscious.ContextMesssage.completedAt:type_name -> common.Timestamp
 	5, // [5:5] is the sub-list for method output_type
 	5, // [5:5] is the sub-list for method input_type
 	5, // [5:5] is the sub-list for extension type_name
@@ -711,7 +710,6 @@ func file_v1_conscious_contextMessage_proto_init() {
 	if File_v1_conscious_contextMessage_proto != nil {
 		return
 	}
-	file_v1_conscious_common_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

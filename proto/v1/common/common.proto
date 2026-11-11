@@ -1,0 +1,18 @@
+/// Please use the following editor setup for this file:
+
+// Tab size=4; Tabs as spaces; Clean up trailing whitepsace
+// 'make proto' will run clang-format to fix formatiing
+syntax = "proto3";
+
+package common;
+
+option go_package = "github.com/binuud/avatar-conscious/gen/go/v1/common";
+
+message Timestamp {
+
+  // Seconds of UTC time since Unix epoch 1970-01-01T00:00:00Z.
+  int64 seconds = 1; 
+  // Non-negative fractions of a second at nanosecond resolution.
+  int32 nanos = 2; 
+
+}

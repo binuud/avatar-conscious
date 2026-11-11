@@ -16,7 +16,10 @@ type McpCommandHandler struct {
 }
 
 // sample "mcp-greet-server"
-func NewMcpCommandHandler(mcpServerName string) (*McpCommandHandler, error) {
+// NewMcpCommandHandler
+// name is human readable snake case
+// cmd or url can be provided, both should not be emtpy
+func NewMcpCommandHandler(name string, cmd string, url string) (*McpCommandHandler, error) {
 
 	ctx := context.Background()
 
@@ -25,24 +28,29 @@ func NewMcpCommandHandler(mcpServerName string) (*McpCommandHandler, error) {
 
 	var session *mcp.ClientSession
 	var err error
-	url := strings.ToLower(mcpServerName)
-	isHTTP := strings.HasPrefix(url, "http://") || strings.HasPrefix(url, "https://")
-	if isHTTP {
-		transport := &mcp.StreamableClientTransport{
-			Endpoint: url,
-		}
+
+	if cmd != "" {
+		transport := &mcp.CommandTransport{Command: exec.Command(cmd)}
 		// Connect to a server over stdin/stdout.
 		session, err = client.Connect(ctx, transport, nil)
 		if err != nil {
 			return nil, err
+		}
+	} else if url != "" {
+		lowerCaseUrl := strings.ToLower(url)
+		isHTTP := strings.HasPrefix(lowerCaseUrl, "http://") || strings.HasPrefix(lowerCaseUrl, "https://")
+		if isHTTP {
+			transport := &mcp.StreamableClientTransport{
+				Endpoint: url,
+			}
+			// Connect to a server over stdin/stdout.
+			session, err = client.Connect(ctx, transport, nil)
+			if err != nil {
+				return nil, err
+			}
 		}
 	} else {
-		transport := &mcp.CommandTransport{Command: exec.Command(mcpServerName)}
-		// Connect to a server over stdin/stdout.
-		session, err = client.Connect(ctx, transport, nil)
-		if err != nil {
-			return nil, err
-		}
+		return nil, fmt.Errorf("error both cmd and url are emtpy")
 	}
 
 	defer session.Close()
@@ -53,7 +61,7 @@ func NewMcpCommandHandler(mcpServerName string) (*McpCommandHandler, error) {
 	}
 
 	return &McpCommandHandler{
-		name:  mcpServerName,
+		name:  name,
 		Tools: toolList.Tools,
 	}, nil
 }

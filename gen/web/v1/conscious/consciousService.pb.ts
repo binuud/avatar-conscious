@@ -5,28 +5,28 @@
 */
 
 import * as fm from "../../fetch.pb"
-import * as Common from "./common.pb"
-import * as ContextMessage from "./contextMessage.pb"
+import * as ConsciousCommon from "./common.pb"
+import * as ConsciousContextMessage from "./contextMessage.pb"
 export class Conscious {
-  static In(req: ContextMessage.ContextMesssage, initReq?: fm.InitReq): Promise<ContextMessage.ContextMesssage> {
-    return fm.fetchReq<ContextMessage.ContextMesssage, ContextMessage.ContextMesssage>(`/v1/conscious/in`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
+  static In(req: ConsciousContextMessage.ContextMesssage, initReq?: fm.InitReq): Promise<ConsciousContextMessage.ContextMesssage> {
+    return fm.fetchReq<ConsciousContextMessage.ContextMesssage, ConsciousContextMessage.ContextMesssage>(`/v1/conscious/in`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
   }
-  static Generate(req: ContextMessage.ContextMesssage, entityNotifier?: fm.NotifyStreamEntityArrival<ContextMessage.ContextMesssage>, initReq?: fm.InitReq): Promise<void> {
-    return fm.fetchStreamingRequest<ContextMessage.ContextMesssage, ContextMessage.ContextMesssage>(`/v1/conscious/generate`, entityNotifier, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
+  static Generate(req: ConsciousContextMessage.ContextMesssage, entityNotifier?: fm.NotifyStreamEntityArrival<ConsciousContextMessage.ContextMesssage>, initReq?: fm.InitReq): Promise<void> {
+    return fm.fetchStreamingRequest<ConsciousContextMessage.ContextMesssage, ConsciousContextMessage.ContextMesssage>(`/v1/conscious/generate`, entityNotifier, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
   }
-  static InStream(req: ContextMessage.ContextMesssage, entityNotifier?: fm.NotifyStreamEntityArrival<ContextMessage.ContextMesssage>, initReq?: fm.InitReq): Promise<void> {
-    return fm.fetchStreamingRequest<ContextMessage.ContextMesssage, ContextMessage.ContextMesssage>(`/v1/conscious/inStream`, entityNotifier, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
+  static InStream(req: ConsciousContextMessage.ContextMesssage, entityNotifier?: fm.NotifyStreamEntityArrival<ConsciousContextMessage.ContextMesssage>, initReq?: fm.InitReq): Promise<void> {
+    return fm.fetchStreamingRequest<ConsciousContextMessage.ContextMesssage, ConsciousContextMessage.ContextMesssage>(`/v1/conscious/inStream`, entityNotifier, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
   }
-  static GetModels(req: Common.ModelRequest, initReq?: fm.InitReq): Promise<Common.ModelResponse> {
-    return fm.fetchReq<Common.ModelRequest, Common.ModelResponse>(`/v1/conscious/models?${fm.renderURLSearchParams(req, [])}`, {...initReq, method: "GET"})
+  static GetModels(req: ConsciousCommon.ModelRequest, initReq?: fm.InitReq): Promise<ConsciousCommon.ModelResponse> {
+    return fm.fetchReq<ConsciousCommon.ModelRequest, ConsciousCommon.ModelResponse>(`/v1/conscious/models?${fm.renderURLSearchParams(req, [])}`, {...initReq, method: "GET"})
   }
-  static FileUpload(req: ContextMessage.UploadRequest, initReq?: fm.InitReq): Promise<ContextMessage.UploadResponse> {
-    return fm.fetchReq<ContextMessage.UploadRequest, ContextMessage.UploadResponse>(`/v1/conscious/fileUpload`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
+  static FileUpload(req: ConsciousContextMessage.UploadRequest, initReq?: fm.InitReq): Promise<ConsciousContextMessage.UploadResponse> {
+    return fm.fetchReq<ConsciousContextMessage.UploadRequest, ConsciousContextMessage.UploadResponse>(`/v1/conscious/fileUpload`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
   }
-  static ClearMemory(req: Common.ClearMemoryRequest, initReq?: fm.InitReq): Promise<Common.ClearMemoryResponse> {
-    return fm.fetchReq<Common.ClearMemoryRequest, Common.ClearMemoryResponse>(`/v1/conscious/clearMeroy`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
+  static ClearMemory(req: ConsciousCommon.ClearMemoryRequest, initReq?: fm.InitReq): Promise<ConsciousCommon.ClearMemoryResponse> {
+    return fm.fetchReq<ConsciousCommon.ClearMemoryRequest, ConsciousCommon.ClearMemoryResponse>(`/v1/conscious/clearMeroy`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
   }
-  static Health(req: Common.HealthRequest, initReq?: fm.InitReq): Promise<Common.HealthResponse> {
-    return fm.fetchReq<Common.HealthRequest, Common.HealthResponse>(`/v1/health?${fm.renderURLSearchParams(req, [])}`, {...initReq, method: "GET"})
+  static Health(req: ConsciousCommon.HealthRequest, initReq?: fm.InitReq): Promise<ConsciousCommon.HealthResponse> {
+    return fm.fetchReq<ConsciousCommon.HealthRequest, ConsciousCommon.HealthResponse>(`/v1/health?${fm.renderURLSearchParams(req, [])}`, {...initReq, method: "GET"})
   }
 }

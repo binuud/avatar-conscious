@@ -7,8 +7,8 @@
 package avatar
 
 import (
+	common "github.com/binuud/avatar-conscious/gen/go/v1/common"
 	conscious "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
-	_ "github.com/binuud/avatar-conscious/gen/go/v1/quantumUI"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -278,8 +278,8 @@ type StepStatus struct {
 	Reqeust       string                  `protobuf:"bytes,3,opt,name=reqeust,proto3" json:"reqeust,omitempty"`
 	Response      string                  `protobuf:"bytes,4,opt,name=response,proto3" json:"response,omitempty"`
 	Result        AvatarResult            `protobuf:"varint,7,opt,name=result,proto3,enum=avatar.AvatarResult" json:"result,omitempty"`
-	CreatedAt     *conscious.Timestamp    `protobuf:"bytes,11,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	CompletedAt   *conscious.Timestamp    `protobuf:"bytes,12,opt,name=completed_at,json=completedAt,proto3" json:"completed_at,omitempty"`
+	CreatedAt     *common.Timestamp       `protobuf:"bytes,11,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	CompletedAt   *common.Timestamp       `protobuf:"bytes,12,opt,name=completed_at,json=completedAt,proto3" json:"completed_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -349,14 +349,14 @@ func (x *StepStatus) GetResult() AvatarResult {
 	return AvatarResult_RESULT_IGNORE
 }
 
-func (x *StepStatus) GetCreatedAt() *conscious.Timestamp {
+func (x *StepStatus) GetCreatedAt() *common.Timestamp {
 	if x != nil {
 		return x.CreatedAt
 	}
 	return nil
 }
 
-func (x *StepStatus) GetCompletedAt() *conscious.Timestamp {
+func (x *StepStatus) GetCompletedAt() *common.Timestamp {
 	if x != nil {
 		return x.CompletedAt
 	}
@@ -376,9 +376,9 @@ type AvatarControl struct {
 	StepStatuses []*StepStatus              `protobuf:"bytes,7,rep,name=stepStatuses,proto3" json:"stepStatuses,omitempty"`
 	Response     *conscious.ContextMesssage `protobuf:"bytes,8,opt,name=response,proto3" json:"response,omitempty"`
 	// AvatarMeta meta = 9;
-	Result        AvatarResult         `protobuf:"varint,9,opt,name=result,proto3,enum=avatar.AvatarResult" json:"result,omitempty"`
-	CreatedAt     *conscious.Timestamp `protobuf:"bytes,11,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	CompletedAt   *conscious.Timestamp `protobuf:"bytes,12,opt,name=completed_at,json=completedAt,proto3" json:"completed_at,omitempty"`
+	Result        AvatarResult      `protobuf:"varint,9,opt,name=result,proto3,enum=avatar.AvatarResult" json:"result,omitempty"`
+	CreatedAt     *common.Timestamp `protobuf:"bytes,11,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	CompletedAt   *common.Timestamp `protobuf:"bytes,12,opt,name=completed_at,json=completedAt,proto3" json:"completed_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -476,14 +476,14 @@ func (x *AvatarControl) GetResult() AvatarResult {
 	return AvatarResult_RESULT_IGNORE
 }
 
-func (x *AvatarControl) GetCreatedAt() *conscious.Timestamp {
+func (x *AvatarControl) GetCreatedAt() *common.Timestamp {
 	if x != nil {
 		return x.CreatedAt
 	}
 	return nil
 }
 
-func (x *AvatarControl) GetCompletedAt() *conscious.Timestamp {
+func (x *AvatarControl) GetCompletedAt() *common.Timestamp {
 	if x != nil {
 		return x.CompletedAt
 	}
@@ -494,23 +494,21 @@ var File_v1_avatar_avatarControl_proto protoreflect.FileDescriptor
 
 const file_v1_avatar_avatarControl_proto_rawDesc = "" +
 	"\n" +
-	"\x1dv1/avatar/avatarControl.proto\x12\x06avatar\x1a\x19v1/conscious/common.proto\x1a!v1/conscious/contextMessage.proto\x1a\x1cv1/quantumUI/quantumUI.proto\"\x81\x03\n" +
+	"\x1dv1/avatar/avatarControl.proto\x12\x06avatar\x1a\x19v1/conscious/common.proto\x1a\x16v1/common/common.proto\x1a!v1/conscious/contextMessage.proto\"\x8f\x03\n" +
 	"\n" +
 	"StepStatus\x12,\n" +
 	"\x06status\x18\x01 \x01(\x0e2\x14.avatar.AvatarStatusR\x06status\x12D\n" +
 	"\rresponse_type\x18\x02 \x01(\x0e2\x1f.avatar.StepStatus.ResponseTypeR\fresponseType\x12\x18\n" +
 	"\areqeust\x18\x03 \x01(\tR\areqeust\x12\x1a\n" +
 	"\bresponse\x18\x04 \x01(\tR\bresponse\x12,\n" +
-	"\x06result\x18\a \x01(\x0e2\x14.avatar.AvatarResultR\x06result\x12)\n" +
+	"\x06result\x18\a \x01(\x0e2\x14.avatar.AvatarResultR\x06result\x120\n" +
 	"\n" +
-	"created_at\x18\v \x01(\v2\n" +
-	".TimestampR\tcreatedAt\x12-\n" +
-	"\fcompleted_at\x18\f \x01(\v2\n" +
-	".TimestampR\vcompletedAt\"A\n" +
+	"created_at\x18\v \x01(\v2\x11.common.TimestampR\tcreatedAt\x124\n" +
+	"\fcompleted_at\x18\f \x01(\v2\x11.common.TimestampR\vcompletedAt\"A\n" +
 	"\fResponseType\x12\x18\n" +
 	"\x14RESPONSE_TYPE_IGNORE\x10\x00\x12\r\n" +
 	"\tIMAGEDATA\x10\x01\x12\b\n" +
-	"\x04TEXT\x10\x02\"\xc4\x03\n" +
+	"\x04TEXT\x10\x02\"\xdc\x03\n" +
 	"\rAvatarControl\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x1e\n" +
 	"\n" +
@@ -520,14 +518,12 @@ const file_v1_avatar_avatarControl_proto_rawDesc = "" +
 	"\x06status\x18\x04 \x01(\x0e2\x14.avatar.AvatarStatusR\x06status\x12,\n" +
 	"\x06action\x18\x05 \x01(\x0e2\x14.avatar.AvatarActionR\x06action\x12!\n" +
 	"\fcurrent_step\x18\x06 \x01(\x05R\vcurrentStep\x126\n" +
-	"\fstepStatuses\x18\a \x03(\v2\x12.avatar.StepStatusR\fstepStatuses\x12,\n" +
-	"\bresponse\x18\b \x01(\v2\x10.ContextMesssageR\bresponse\x12,\n" +
-	"\x06result\x18\t \x01(\x0e2\x14.avatar.AvatarResultR\x06result\x12)\n" +
+	"\fstepStatuses\x18\a \x03(\v2\x12.avatar.StepStatusR\fstepStatuses\x126\n" +
+	"\bresponse\x18\b \x01(\v2\x1a.conscious.ContextMesssageR\bresponse\x12,\n" +
+	"\x06result\x18\t \x01(\x0e2\x14.avatar.AvatarResultR\x06result\x120\n" +
 	"\n" +
-	"created_at\x18\v \x01(\v2\n" +
-	".TimestampR\tcreatedAt\x12-\n" +
-	"\fcompleted_at\x18\f \x01(\v2\n" +
-	".TimestampR\vcompletedAt*G\n" +
+	"created_at\x18\v \x01(\v2\x11.common.TimestampR\tcreatedAt\x124\n" +
+	"\fcompleted_at\x18\f \x01(\v2\x11.common.TimestampR\vcompletedAt*G\n" +
 	"\fAvatarResult\x12\x11\n" +
 	"\rRESULT_IGNORE\x10\x00\x12\x12\n" +
 	"\x0eRESULT_SUCCESS\x10\x01\x12\x10\n" +
@@ -576,22 +572,22 @@ var file_v1_avatar_avatarControl_proto_goTypes = []any{
 	(StepStatus_ResponseType)(0),      // 3: avatar.StepStatus.ResponseType
 	(*StepStatus)(nil),                // 4: avatar.StepStatus
 	(*AvatarControl)(nil),             // 5: avatar.AvatarControl
-	(*conscious.Timestamp)(nil),       // 6: Timestamp
-	(*conscious.ContextMesssage)(nil), // 7: ContextMesssage
+	(*common.Timestamp)(nil),          // 6: common.Timestamp
+	(*conscious.ContextMesssage)(nil), // 7: conscious.ContextMesssage
 }
 var file_v1_avatar_avatarControl_proto_depIdxs = []int32{
 	1,  // 0: avatar.StepStatus.status:type_name -> avatar.AvatarStatus
 	3,  // 1: avatar.StepStatus.response_type:type_name -> avatar.StepStatus.ResponseType
 	0,  // 2: avatar.StepStatus.result:type_name -> avatar.AvatarResult
-	6,  // 3: avatar.StepStatus.created_at:type_name -> Timestamp
-	6,  // 4: avatar.StepStatus.completed_at:type_name -> Timestamp
+	6,  // 3: avatar.StepStatus.created_at:type_name -> common.Timestamp
+	6,  // 4: avatar.StepStatus.completed_at:type_name -> common.Timestamp
 	1,  // 5: avatar.AvatarControl.status:type_name -> avatar.AvatarStatus
 	2,  // 6: avatar.AvatarControl.action:type_name -> avatar.AvatarAction
 	4,  // 7: avatar.AvatarControl.stepStatuses:type_name -> avatar.StepStatus
-	7,  // 8: avatar.AvatarControl.response:type_name -> ContextMesssage
+	7,  // 8: avatar.AvatarControl.response:type_name -> conscious.ContextMesssage
 	0,  // 9: avatar.AvatarControl.result:type_name -> avatar.AvatarResult
-	6,  // 10: avatar.AvatarControl.created_at:type_name -> Timestamp
-	6,  // 11: avatar.AvatarControl.completed_at:type_name -> Timestamp
+	6,  // 10: avatar.AvatarControl.created_at:type_name -> common.Timestamp
+	6,  // 11: avatar.AvatarControl.completed_at:type_name -> common.Timestamp
 	12, // [12:12] is the sub-list for method output_type
 	12, // [12:12] is the sub-list for method input_type
 	12, // [12:12] is the sub-list for extension type_name

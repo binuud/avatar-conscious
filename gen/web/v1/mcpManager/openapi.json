@@ -1,0 +1,307 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "",
+    "version": ""
+  },
+  "paths": {
+    "/v1/mcpManager/check": {
+      "post": {
+        "operationId": "check",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CheckRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "mcpManager.MCPManagerService.Check response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CheckResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/mcpManager/delete": {
+      "post": {
+        "operationId": "delete",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "mcpManager.MCPManagerService.Delete response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/mcpManager/get": {
+      "get": {
+        "operationId": "get",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "mcpManager.MCPManagerService.Get response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/mcpManager/list": {
+      "get": {
+        "operationId": "list",
+        "responses": {
+          "200": {
+            "description": "mcpManager.MCPManagerService.List response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/mcpManager/register": {
+      "post": {
+        "operationId": "register",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "mcpManager.MCPManagerService.Register response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CheckRequest": {
+        "type": "object",
+        "properties": {
+          "config": {
+            "$ref": "#/components/schemas/MCPServerConfig"
+          }
+        }
+      },
+      "CheckResponse": {
+        "type": "object",
+        "properties": {
+          "instance": {
+            "$ref": "#/components/schemas/MCPServerInstance"
+          }
+        }
+      },
+      "DeleteRequest": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string"
+          }
+        }
+      },
+      "DeleteResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "GetResponse": {
+        "type": "object",
+        "properties": {
+          "instance": {
+            "$ref": "#/components/schemas/MCPServerInstance"
+          }
+        }
+      },
+      "ListResponse": {
+        "type": "object",
+        "properties": {
+          "servers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MCPServerConfig"
+            }
+          }
+        }
+      },
+      "MCPServerConfig": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "transport": {
+            "$ref": "#/components/schemas/MCPTransportType"
+          },
+          "command": {
+            "type": "string"
+          },
+          "args": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "env": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "url": {
+            "type": "string"
+          },
+          "timeout": {
+            "$ref": "#/components/schemas/Timestamp"
+          }
+        }
+      },
+      "MCPServerInstance": {
+        "type": "object",
+        "properties": {
+          "config": {
+            "$ref": "#/components/schemas/MCPServerConfig"
+          },
+          "status": {
+            "$ref": "#/components/schemas/MCPServerStatus"
+          },
+          "lastChecked": {
+            "$ref": "#/components/schemas/Timestamp"
+          },
+          "lastError": {
+            "type": "string"
+          },
+          "tools": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MCPTool"
+            }
+          },
+          "resources": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "prompts": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "MCPServerStatus": {
+        "type": "string",
+        "enum": [
+          "SERVER_STATUS_IGNORE",
+          "SERVER_STATUS_CONNECTING",
+          "SERVER_STATUS_CONNECTED",
+          "SERVER_STATUS_DISCONNECTED",
+          "SERVER_STATUS_ERROR"
+        ]
+      },
+      "MCPTool": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "inputSchema": {
+            "type": "string"
+          }
+        }
+      },
+      "MCPTransportType": {
+        "type": "string",
+        "enum": [
+          "TRANSPORT_TYPE_IGNORE",
+          "TRANSPORT_TYPE_STDIO",
+          "TRANSPORT_TYPE_HTTP",
+          "TRANSPORT_TYPE_SSE"
+        ]
+      },
+      "RegisterRequest": {
+        "type": "object",
+        "properties": {
+          "config": {
+            "$ref": "#/components/schemas/MCPServerConfig"
+          }
+        }
+      },
+      "RegisterResponse": {
+        "type": "object",
+        "properties": {
+          "instance": {
+            "$ref": "#/components/schemas/MCPServerInstance"
+          }
+        }
+      }
+    }
+  }
+}

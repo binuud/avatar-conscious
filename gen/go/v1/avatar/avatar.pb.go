@@ -7,7 +7,6 @@
 package avatar
 
 import (
-	_ "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	quantumUI "github.com/binuud/avatar-conscious/gen/go/v1/quantumUI"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -678,7 +677,7 @@ var File_v1_avatar_avatar_proto protoreflect.FileDescriptor
 
 const file_v1_avatar_avatar_proto_rawDesc = "" +
 	"\n" +
-	"\x16v1/avatar/avatar.proto\x12\x06avatar\x1a\x19v1/conscious/common.proto\x1a!v1/conscious/contextMessage.proto\x1a\x1cv1/quantumUI/quantumUI.proto\"r\n" +
+	"\x16v1/avatar/avatar.proto\x12\x06avatar\x1a\x1cv1/quantumUI/quantumUI.proto\"r\n" +
 	"\n" +
 	"ToolParams\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12\x12\n" +
