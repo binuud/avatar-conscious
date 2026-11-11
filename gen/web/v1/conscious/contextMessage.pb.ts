@@ -4,7 +4,7 @@
 * This file is a generated Typescript file for GRPC Gateway, DO NOT MODIFY
 */
 
-import * as Common from "./common.pb"
+import * as CommonCommon from "../common/common.pb"
 
 export enum ContextMesssageContextType {
   CONTEXT_TYPE_IGNORE = "CONTEXT_TYPE_IGNORE",
@@ -71,6 +71,6 @@ export type ContextMesssage = {
   responseImage?: string
   reasoning?: string
   thinking?: string
-  createdAt?: Common.Timestamp
-  completedAt?: Common.Timestamp
+  createdAt?: CommonCommon.Timestamp
+  completedAt?: CommonCommon.Timestamp
 }

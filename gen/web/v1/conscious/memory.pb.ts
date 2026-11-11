@@ -4,11 +4,11 @@
 * This file is a generated Typescript file for GRPC Gateway, DO NOT MODIFY
 */
 
-import * as Common from "./common.pb"
-import * as ContextMessage from "./contextMessage.pb"
+import * as CommonCommon from "../common/common.pb"
+import * as ConsciousContextMessage from "./contextMessage.pb"
 export type SingleContext = {
-  in?: ContextMessage.ContextMesssage
-  out?: ContextMessage.ContextMesssage
+  in?: ConsciousContextMessage.ContextMesssage
+  out?: ConsciousContextMessage.ContextMesssage
 }
 
 export type Memory = {
@@ -20,5 +20,5 @@ export type Memory = {
   seed?: string
   temperature?: number
   contexts?: SingleContext[]
-  createdAt?: Common.Timestamp
+  createdAt?: CommonCommon.Timestamp
 }

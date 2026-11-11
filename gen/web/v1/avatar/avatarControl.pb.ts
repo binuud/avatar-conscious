@@ -4,8 +4,8 @@
 * This file is a generated Typescript file for GRPC Gateway, DO NOT MODIFY
 */
 
-import * as Common from "../conscious/common.pb"
-import * as ContextMessage from "../conscious/contextMessage.pb"
+import * as CommonCommon from "../common/common.pb"
+import * as ConsciousContextMessage from "../conscious/contextMessage.pb"
 
 export enum AvatarResult {
   RESULT_IGNORE = "RESULT_IGNORE",
@@ -50,8 +50,8 @@ export type StepStatus = {
   reqeust?: string
   response?: string
   result?: AvatarResult
-  createdAt?: Common.Timestamp
-  completedAt?: Common.Timestamp
+  createdAt?: CommonCommon.Timestamp
+  completedAt?: CommonCommon.Timestamp
 }
 
 export type AvatarControl = {
@@ -62,8 +62,8 @@ export type AvatarControl = {
   action?: AvatarAction
   currentStep?: number
   stepStatuses?: StepStatus[]
-  response?: ContextMessage.ContextMesssage
+  response?: ConsciousContextMessage.ContextMesssage
   result?: AvatarResult
-  createdAt?: Common.Timestamp
-  completedAt?: Common.Timestamp
+  createdAt?: CommonCommon.Timestamp
+  completedAt?: CommonCommon.Timestamp
 }

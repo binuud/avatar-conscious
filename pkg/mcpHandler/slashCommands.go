@@ -33,7 +33,7 @@ func NewMCPServerCommand() *cobra.Command {
 				return
 			}
 			mcpName := args[0]
-			mcp, err := NewMcpCommandHandler(mcpName)
+			mcp, err := NewMcpCommandHandler(mcpName, mcpName, "")
 			if err != nil {
 				cmd.PrintErrf("Cannot get tools from mcp server/commnad %s : %v\n", mcpName, err)
 				logrus.Errorf("Cannot get tools from mcp server/commnad %s : %v", mcpName, err)

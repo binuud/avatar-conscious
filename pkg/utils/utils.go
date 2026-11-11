@@ -5,7 +5,7 @@ import (
 	"time"
 	"uuid"
 
-	"github.com/binuud/avatar-conscious/gen/go/v1/conscious"
+	"github.com/binuud/avatar-conscious/gen/go/v1/common"
 )
 
 func GenerateUUID() string {
@@ -20,9 +20,9 @@ func GetEnv(key, fallback string) string {
 	return fallback
 }
 
-func GetTimeStamp() *conscious.Timestamp {
+func GetTimeStamp() *common.Timestamp {
 
-	return &conscious.Timestamp{
+	return &common.Timestamp{
 		Seconds: time.Now().Unix(),
 		Nanos:   0,
 	}

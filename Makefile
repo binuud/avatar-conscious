@@ -93,8 +93,26 @@ errcheck:
 
 ### the ordering of sub targets is very important
 ### do not change
-protos: protos-quantum-ui protos-settings protos-conscious protos-avatar ## run all protos
+protos: protos-common protos-quantum-ui protos-settings protos-conscious protos-avatar protos-mcp ## run all protos
 
+
+protos-common: ## Build Go and Web Proto for common module
+	mkdir -p gen/go gen/web/v1/common
+# ****** common Settings 
+	$(PROTOC) -I=./proto/.  \
+	--go_out=./gen/go/ \
+	--go_opt paths=source_relative \
+	--go-grpc_out=./gen/go/ \
+	--go-grpc_opt paths=source_relative \
+	--grpc-gateway_out=./gen/go/ \
+	--grpc-gateway_opt paths=source_relative \
+	--grpc-gateway_opt generate_unbound_methods=true \
+	--grpc-gateway-ts_out=./gen/web/ \
+	--grpc-gateway-ts_opt paths=source_relative \
+	--grpc-gateway-ts_opt generate_unbound_methods=true \
+	--oas_out ./gen/web/v1/common/ \
+	proto/v1/common/common.proto 
+	yq eval ./gen/web/v1/common/openapi.yaml -o=json -P > ./gen/web/v1/common/openapi.json	
 
 ## protos
 protos-conscious: ## Build Go and Web Proto for Conscious module
@@ -176,6 +194,25 @@ protos-quantum-ui: ## Build Go and Web Proto for quantum-ui module
 	--oas_out ./gen/web/v1/quantumUI/ \
 	proto/v1/quantumUI/quantumUI.proto 
 	yq eval ./gen/web/v1/quantumUI/openapi.yaml -o=json -P > ./gen/web/v1/quantumUI/openapi.json	
+
+
+protos-mcp: ## Build Go and Web Proto for mcp module
+	mkdir -p gen/go gen/web/v1/mcpManager
+# ****** mcpManager 
+	$(PROTOC) -I=./proto/.  \
+	--go_out=./gen/go/ \
+	--go_opt paths=source_relative \
+	--go-grpc_out=./gen/go/ \
+	--go-grpc_opt paths=source_relative \
+	--grpc-gateway_out=./gen/go/ \
+	--grpc-gateway_opt paths=source_relative \
+	--grpc-gateway_opt generate_unbound_methods=true \
+	--grpc-gateway-ts_out=./gen/web/ \
+	--grpc-gateway-ts_opt paths=source_relative \
+	--grpc-gateway-ts_opt generate_unbound_methods=true \
+	--oas_out ./gen/web/v1/mcpManager/ \
+	proto/v1/mcpManager/mcpManager.proto 
+	yq eval ./gen/web/v1/mcpManager/openapi.yaml -o=json -P > ./gen/web/v1/mcpManager/openapi.json		
 ##
 ## Test Code
 ##

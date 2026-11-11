@@ -1,0 +1,150 @@
+syntax = "proto3";
+package mcpManager;
+
+option go_package = "github.com/binuud/avatar-conscious/gen/go/v1/mcpManager";
+
+import "v1/common/common.proto";
+
+// for http annotations
+import "google/api/annotations.proto";
+
+// TransportType defines how the MCP server communicates.
+enum MCPTransportType {
+  TRANSPORT_TYPE_IGNORE = 0;
+  // for command line
+  TRANSPORT_TYPE_STDIO = 1;
+  TRANSPORT_TYPE_HTTP = 2;
+  // for server side streaming
+  // streaming is buffered in current implementation
+  TRANSPORT_TYPE_SSE = 3;
+}
+
+// ServerStatus represents the current runtime state of an MCP server.
+enum MCPServerStatus {
+  SERVER_STATUS_IGNORE = 0;
+  SERVER_STATUS_CONNECTING = 1;
+  SERVER_STATUS_CONNECTED = 2;
+  SERVER_STATUS_DISCONNECTED = 3;
+  SERVER_STATUS_ERROR = 4;
+}
+
+// MCPServerConfig holds the static configuration to launch or connect to an MCP server.
+message MCPServerConfig {
+  string uuid = 1;
+  string name = 2;
+  MCPTransportType transport = 3;
+  
+  // Stdio-specific configuration
+  string command = 4;
+  repeated string args = 5;
+  map<string, string> env = 6;
+  
+  // SSE/HTTP-specific configuration
+  string url = 7;
+  
+  common.Timestamp timeout = 8;
+}
+
+message MCPTool {
+  string name = 1;
+  string description = 2;
+  string inputSchema = 3;
+}
+
+message MCPServerConfigs {
+  repeated MCPServerConfig configs = 1;
+}
+
+// MCPServerInstance represents a tracked server along with its runtime state and capabilities.
+message MCPServerInstance {
+  MCPServerConfig config = 1;
+  MCPServerStatus status = 2;
+  common.Timestamp last_checked = 3;
+  string last_error = 4;
+
+  // Cached capabilities discovered from the MCP server
+  repeated MCPTool tools = 5;
+  repeated string resources = 6;
+  repeated string prompts = 7;
+}
+
+// --- RPC Service & Request/Response Messages ---
+
+service MCPManagerService {
+
+  // for checking the mcp server without registering 
+  // or saving in the config
+  rpc Check(CheckRequest) returns (CheckResponse) {
+    option (google.api.http) = {
+      post : "/v1/mcpManager/check"
+      body : "*"
+    };
+  }
+
+  // check and add mcp server in config
+  rpc Register(RegisterRequest) returns (RegisterResponse) {
+    option (google.api.http) = {
+      post : "/v1/mcpManager/register"
+      body : "*"
+    };
+  }
+
+  // return config and the instance status like reachability
+  rpc Get(GetRequest) returns (GetResponse) {
+    option (google.api.http) = {
+      get : "/v1/mcpManager/get"
+    };
+  }
+
+  // return entries from config file
+  rpc List(ListRequest) returns (ListResponse) {
+    option (google.api.http) = {
+      get : "/v1/mcpManager/list"
+    };
+  }
+
+  rpc Delete(DeleteRequest) returns (DeleteResponse) {
+    option (google.api.http) = {
+      post : "/v1/mcpManager/delete"
+      body : "*"
+    };
+  }
+}
+
+message CheckRequest {
+  MCPServerConfig config = 1;
+}
+
+message CheckResponse {
+  MCPServerInstance instance = 1;
+}
+
+message RegisterRequest {
+  MCPServerConfig config = 1;
+}
+
+message RegisterResponse {
+  MCPServerInstance instance = 1;
+}
+
+message GetRequest {
+  string uuid = 1;
+}
+
+message GetResponse {
+  MCPServerInstance instance = 1;
+}
+
+message ListRequest {}
+
+message ListResponse {
+  repeated MCPServerConfig servers = 1;
+}
+
+message DeleteRequest {
+  string uuid = 1;
+}
+
+message DeleteResponse {
+  bool success = 1;
+}

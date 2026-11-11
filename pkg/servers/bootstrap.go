@@ -7,10 +7,12 @@ import (
 
 	pbAvatar "github.com/binuud/avatar-conscious/gen/go/v1/avatar"
 	pbConscious "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
+	pbMcp "github.com/binuud/avatar-conscious/gen/go/v1/mcpManager"
 	pbSettings "github.com/binuud/avatar-conscious/gen/go/v1/settings"
 	"github.com/binuud/avatar-conscious/pkg/servers/avatarServer"
 	"github.com/binuud/avatar-conscious/pkg/servers/avatarStoreServer"
 	"github.com/binuud/avatar-conscious/pkg/servers/consciousServer"
+	"github.com/binuud/avatar-conscious/pkg/servers/mcpManagerServer"
 	"github.com/binuud/avatar-conscious/pkg/servers/settingsServer"
 	"github.com/binuud/avatar-conscious/pkg/servers/systemMetricsServer"
 	"github.com/sirupsen/logrus"
@@ -38,6 +40,9 @@ func Bootstrap_GRPC_Services(server_grpc_port int) {
 
 	// GRPC SystemMetrics Server
 	pbConscious.RegisterMetricsServer(insecureServer, systemMetricsServer.NewGrpcSystemMetricsServer())
+
+	// GRPC MCP Server
+	pbMcp.RegisterMCPManagerServiceServer(insecureServer, mcpManagerServer.NewMCPManagerGrpcServer())
 
 	// GRPC Settings Server
 	pbSettings.RegisterSettingsServer(insecureServer, settingsServer.NewSettingsGrpcServer())
