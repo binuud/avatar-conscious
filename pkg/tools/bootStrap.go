@@ -24,7 +24,7 @@ func Bootstrap() {
 	GlobalCommonToolsRegistry.AddTool(aiGenTools.NewUiLaunchTool())
 
 	// now add mcp tools
-	var mcpServers = []string{"mcp-greet-server", "mcp-weather-server"}
+	var mcpServers = []string{"mcp-greet-server", "mcp-weather-server", "http://localhost:1080/mockserver/mcp"}
 	for _, mcpServer := range mcpServers {
 
 		mcp, err := mcpHandler.NewMcpCommandHandler(mcpServer)
