@@ -99,6 +99,10 @@ func GetGeneratedFilesFolder() string {
 	return settings.Global.GetValue("FILE_STORE_PATH") + "/gen/"
 }
 
+func GetGeneratedTTSFolder() string {
+	return settings.Global.GetValue("FILE_STORE_PATH") + "/gen/tts/"
+}
+
 func GetSamplesFolder() string {
 	return settings.Global.GetValue("FILE_STORE_PATH") + "/sampleImages/"
 }

@@ -289,3 +289,34 @@ func MakeOpenAiImageEditRequest(prompt string, model string, imageFileNames []st
 	})
 
 }
+
+func MakeTTSRequest(prompt string, model string, fileName string) error {
+
+	client := GetLLMClient()
+
+	response, err := client.Audio.Speech.New(context.Background(), openai.AudioSpeechNewParams{
+		Model: model,
+		// Voice:        openai.AudioSpeechNewParamsVoiceUnion{OfAudioSpeechNewsVoiceString2: openai.String("coral")},
+		Input:        "Today is a wonderful day to build something people love!",
+		Instructions: openai.String("Speak in a cheerful and positive tone."),
+	})
+
+	if err != nil {
+		return err
+	}
+	defer response.Body.Close()
+
+	// save the generated audio file
+	file, err := os.Create(fileName)
+	if err != nil {
+		return err
+	}
+	if _, err := io.Copy(file, response.Body); err != nil {
+		return err
+	}
+	if err := file.Close(); err != nil {
+		return err
+	}
+	return nil
+
+}
