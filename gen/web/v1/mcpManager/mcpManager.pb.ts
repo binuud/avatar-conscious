@@ -8,10 +8,10 @@ import * as fm from "../../fetch.pb"
 import * as CommonCommon from "../common/common.pb"
 
 export enum MCPTransportType {
-  TRANSPORT_TYPE_IGNORE = "TRANSPORT_TYPE_IGNORE",
-  TRANSPORT_TYPE_STDIO = "TRANSPORT_TYPE_STDIO",
-  TRANSPORT_TYPE_HTTP = "TRANSPORT_TYPE_HTTP",
-  TRANSPORT_TYPE_SSE = "TRANSPORT_TYPE_SSE",
+  MCP_TYPE_IGNORE = "MCP_TYPE_IGNORE",
+  MCP_TYPE_STDIO = "MCP_TYPE_STDIO",
+  MCP_TYPE_HTTP = "MCP_TYPE_HTTP",
+  MCP_TYPE_SSE = "MCP_TYPE_SSE",
 }
 
 export enum MCPServerStatus {
@@ -25,7 +25,7 @@ export enum MCPServerStatus {
 export type MCPServerConfig = {
   uuid?: string
   name?: string
-  transport?: MCPTransportType
+  mcpType?: MCPTransportType
   command?: string
   args?: string[]
   env?: {[key: string]: string}

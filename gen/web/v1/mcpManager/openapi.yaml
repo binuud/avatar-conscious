@@ -119,7 +119,7 @@ components:
           type: string
         name:
           type: string
-        transport:
+        mcpType:
           $ref: '#/components/schemas/MCPTransportType'
         command:
           type: string
@@ -178,10 +178,10 @@ components:
     MCPTransportType:
       type: string
       enum:
-        - "TRANSPORT_TYPE_IGNORE"
-        - "TRANSPORT_TYPE_STDIO"
-        - "TRANSPORT_TYPE_HTTP"
-        - "TRANSPORT_TYPE_SSE"
+        - "MCP_TYPE_IGNORE"
+        - "MCP_TYPE_STDIO"
+        - "MCP_TYPE_HTTP"
+        - "MCP_TYPE_SSE"
     RegisterRequest:
       type: object
       properties:

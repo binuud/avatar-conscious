@@ -62,6 +62,18 @@ func (s *mcpManagerGrpcServer) Register(ctx context.Context, in *pbMcp.RegisterR
 
 	logrus.Infof("Register called on MCP Manager %v", in)
 
+	if in.Config.Name == "" {
+		return nil, fmt.Errorf("emtpy MCP Server name not accepted")
+	}
+
+	if in.Config.McpType == pbMcp.MCPTransportType_MCP_TYPE_HTTP && in.Config.Url == "" {
+		return nil, fmt.Errorf("emtpy MCP Server Remote URL not accepted")
+	}
+
+	if in.Config.McpType == pbMcp.MCPTransportType_MCP_TYPE_STDIO && in.Config.Command == "" {
+		return nil, fmt.Errorf("emtpy MCP Server Command not accepted")
+	}
+
 	entries, err := load()
 	if err != nil {
 		logrus.Errorf("cannot read mcp server details - %v", err)
@@ -82,7 +94,7 @@ func (s *mcpManagerGrpcServer) Register(ctx context.Context, in *pbMcp.RegisterR
 	}
 
 	if found != -1 {
-		return nil, fmt.Errorf("mcp server entry already registered with avatar - %s", in.Config.Uuid)
+		return nil, fmt.Errorf("mcp server entry already registered with avatar having uuid - %s", entries.Configs[found].Uuid)
 	}
 
 	in.Config.Uuid = utils.GenerateUUID()

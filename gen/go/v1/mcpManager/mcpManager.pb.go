@@ -27,28 +27,28 @@ const (
 type MCPTransportType int32
 
 const (
-	MCPTransportType_TRANSPORT_TYPE_IGNORE MCPTransportType = 0
+	MCPTransportType_MCP_TYPE_IGNORE MCPTransportType = 0
 	// for command line
-	MCPTransportType_TRANSPORT_TYPE_STDIO MCPTransportType = 1
-	MCPTransportType_TRANSPORT_TYPE_HTTP  MCPTransportType = 2
+	MCPTransportType_MCP_TYPE_STDIO MCPTransportType = 1
+	MCPTransportType_MCP_TYPE_HTTP  MCPTransportType = 2
 	// for server side streaming
 	// streaming is buffered in current implementation
-	MCPTransportType_TRANSPORT_TYPE_SSE MCPTransportType = 3
+	MCPTransportType_MCP_TYPE_SSE MCPTransportType = 3
 )
 
 // Enum value maps for MCPTransportType.
 var (
 	MCPTransportType_name = map[int32]string{
-		0: "TRANSPORT_TYPE_IGNORE",
-		1: "TRANSPORT_TYPE_STDIO",
-		2: "TRANSPORT_TYPE_HTTP",
-		3: "TRANSPORT_TYPE_SSE",
+		0: "MCP_TYPE_IGNORE",
+		1: "MCP_TYPE_STDIO",
+		2: "MCP_TYPE_HTTP",
+		3: "MCP_TYPE_SSE",
 	}
 	MCPTransportType_value = map[string]int32{
-		"TRANSPORT_TYPE_IGNORE": 0,
-		"TRANSPORT_TYPE_STDIO":  1,
-		"TRANSPORT_TYPE_HTTP":   2,
-		"TRANSPORT_TYPE_SSE":    3,
+		"MCP_TYPE_IGNORE": 0,
+		"MCP_TYPE_STDIO":  1,
+		"MCP_TYPE_HTTP":   2,
+		"MCP_TYPE_SSE":    3,
 	}
 )
 
@@ -137,10 +137,10 @@ func (MCPServerStatus) EnumDescriptor() ([]byte, []int) {
 
 // MCPServerConfig holds the static configuration to launch or connect to an MCP server.
 type MCPServerConfig struct {
-	state     protoimpl.MessageState `protogen:"open.v1"`
-	Uuid      string                 `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
-	Name      string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Transport MCPTransportType       `protobuf:"varint,3,opt,name=transport,proto3,enum=mcpManager.MCPTransportType" json:"transport,omitempty"`
+	state   protoimpl.MessageState `protogen:"open.v1"`
+	Uuid    string                 `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
+	Name    string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	McpType MCPTransportType       `protobuf:"varint,3,opt,name=mcpType,proto3,enum=mcpManager.MCPTransportType" json:"mcpType,omitempty"`
 	// Stdio-specific configuration
 	Command string            `protobuf:"bytes,4,opt,name=command,proto3" json:"command,omitempty"`
 	Args    []string          `protobuf:"bytes,5,rep,name=args,proto3" json:"args,omitempty"`
@@ -196,11 +196,11 @@ func (x *MCPServerConfig) GetName() string {
 	return ""
 }
 
-func (x *MCPServerConfig) GetTransport() MCPTransportType {
+func (x *MCPServerConfig) GetMcpType() MCPTransportType {
 	if x != nil {
-		return x.Transport
+		return x.McpType
 	}
-	return MCPTransportType_TRANSPORT_TYPE_IGNORE
+	return MCPTransportType_MCP_TYPE_IGNORE
 }
 
 func (x *MCPServerConfig) GetCommand() string {
@@ -873,11 +873,11 @@ var File_v1_mcpManager_mcpManager_proto protoreflect.FileDescriptor
 const file_v1_mcpManager_mcpManager_proto_rawDesc = "" +
 	"\n" +
 	"\x1ev1/mcpManager/mcpManager.proto\x12\n" +
-	"mcpManager\x1a\x16v1/common/common.proto\x1a\x1cgoogle/api/annotations.proto\"\xd2\x02\n" +
+	"mcpManager\x1a\x16v1/common/common.proto\x1a\x1cgoogle/api/annotations.proto\"\xce\x02\n" +
 	"\x0fMCPServerConfig\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
-	"\x04name\x18\x02 \x01(\tR\x04name\x12:\n" +
-	"\ttransport\x18\x03 \x01(\x0e2\x1c.mcpManager.MCPTransportTypeR\ttransport\x12\x18\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x126\n" +
+	"\amcpType\x18\x03 \x01(\x0e2\x1c.mcpManager.MCPTransportTypeR\amcpType\x12\x18\n" +
 	"\acommand\x18\x04 \x01(\tR\acommand\x12\x12\n" +
 	"\x04args\x18\x05 \x03(\tR\x04args\x126\n" +
 	"\x03env\x18\x06 \x03(\v2$.mcpManager.MCPServerConfig.EnvEntryR\x03env\x12\x10\n" +
@@ -920,12 +920,12 @@ const file_v1_mcpManager_mcpManager_proto_rawDesc = "" +
 	"\rDeleteRequest\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\"*\n" +
 	"\x0eDeleteResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess*x\n" +
-	"\x10MCPTransportType\x12\x19\n" +
-	"\x15TRANSPORT_TYPE_IGNORE\x10\x00\x12\x18\n" +
-	"\x14TRANSPORT_TYPE_STDIO\x10\x01\x12\x17\n" +
-	"\x13TRANSPORT_TYPE_HTTP\x10\x02\x12\x16\n" +
-	"\x12TRANSPORT_TYPE_SSE\x10\x03*\x9f\x01\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess*`\n" +
+	"\x10MCPTransportType\x12\x13\n" +
+	"\x0fMCP_TYPE_IGNORE\x10\x00\x12\x12\n" +
+	"\x0eMCP_TYPE_STDIO\x10\x01\x12\x11\n" +
+	"\rMCP_TYPE_HTTP\x10\x02\x12\x10\n" +
+	"\fMCP_TYPE_SSE\x10\x03*\x9f\x01\n" +
 	"\x0fMCPServerStatus\x12\x18\n" +
 	"\x14SERVER_STATUS_IGNORE\x10\x00\x12\x1c\n" +
 	"\x18SERVER_STATUS_CONNECTING\x10\x01\x12\x1b\n" +
@@ -974,7 +974,7 @@ var file_v1_mcpManager_mcpManager_proto_goTypes = []any{
 	(*common.Timestamp)(nil),  // 17: common.Timestamp
 }
 var file_v1_mcpManager_mcpManager_proto_depIdxs = []int32{
-	0,  // 0: mcpManager.MCPServerConfig.transport:type_name -> mcpManager.MCPTransportType
+	0,  // 0: mcpManager.MCPServerConfig.mcpType:type_name -> mcpManager.MCPTransportType
 	16, // 1: mcpManager.MCPServerConfig.env:type_name -> mcpManager.MCPServerConfig.EnvEntry
 	17, // 2: mcpManager.MCPServerConfig.timeout:type_name -> common.Timestamp
 	2,  // 3: mcpManager.MCPServerConfigs.configs:type_name -> mcpManager.MCPServerConfig
