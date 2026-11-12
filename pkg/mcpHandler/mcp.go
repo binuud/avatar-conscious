@@ -7,7 +7,9 @@ import (
 	"os/exec"
 	"strings"
 
+	"github.com/binuud/avatar-conscious/pkg/utils"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
+	"github.com/sirupsen/logrus"
 )
 
 type McpCommandHandler struct {
@@ -114,4 +116,17 @@ func HandleMcp(mcpServerName string, mcpFunction string, mcpParams any) (string,
 	}
 
 	return out, err
+}
+
+// GetMCPAuthPRM
+// gets the protected resources metadata discovery
+func GetMCPAuthPRM(url string) (string, error) {
+	baseUrl, err := utils.GetBaseUrl(url)
+	if err != nil {
+		return "", fmt.Errorf("cannot get baseurl from url %s: %v", url, err)
+	}
+	prmUrl := baseUrl + "/.well-known/oauth-protected-resource/mcp"
+	logrus.Infof("prmUrl %s", prmUrl)
+	return utils.GetDataFromUrl(prmUrl)
+
 }

@@ -26,33 +26,16 @@ func NewMCPManagerGrpcServer() *mcpManagerGrpcServer {
 func (s *mcpManagerGrpcServer) Check(ctx context.Context, in *pbMcp.CheckRequest) (*pbMcp.CheckResponse, error) {
 
 	logrus.Infof("Check called on MCP Manager %v", in)
-	mcp, err := mcpHandler.NewMcpCommandHandler(in.Config.Name, in.Config.Command, in.Config.Url)
+
+	instanceDetails, err := s.getInstanceDetails(in.Config)
 	if err != nil {
-		logrus.Errorf("cannot check mcp server, unreachable or command not found  - %v", err)
-		return nil, fmt.Errorf("error -  checking mcp server, unreachable or command not found  - %v", err)
-	}
-
-	mcpTools := make([]*pbMcp.MCPTool, 0)
-	for _, tool := range mcp.Tools {
-
-		jsonBytes, err := json.MarshalIndent(tool.InputSchema, "", "  ")
-		if err != nil {
-			logrus.Errorf("error parse input schema %v", tool.InputSchema)
-		}
-
-		mcpTools = append(mcpTools, &pbMcp.MCPTool{
-			Name:        tool.Name,
-			Description: tool.Description,
-			InputSchema: string(jsonBytes),
-		})
+		return nil, err
 	}
 
 	return &pbMcp.CheckResponse{
-		Instance: &pbMcp.MCPServerInstance{
-			Config: in.Config,
-			Tools:  mcpTools,
-		},
+		Instance: instanceDetails,
 	}, nil
+
 }
 
 // Register
@@ -153,32 +136,10 @@ func (s *mcpManagerGrpcServer) Get(ctx context.Context, in *pbMcp.GetRequest) (*
 
 	entry := entries.Configs[found]
 
-	mcp, err := mcpHandler.NewMcpCommandHandler(entry.Name, entry.Command, entry.Url)
-	if err != nil {
-		logrus.Errorf("cannot check mcp server, unreachable or command not found  - %v", err)
-		return nil, fmt.Errorf("error -  checking mcp server, unreachable or command not found  - %v", err)
-	}
-
-	mcpTools := make([]*pbMcp.MCPTool, 0)
-	for _, tool := range mcp.Tools {
-
-		jsonBytes, err := json.MarshalIndent(tool.InputSchema, "", "  ")
-		if err != nil {
-			logrus.Errorf("error parse input schema %v", tool.InputSchema)
-		}
-
-		mcpTools = append(mcpTools, &pbMcp.MCPTool{
-			Name:        tool.Name,
-			Description: tool.Description,
-			InputSchema: string(jsonBytes),
-		})
-	}
+	instanceDetails, err := s.getInstanceDetails(entry)
 
 	return &pbMcp.GetResponse{
-		Instance: &pbMcp.MCPServerInstance{
-			Config: entry,
-			Tools:  mcpTools,
-		},
+		Instance: instanceDetails,
 	}, nil
 
 }
@@ -209,5 +170,51 @@ func (s *mcpManagerGrpcServer) Delete(ctx context.Context, in *pbMcp.DeleteReque
 
 	return &pbMcp.DeleteResponse{
 		Success: true,
+	}, nil
+}
+
+func (s *mcpManagerGrpcServer) getInstanceDetails(config *pbMcp.MCPServerConfig) (*pbMcp.MCPServerInstance, error) {
+
+	mcp, err := mcpHandler.NewMcpCommandHandler(config.Name, config.Command, config.Url)
+	if err != nil {
+		logrus.Errorf("cannot check mcp server, unreachable or command not found  - %v", err)
+		return nil, fmt.Errorf("error -  checking mcp server, unreachable or command not found  - %v", err)
+	}
+
+	mcpTools := make([]*pbMcp.MCPTool, 0)
+	for _, tool := range mcp.Tools {
+
+		jsonBytes, err := json.MarshalIndent(tool.InputSchema, "", "  ")
+		if err != nil {
+			logrus.Errorf("error parse input schema %v", tool.InputSchema)
+		}
+
+		mcpTools = append(mcpTools, &pbMcp.MCPTool{
+			Name:        tool.Name,
+			Description: tool.Description,
+			InputSchema: string(jsonBytes),
+		})
+	}
+
+	// read the Protected Resource Metadata (PRM) document
+	prmDoc := ""
+	if config.McpType == pbMcp.MCPTransportType_MCP_TYPE_HTTP {
+		prmDoc, err = mcpHandler.GetMCPAuthPRM(config.Url)
+		if err != nil {
+			prmDoc = fmt.Sprintf("error in fetching PRM Doc %v", err)
+		} else {
+			// try to pretty the json for display purpose
+			prettyPrmDoc, err := utils.GetPrettyJson(prmDoc)
+			if err == nil {
+				// if no error, we send the prettyfied json back to client
+				prmDoc = prettyPrmDoc
+			}
+		}
+	}
+	logrus.Infof("prmdoc %s", prmDoc)
+	return &pbMcp.MCPServerInstance{
+		Config: config,
+		Tools:  mcpTools,
+		PrmDoc: prmDoc,
 	}, nil
 }

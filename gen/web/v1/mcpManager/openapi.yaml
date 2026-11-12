@@ -158,6 +158,8 @@ components:
           type: array
           items:
             type: string
+        prmDoc:
+          type: string
     MCPServerStatus:
       type: string
       enum:
