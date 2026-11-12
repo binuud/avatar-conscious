@@ -26,7 +26,7 @@ func preCleanUp() {
 	audioFile := utils.GetGeneratedTTSFolder() + "test--tts-llm.mp3"
 	err := os.Remove(audioFile)
 	if err != nil {
-		logrus.Errorf("Error deleting file:", err)
+		logrus.Errorf("Error deleting file: %v", err)
 		return
 	}
 }
@@ -93,9 +93,9 @@ func Test_LLM_Chat_Request(t *testing.T) {
 func Test_LLM_Audio_Request(t *testing.T) {
 
 	tts_model := "mlx-community/Qwen3-TTS-12Hz-0.6B-Base-8bit"
-
+	voiceStyle := "Speak in a cheerful and positive tone."
 	audioFile := utils.GetGeneratedTTSFolder() + "test--tts-llm.mp3"
-	err := llm.MakeTTSRequest("Hi how are you", tts_model, audioFile)
+	err := llm.MakeTTSRequest("Hi how are you", voiceStyle, tts_model, audioFile)
 	if err != nil {
 		t.Errorf("error Test_LLM_Audio_Request: %v", err)
 		return
