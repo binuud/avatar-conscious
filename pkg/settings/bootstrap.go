@@ -70,6 +70,14 @@ func Bootstrap() {
 	})
 
 	Global.Add(&pbSettings.Config{
+		Name:        "TTS_MODEL",
+		Group:       "MODELS",
+		Default:     "mlx-community/Qwen3-TTS-12Hz-0.6B-Base-8bit",
+		Description: "Default Text To Speech model",
+		Type:        pbSettings.Config_STRING,
+	})
+
+	Global.Add(&pbSettings.Config{
 		Name:        "SERVABLE_DIRECTORY",
 		Group:       "SERVER",
 		Default:     "/dataVolume/static",
