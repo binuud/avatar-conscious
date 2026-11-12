@@ -96,11 +96,11 @@ func GetUploadsFolder() string {
 }
 
 func GetGeneratedFilesFolder() string {
-	return settings.Global.GetValue("FILE_STORE_PATH") + "/gen/"
+	return settings.Global.GetValue("SERVABLE_DIRECTORY") + "/gen/"
 }
 
 func GetGeneratedTTSFolder() string {
-	return settings.Global.GetValue("FILE_STORE_PATH") + "/gen/tts/"
+	return settings.Global.GetValue("SERVABLE_DIRECTORY") + "/gen/tts/"
 }
 
 func GetSamplesFolder() string {
