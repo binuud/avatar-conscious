@@ -10,13 +10,13 @@ import "google/api/annotations.proto";
 
 // TransportType defines how the MCP server communicates.
 enum MCPTransportType {
-  TRANSPORT_TYPE_IGNORE = 0;
+  MCP_TYPE_IGNORE = 0;
   // for command line
-  TRANSPORT_TYPE_STDIO = 1;
-  TRANSPORT_TYPE_HTTP = 2;
+  MCP_TYPE_STDIO = 1;
+  MCP_TYPE_HTTP = 2;
   // for server side streaming
   // streaming is buffered in current implementation
-  TRANSPORT_TYPE_SSE = 3;
+  MCP_TYPE_SSE = 3;
 }
 
 // ServerStatus represents the current runtime state of an MCP server.
@@ -32,7 +32,7 @@ enum MCPServerStatus {
 message MCPServerConfig {
   string uuid = 1;
   string name = 2;
-  MCPTransportType transport = 3;
+  MCPTransportType mcpType = 3;
   
   // Stdio-specific configuration
   string command = 4;

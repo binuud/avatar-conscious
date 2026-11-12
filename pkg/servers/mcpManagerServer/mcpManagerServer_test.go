@@ -44,9 +44,9 @@ func _register(t *testing.T) {
 
 	got, err := s.Register(context.Background(), &pbMcp.RegisterRequest{
 		Config: &pbMcp.MCPServerConfig{
-			Name:      "get-weather",
-			Transport: pbMcp.MCPTransportType_TRANSPORT_TYPE_STDIO,
-			Command:   "mcp-weather-server",
+			Name:    "get-weather",
+			McpType: pbMcp.MCPTransportType_MCP_TYPE_STDIO,
+			Command: "mcp-weather-server",
 		},
 	})
 
@@ -58,9 +58,9 @@ func _register(t *testing.T) {
 
 	got, err = s.Register(context.Background(), &pbMcp.RegisterRequest{
 		Config: &pbMcp.MCPServerConfig{
-			Name:      "greet-server",
-			Transport: pbMcp.MCPTransportType_TRANSPORT_TYPE_STDIO,
-			Command:   "mcp-greet-server",
+			Name:    "greet-server",
+			McpType: pbMcp.MCPTransportType_MCP_TYPE_STDIO,
+			Command: "mcp-greet-server",
 		},
 	})
 
@@ -72,9 +72,9 @@ func _register(t *testing.T) {
 
 	got, err = s.Register(context.Background(), &pbMcp.RegisterRequest{
 		Config: &pbMcp.MCPServerConfig{
-			Name:      "get-weather",
-			Transport: pbMcp.MCPTransportType_TRANSPORT_TYPE_STDIO,
-			Command:   "mcp-weather-server",
+			Name:    "get-weather",
+			McpType: pbMcp.MCPTransportType_MCP_TYPE_STDIO,
+			Command: "mcp-weather-server",
 		},
 	})
 
@@ -86,9 +86,9 @@ func _register(t *testing.T) {
 
 	got, err = s.Register(context.Background(), &pbMcp.RegisterRequest{
 		Config: &pbMcp.MCPServerConfig{
-			Name:      "mock-server",
-			Transport: pbMcp.MCPTransportType_TRANSPORT_TYPE_SSE,
-			Url:       "http://localhost:1080/mockserver/mcp",
+			Name:    "mock-server",
+			McpType: pbMcp.MCPTransportType_MCP_TYPE_HTTP,
+			Url:     "http://localhost:1080/mockserver/mcp",
 		},
 	})
 
