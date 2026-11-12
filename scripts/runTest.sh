@@ -14,6 +14,7 @@ export SERVABLE_DIRECTORY=$PWD/dataVolume/static
 
 # this entry is for testing settings package
 export SETTINGS_IGNORE_TESTCASE_ENDPOINT="Sample123"
+export TTS_MODEL="mlx-community/Qwen3-TTS-12Hz-0.6B-Base-8bit"
 
 # go test ./pkg/...
 # go test ./pkg/...  -v
@@ -23,12 +24,14 @@ export SETTINGS_IGNORE_TESTCASE_ENDPOINT="Sample123"
 ## test run for running avatar step by step
 # go test -v  --run Test_Avatar_By_Step_Election_Officer ./pkg/servers/avatarServer
 
+ go test -v --run Test_LLM_Audio_Request ./pkg/llm
+
 ## test run for running avatar step by step, control via bidirectional server
 #go test -v  --run Test_AvatarServer_Control ./pkg/servers/avatarServer
 # go test -v --run  Test_UiLaunchTool ./pkg/tools/testTools/
 # go test -v --run  Test_ImageEdit ./pkg/tools/testTools/
 # go test -v  ./pkg/servers/avatarStoreServer
-go test -v  ./pkg/servers/mcpManagerServer
+# go test -v  ./pkg/servers/mcpManagerServer
 # go test -v  ./pkg/settings/
 # go test ./pkg/... -v -run "Test_RouterViaTool"
 # go test -v --run Test_LLM_TOOL ./pkg/servers/consciousServer
