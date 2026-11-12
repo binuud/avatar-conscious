@@ -350,9 +350,11 @@ type MCPServerInstance struct {
 	LastChecked *common.Timestamp      `protobuf:"bytes,3,opt,name=last_checked,json=lastChecked,proto3" json:"last_checked,omitempty"`
 	LastError   string                 `protobuf:"bytes,4,opt,name=last_error,json=lastError,proto3" json:"last_error,omitempty"`
 	// Cached capabilities discovered from the MCP server
-	Tools         []*MCPTool `protobuf:"bytes,5,rep,name=tools,proto3" json:"tools,omitempty"`
-	Resources     []string   `protobuf:"bytes,6,rep,name=resources,proto3" json:"resources,omitempty"`
-	Prompts       []string   `protobuf:"bytes,7,rep,name=prompts,proto3" json:"prompts,omitempty"`
+	Tools     []*MCPTool `protobuf:"bytes,5,rep,name=tools,proto3" json:"tools,omitempty"`
+	Resources []string   `protobuf:"bytes,6,rep,name=resources,proto3" json:"resources,omitempty"`
+	Prompts   []string   `protobuf:"bytes,7,rep,name=prompts,proto3" json:"prompts,omitempty"`
+	// protected resources metadata discovery
+	PrmDoc        string `protobuf:"bytes,8,opt,name=prmDoc,proto3" json:"prmDoc,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -434,6 +436,13 @@ func (x *MCPServerInstance) GetPrompts() []string {
 		return x.Prompts
 	}
 	return nil
+}
+
+func (x *MCPServerInstance) GetPrmDoc() string {
+	if x != nil {
+		return x.PrmDoc
+	}
+	return ""
 }
 
 type CheckRequest struct {
@@ -891,7 +900,7 @@ const file_v1_mcpManager_mcpManager_proto_rawDesc = "" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x12 \n" +
 	"\vinputSchema\x18\x03 \x01(\tR\vinputSchema\"I\n" +
 	"\x10MCPServerConfigs\x125\n" +
-	"\aconfigs\x18\x01 \x03(\v2\x1b.mcpManager.MCPServerConfigR\aconfigs\"\xb5\x02\n" +
+	"\aconfigs\x18\x01 \x03(\v2\x1b.mcpManager.MCPServerConfigR\aconfigs\"\xcd\x02\n" +
 	"\x11MCPServerInstance\x123\n" +
 	"\x06config\x18\x01 \x01(\v2\x1b.mcpManager.MCPServerConfigR\x06config\x123\n" +
 	"\x06status\x18\x02 \x01(\x0e2\x1b.mcpManager.MCPServerStatusR\x06status\x124\n" +
@@ -900,7 +909,8 @@ const file_v1_mcpManager_mcpManager_proto_rawDesc = "" +
 	"last_error\x18\x04 \x01(\tR\tlastError\x12)\n" +
 	"\x05tools\x18\x05 \x03(\v2\x13.mcpManager.MCPToolR\x05tools\x12\x1c\n" +
 	"\tresources\x18\x06 \x03(\tR\tresources\x12\x18\n" +
-	"\aprompts\x18\a \x03(\tR\aprompts\"C\n" +
+	"\aprompts\x18\a \x03(\tR\aprompts\x12\x16\n" +
+	"\x06prmDoc\x18\b \x01(\tR\x06prmDoc\"C\n" +
 	"\fCheckRequest\x123\n" +
 	"\x06config\x18\x01 \x01(\v2\x1b.mcpManager.MCPServerConfigR\x06config\"J\n" +
 	"\rCheckResponse\x129\n" +

@@ -250,6 +250,9 @@
             "items": {
               "type": "string"
             }
+          },
+          "prmDoc": {
+            "type": "string"
           }
         }
       },

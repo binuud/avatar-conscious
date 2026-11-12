@@ -66,6 +66,8 @@ message MCPServerInstance {
   repeated MCPTool tools = 5;
   repeated string resources = 6;
   repeated string prompts = 7;
+  // protected resources metadata discovery
+  string prmDoc = 8;
 }
 
 // --- RPC Service & Request/Response Messages ---

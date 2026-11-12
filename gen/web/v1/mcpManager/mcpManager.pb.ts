@@ -51,6 +51,7 @@ export type MCPServerInstance = {
   tools?: MCPTool[]
   resources?: string[]
   prompts?: string[]
+  prmDoc?: string
 }
 
 export type CheckRequest = {
