@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"slices"
+	"strings"
 
 	pbMcp "github.com/binuud/avatar-conscious/gen/go/v1/mcpManager"
 	"github.com/binuud/avatar-conscious/pkg/mcpHandler"
@@ -48,6 +49,7 @@ func (s *mcpManagerGrpcServer) Register(ctx context.Context, in *pbMcp.RegisterR
 	if in.Config.Name == "" {
 		return nil, fmt.Errorf("emtpy MCP Server name not accepted")
 	}
+	in.Config.Name = strings.ToLower(in.Config.Name)
 
 	if in.Config.McpType == pbMcp.MCPTransportType_MCP_TYPE_HTTP && in.Config.Url == "" {
 		return nil, fmt.Errorf("emtpy MCP Server Remote URL not accepted")
