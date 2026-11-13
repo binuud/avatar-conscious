@@ -79,6 +79,7 @@ func HandleMcp(mcpServerName string, mcpFunction string, mcpParams any) (string,
 	url := strings.ToLower(mcpServerName)
 	isHTTP := strings.HasPrefix(url, "http://") || strings.HasPrefix(url, "https://")
 	if isHTTP {
+		logrus.Debugf("trying to execute mcp remote server %s->%s", mcpServerName, mcpFunction)
 		transport := &mcp.StreamableClientTransport{
 			Endpoint: url,
 		}
@@ -88,6 +89,7 @@ func HandleMcp(mcpServerName string, mcpFunction string, mcpParams any) (string,
 			return "", err
 		}
 	} else {
+		logrus.Debugf("trying to execute mcp command %s->%s", mcpServerName, mcpFunction)
 		transport := &mcp.CommandTransport{Command: exec.Command(mcpServerName)}
 		// Connect to a server over stdin/stdout.
 		session, err = client.Connect(ctx, transport, nil)
