@@ -59,7 +59,7 @@ func (s *mcpManagerGrpcServer) Register(ctx context.Context, in *pbMcp.RegisterR
 		return nil, fmt.Errorf("emtpy MCP Server Command not accepted")
 	}
 
-	entries, err := load()
+	entries, err := Load()
 	if err != nil {
 		logrus.Errorf("cannot read mcp server details - %v", err)
 	}
@@ -104,7 +104,7 @@ func (s *mcpManagerGrpcServer) Register(ctx context.Context, in *pbMcp.RegisterR
 func (s *mcpManagerGrpcServer) List(ctx context.Context, in *pbMcp.ListRequest) (*pbMcp.ListResponse, error) {
 
 	logrus.Infof("List called on MCP Manager %v", in)
-	entries, err := load()
+	entries, err := Load()
 	if err != nil {
 		logrus.Errorf("cannot read mcp server details - %v", err)
 		return nil, err
@@ -115,28 +115,34 @@ func (s *mcpManagerGrpcServer) List(ctx context.Context, in *pbMcp.ListRequest) 
 	}, nil
 }
 
-func (s *mcpManagerGrpcServer) Get(ctx context.Context, in *pbMcp.GetRequest) (*pbMcp.GetResponse, error) {
+func (s *mcpManagerGrpcServer) Toggle(ctx context.Context, in *pbMcp.ToggleRequest) (*pbMcp.ToggleResponse, error) {
 
-	logrus.Infof("Get called on MCP Manager %v", in)
-	entries, err := load()
+	logrus.Infof("Toggle called on MCP Manager %v", in.Uuid)
+
+	entries, foundIndex, err := getIndexByUUIDName(in.Uuid, "")
 	if err != nil {
-		logrus.Errorf("cannot read mcp server details - %v", err)
+		logrus.Errorf("error - %v", err)
 		return nil, err
 	}
 
-	found := -1
-	for i, entry := range entries.Configs {
-		if in.Uuid == entry.Uuid {
-			found = i
-			break
-		}
+	if foundIndex != -1 {
+		entries.Configs[foundIndex].Enabled = !entries.Configs[foundIndex].Enabled
+		save(entries)
+		return &pbMcp.ToggleResponse{
+			Config: entries.Configs[foundIndex],
+		}, nil
 	}
+	return nil, err
+}
 
-	if found == -1 {
-		return nil, fmt.Errorf("error mcp server with uuid %s not found", in.Uuid)
+func (s *mcpManagerGrpcServer) Get(ctx context.Context, in *pbMcp.GetRequest) (*pbMcp.GetResponse, error) {
+
+	logrus.Infof("Get called on MCP Manager %v", in)
+	entry, err := findByUUIDName(in.Uuid, "")
+	if err != nil {
+		logrus.Errorf("error - %v", err)
+		return nil, err
 	}
-
-	entry := entries.Configs[found]
 
 	instanceDetails, err := s.getInstanceDetails(entry)
 
@@ -149,24 +155,17 @@ func (s *mcpManagerGrpcServer) Get(ctx context.Context, in *pbMcp.GetRequest) (*
 func (s *mcpManagerGrpcServer) Delete(ctx context.Context, in *pbMcp.DeleteRequest) (*pbMcp.DeleteResponse, error) {
 
 	logrus.Infof("Delete called on MCP Manager %v", in)
-	entries, err := load()
+
+	entries, foundIndex, err := getIndexByUUIDName(in.Uuid, "")
 	if err != nil {
-		logrus.Errorf("cannot read mcp server details - %v", err)
+		logrus.Errorf("error - %v", err)
 		return nil, err
 	}
 
-	found := -1
-	for i, entry := range entries.Configs {
-		if in.Uuid == entry.Uuid {
-			found = i
-			break
-		}
-	}
-
-	if found == -1 {
+	if foundIndex == -1 {
 		return nil, fmt.Errorf("mcp server with uuid %s, not found", in.Uuid)
 	} else {
-		entries.Configs = slices.Delete(entries.Configs, found, 1)
+		entries.Configs = slices.Delete(entries.Configs, foundIndex, 1)
 		save(entries)
 	}
 

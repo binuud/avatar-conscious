@@ -1,7 +1,9 @@
 package tools
 
 import (
+	"github.com/binuud/avatar-conscious/gen/go/v1/mcpManager"
 	"github.com/binuud/avatar-conscious/pkg/mcpHandler"
+	"github.com/binuud/avatar-conscious/pkg/servers/mcpManagerServer"
 	"github.com/binuud/avatar-conscious/pkg/tools/aiGenTools"
 	apitools "github.com/binuud/avatar-conscious/pkg/tools/apiTools"
 	"github.com/binuud/avatar-conscious/pkg/tools/commonTools"
@@ -24,22 +26,42 @@ func Bootstrap() {
 	GlobalCommonToolsRegistry.AddTool(aiGenTools.NewUiLaunchTool())
 
 	// now add mcp tools
-	var mcpServers = []string{"mcp-greet-server", "mcp-weather-server"}
-	// "http://localhost:1080/mockserver/mcp"
-	for _, mcpServer := range mcpServers {
+	mcpServers, err := mcpManagerServer.Load()
+	if err == nil {
+		for _, mcpServer := range mcpServers.Configs {
 
-		mcp, err := mcpHandler.NewMcpCommandHandler(mcpServer, mcpServer, "")
-		if err != nil {
-			logrus.Fatalf("Cannot get tools from mcp server/commnad %s : %v", mcpServer, err)
+			if mcpServer.Enabled == false {
+				continue
+			}
+
+			// only add mcp server which are enabled
+			if mcpServer.McpType == mcpManager.MCPTransportType_MCP_TYPE_STDIO {
+				mcp, err := mcpHandler.NewMcpCommandHandler(mcpServer.Name, mcpServer.Command, "")
+				if err != nil {
+					logrus.Fatalf("Cannot get tools from mcp server/commnad %s : %v", mcpServer, err)
+				}
+
+				// for each tool in mcp create an entry in GlobalTools
+				for _, tool := range mcp.Tools {
+					mcpTool := mcpCommandTool.NewMCPCommandTool(mcpServer.Command, tool)
+					GlobalCommonToolsRegistry.AddMCPTool(mcpServer.Name, mcpTool)
+				}
+			}
+			if mcpServer.McpType == mcpManager.MCPTransportType_MCP_TYPE_HTTP {
+				mcp, err := mcpHandler.NewMcpCommandHandler(mcpServer.Name, "", mcpServer.Url)
+				if err != nil {
+					logrus.Fatalf("Cannot get tools from mcp server/commnad %s : %v", mcpServer, err)
+				}
+
+				// for each tool in mcp create an entry in GlobalTools
+				for _, tool := range mcp.Tools {
+					mcpTool := mcpCommandTool.NewMCPCommandTool(mcpServer.Command, tool)
+					GlobalCommonToolsRegistry.AddMCPTool(mcpServer.Name, mcpTool)
+				}
+			}
 		}
-
-		// for each tool in mcp create an entry in GlobalTools
-		for _, tool := range mcp.Tools {
-			mcpTool := mcpCommandTool.NewMCPCommandTool(mcpServer, tool)
-			GlobalCommonToolsRegistry.AddMCPTool(mcpServer, mcpTool)
-		}
-
 	}
+	// "http://localhost:1080/mockserver/mcp"
 
 	GlobalCommonTools = GlobalCommonToolsRegistry.GetCommonTools()
 

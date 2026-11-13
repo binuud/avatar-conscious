@@ -22,6 +22,7 @@ const (
 	MCPManagerService_Check_FullMethodName    = "/mcpManager.MCPManagerService/Check"
 	MCPManagerService_Register_FullMethodName = "/mcpManager.MCPManagerService/Register"
 	MCPManagerService_Get_FullMethodName      = "/mcpManager.MCPManagerService/Get"
+	MCPManagerService_Toggle_FullMethodName   = "/mcpManager.MCPManagerService/Toggle"
 	MCPManagerService_List_FullMethodName     = "/mcpManager.MCPManagerService/List"
 	MCPManagerService_Delete_FullMethodName   = "/mcpManager.MCPManagerService/Delete"
 )
@@ -37,6 +38,8 @@ type MCPManagerServiceClient interface {
 	Register(ctx context.Context, in *RegisterRequest, opts ...grpc.CallOption) (*RegisterResponse, error)
 	// return config and the instance status like reachability
 	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error)
+	// toggle the MCP server for the main chat session
+	Toggle(ctx context.Context, in *ToggleRequest, opts ...grpc.CallOption) (*ToggleResponse, error)
 	// return entries from config file
 	List(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListResponse, error)
 	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
@@ -80,6 +83,16 @@ func (c *mCPManagerServiceClient) Get(ctx context.Context, in *GetRequest, opts 
 	return out, nil
 }
 
+func (c *mCPManagerServiceClient) Toggle(ctx context.Context, in *ToggleRequest, opts ...grpc.CallOption) (*ToggleResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ToggleResponse)
+	err := c.cc.Invoke(ctx, MCPManagerService_Toggle_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *mCPManagerServiceClient) List(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListResponse)
@@ -111,6 +124,8 @@ type MCPManagerServiceServer interface {
 	Register(context.Context, *RegisterRequest) (*RegisterResponse, error)
 	// return config and the instance status like reachability
 	Get(context.Context, *GetRequest) (*GetResponse, error)
+	// toggle the MCP server for the main chat session
+	Toggle(context.Context, *ToggleRequest) (*ToggleResponse, error)
 	// return entries from config file
 	List(context.Context, *ListRequest) (*ListResponse, error)
 	Delete(context.Context, *DeleteRequest) (*DeleteResponse, error)
@@ -132,6 +147,9 @@ func (UnimplementedMCPManagerServiceServer) Register(context.Context, *RegisterR
 }
 func (UnimplementedMCPManagerServiceServer) Get(context.Context, *GetRequest) (*GetResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Get not implemented")
+}
+func (UnimplementedMCPManagerServiceServer) Toggle(context.Context, *ToggleRequest) (*ToggleResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Toggle not implemented")
 }
 func (UnimplementedMCPManagerServiceServer) List(context.Context, *ListRequest) (*ListResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method List not implemented")
@@ -214,6 +232,24 @@ func _MCPManagerService_Get_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MCPManagerService_Toggle_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ToggleRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MCPManagerServiceServer).Toggle(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MCPManagerService_Toggle_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MCPManagerServiceServer).Toggle(ctx, req.(*ToggleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _MCPManagerService_List_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ListRequest)
 	if err := dec(in); err != nil {
@@ -268,6 +304,10 @@ var MCPManagerService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Get",
 			Handler:    _MCPManagerService_Get_Handler,
+		},
+		{
+			MethodName: "Toggle",
+			Handler:    _MCPManagerService_Toggle_Handler,
 		},
 		{
 			MethodName: "List",
