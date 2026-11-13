@@ -87,6 +87,14 @@ func (s *grpcConsciousServer) In(ctx context.Context, in *pb.ContextMesssage) (*
 	in.CreatedAt = utils.GetTimeStamp()
 	logrus.Infof("Generate Received -> Request: %s", in.Prompt)
 
+	if in.Prompt == "" {
+		return nil, fmt.Errorf("error prompt emtpy")
+	}
+
+	if in.Model == "" {
+		return nil, fmt.Errorf("error - no model provided")
+	}
+
 	// do not add to memory for slash commands
 	if strings.HasPrefix(in.Prompt, "/") {
 		out := handleSlashCommand(in)
@@ -259,6 +267,14 @@ func (s *grpcConsciousServer) Generate(in *pb.ContextMesssage, stream grpc.Serve
 
 	in.CreatedAt = utils.GetTimeStamp()
 	logrus.Infof("Generate Received -> Request: %s", in.Prompt)
+
+	if in.Prompt == "" {
+		return fmt.Errorf("error prompt emtpy")
+	}
+
+	if in.Model == "" {
+		return fmt.Errorf("error - no model provided")
+	}
 
 	// do not add to memory for slash commands
 	if strings.HasPrefix(in.Prompt, "/") {

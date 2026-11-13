@@ -217,6 +217,9 @@ protos-mcp: ## Build Go and Web Proto for mcp module
 ## Test Code
 ##
 
+test-all: ## Run test 
+	./scripts/runTestAll.sh
+
 test: ## Run test 
 	./scripts/runTest.sh
 

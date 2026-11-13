@@ -253,6 +253,7 @@ func GetLLMToolName(messages []openai.ChatCompletionMessageParamUnion, model str
 func MakeOpenAiImageGenerationRequest(prompt string, model string) (*openai.ImagesResponse, error) {
 
 	client := GetLLMClient()
+	logrus.Infof("MakeOpenAiImageGenerationRequest Model: %s", model)
 
 	return client.Images.Generate(context.Background(), openai.ImageGenerateParams{
 		Model:          openai.ImageModel(model),
