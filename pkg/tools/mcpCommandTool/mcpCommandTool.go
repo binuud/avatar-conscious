@@ -81,7 +81,7 @@ func (t *MCPCommandTool) Handler(in *pb.ContextMesssage) (*pb.ContextMesssage, e
 		return nil, err
 	}
 	logrus.Infof("Arguments parsed into input structure %v", in)
-	logrus.Infof("Current tool %s %s", t.name, t.mcpTool.Name)
+	logrus.Infof("Current tool %s->%s", t.name, t.mcpTool.Name)
 	outMsg, err := mcpHandler.HandleMcp(t.name, t.mcpTool.Name, inObj)
 	if err != nil {
 		return nil, err
