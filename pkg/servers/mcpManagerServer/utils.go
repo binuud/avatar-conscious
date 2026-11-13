@@ -1,6 +1,8 @@
 package mcpManagerServer
 
 import (
+	"fmt"
+
 	pbMcp "github.com/binuud/avatar-conscious/gen/go/v1/mcpManager"
 	datalayer "github.com/binuud/avatar-conscious/pkg/dataLayer"
 	"github.com/sirupsen/logrus"
@@ -40,4 +42,56 @@ func load() (*pbMcp.MCPServerConfigs, error) {
 	}
 
 	return data, nil
+}
+
+// findByUUIDName
+// search MCP servers in config by UUID or name
+// it returns the entry which matches either UUID or name
+func findByUUIDName(uuid string, name string) (*pbMcp.MCPServerConfig, error) {
+
+	entries, err := load()
+	if err != nil {
+		logrus.Errorf("cannot read mcp server details - %v", err)
+		return nil, err
+	}
+
+	for _, entry := range entries.Configs {
+		if uuid == entry.Uuid {
+			if uuid != "" && uuid == entry.Uuid {
+				return entry, nil
+			}
+			if name != "" && name == entry.Name {
+				return entry, nil
+			}
+		}
+	}
+
+	return nil, fmt.Errorf("mcp server with uuid/name %s/%s not found", uuid, name)
+
+}
+
+// getIndexByUUIDName
+// search MCP servers in config by UUID or name
+// it returns the index which matches either UUID or name
+func getIndexByUUIDName(uuid string, name string) (*pbMcp.MCPServerConfigs, int, error) {
+
+	entries, err := load()
+	if err != nil {
+		logrus.Errorf("cannot read mcp server details - %v", err)
+		return nil, -1, err
+	}
+
+	for index, entry := range entries.Configs {
+		if uuid == entry.Uuid {
+			if uuid != "" && uuid == entry.Uuid {
+				return entries, index, nil
+			}
+			if name != "" && name == entry.Name {
+				return entries, index, nil
+			}
+		}
+	}
+
+	return entries, -1, fmt.Errorf("mcp server with uuid/name %s/%s not found", uuid, name)
+
 }

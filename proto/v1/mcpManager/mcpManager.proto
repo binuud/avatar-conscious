@@ -41,8 +41,11 @@ message MCPServerConfig {
   
   // SSE/HTTP-specific configuration
   string url = 7;
-  
-  common.Timestamp timeout = 8;
+
+  // is the MCP Server enabled for the current chat
+  bool enabled = 8;
+
+  common.Timestamp timeout = 9;
 }
 
 message MCPTool {
@@ -98,6 +101,14 @@ service MCPManagerService {
     };
   }
 
+  // toggle the MCP server for the main chat session
+  rpc Toggle(ToggleRequest) returns (ToggleResponse) {
+    option (google.api.http) = {
+      post : "/v1/mcpManager/toggle"
+      body : "*"
+    };
+  }
+
   // return entries from config file
   rpc List(ListRequest) returns (ListResponse) {
     option (google.api.http) = {
@@ -136,6 +147,15 @@ message GetRequest {
 message GetResponse {
   MCPServerInstance instance = 1;
 }
+
+message ToggleRequest {
+  string uuid = 1;
+}
+
+message ToggleResponse {
+  MCPServerConfig config = 1;
+}
+
 
 message ListRequest {}
 

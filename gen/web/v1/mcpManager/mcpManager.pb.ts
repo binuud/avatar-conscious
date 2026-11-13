@@ -30,6 +30,7 @@ export type MCPServerConfig = {
   args?: string[]
   env?: {[key: string]: string}
   url?: string
+  enabled?: boolean
   timeout?: CommonCommon.Timestamp
 }
 
@@ -78,6 +79,14 @@ export type GetResponse = {
   instance?: MCPServerInstance
 }
 
+export type ToggleRequest = {
+  uuid?: string
+}
+
+export type ToggleResponse = {
+  config?: MCPServerConfig
+}
+
 export type ListRequest = {
 }
 
@@ -102,6 +111,9 @@ export class MCPManagerService {
   }
   static Get(req: GetRequest, initReq?: fm.InitReq): Promise<GetResponse> {
     return fm.fetchReq<GetRequest, GetResponse>(`/v1/mcpManager/get?${fm.renderURLSearchParams(req, [])}`, {...initReq, method: "GET"})
+  }
+  static Toggle(req: ToggleRequest, initReq?: fm.InitReq): Promise<ToggleResponse> {
+    return fm.fetchReq<ToggleRequest, ToggleResponse>(`/v1/mcpManager/toggle`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
   }
   static List(req: ListRequest, initReq?: fm.InitReq): Promise<ListResponse> {
     return fm.fetchReq<ListRequest, ListResponse>(`/v1/mcpManager/list?${fm.renderURLSearchParams(req, [])}`, {...initReq, method: "GET"})

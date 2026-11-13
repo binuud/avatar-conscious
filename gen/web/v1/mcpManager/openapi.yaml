@@ -78,6 +78,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/RegisterResponse'
+  /v1/mcpManager/toggle:
+    post:
+      operationId: toggle
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ToggleRequest'
+        required: true
+      responses:
+        "200":
+          description: mcpManager.MCPManagerService.Toggle response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ToggleResponse'
 components:
   schemas:
     CheckRequest:
@@ -133,6 +149,8 @@ components:
             type: string
         url:
           type: string
+        enabled:
+          type: boolean
         timeout:
           $ref: '#/components/schemas/Timestamp'
     MCPServerInstance:
@@ -194,3 +212,13 @@ components:
       properties:
         instance:
           $ref: '#/components/schemas/MCPServerInstance'
+    ToggleRequest:
+      type: object
+      properties:
+        uuid:
+          type: string
+    ToggleResponse:
+      type: object
+      properties:
+        config:
+          $ref: '#/components/schemas/MCPServerConfig'
