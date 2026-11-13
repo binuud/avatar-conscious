@@ -123,7 +123,7 @@ func (s *grpcConsciousServer) RouteOpenAiImageGenerationRequest(in *protoV1.Cont
 
 	imageFileName, err := aiGenTools.GetAiImage(in.Prompt, in.Model)
 	if err != nil {
-		logrus.Errorf("RouteOpenAiImageGenerationRequest -> GetAiImage result(%v), %v", imageFileName, err)
+		logrus.Errorf("RouteOpenAiImageGenerationRequest -> GetAiImage result(%s), %v", imageFileName, err)
 		return nil, err
 	}
 
