@@ -30,7 +30,7 @@ func save(data *pbMcp.MCPServerConfigs) error {
 // Read the config file from storage
 // Update the values from storage to the current settings
 // Do not add entries, only updation to existing entries happens here
-func load() (*pbMcp.MCPServerConfigs, error) {
+func Load() (*pbMcp.MCPServerConfigs, error) {
 
 	filePath := datalayer.GetFileAbsolutePath(SETTINGS_DIRECTORY, MCP_CONFIG_FILE)
 	data := &pbMcp.MCPServerConfigs{}
@@ -49,7 +49,7 @@ func load() (*pbMcp.MCPServerConfigs, error) {
 // it returns the entry which matches either UUID or name
 func findByUUIDName(uuid string, name string) (*pbMcp.MCPServerConfig, error) {
 
-	entries, err := load()
+	entries, err := Load()
 	if err != nil {
 		logrus.Errorf("cannot read mcp server details - %v", err)
 		return nil, err
@@ -75,7 +75,7 @@ func findByUUIDName(uuid string, name string) (*pbMcp.MCPServerConfig, error) {
 // it returns the index which matches either UUID or name
 func getIndexByUUIDName(uuid string, name string) (*pbMcp.MCPServerConfigs, int, error) {
 
-	entries, err := load()
+	entries, err := Load()
 	if err != nil {
 		logrus.Errorf("cannot read mcp server details - %v", err)
 		return nil, -1, err

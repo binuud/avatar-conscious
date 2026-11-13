@@ -59,7 +59,7 @@ func (s *mcpManagerGrpcServer) Register(ctx context.Context, in *pbMcp.RegisterR
 		return nil, fmt.Errorf("emtpy MCP Server Command not accepted")
 	}
 
-	entries, err := load()
+	entries, err := Load()
 	if err != nil {
 		logrus.Errorf("cannot read mcp server details - %v", err)
 	}
@@ -104,7 +104,7 @@ func (s *mcpManagerGrpcServer) Register(ctx context.Context, in *pbMcp.RegisterR
 func (s *mcpManagerGrpcServer) List(ctx context.Context, in *pbMcp.ListRequest) (*pbMcp.ListResponse, error) {
 
 	logrus.Infof("List called on MCP Manager %v", in)
-	entries, err := load()
+	entries, err := Load()
 	if err != nil {
 		logrus.Errorf("cannot read mcp server details - %v", err)
 		return nil, err
