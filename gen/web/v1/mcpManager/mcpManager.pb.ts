@@ -38,6 +38,7 @@ export type MCPTool = {
   name?: string
   description?: string
   inputSchema?: string
+  response?: string
 }
 
 export type MCPServerConfigs = {
@@ -102,6 +103,21 @@ export type DeleteResponse = {
   success?: boolean
 }
 
+export type HandleToolRequest = {
+  uuid?: string
+  name?: string
+  toolName?: string
+  inputData?: string
+}
+
+export type HandleToolResponse = {
+  uuid?: string
+  name?: string
+  toolName?: string
+  inputData?: string
+  output?: string
+}
+
 export class MCPManagerService {
   static Check(req: CheckRequest, initReq?: fm.InitReq): Promise<CheckResponse> {
     return fm.fetchReq<CheckRequest, CheckResponse>(`/v1/mcpManager/check`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
@@ -120,5 +136,8 @@ export class MCPManagerService {
   }
   static Delete(req: DeleteRequest, initReq?: fm.InitReq): Promise<DeleteResponse> {
     return fm.fetchReq<DeleteRequest, DeleteResponse>(`/v1/mcpManager/delete`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
+  }
+  static HandleTool(req: HandleToolRequest, initReq?: fm.InitReq): Promise<HandleToolResponse> {
+    return fm.fetchReq<HandleToolRequest, HandleToolResponse>(`/v1/mcpManager/handleTool`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
   }
 }

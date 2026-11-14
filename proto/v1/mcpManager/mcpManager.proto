@@ -52,6 +52,7 @@ message MCPTool {
   string name = 1;
   string description = 2;
   string inputSchema = 3;
+  string response = 4;
 }
 
 message MCPServerConfigs {
@@ -122,6 +123,14 @@ service MCPManagerService {
       body : "*"
     };
   }
+
+  // handle the MCP server tool, this is for debugging only
+  rpc HandleTool(HandleToolRequest) returns (HandleToolResponse) {
+    option (google.api.http) = {
+      post : "/v1/mcpManager/handleTool"
+      body : "*"
+    };
+  }
 }
 
 message CheckRequest {
@@ -169,4 +178,19 @@ message DeleteRequest {
 
 message DeleteResponse {
   bool success = 1;
+}
+
+message HandleToolRequest {
+  string uuid = 1;
+  string name = 2;
+  string toolName = 3;
+  string inputData = 4;
+}
+
+message HandleToolResponse {
+  string uuid = 1;
+  string name = 2;
+  string toolName = 3;
+  string inputData = 4;
+  string output = 5;
 }

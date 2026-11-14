@@ -174,6 +174,32 @@ func (s *mcpManagerGrpcServer) Delete(ctx context.Context, in *pbMcp.DeleteReque
 	}, nil
 }
 
+func (s *mcpManagerGrpcServer) HandleTool(ctx context.Context, in *pbMcp.HandleToolRequest) (*pbMcp.HandleToolResponse, error) {
+
+	logrus.Infof("HandleTool called on MCP Manager %v", in)
+	entry, err := findByUUIDName(in.Uuid, "")
+	if err != nil {
+		logrus.Errorf("error - %v", err)
+		return nil, err
+	}
+	logrus.Debugf("HandleTool MCP Server with name %s found", entry.Name)
+	command := ""
+	switch entry.McpType {
+	case pbMcp.MCPTransportType_MCP_TYPE_STDIO:
+		command = entry.Command
+	case pbMcp.MCPTransportType_MCP_TYPE_HTTP, pbMcp.MCPTransportType_MCP_TYPE_SSE:
+		command = entry.Url
+	}
+	outMsg, err := mcpHandler.HandleMcpTool(command, in.ToolName, in.InputData)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pbMcp.HandleToolResponse{
+		Output: outMsg,
+	}, nil
+}
+
 func (s *mcpManagerGrpcServer) getInstanceDetails(config *pbMcp.MCPServerConfig) (*pbMcp.MCPServerInstance, error) {
 
 	mcp, err := mcpHandler.NewMcpCommandHandler(config.Name, config.Command, config.Url)

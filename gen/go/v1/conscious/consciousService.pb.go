@@ -30,15 +30,15 @@ var File_v1_conscious_consciousService_proto protoreflect.FileDescriptor
 
 const file_v1_conscious_consciousService_proto_rawDesc = "" +
 	"\n" +
-	"#v1/conscious/consciousService.proto\x12\tconscious\x1a\x19v1/conscious/common.proto\x1a!v1/conscious/contextMessage.proto\x1a\x1cgoogle/api/annotations.proto2\xc4\x05\n" +
+	"#v1/conscious/consciousService.proto\x12\tconscious\x1a\x19v1/conscious/common.proto\x1a!v1/conscious/contextMessage.proto\x1a\x1cgoogle/api/annotations.proto2\xc5\x05\n" +
 	"\tConscious\x12Y\n" +
 	"\x02In\x12\x1a.conscious.ContextMesssage\x1a\x1a.conscious.ContextMesssage\"\x1b\x82\xd3\xe4\x93\x02\x15:\x01*\"\x10/v1/conscious/in\x12g\n" +
 	"\bGenerate\x12\x1a.conscious.ContextMesssage\x1a\x1a.conscious.ContextMesssage\"!\x82\xd3\xe4\x93\x02\x1b:\x01*\"\x16/v1/conscious/generate0\x01\x12g\n" +
 	"\bInStream\x12\x1a.conscious.ContextMesssage\x1a\x1a.conscious.ContextMesssage\"!\x82\xd3\xe4\x93\x02\x1b:\x01*\"\x16/v1/conscious/inStream0\x01\x12\\\n" +
 	"\tGetModels\x12\x17.conscious.ModelRequest\x1a\x18.conscious.ModelResponse\"\x1c\x82\xd3\xe4\x93\x02\x16\x12\x14/v1/conscious/models\x12f\n" +
 	"\n" +
-	"FileUpload\x12\x18.conscious.UploadRequest\x1a\x19.conscious.UploadResponse\"#\x82\xd3\xe4\x93\x02\x1d:\x01*\"\x18/v1/conscious/fileUpload\x12q\n" +
-	"\vClearMemory\x12\x1d.conscious.ClearMemoryRequest\x1a\x1e.conscious.ClearMemoryResponse\"#\x82\xd3\xe4\x93\x02\x1d:\x01*\"\x18/v1/conscious/clearMeroy\x12Q\n" +
+	"FileUpload\x12\x18.conscious.UploadRequest\x1a\x19.conscious.UploadResponse\"#\x82\xd3\xe4\x93\x02\x1d:\x01*\"\x18/v1/conscious/fileUpload\x12r\n" +
+	"\vClearMemory\x12\x1d.conscious.ClearMemoryRequest\x1a\x1e.conscious.ClearMemoryResponse\"$\x82\xd3\xe4\x93\x02\x1e:\x01*\"\x19/v1/conscious/clearMemory\x12Q\n" +
 	"\x06Health\x12\x18.conscious.HealthRequest\x1a\x19.conscious.HealthResponse\"\x12\x82\xd3\xe4\x93\x02\f\x12\n" +
 	"/v1/healthB8Z6github.com/binuud/avatar-conscious/gen/go/v1/consciousb\x06proto3"
 

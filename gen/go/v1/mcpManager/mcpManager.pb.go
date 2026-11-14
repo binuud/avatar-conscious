@@ -252,6 +252,7 @@ type MCPTool struct {
 	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
 	Description   string                 `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
 	InputSchema   string                 `protobuf:"bytes,3,opt,name=inputSchema,proto3" json:"inputSchema,omitempty"`
+	Response      string                 `protobuf:"bytes,4,opt,name=response,proto3" json:"response,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -303,6 +304,13 @@ func (x *MCPTool) GetDescription() string {
 func (x *MCPTool) GetInputSchema() string {
 	if x != nil {
 		return x.InputSchema
+	}
+	return ""
+}
+
+func (x *MCPTool) GetResponse() string {
+	if x != nil {
+		return x.Response
 	}
 	return ""
 }
@@ -974,6 +982,150 @@ func (x *DeleteResponse) GetSuccess() bool {
 	return false
 }
 
+type HandleToolRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Uuid          string                 `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	ToolName      string                 `protobuf:"bytes,3,opt,name=toolName,proto3" json:"toolName,omitempty"`
+	InputData     string                 `protobuf:"bytes,4,opt,name=inputData,proto3" json:"inputData,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *HandleToolRequest) Reset() {
+	*x = HandleToolRequest{}
+	mi := &file_v1_mcpManager_mcpManager_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *HandleToolRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*HandleToolRequest) ProtoMessage() {}
+
+func (x *HandleToolRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_mcpManager_mcpManager_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use HandleToolRequest.ProtoReflect.Descriptor instead.
+func (*HandleToolRequest) Descriptor() ([]byte, []int) {
+	return file_v1_mcpManager_mcpManager_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *HandleToolRequest) GetUuid() string {
+	if x != nil {
+		return x.Uuid
+	}
+	return ""
+}
+
+func (x *HandleToolRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *HandleToolRequest) GetToolName() string {
+	if x != nil {
+		return x.ToolName
+	}
+	return ""
+}
+
+func (x *HandleToolRequest) GetInputData() string {
+	if x != nil {
+		return x.InputData
+	}
+	return ""
+}
+
+type HandleToolResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Uuid          string                 `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	ToolName      string                 `protobuf:"bytes,3,opt,name=toolName,proto3" json:"toolName,omitempty"`
+	InputData     string                 `protobuf:"bytes,4,opt,name=inputData,proto3" json:"inputData,omitempty"`
+	Output        string                 `protobuf:"bytes,5,opt,name=output,proto3" json:"output,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *HandleToolResponse) Reset() {
+	*x = HandleToolResponse{}
+	mi := &file_v1_mcpManager_mcpManager_proto_msgTypes[17]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *HandleToolResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*HandleToolResponse) ProtoMessage() {}
+
+func (x *HandleToolResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_mcpManager_mcpManager_proto_msgTypes[17]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use HandleToolResponse.ProtoReflect.Descriptor instead.
+func (*HandleToolResponse) Descriptor() ([]byte, []int) {
+	return file_v1_mcpManager_mcpManager_proto_rawDescGZIP(), []int{17}
+}
+
+func (x *HandleToolResponse) GetUuid() string {
+	if x != nil {
+		return x.Uuid
+	}
+	return ""
+}
+
+func (x *HandleToolResponse) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *HandleToolResponse) GetToolName() string {
+	if x != nil {
+		return x.ToolName
+	}
+	return ""
+}
+
+func (x *HandleToolResponse) GetInputData() string {
+	if x != nil {
+		return x.InputData
+	}
+	return ""
+}
+
+func (x *HandleToolResponse) GetOutput() string {
+	if x != nil {
+		return x.Output
+	}
+	return ""
+}
+
 var File_v1_mcpManager_mcpManager_proto protoreflect.FileDescriptor
 
 const file_v1_mcpManager_mcpManager_proto_rawDesc = "" +
@@ -992,11 +1144,12 @@ const file_v1_mcpManager_mcpManager_proto_rawDesc = "" +
 	"\atimeout\x18\t \x01(\v2\x11.common.TimestampR\atimeout\x1a6\n" +
 	"\bEnvEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
-	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"a\n" +
+	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"}\n" +
 	"\aMCPTool\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x12 \n" +
-	"\vinputSchema\x18\x03 \x01(\tR\vinputSchema\"I\n" +
+	"\vinputSchema\x18\x03 \x01(\tR\vinputSchema\x12\x1a\n" +
+	"\bresponse\x18\x04 \x01(\tR\bresponse\"I\n" +
 	"\x10MCPServerConfigs\x125\n" +
 	"\aconfigs\x18\x01 \x03(\v2\x1b.mcpManager.MCPServerConfigR\aconfigs\"\xcd\x02\n" +
 	"\x11MCPServerInstance\x123\n" +
@@ -1032,7 +1185,18 @@ const file_v1_mcpManager_mcpManager_proto_rawDesc = "" +
 	"\rDeleteRequest\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\"*\n" +
 	"\x0eDeleteResponse\x12\x18\n" +
-	"\asuccess\x18\x01 \x01(\bR\asuccess*`\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"u\n" +
+	"\x11HandleToolRequest\x12\x12\n" +
+	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1a\n" +
+	"\btoolName\x18\x03 \x01(\tR\btoolName\x12\x1c\n" +
+	"\tinputData\x18\x04 \x01(\tR\tinputData\"\x8e\x01\n" +
+	"\x12HandleToolResponse\x12\x12\n" +
+	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\x12\x1a\n" +
+	"\btoolName\x18\x03 \x01(\tR\btoolName\x12\x1c\n" +
+	"\tinputData\x18\x04 \x01(\tR\tinputData\x12\x16\n" +
+	"\x06output\x18\x05 \x01(\tR\x06output*`\n" +
 	"\x10MCPTransportType\x12\x13\n" +
 	"\x0fMCP_TYPE_IGNORE\x10\x00\x12\x12\n" +
 	"\x0eMCP_TYPE_STDIO\x10\x01\x12\x11\n" +
@@ -1043,14 +1207,16 @@ const file_v1_mcpManager_mcpManager_proto_rawDesc = "" +
 	"\x18SERVER_STATUS_CONNECTING\x10\x01\x12\x1b\n" +
 	"\x17SERVER_STATUS_CONNECTED\x10\x02\x12\x1e\n" +
 	"\x1aSERVER_STATUS_DISCONNECTED\x10\x03\x12\x17\n" +
-	"\x13SERVER_STATUS_ERROR\x10\x042\xcf\x04\n" +
+	"\x13SERVER_STATUS_ERROR\x10\x042\xc2\x05\n" +
 	"\x11MCPManagerService\x12]\n" +
 	"\x05Check\x12\x18.mcpManager.CheckRequest\x1a\x19.mcpManager.CheckResponse\"\x1f\x82\xd3\xe4\x93\x02\x19:\x01*\"\x14/v1/mcpManager/check\x12i\n" +
 	"\bRegister\x12\x1b.mcpManager.RegisterRequest\x1a\x1c.mcpManager.RegisterResponse\"\"\x82\xd3\xe4\x93\x02\x1c:\x01*\"\x17/v1/mcpManager/register\x12R\n" +
 	"\x03Get\x12\x16.mcpManager.GetRequest\x1a\x17.mcpManager.GetResponse\"\x1a\x82\xd3\xe4\x93\x02\x14\x12\x12/v1/mcpManager/get\x12a\n" +
 	"\x06Toggle\x12\x19.mcpManager.ToggleRequest\x1a\x1a.mcpManager.ToggleResponse\" \x82\xd3\xe4\x93\x02\x1a:\x01*\"\x15/v1/mcpManager/toggle\x12V\n" +
 	"\x04List\x12\x17.mcpManager.ListRequest\x1a\x18.mcpManager.ListResponse\"\x1b\x82\xd3\xe4\x93\x02\x15\x12\x13/v1/mcpManager/list\x12a\n" +
-	"\x06Delete\x12\x19.mcpManager.DeleteRequest\x1a\x1a.mcpManager.DeleteResponse\" \x82\xd3\xe4\x93\x02\x1a:\x01*\"\x15/v1/mcpManager/deleteB9Z7github.com/binuud/avatar-conscious/gen/go/v1/mcpManagerb\x06proto3"
+	"\x06Delete\x12\x19.mcpManager.DeleteRequest\x1a\x1a.mcpManager.DeleteResponse\" \x82\xd3\xe4\x93\x02\x1a:\x01*\"\x15/v1/mcpManager/delete\x12q\n" +
+	"\n" +
+	"HandleTool\x12\x1d.mcpManager.HandleToolRequest\x1a\x1e.mcpManager.HandleToolResponse\"$\x82\xd3\xe4\x93\x02\x1e:\x01*\"\x19/v1/mcpManager/handleToolB9Z7github.com/binuud/avatar-conscious/gen/go/v1/mcpManagerb\x06proto3"
 
 var (
 	file_v1_mcpManager_mcpManager_proto_rawDescOnce sync.Once
@@ -1065,37 +1231,39 @@ func file_v1_mcpManager_mcpManager_proto_rawDescGZIP() []byte {
 }
 
 var file_v1_mcpManager_mcpManager_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
-var file_v1_mcpManager_mcpManager_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
+var file_v1_mcpManager_mcpManager_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
 var file_v1_mcpManager_mcpManager_proto_goTypes = []any{
-	(MCPTransportType)(0),     // 0: mcpManager.MCPTransportType
-	(MCPServerStatus)(0),      // 1: mcpManager.MCPServerStatus
-	(*MCPServerConfig)(nil),   // 2: mcpManager.MCPServerConfig
-	(*MCPTool)(nil),           // 3: mcpManager.MCPTool
-	(*MCPServerConfigs)(nil),  // 4: mcpManager.MCPServerConfigs
-	(*MCPServerInstance)(nil), // 5: mcpManager.MCPServerInstance
-	(*CheckRequest)(nil),      // 6: mcpManager.CheckRequest
-	(*CheckResponse)(nil),     // 7: mcpManager.CheckResponse
-	(*RegisterRequest)(nil),   // 8: mcpManager.RegisterRequest
-	(*RegisterResponse)(nil),  // 9: mcpManager.RegisterResponse
-	(*GetRequest)(nil),        // 10: mcpManager.GetRequest
-	(*GetResponse)(nil),       // 11: mcpManager.GetResponse
-	(*ToggleRequest)(nil),     // 12: mcpManager.ToggleRequest
-	(*ToggleResponse)(nil),    // 13: mcpManager.ToggleResponse
-	(*ListRequest)(nil),       // 14: mcpManager.ListRequest
-	(*ListResponse)(nil),      // 15: mcpManager.ListResponse
-	(*DeleteRequest)(nil),     // 16: mcpManager.DeleteRequest
-	(*DeleteResponse)(nil),    // 17: mcpManager.DeleteResponse
-	nil,                       // 18: mcpManager.MCPServerConfig.EnvEntry
-	(*common.Timestamp)(nil),  // 19: common.Timestamp
+	(MCPTransportType)(0),      // 0: mcpManager.MCPTransportType
+	(MCPServerStatus)(0),       // 1: mcpManager.MCPServerStatus
+	(*MCPServerConfig)(nil),    // 2: mcpManager.MCPServerConfig
+	(*MCPTool)(nil),            // 3: mcpManager.MCPTool
+	(*MCPServerConfigs)(nil),   // 4: mcpManager.MCPServerConfigs
+	(*MCPServerInstance)(nil),  // 5: mcpManager.MCPServerInstance
+	(*CheckRequest)(nil),       // 6: mcpManager.CheckRequest
+	(*CheckResponse)(nil),      // 7: mcpManager.CheckResponse
+	(*RegisterRequest)(nil),    // 8: mcpManager.RegisterRequest
+	(*RegisterResponse)(nil),   // 9: mcpManager.RegisterResponse
+	(*GetRequest)(nil),         // 10: mcpManager.GetRequest
+	(*GetResponse)(nil),        // 11: mcpManager.GetResponse
+	(*ToggleRequest)(nil),      // 12: mcpManager.ToggleRequest
+	(*ToggleResponse)(nil),     // 13: mcpManager.ToggleResponse
+	(*ListRequest)(nil),        // 14: mcpManager.ListRequest
+	(*ListResponse)(nil),       // 15: mcpManager.ListResponse
+	(*DeleteRequest)(nil),      // 16: mcpManager.DeleteRequest
+	(*DeleteResponse)(nil),     // 17: mcpManager.DeleteResponse
+	(*HandleToolRequest)(nil),  // 18: mcpManager.HandleToolRequest
+	(*HandleToolResponse)(nil), // 19: mcpManager.HandleToolResponse
+	nil,                        // 20: mcpManager.MCPServerConfig.EnvEntry
+	(*common.Timestamp)(nil),   // 21: common.Timestamp
 }
 var file_v1_mcpManager_mcpManager_proto_depIdxs = []int32{
 	0,  // 0: mcpManager.MCPServerConfig.mcpType:type_name -> mcpManager.MCPTransportType
-	18, // 1: mcpManager.MCPServerConfig.env:type_name -> mcpManager.MCPServerConfig.EnvEntry
-	19, // 2: mcpManager.MCPServerConfig.timeout:type_name -> common.Timestamp
+	20, // 1: mcpManager.MCPServerConfig.env:type_name -> mcpManager.MCPServerConfig.EnvEntry
+	21, // 2: mcpManager.MCPServerConfig.timeout:type_name -> common.Timestamp
 	2,  // 3: mcpManager.MCPServerConfigs.configs:type_name -> mcpManager.MCPServerConfig
 	2,  // 4: mcpManager.MCPServerInstance.config:type_name -> mcpManager.MCPServerConfig
 	1,  // 5: mcpManager.MCPServerInstance.status:type_name -> mcpManager.MCPServerStatus
-	19, // 6: mcpManager.MCPServerInstance.last_checked:type_name -> common.Timestamp
+	21, // 6: mcpManager.MCPServerInstance.last_checked:type_name -> common.Timestamp
 	3,  // 7: mcpManager.MCPServerInstance.tools:type_name -> mcpManager.MCPTool
 	2,  // 8: mcpManager.CheckRequest.config:type_name -> mcpManager.MCPServerConfig
 	5,  // 9: mcpManager.CheckResponse.instance:type_name -> mcpManager.MCPServerInstance
@@ -1110,14 +1278,16 @@ var file_v1_mcpManager_mcpManager_proto_depIdxs = []int32{
 	12, // 18: mcpManager.MCPManagerService.Toggle:input_type -> mcpManager.ToggleRequest
 	14, // 19: mcpManager.MCPManagerService.List:input_type -> mcpManager.ListRequest
 	16, // 20: mcpManager.MCPManagerService.Delete:input_type -> mcpManager.DeleteRequest
-	7,  // 21: mcpManager.MCPManagerService.Check:output_type -> mcpManager.CheckResponse
-	9,  // 22: mcpManager.MCPManagerService.Register:output_type -> mcpManager.RegisterResponse
-	11, // 23: mcpManager.MCPManagerService.Get:output_type -> mcpManager.GetResponse
-	13, // 24: mcpManager.MCPManagerService.Toggle:output_type -> mcpManager.ToggleResponse
-	15, // 25: mcpManager.MCPManagerService.List:output_type -> mcpManager.ListResponse
-	17, // 26: mcpManager.MCPManagerService.Delete:output_type -> mcpManager.DeleteResponse
-	21, // [21:27] is the sub-list for method output_type
-	15, // [15:21] is the sub-list for method input_type
+	18, // 21: mcpManager.MCPManagerService.HandleTool:input_type -> mcpManager.HandleToolRequest
+	7,  // 22: mcpManager.MCPManagerService.Check:output_type -> mcpManager.CheckResponse
+	9,  // 23: mcpManager.MCPManagerService.Register:output_type -> mcpManager.RegisterResponse
+	11, // 24: mcpManager.MCPManagerService.Get:output_type -> mcpManager.GetResponse
+	13, // 25: mcpManager.MCPManagerService.Toggle:output_type -> mcpManager.ToggleResponse
+	15, // 26: mcpManager.MCPManagerService.List:output_type -> mcpManager.ListResponse
+	17, // 27: mcpManager.MCPManagerService.Delete:output_type -> mcpManager.DeleteResponse
+	19, // 28: mcpManager.MCPManagerService.HandleTool:output_type -> mcpManager.HandleToolResponse
+	22, // [22:29] is the sub-list for method output_type
+	15, // [15:22] is the sub-list for method input_type
 	15, // [15:15] is the sub-list for extension type_name
 	15, // [15:15] is the sub-list for extension extendee
 	0,  // [0:15] is the sub-list for field type_name
@@ -1134,7 +1304,7 @@ func file_v1_mcpManager_mcpManager_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_v1_mcpManager_mcpManager_proto_rawDesc), len(file_v1_mcpManager_mcpManager_proto_rawDesc)),
 			NumEnums:      2,
-			NumMessages:   17,
+			NumMessages:   19,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

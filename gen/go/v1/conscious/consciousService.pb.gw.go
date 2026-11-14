@@ -304,7 +304,7 @@ func RegisterConsciousHandlerServer(ctx context.Context, mux *runtime.ServeMux, 
 		var stream runtime.ServerTransportStream
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/conscious.Conscious/ClearMemory", runtime.WithHTTPPathPattern("/v1/conscious/clearMeroy"))
+		annotatedContext, err := runtime.AnnotateIncomingContext(ctx, mux, req, "/conscious.Conscious/ClearMemory", runtime.WithHTTPPathPattern("/v1/conscious/clearMemory"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -467,7 +467,7 @@ func RegisterConsciousHandlerClient(ctx context.Context, mux *runtime.ServeMux, 
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
-		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/conscious.Conscious/ClearMemory", runtime.WithHTTPPathPattern("/v1/conscious/clearMeroy"))
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/conscious.Conscious/ClearMemory", runtime.WithHTTPPathPattern("/v1/conscious/clearMemory"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -506,7 +506,7 @@ var (
 	pattern_Conscious_InStream_0    = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "conscious", "inStream"}, ""))
 	pattern_Conscious_GetModels_0   = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "conscious", "models"}, ""))
 	pattern_Conscious_FileUpload_0  = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "conscious", "fileUpload"}, ""))
-	pattern_Conscious_ClearMemory_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "conscious", "clearMeroy"}, ""))
+	pattern_Conscious_ClearMemory_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "conscious", "clearMemory"}, ""))
 	pattern_Conscious_Health_0      = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "health"}, ""))
 )
 

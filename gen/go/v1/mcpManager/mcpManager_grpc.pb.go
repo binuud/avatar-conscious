@@ -19,12 +19,13 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	MCPManagerService_Check_FullMethodName    = "/mcpManager.MCPManagerService/Check"
-	MCPManagerService_Register_FullMethodName = "/mcpManager.MCPManagerService/Register"
-	MCPManagerService_Get_FullMethodName      = "/mcpManager.MCPManagerService/Get"
-	MCPManagerService_Toggle_FullMethodName   = "/mcpManager.MCPManagerService/Toggle"
-	MCPManagerService_List_FullMethodName     = "/mcpManager.MCPManagerService/List"
-	MCPManagerService_Delete_FullMethodName   = "/mcpManager.MCPManagerService/Delete"
+	MCPManagerService_Check_FullMethodName      = "/mcpManager.MCPManagerService/Check"
+	MCPManagerService_Register_FullMethodName   = "/mcpManager.MCPManagerService/Register"
+	MCPManagerService_Get_FullMethodName        = "/mcpManager.MCPManagerService/Get"
+	MCPManagerService_Toggle_FullMethodName     = "/mcpManager.MCPManagerService/Toggle"
+	MCPManagerService_List_FullMethodName       = "/mcpManager.MCPManagerService/List"
+	MCPManagerService_Delete_FullMethodName     = "/mcpManager.MCPManagerService/Delete"
+	MCPManagerService_HandleTool_FullMethodName = "/mcpManager.MCPManagerService/HandleTool"
 )
 
 // MCPManagerServiceClient is the client API for MCPManagerService service.
@@ -43,6 +44,8 @@ type MCPManagerServiceClient interface {
 	// return entries from config file
 	List(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*ListResponse, error)
 	Delete(ctx context.Context, in *DeleteRequest, opts ...grpc.CallOption) (*DeleteResponse, error)
+	// handle the MCP server tool, this is for debugging only
+	HandleTool(ctx context.Context, in *HandleToolRequest, opts ...grpc.CallOption) (*HandleToolResponse, error)
 }
 
 type mCPManagerServiceClient struct {
@@ -113,6 +116,16 @@ func (c *mCPManagerServiceClient) Delete(ctx context.Context, in *DeleteRequest,
 	return out, nil
 }
 
+func (c *mCPManagerServiceClient) HandleTool(ctx context.Context, in *HandleToolRequest, opts ...grpc.CallOption) (*HandleToolResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(HandleToolResponse)
+	err := c.cc.Invoke(ctx, MCPManagerService_HandleTool_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MCPManagerServiceServer is the server API for MCPManagerService service.
 // All implementations must embed UnimplementedMCPManagerServiceServer
 // for forward compatibility.
@@ -129,6 +142,8 @@ type MCPManagerServiceServer interface {
 	// return entries from config file
 	List(context.Context, *ListRequest) (*ListResponse, error)
 	Delete(context.Context, *DeleteRequest) (*DeleteResponse, error)
+	// handle the MCP server tool, this is for debugging only
+	HandleTool(context.Context, *HandleToolRequest) (*HandleToolResponse, error)
 	mustEmbedUnimplementedMCPManagerServiceServer()
 }
 
@@ -156,6 +171,9 @@ func (UnimplementedMCPManagerServiceServer) List(context.Context, *ListRequest) 
 }
 func (UnimplementedMCPManagerServiceServer) Delete(context.Context, *DeleteRequest) (*DeleteResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedMCPManagerServiceServer) HandleTool(context.Context, *HandleToolRequest) (*HandleToolResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method HandleTool not implemented")
 }
 func (UnimplementedMCPManagerServiceServer) mustEmbedUnimplementedMCPManagerServiceServer() {}
 func (UnimplementedMCPManagerServiceServer) testEmbeddedByValue()                           {}
@@ -286,6 +304,24 @@ func _MCPManagerService_Delete_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MCPManagerService_HandleTool_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(HandleToolRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MCPManagerServiceServer).HandleTool(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MCPManagerService_HandleTool_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MCPManagerServiceServer).HandleTool(ctx, req.(*HandleToolRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MCPManagerService_ServiceDesc is the grpc.ServiceDesc for MCPManagerService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -316,6 +352,10 @@ var MCPManagerService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Delete",
 			Handler:    _MCPManagerService_Delete_Handler,
+		},
+		{
+			MethodName: "HandleTool",
+			Handler:    _MCPManagerService_HandleTool_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
