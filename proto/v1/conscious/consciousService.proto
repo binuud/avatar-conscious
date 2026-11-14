@@ -57,7 +57,7 @@ service Conscious {
   // Clears the memory
   rpc ClearMemory(ClearMemoryRequest) returns (ClearMemoryResponse) {
     option (google.api.http) = {
-      post : "/v1/conscious/clearMeroy"
+      post : "/v1/conscious/clearMemory"
       body : "*"
     };
   }

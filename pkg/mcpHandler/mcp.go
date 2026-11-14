@@ -2,6 +2,7 @@ package mcpHandler
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os/exec"
@@ -16,6 +17,11 @@ type McpCommandHandler struct {
 	name  string
 	Tools []*mcp.Tool `json:"tools"`
 }
+
+// LLM returns a json string
+// which has to be parsed into a equivalent structure
+// this provides the input structure
+type Tool_MCP_Input map[string]any
 
 // sample "mcp-greet-server"
 // NewMcpCommandHandler
@@ -69,6 +75,7 @@ func NewMcpCommandHandler(name string, cmd string, url string) (*McpCommandHandl
 }
 
 func HandleMcp(mcpServerName string, mcpFunction string, mcpParams any) (string, error) {
+
 	ctx := context.Background()
 
 	// Create a new client, with no features.
@@ -79,7 +86,7 @@ func HandleMcp(mcpServerName string, mcpFunction string, mcpParams any) (string,
 	url := strings.ToLower(mcpServerName)
 	isHTTP := strings.HasPrefix(url, "http://") || strings.HasPrefix(url, "https://")
 	if isHTTP {
-		logrus.Debugf("trying to execute mcp remote server %s->%s", mcpServerName, mcpFunction)
+		logrus.Debugf("HandleMcp trying to connect mcp remote server %s->%s", mcpServerName, mcpFunction)
 		transport := &mcp.StreamableClientTransport{
 			Endpoint: url,
 		}
@@ -89,7 +96,7 @@ func HandleMcp(mcpServerName string, mcpFunction string, mcpParams any) (string,
 			return "", err
 		}
 	} else {
-		logrus.Debugf("trying to execute mcp command %s->%s", mcpServerName, mcpFunction)
+		logrus.Debugf("HandleMcp trying to connect mcp command %s->%s", mcpServerName, mcpFunction)
 		transport := &mcp.CommandTransport{Command: exec.Command(mcpServerName)}
 		// Connect to a server over stdin/stdout.
 		session, err = client.Connect(ctx, transport, nil)
@@ -104,11 +111,14 @@ func HandleMcp(mcpServerName string, mcpFunction string, mcpParams any) (string,
 		Name:      mcpFunction,
 		Arguments: mcpParams,
 	}
+	logrus.Debugf("HandleMcp trying to execute mcp command %s->%s (%v)", mcpServerName, mcpFunction, mcpParams)
 	res, err := session.CallTool(ctx, params)
 	if err != nil {
+		logrus.Errorf("error HandleMcp %v", err)
 		return "", fmt.Errorf("CallTool failed: %v", err)
 	}
 	if res.IsError {
+		logrus.Errorf("error HandleMcp %v", res)
 		return "", fmt.Errorf("tool failed %v", res)
 	}
 	out := ""
@@ -118,6 +128,21 @@ func HandleMcp(mcpServerName string, mcpFunction string, mcpParams any) (string,
 	}
 
 	return out, err
+}
+
+// HandleMcpTool
+// takes in a string inoutData converts it into map<<String>
+// and executes the tool call
+func HandleMcpTool(mcpServer string, toolName string, inputData string) (string, error) {
+	var inObj Tool_MCP_Input
+	if err := json.Unmarshal([]byte(inputData), &inObj); err != nil {
+		return "", err
+	}
+	outMsg, err := HandleMcp(mcpServer, toolName, inObj)
+	if err != nil {
+		return "", err
+	}
+	return outMsg, nil
 }
 
 // GetMCPAuthPRM

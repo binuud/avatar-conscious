@@ -9,7 +9,6 @@ package mcpCommandTool
 // This can be used as reference to generate other others tools
 
 import (
-	"encoding/json"
 	"fmt"
 
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
@@ -20,11 +19,6 @@ import (
 	"github.com/openai/openai-go/v3"
 	"github.com/sirupsen/logrus"
 )
-
-// LLM returns a json string
-// which has to be parsed into a equivalent structure
-// this provides the input structure
-type Tool_MCP_Input map[string]any
 
 // path is the absolute path to read (required).
 
@@ -76,13 +70,8 @@ func (t *MCPCommandTool) InputSchemaAsOpenAiParam() openai.FunctionParameters {
 func (t *MCPCommandTool) Handler(in *pb.ContextMesssage) (*pb.ContextMesssage, error) {
 
 	logrus.Infof("MCPCommandTool handler Arguments received %v", in.Prompt)
-	var inObj Tool_MCP_Input
-	if err := json.Unmarshal([]byte(in.Prompt), &inObj); err != nil {
-		return nil, err
-	}
-	logrus.Infof("Arguments parsed into input structure %v", in)
-	logrus.Infof("Current tool %s->%s", t.name, t.mcpTool.Name)
-	outMsg, err := mcpHandler.HandleMcp(t.name, t.mcpTool.Name, inObj)
+
+	outMsg, err := mcpHandler.HandleMcpTool(t.name, t.mcpTool.Name, in.Prompt)
 	if err != nil {
 		return nil, err
 	}

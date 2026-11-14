@@ -5,7 +5,7 @@ info:
   title: ""
   version: ""
 paths:
-  /v1/conscious/clearMeroy:
+  /v1/conscious/clearMemory:
     post:
       operationId: clearMemory
       requestBody:

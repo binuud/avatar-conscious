@@ -85,6 +85,33 @@
         }
       }
     },
+    "/v1/mcpManager/handleTool": {
+      "post": {
+        "operationId": "handleTool",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/HandleToolRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "mcpManager.MCPManagerService.HandleTool response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HandleToolResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/mcpManager/list": {
       "get": {
         "operationId": "list",
@@ -199,6 +226,43 @@
           }
         }
       },
+      "HandleToolRequest": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "toolName": {
+            "type": "string"
+          },
+          "inputData": {
+            "type": "string"
+          }
+        }
+      },
+      "HandleToolResponse": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "toolName": {
+            "type": "string"
+          },
+          "inputData": {
+            "type": "string"
+          },
+          "output": {
+            "type": "string"
+          }
+        }
+      },
       "ListResponse": {
         "type": "object",
         "properties": {
@@ -306,6 +370,9 @@
             "type": "string"
           },
           "inputSchema": {
+            "type": "string"
+          },
+          "response": {
             "type": "string"
           }
         }
