@@ -61,6 +61,8 @@ message AvatarMeta {
   // white list of allowed ai_tools
   repeated string ai_allowed_tools = 6;
 
+  // white list of allowed mcp servers
+  repeated string mcp_servers = 7;
 }
 
 

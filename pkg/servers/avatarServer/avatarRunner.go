@@ -8,7 +8,9 @@ import (
 	pbConcsious "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	"github.com/binuud/avatar-conscious/pkg/llm"
 	"github.com/binuud/avatar-conscious/pkg/memory"
-	"github.com/binuud/avatar-conscious/pkg/tools"
+	"github.com/binuud/avatar-conscious/pkg/servers/mcpManagerServer"
+	"github.com/binuud/avatar-conscious/pkg/tools/aiGenTools"
+	"github.com/binuud/avatar-conscious/pkg/tools/toolRegistry"
 	"github.com/openai/openai-go/v3"
 	"github.com/sirupsen/logrus"
 )
@@ -29,14 +31,40 @@ func (a *AvatarWrapper) Run() error {
 	return nil
 }
 
+func (a *AvatarWrapper) InitTools() error {
+	avatarTools := toolRegistry.NewToolRegistry()
+	mcpServers := mcpManagerServer.NewMcpServers()
+	// iterate over avatar mcp_servers and add them to the avatarTools Registry
+	for _, allowedMcpServer := range a.Meta.McpServers {
+		mcpServer, err := mcpServers.FindByUUIDName("", allowedMcpServer)
+		if err != nil {
+			// bail out, since one of the mcp servers is not registered with the system
+			return err
+		}
+		if mcpServer.Enabled == false {
+			return fmt.Errorf("error the requested mcp server is not enabled %s")
+		}
+		mcpManagerServer.AddMcpServerToTool(mcpServer, avatarTools)
+	}
+
+	// now add common tools
+	avatarTools.AddTool(aiGenTools.NewUiLaunchTool())
+	a.Memory.ToolRegistry = avatarTools
+	a.Memory.Tools = avatarTools.GetCommonTools()
+	return nil
+}
+
 // Start
 // start the avatar, creates the memory
 // waits for run by step command
 func (a *AvatarWrapper) Start() {
 	// create an use and throw memory
 	a.Memory = memory.NewMemory("")
-	a.Memory.Tools = tools.GlobalCommonTools
-	logrus.Infof("Running Avatar %s, with Model : %s", a.Meta.Name, a.Memory.Model)
+	err := a.InitTools()
+	if err != nil {
+		logrus.Errorf("error - avatar Start() cannot init tools %v", err)
+	}
+	logrus.Infof("Start() Avatar %s, with Model : %s", a.Meta.Name, a.Memory.Model)
 	logrus.Infof("Description %s", a.Meta.Description)
 }
 
@@ -71,8 +99,9 @@ func (a *AvatarWrapper) RunStep(i int, step *pb.Step) (*pbConcsious.ContextMesss
 	// if so call hanldle the tool and return the output response
 	msg := completions.Choices[0].Message
 	if len(msg.ToolCalls) > 0 {
+		logrus.Infof("ToolCalling in RunStep %s called, Out Msg : %s", msg.ToolCalls[0].Function.Name, msg.ToolCalls[0].Type)
 		// a.Memory.AppendMemory(openai.ToolMessage(msg.ToolCalls[0].RawJSON(), msg.ToolCalls[0].ID))
-		out, err = tools.GlobalCommonToolsRegistry.HandleToolCalls(msg.ToolCalls, step.Prompt)
+		out, err = a.Memory.ToolRegistry.HandleToolCalls(msg.ToolCalls, step.Prompt)
 		if err != nil {
 			logrus.Errorf("HandleToolCalls: %v \n", err)
 			return nil, err
@@ -93,6 +122,10 @@ func (a *AvatarWrapper) RunStep(i int, step *pb.Step) (*pbConcsious.ContextMesss
 				logrus.Errorf("RunStep %v", err)
 				return nil, err
 			}
+		} else {
+			// proceed by adding the tool output to memory
+			// so subsequent steps can use the data
+			a.Memory.AppendMemory(openai.ToolMessage(fmt.Sprintf("%s", out.Response), msg.ToolCalls[0].ID))
 		}
 	} else {
 		out.Response = msg.Content

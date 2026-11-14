@@ -54,6 +54,7 @@ export type AvatarMeta = {
   image?: string
   triggers?: string[]
   aiAllowedTools?: string[]
+  mcpServers?: string[]
 }
 
 export type UiCollection = {

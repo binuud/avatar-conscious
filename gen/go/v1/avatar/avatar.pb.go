@@ -345,8 +345,10 @@ type AvatarMeta struct {
 	Triggers    []string `protobuf:"bytes,5,rep,name=triggers,proto3" json:"triggers,omitempty"`
 	// white list of allowed ai_tools
 	AiAllowedTools []string `protobuf:"bytes,6,rep,name=ai_allowed_tools,json=aiAllowedTools,proto3" json:"ai_allowed_tools,omitempty"`
-	unknownFields  protoimpl.UnknownFields
-	sizeCache      protoimpl.SizeCache
+	// white list of allowed mcp servers
+	McpServers    []string `protobuf:"bytes,7,rep,name=mcp_servers,json=mcpServers,proto3" json:"mcp_servers,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
 }
 
 func (x *AvatarMeta) Reset() {
@@ -417,6 +419,13 @@ func (x *AvatarMeta) GetTriggers() []string {
 func (x *AvatarMeta) GetAiAllowedTools() []string {
 	if x != nil {
 		return x.AiAllowedTools
+	}
+	return nil
+}
+
+func (x *AvatarMeta) GetMcpServers() []string {
+	if x != nil {
+		return x.McpServers
 	}
 	return nil
 }
@@ -693,7 +702,7 @@ const file_v1_avatar_avatar_proto_rawDesc = "" +
 	"parameters\x1aQ\n" +
 	"\x0fParametersEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12(\n" +
-	"\x05value\x18\x02 \x01(\v2\x12.avatar.ToolParamsR\x05value:\x028\x01\"\xb2\x01\n" +
+	"\x05value\x18\x02 \x01(\v2\x12.avatar.ToolParamsR\x05value:\x028\x01\"\xd3\x01\n" +
 	"\n" +
 	"AvatarMeta\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
@@ -701,7 +710,9 @@ const file_v1_avatar_avatar_proto_rawDesc = "" +
 	"\vdescription\x18\x03 \x01(\tR\vdescription\x12\x14\n" +
 	"\x05image\x18\x04 \x01(\tR\x05image\x12\x1a\n" +
 	"\btriggers\x18\x05 \x03(\tR\btriggers\x12(\n" +
-	"\x10ai_allowed_tools\x18\x06 \x03(\tR\x0eaiAllowedTools\"3\n" +
+	"\x10ai_allowed_tools\x18\x06 \x03(\tR\x0eaiAllowedTools\x12\x1f\n" +
+	"\vmcp_servers\x18\a \x03(\tR\n" +
+	"mcpServers\"3\n" +
 	"\fUiCollection\x12#\n" +
 	"\x02ui\x18\x01 \x03(\v2\x13.quatumUI.QuantumUIR\x02ui\"\xde\x01\n" +
 	"\x04Step\x12\x12\n" +
