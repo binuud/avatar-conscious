@@ -115,7 +115,6 @@ func (s *grpcConsciousServer) In(ctx context.Context, in *pb.ContextMesssage) (*
 
 func (s *grpcConsciousServer) InStream(in *pb.ContextMesssage, stream grpc.ServerStreamingServer[pb.ContextMesssage]) error {
 
-	s.memory.AppendInMessage(in)
 	// thinking := ""
 	completeResponse := ""
 

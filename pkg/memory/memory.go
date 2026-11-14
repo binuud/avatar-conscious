@@ -7,6 +7,7 @@ import (
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	datalayer "github.com/binuud/avatar-conscious/pkg/dataLayer"
 	"github.com/binuud/avatar-conscious/pkg/settings"
+	"github.com/binuud/avatar-conscious/pkg/tools/toolRegistry"
 
 	"github.com/openai/openai-go/v3"
 	"github.com/sirupsen/logrus"
@@ -20,6 +21,7 @@ type Memory struct {
 	// extend the proto buffer
 	pb.Memory
 	Messages       []openai.ChatCompletionMessageParamUnion
+	ToolRegistry   *toolRegistry.ToolRegistry
 	Tools          []openai.ChatCompletionToolUnionParam
 	CurrentContext *pb.SingleContext
 }
@@ -94,7 +96,7 @@ func (m *Memory) DumpMemory(w io.Writer) {
 		if w != nil {
 			// write to an io writer, so UI client or non standard client
 			// can view the output
-			str := fmt.Sprintf("Name: %s, content: %s", role, content)
+			str := fmt.Sprintf("Name: %s, content: %s\n", role, content)
 			w.Write([]byte(str))
 		}
 		logrus.Debugf("Name: %s, content: %s", role, content)
@@ -125,7 +127,7 @@ func (m *Memory) AppendOutMessage(out *pb.ContextMesssage) {
 	}
 	m.CurrentContext.Out = out
 	m.Contexts = append(m.Contexts, m.CurrentContext)
-	m.AppendMemory(openai.AssistantMessage(out.Prompt))
+	m.AppendMemory(openai.AssistantMessage(out.Response))
 	m.Save()
 }
 

@@ -794,6 +794,12 @@
             "items": {
               "type": "string"
             }
+          },
+          "mcpServers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },

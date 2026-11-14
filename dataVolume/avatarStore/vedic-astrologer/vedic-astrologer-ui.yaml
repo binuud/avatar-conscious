@@ -1,0 +1,40 @@
+ui:  
+- uuid: ''
+  name: get-birth-details
+  description: Vedic Astrologer
+  title: Get insights about your life
+  showSubmit: true
+  components:
+  - id: dob
+    class: ''
+    label: Date of Birth
+    value: ''
+    placeHolder: Enter your Date of Birth, in DD/MM/YYYY format
+    help: ''
+    style: ''
+    width: 50
+    rows: 0
+    cols: 0
+    type: INPUT
+  - id: tob
+    class: ''
+    label: Time of Birth
+    value: ''
+    placeHolder: Enter your Time of Birth, in HH:MM format
+    help: ''
+    style: ''
+    width: 50
+    rows: 0
+    cols: 0
+    type: INPUT
+  - id: ''
+    class: ''
+    label: ''
+    value: Avatar will try to get insights about your life from your astrological chart. This is for demo purpose only.
+    placeHolder: ''
+    help: ''
+    style: ''
+    width: 100
+    rows: 0
+    cols: 0
+    type: PLAINTEXT  
