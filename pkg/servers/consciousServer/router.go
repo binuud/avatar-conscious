@@ -22,15 +22,15 @@ func (s *grpcConsciousServer) RouteStreamingPromptIntent(in *pb.ContextMesssage,
 	var err error
 
 	switch utils.DetectImageIntent(in.Prompt) {
-	case utils.IntentDescribe:
-		in.Model = settings.Global.GetValue("VISION_MODEL")
-		out, err = s.RouteLLMImageDescribeRequest(in)
+	// case utils.IntentDescribe:
+	// 	in.Model = settings.Global.GetValue("VISION_MODEL")
+	// 	out, err = s.RouteLLMImageDescribeRequest(in)
 	case utils.IntentCreate:
 		in.Model = settings.Global.GetValue("IMAGE_MODEL")
 		out, err = s.RouteOpenAiImageGenerationRequest(in)
-	case utils.IntentEdit:
-		in.Model = settings.Global.GetValue("IMAGE_MODEL")
-		out, err = s.RouteOpenAiImageEditRequest(in)
+	// case utils.IntentEdit:
+	// 	in.Model = settings.Global.GetValue("IMAGE_MODEL")
+	// 	out, err = s.RouteOpenAiImageEditRequest(in)
 	default:
 		// for tool calling, do not send the history
 		handled, err := s.handleTool(in, stream)
@@ -163,7 +163,7 @@ func (s *grpcConsciousServer) RouteOpenAiImageGenerationRequest(in *protoV1.Cont
 
 	logrus.Infof("RouteImageCreateRequest -> %s, %s, %s", in.Model, in.Prompt, imageFileName)
 
-	assistantMsgContent := "Image generated and saved to disk."
+	assistantMsgContent := "Image generated and saved to file: " + imageFileName
 	s.memory.AppendMemory(openai.AssistantMessage(assistantMsgContent))
 
 	return &protoV1.ContextMesssage{
@@ -195,7 +195,7 @@ func (s *grpcConsciousServer) RouteOpenAiImageEditRequest(in *protoV1.ContextMes
 
 	logrus.Infof("RouteOpenAiImageEditRequest -> %s, %s, %s", in.Model, in.Prompt, imageFileName)
 
-	assistantMsgContent := "Image edit, generated using reference and saved to disk."
+	assistantMsgContent := "Image edited and saved to file: " + imageFileName
 	s.memory.AppendMemory(openai.AssistantMessage(assistantMsgContent))
 
 	return &protoV1.ContextMesssage{

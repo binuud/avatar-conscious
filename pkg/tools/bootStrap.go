@@ -16,10 +16,11 @@ func Bootstrap() {
 
 	GlobalCommonToolsRegistry.AddTool(commonTools.NewToolFileContents())
 	GlobalCommonToolsRegistry.AddTool(apiTools.NewApiGetTool())
+
 	// GlobalCommonToolsRegistry.AddTool(aiGenTools.NewAiGenerateImageTool())
-	// GlobalCommonToolsRegistry.AddTool(aiGenTools.NewAiGenerateImageEditTool())
-	// GlobalCommonToolsRegistry.AddTool(aiGenTools.NewAiGenerateImageDescriptionTool())
-	GlobalCommonToolsRegistry.AddTool(aiGenTools.NewUiLaunchTool())
+	GlobalCommonToolsRegistry.AddTool(aiGenTools.NewAiGenerateImageEditTool())
+	GlobalCommonToolsRegistry.AddTool(aiGenTools.NewAiGenerateImageDescriptionTool())
+	// GlobalCommonToolsRegistry.AddTool(aiGenTools.NewUiLaunchTool())
 
 	// now add mcp tools
 	mcpServers := mcpManagerServer.NewMcpServers()
