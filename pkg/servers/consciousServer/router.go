@@ -5,13 +5,47 @@ import (
 	"fmt"
 	"strings"
 
+	pb "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	protoV1 "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	"github.com/binuud/avatar-conscious/pkg/llm"
+	"github.com/binuud/avatar-conscious/pkg/settings"
 	"github.com/binuud/avatar-conscious/pkg/tools/aiGenTools"
 	"github.com/binuud/avatar-conscious/pkg/utils"
 	"github.com/openai/openai-go/v3"
 	"github.com/sirupsen/logrus"
+	grpc "google.golang.org/grpc"
 )
+
+func (s *grpcConsciousServer) RouteStreamingPromptIntent(in *pb.ContextMesssage, stream grpc.ServerStreamingServer[pb.ContextMesssage]) error {
+
+	out := &pb.ContextMesssage{}
+	var err error
+
+	switch utils.DetectImageIntent(in.Prompt) {
+	case utils.IntentDescribe:
+		in.Model = settings.Global.GetValue("VISION_MODEL")
+		out, err = s.RouteLLMImageDescribeRequest(in)
+	case utils.IntentCreate:
+		in.Model = settings.Global.GetValue("IMAGE_MODEL")
+		out, err = s.RouteOpenAiImageGenerationRequest(in)
+	case utils.IntentEdit:
+		in.Model = settings.Global.GetValue("IMAGE_MODEL")
+		out, err = s.RouteOpenAiImageEditRequest(in)
+	default:
+		// for tool calling, do not send the history
+		handled, err := s.handleTool(in, stream)
+		if handled {
+			return err
+		}
+		// this is a normal chat streaming call
+		// user has not asked for any tools
+		return s.InStream(in, stream)
+	}
+	if err = stream.Send(out); err != nil {
+		return err
+	}
+	return nil
+}
 
 func (s *grpcConsciousServer) RouteRequest(in *protoV1.ContextMesssage) (*protoV1.ContextMesssage, error) {
 

@@ -18,6 +18,7 @@ import (
 	"github.com/binuud/avatar-conscious/pkg/servers/avatarServer"
 	"github.com/binuud/avatar-conscious/pkg/settings"
 	"github.com/binuud/avatar-conscious/pkg/testbed"
+	"github.com/binuud/avatar-conscious/pkg/tools"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
@@ -70,5 +71,5 @@ func Bootstrap() {
 	SlashCommands.AddCommand(settings.NewSettingsCommand())
 	SlashCommands.AddCommand(mcpHandler.NewMCPServerCommand())
 	SlashCommands.AddCommand(testbed.NewTestBedCommand())
-
+	SlashCommands.AddCommand(tools.NewImageAiCommand())
 }

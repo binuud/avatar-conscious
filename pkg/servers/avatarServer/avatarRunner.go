@@ -10,7 +10,8 @@ import (
 	"github.com/binuud/avatar-conscious/pkg/memory"
 	"github.com/binuud/avatar-conscious/pkg/servers/mcpManagerServer"
 	"github.com/binuud/avatar-conscious/pkg/tools/aiGenTools"
-	apitools "github.com/binuud/avatar-conscious/pkg/tools/apiTools"
+	"github.com/binuud/avatar-conscious/pkg/tools/apiTools"
+
 	"github.com/binuud/avatar-conscious/pkg/tools/commonTools"
 	"github.com/binuud/avatar-conscious/pkg/tools/toolRegistry"
 	"github.com/openai/openai-go/v3"
@@ -51,7 +52,7 @@ func (a *AvatarWrapper) InitTools() error {
 
 	// now add common tools
 	avatarTools.AddTool(commonTools.NewToolFileContents())
-	avatarTools.AddTool(apitools.NewApiGetTool())
+	avatarTools.AddTool(apiTools.NewApiGetTool())
 	avatarTools.AddTool(aiGenTools.NewAiGenerateImageTool())
 	avatarTools.AddTool(aiGenTools.NewAiGenerateImageEditTool())
 	avatarTools.AddTool(aiGenTools.NewAiGenerateImageDescriptionTool())

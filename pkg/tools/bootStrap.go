@@ -3,7 +3,7 @@ package tools
 import (
 	"github.com/binuud/avatar-conscious/pkg/servers/mcpManagerServer"
 	"github.com/binuud/avatar-conscious/pkg/tools/aiGenTools"
-	apitools "github.com/binuud/avatar-conscious/pkg/tools/apiTools"
+	"github.com/binuud/avatar-conscious/pkg/tools/apiTools"
 	"github.com/binuud/avatar-conscious/pkg/tools/commonTools"
 	"github.com/binuud/avatar-conscious/pkg/tools/toolRegistry"
 	"github.com/openai/openai-go/v3"
@@ -15,10 +15,10 @@ var GlobalCommonTools []openai.ChatCompletionToolUnionParam
 func Bootstrap() {
 
 	GlobalCommonToolsRegistry.AddTool(commonTools.NewToolFileContents())
-	GlobalCommonToolsRegistry.AddTool(apitools.NewApiGetTool())
-	GlobalCommonToolsRegistry.AddTool(aiGenTools.NewAiGenerateImageTool())
-	GlobalCommonToolsRegistry.AddTool(aiGenTools.NewAiGenerateImageEditTool())
-	GlobalCommonToolsRegistry.AddTool(aiGenTools.NewAiGenerateImageDescriptionTool())
+	GlobalCommonToolsRegistry.AddTool(apiTools.NewApiGetTool())
+	// GlobalCommonToolsRegistry.AddTool(aiGenTools.NewAiGenerateImageTool())
+	// GlobalCommonToolsRegistry.AddTool(aiGenTools.NewAiGenerateImageEditTool())
+	// GlobalCommonToolsRegistry.AddTool(aiGenTools.NewAiGenerateImageDescriptionTool())
 	GlobalCommonToolsRegistry.AddTool(aiGenTools.NewUiLaunchTool())
 
 	// now add mcp tools
@@ -28,8 +28,6 @@ func Bootstrap() {
 		mcpManagerServer.AddMcpServerToTool(mcpServer, GlobalCommonToolsRegistry)
 
 	}
-
-	// "http://localhost:1080/mockserver/mcp"
 
 	GlobalCommonTools = GlobalCommonToolsRegistry.GetCommonTools()
 

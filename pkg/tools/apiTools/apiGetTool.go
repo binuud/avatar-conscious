@@ -1,4 +1,4 @@
-package apitools
+package apiTools
 
 import (
 	"encoding/json"

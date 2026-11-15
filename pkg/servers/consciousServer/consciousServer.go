@@ -19,7 +19,6 @@ import (
 	datalayer "github.com/binuud/avatar-conscious/pkg/dataLayer"
 	"github.com/binuud/avatar-conscious/pkg/llm"
 	"github.com/binuud/avatar-conscious/pkg/memory"
-	"github.com/binuud/avatar-conscious/pkg/settings"
 	"github.com/binuud/avatar-conscious/pkg/tools"
 	"github.com/binuud/avatar-conscious/pkg/utils"
 	grpc "google.golang.org/grpc"
@@ -31,7 +30,6 @@ import (
 
 	"github.com/openai/openai-go/v3"
 	"github.com/openai/openai-go/v3/option"
-	"github.com/openai/openai-go/v3/responses"
 
 	"github.com/sirupsen/logrus"
 )
@@ -169,99 +167,11 @@ func (s *grpcConsciousServer) InStream(in *pb.ContextMesssage, stream grpc.Serve
 
 }
 
-func (s *grpcConsciousServer) InStreamNewApi(in *pb.ContextMesssage, stream grpc.ServerStreamingServer[pb.ContextMesssage]) error {
-
-	logrus.Infof("InStream Received -> Request: %s, %s", in.Type, in.Prompt)
-
-	// thinking := ""
-	completeResponse := ""
-
-	s.memory.AppendInMessage(in)
-
-	params := responses.ResponseNewParams{
-		Model: in.Model,
-		Input: responses.ResponseNewParamsInputUnion{
-			OfInputItemList: responses.ResponseInputParam{
-				responses.ResponseInputItemParamOfMessage(
-					responses.ResponseInputMessageContentListParam{
-						responses.ResponseInputContentParamOfInputText(in.Prompt),
-					},
-					responses.EasyInputMessageRoleUser,
-				),
-			},
-		},
-	}
-
-	llmStream := s.openAiClient.Responses.NewStreaming(context.Background(), params)
-	defer func() {
-		_ = llmStream.Close()
-	}()
-
-	logrus.Info("\n\n\n Starting streaming")
-
-	// Iterate over incoming chunks as they arrive from the API
-	for llmStream.Next() {
-
-		if err := stream.Context().Err(); err != nil {
-			logrus.Errorf("Client disconnected prematurely. %v", err)
-			return err
-		}
-
-		data := llmStream.Current()
-
-		out := &pb.ContextMesssage{
-			Uuid:     in.Uuid,
-			Response: data.Delta,
-		}
-
-		if data.JSON.Text.Valid() {
-
-			// when reasoning, thinking is enabled, we might see this twice.
-			// once for reasoning, and once for actualy response
-
-			logrus.Infof("Finished Content %s \n\n", data.Type)
-
-			if data.Type == "response.output_text.done" {
-				// streaming complete
-				// handle closure later
-				completeResponse = data.Text
-				logrus.Infof("Complete response %s \n\n", completeResponse)
-			}
-		}
-
-		// send the out message
-		if err := stream.Send(out); err != nil {
-			return err
-		}
-
-	}
-
-	// if streaming is done
-	// send last out message with completeAt timestamp
-	out := &pb.ContextMesssage{
-		Uuid:        in.Uuid,
-		Model:       in.Model,
-		Prompt:      in.Prompt,
-		CreatedAt:   in.CreatedAt,
-		CompletedAt: utils.GetTimeStamp(),
-		Response:    completeResponse,
-	}
-
-	s.memory.AppendOutMessage(out)
-
-	// send the out message
-	if err := stream.Send(out); err != nil {
-		return err
-	}
-
-	return nil
-
-}
-
 // Generate()
-// uses new tool handler
-// Calls toools first with no memory, to decide if image generation or description or tts has to be called
-// Then calls the appropriate function
+// uses tool handler
+// tool handler to checnk if intent of user is to create image or describe an image
+// was slowing the system, so using a slash command handler, user can specify his intent by giving
+// /image create /image edit or /image describe
 func (s *grpcConsciousServer) Generate(in *pb.ContextMesssage, stream grpc.ServerStreamingServer[pb.ContextMesssage]) error {
 
 	in.CreatedAt = utils.GetTimeStamp()
@@ -277,62 +187,10 @@ func (s *grpcConsciousServer) Generate(in *pb.ContextMesssage, stream grpc.Serve
 
 	// do not add to memory for slash commands
 	if strings.HasPrefix(in.Prompt, "/") {
-		return handleSlashCommandStream(in, stream)
+		return s.handleSlashCommandStream(in, stream)
 	}
 
-	// #TODO Binu hot fix shitty hack
-	// should be removed and cleaner implementation done
-	if in.Data != "" {
-		// add the attached file name to the prompt
-		in.Prompt = in.Prompt + " . And the attached or uploaded file is " + in.Data
-	}
-
-	// for tool calling, do not send the history
-	message := []openai.ChatCompletionMessageParamUnion{openai.UserMessage(in.Prompt)}
-	completions, err := llm.MakeLLMSingleToolRequest(message,
-		s.memory.Model,
-		s.commonTools,
-		s.memory.Temperature)
-	if err != nil {
-		logrus.Errorf("client: error llm chat request: %v \n", err)
-		return err
-	}
-
-	msg := completions.Choices[0].Message
-	if len(msg.ToolCalls) > 0 {
-		s.memory.AppendInMessage(in)
-		out, err := tools.GlobalCommonToolsRegistry.HandleToolCalls(msg.ToolCalls, in.Prompt)
-		if err != nil {
-			logrus.Errorf("HandleToolCalls: %v \n", err)
-			return err
-		}
-		// s.memory.Messages = append(s.memory.Messages, openai.AssistantMessage(toolMessage))
-
-		// for metrics, populate the time stamps
-		out.CreatedAt = in.CreatedAt
-		out.CompletedAt = utils.GetTimeStamp()
-
-		logrus.Infof("Generate Out Msg : %s", out)
-		s.memory.AppendOutMessage(out)
-		if err := stream.Send(out); err != nil {
-			return err
-		}
-		return nil
-	} else {
-
-		logrus.Infof("Generate Tool function NOT selected\n")
-		logrus.Infof("Generate Out Msg : %s", msg.Content)
-		if in.Data != "" {
-			// if an image is in the attachment, do a describe image
-			in.Type = pb.ContextMesssage_LLM_IMAGE_DESCRIBE
-			in.Model = settings.Global.GetValue("VISION_MODEL")
-		}
-	}
-
-	// this is a normal chat streaming call
-	// user has not asked for any tools
-	return s.InStream(in, stream)
-
+	return s.RouteStreamingPromptIntent(in, stream)
 }
 
 func (s *grpcConsciousServer) FileUpload(ctx context.Context, in *pb.UploadRequest) (*pb.UploadResponse, error) {
@@ -389,16 +247,4 @@ func (s *grpcConsciousServer) Health(ctx context.Context, in *pb.HealthRequest) 
 	}
 
 	return health, nil
-}
-
-func (s *grpcConsciousServer) MakeLLMChatRequest(prompt string) (*openai.ChatCompletion, error) {
-
-	s.memory.Messages = append(s.memory.Messages, openai.UserMessage(prompt))
-	completions, err := llm.MakeLLMChatRequest(s.memory.Messages, s.memory.Tools, s.memory.Model, s.memory.Temperature)
-	if err != nil {
-		return nil, err
-	}
-
-	return completions, nil
-
 }

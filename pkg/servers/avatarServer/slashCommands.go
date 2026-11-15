@@ -24,7 +24,7 @@ func NewAvatarCommand() *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			items, err := ListAvatars()
 			if err != nil {
-				cmd.PrintErrf("cannot list AI Avatars, check if dataVolumes is mounted, %v", err)
+				cmd.PrintErrf("cannot list AI Avatars, check if dataVolumes is mounted, %v\n", err)
 				return
 			}
 			cmd.Println("AI Avatar...")
