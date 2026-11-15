@@ -84,6 +84,12 @@ func GetFileAbsolutePath(relativePath string) (string, error) {
 			return filePath, nil
 		}
 	}
+	if strings.HasPrefix(relativePath, "/gen") {
+		filePath := settings.Global.GetValue("SERVABLE_DIRECTORY") + relativePath
+		if FileExists(filePath) {
+			return filePath, nil
+		}
+	}
 	filePath := GetUploadsFolder() + relativePath
 	if FileExists(filePath) {
 		return filePath, nil

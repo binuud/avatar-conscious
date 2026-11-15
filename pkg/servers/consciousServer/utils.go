@@ -32,9 +32,9 @@ func (s *grpcConsciousServer) MakeLLMChatRequest(prompt string) (*openai.ChatCom
 func (s *grpcConsciousServer) handleTool(in *pb.ContextMesssage, stream grpc.ServerStreamingServer[pb.ContextMesssage]) (bool, error) {
 
 	// to track if the tool was handled or not
-
-	message := []openai.ChatCompletionMessageParamUnion{openai.UserMessage(in.Prompt)}
-	completions, err := llm.MakeLLMSingleToolRequest(message,
+	s.memory.Messages = append(s.memory.Messages, openai.UserMessage(in.Prompt))
+	// message := []openai.ChatCompletionMessageParamUnion{openai.UserMessage(in.Prompt)}
+	completions, err := llm.MakeLLMSingleToolRequest(s.memory.Messages,
 		s.memory.Model,
 		s.commonTools,
 		s.memory.Temperature)

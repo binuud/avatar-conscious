@@ -56,7 +56,7 @@ func (a *AvatarWrapper) InitTools() error {
 	avatarTools.AddTool(aiGenTools.NewAiGenerateImageTool())
 	avatarTools.AddTool(aiGenTools.NewAiGenerateImageEditTool())
 	avatarTools.AddTool(aiGenTools.NewAiGenerateImageDescriptionTool())
-	avatarTools.AddTool(aiGenTools.NewUiLaunchTool())
+	// avatarTools.AddTool(aiGenTools.NewUiLaunchTool())
 	a.Memory.ToolRegistry = avatarTools
 	a.Memory.Tools = avatarTools.GetCommonTools()
 	return nil
