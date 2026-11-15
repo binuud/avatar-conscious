@@ -105,7 +105,7 @@ func (s *avatarGrpcServer) handleAvatarInit(in *pb.ControlRequest,
 	out := &pb.ControlResponse{
 		Control: myMsg.(*pb.AvatarControl),
 	}
-	out.Control.CurrentStep = 1 // start step count from 1
+	out.Control.CurrentStep = 0 // start step count from 0
 	if s.avatar == nil {
 		out.Control.Status = pb.AvatarStatus_STATUS_ERROR
 	} else {
@@ -141,7 +141,7 @@ func (s *avatarGrpcServer) handleAvatarRun(in *pb.ControlRequest,
 		userResponse := currentStepObj.Response
 		prompt := ""
 		if currentStepObj.Status == pb.AvatarStatus_STATUS_COMPLETED {
-			logrus.Infof("Continue from step %d", currentStep)
+			logrus.Infof("Continue from step %d", currentStep+1)
 			logrus.Infof("Response from UI %s", userResponse[:min(len(userResponse), 100)])
 			// check if response is set
 
@@ -182,36 +182,42 @@ func (s *avatarGrpcServer) handleAvatarRun(in *pb.ControlRequest,
 	lastResponse := &pbConscious.ContextMesssage{
 		Uuid: in.Control.AvatarUuid,
 	}
+	currentStepNo := int(in.Control.CurrentStep)
+	for {
+		if currentStepNo >= len(s.avatar.Avatar.Steps) {
+			break
+		}
+		outControlStepStatus := out.Control.StepStatuses[currentStepNo]
 
-	for i := int(in.Control.CurrentStep); i < (len(s.avatar.Avatar.Steps)); i++ {
-		step := s.avatar.Avatar.Steps[i]
+		// for i := int(in.Control.CurrentStep); i < (len(s.avatar.Avatar.Steps)); i++ {
+		step := s.avatar.Avatar.Steps[currentStepNo]
 		// for i, step := range s.avatar.Avatar.Steps {
 
 		// intimate client on the step completed and its status
-		out.Control.CurrentStep = int32(i)
-		out.Control.StepStatuses[i].Status = pb.AvatarStatus_STATUS_ACTIVE
-		out.Control.StepStatuses[i].CreatedAt = utils.GetTimeStamp()
+		out.Control.CurrentStep = int32(currentStepNo)
+		outControlStepStatus.Status = pb.AvatarStatus_STATUS_ACTIVE
+		outControlStepStatus.CreatedAt = utils.GetTimeStamp()
 		if err := stream.Send(out); err != nil {
 			logrus.Errorf("Connect: Failed to send message: %v", err)
 			return err
 		}
 
 		// run the actual step using llm
-		outContextMsg, err := s.avatar.RunStep(i, step)
+		outContextMsg, err := s.avatar.RunStep(currentStepNo, step)
 		if err != nil {
-			out.Control.StepStatuses[i].Status = pb.AvatarStatus_STATUS_ERROR
-			out.Control.StepStatuses[i].Result = pb.AvatarResult_RESULT_ERROR
+			outControlStepStatus.Status = pb.AvatarStatus_STATUS_ERROR
+			outControlStepStatus.Result = pb.AvatarResult_RESULT_ERROR
 			out.Control.Status = pb.AvatarStatus_STATUS_ERROR
 			out.Control.Result = pb.AvatarResult_RESULT_ERROR
 		} else {
-			out.Control.StepStatuses[i].Status = pb.AvatarStatus_STATUS_COMPLETED
+			outControlStepStatus.Status = pb.AvatarStatus_STATUS_COMPLETED
 		}
-		out.Control.StepStatuses[i].CompletedAt = utils.GetTimeStamp()
+		outControlStepStatus.CompletedAt = utils.GetTimeStamp()
 
 		if outContextMsg.Action == "SHOW-UI" {
 			// we need to launch an UI in avatar
-			out.Control.StepStatuses[i].Status = pb.AvatarStatus_STATUS_WAITING
-			out.Control.StepStatuses[i].Response = outContextMsg.Data
+			outControlStepStatus.Status = pb.AvatarStatus_STATUS_WAITING
+			outControlStepStatus.Response = outContextMsg.Data
 			out.Control.Status = pb.AvatarStatus_STATUS_WAITING
 
 			if err := stream.Send(out); err != nil {
@@ -223,18 +229,19 @@ func (s *avatarGrpcServer) handleAvatarRun(in *pb.ControlRequest,
 
 		if outContextMsg.ResponseImage != "" {
 			lastResponse.ResponseImage = outContextMsg.ResponseImage
-			out.Control.StepStatuses[i].Response = outContextMsg.ResponseImage
+			outControlStepStatus.Response = outContextMsg.ResponseImage
 		} else {
 			lastResponse.Response = outContextMsg.Response
-			out.Control.StepStatuses[i].Response = outContextMsg.Response
+			outControlStepStatus.Response = outContextMsg.Response
 		}
 
 		if err := stream.Send(out); err != nil {
 			logrus.Errorf("Connect: Failed to send message: %v", err)
 			return err
 		}
-
+		currentStepNo++
 	}
+
 	logrus.Infof("Avatar run completed")
 	out.Control.CompletedAt = utils.GetTimeStamp()
 	out.Control.Action = pb.AvatarAction_ACTION_COMPLETE
@@ -245,5 +252,6 @@ func (s *avatarGrpcServer) handleAvatarRun(in *pb.ControlRequest,
 		logrus.Errorf("Connect: Failed to send message: %v", err)
 		return err
 	}
+
 	return nil
 }

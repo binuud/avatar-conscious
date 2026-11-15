@@ -18,6 +18,7 @@ export MQTT_ENDPOINT="tcp://localhost:1883"
 
 export LLM_ENDPOINT="http://localhost:11234/v1"
 export LLM_MODEL="lmstudio-community/Qwen3.5-9B-MLX-4bit"
+# export LLM_MODEL="ddalcu/Qwen3.8-27B-MLX-Serve-4bit"
 export IMAGE_MODEL="Runpod/FLUX.2-klein-4B-mflux-4bit"
 export VISION_MODEL="lmstudio-community/Qwen3.5-9B-MLX-4bit"
 
