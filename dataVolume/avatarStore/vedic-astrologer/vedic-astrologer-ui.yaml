@@ -27,6 +27,28 @@ ui:
     rows: 0
     cols: 0
     type: INPUT
+  - id: city
+    class: ''
+    label: City of Birth
+    value: ''
+    placeHolder: Enter your City of Birth
+    help: ''
+    style: ''
+    width: 50
+    rows: 0
+    cols: 0
+    type: INPUT
+  - id: countryCode
+    class: ''
+    label: Country of Birth
+    value: ''
+    placeHolder: Enter your Country Code, of your Country of Birth. eg IN, US
+    help: ''
+    style: ''
+    width: 50
+    rows: 0
+    cols: 0
+    type: INPUT        
   - id: ''
     class: ''
     label: ''
