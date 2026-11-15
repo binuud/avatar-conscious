@@ -24,8 +24,9 @@ export TTS_MODEL="mlx-community/Qwen3-TTS-12Hz-0.6B-Base-8bit"
 ## test run for running avatar step by step
 # go test -v  --run Test_Avatar_By_Step_Election_Officer ./pkg/servers/avatarServer
 
- go test -v --run Test_LLM_Audio_Request ./pkg/llm
+#go test -v --run Test_LLM_Audio_Request ./pkg/llm
 
+go test -v ./pkg/utils
 ## test run for running avatar step by step, control via bidirectional server
 #go test -v  --run Test_AvatarServer_Control ./pkg/servers/avatarServer
 # go test -v --run  Test_UiLaunchTool ./pkg/tools/testTools/

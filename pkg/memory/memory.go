@@ -114,7 +114,6 @@ func (m *Memory) AppendInMessage(in *pb.ContextMesssage) {
 		In: in,
 	}
 	m.AppendMemory(openai.UserMessage(in.Prompt))
-	m.Save()
 }
 
 // AppendOutMessage
@@ -128,7 +127,6 @@ func (m *Memory) AppendOutMessage(out *pb.ContextMesssage) {
 	m.CurrentContext.Out = out
 	m.Contexts = append(m.Contexts, m.CurrentContext)
 	m.AppendMemory(openai.AssistantMessage(out.Response))
-	m.Save()
 }
 
 // AppendMemory
