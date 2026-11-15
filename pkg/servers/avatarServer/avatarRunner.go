@@ -26,7 +26,7 @@ func (a *AvatarWrapper) Run() error {
 
 	// iterate over the steps, as per instructctions on the avatar md file
 	for i, step := range a.Avatar.Steps {
-		_, err := a.RunStep(i, step)
+		_, err := a.RunStep(i+1, step)
 		if err != nil {
 			return err
 		}
@@ -79,11 +79,11 @@ func (a *AvatarWrapper) Start() {
 // RunStep
 // run a particular step, returns the outContext message
 // update memory
-func (a *AvatarWrapper) RunStep(i int, step *pb.Step) (*pbConcsious.ContextMesssage, error) {
+func (a *AvatarWrapper) RunStep(stepNo int, step *pb.Step) (*pbConcsious.ContextMesssage, error) {
 
 	out := &pbConcsious.ContextMesssage{}
-	logrus.Infof("%s (%d) : %s", step.Name, i+1, step.Prompt)
-	a.Memory.AppendMemory(openai.UserMessage(fmt.Sprintf("Step No: %d, %s", i+1, step.Prompt)))
+	logrus.Infof("%s (%d) : %s", step.Name, stepNo, step.Prompt)
+	a.Memory.AppendMemory(openai.UserMessage(fmt.Sprintf("Step No: %d, %s", stepNo, step.Prompt)))
 
 	a.Memory.DumpMemory(nil)
 

@@ -17,6 +17,7 @@ const (
 	SYSTEM_PROMPT          = `Review the provided instruction structure and extract a JSON list of all steps with prompts if needed,
 														Steps should be prefixed in format {{Step [num]: [description]"}}
 														Schema is provided in the context.
+														If the step instruction is to launch an avatar ui, change the prompt field to "/launch-ui [ui-component-name]"
 														do not parse any other properties not mentioned in the schema. Keep instructions in prompt field intact, 
 														since llm will have to use the prompts as is, to complete the task later.
 														`
