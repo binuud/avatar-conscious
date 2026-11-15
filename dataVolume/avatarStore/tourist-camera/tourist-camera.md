@@ -41,6 +41,6 @@ Do not change the face of the person.
 Do not alter the gender of the person.
 Do not change facial features of the person.
 Avoid nudity or exposing clothing.
-Change the background and surroundings as per the place mentioned in select-place in Step No.2.
+Change the background and surroundings as per the place mentioned in select-place-prompt in Step No.2.
 Style the clothing depending on the tourist place. 
 ```

@@ -33,7 +33,7 @@ ui:
   title: Enter the tourist place
   showSubmit: true
   components:
-  - id: select-place
+  - id: select-place-prompt
     class: ''
     label: Tourist Place
     value: ''

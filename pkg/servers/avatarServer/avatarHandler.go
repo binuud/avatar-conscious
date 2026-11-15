@@ -105,7 +105,7 @@ func (s *avatarGrpcServer) handleAvatarInit(in *pb.ControlRequest,
 	out := &pb.ControlResponse{
 		Control: myMsg.(*pb.AvatarControl),
 	}
-	out.Control.CurrentStep = 0
+	out.Control.CurrentStep = 1 // start step count from 1
 	if s.avatar == nil {
 		out.Control.Status = pb.AvatarStatus_STATUS_ERROR
 	} else {
@@ -141,7 +141,7 @@ func (s *avatarGrpcServer) handleAvatarRun(in *pb.ControlRequest,
 		userResponse := currentStepObj.Response
 		prompt := ""
 		if currentStepObj.Status == pb.AvatarStatus_STATUS_COMPLETED {
-			logrus.Infof("Continue from step %d", currentStep+1)
+			logrus.Infof("Continue from step %d", currentStep)
 			logrus.Infof("Response from UI %s", userResponse[:min(len(userResponse), 100)])
 			// check if response is set
 
@@ -183,7 +183,7 @@ func (s *avatarGrpcServer) handleAvatarRun(in *pb.ControlRequest,
 		Uuid: in.Control.AvatarUuid,
 	}
 
-	for i := int(in.Control.CurrentStep); i < len(s.avatar.Avatar.Steps); i++ {
+	for i := int(in.Control.CurrentStep); i < (len(s.avatar.Avatar.Steps)); i++ {
 		step := s.avatar.Avatar.Steps[i]
 		// for i, step := range s.avatar.Avatar.Steps {
 
