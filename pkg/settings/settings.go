@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/settings"
-	datalayer "github.com/binuud/avatar-conscious/pkg/dataLayer"
+	"github.com/binuud/avatar-conscious/pkg/dataLayer"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/proto"
 )
@@ -184,9 +184,9 @@ func (s *Settings) Save() error {
 	}
 
 	configFileName := s.Name + ".config.yaml"
-	filePath := datalayer.GetFileAbsolutePath(SETTINGS_DIRECTORY, configFileName)
+	filePath := dataLayer.GetFileAbsolutePath(SETTINGS_DIRECTORY, configFileName)
 	// Save list of configs
-	if err := datalayer.SaveProtoYAML(filePath, cleanedConfigs); err != nil {
+	if err := dataLayer.SaveProtoYAML(filePath, cleanedConfigs); err != nil {
 		logrus.Errorf("Cannot save config file %s %v", filePath, err)
 		return err
 	}
@@ -200,11 +200,11 @@ func (s *Settings) Save() error {
 // Do not add entries, only updation to existing entries happens here
 func (s *Settings) Load() error {
 
-	filePath := datalayer.GetFileAbsolutePath(SETTINGS_DIRECTORY, s.Name+".config.yaml")
+	filePath := dataLayer.GetFileAbsolutePath(SETTINGS_DIRECTORY, s.Name+".config.yaml")
 	newConfigs := &pb.Configs{}
 
 	// note: only the proto msg has to be sent, not the wrapper
-	err := datalayer.ReadProtoYAML(filePath, newConfigs)
+	err := dataLayer.ReadProtoYAML(filePath, newConfigs)
 	if err != nil {
 		return err
 	}

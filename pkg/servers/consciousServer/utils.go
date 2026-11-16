@@ -8,7 +8,6 @@ import (
 	"github.com/binuud/avatar-conscious/pkg/llm"
 	"github.com/binuud/avatar-conscious/pkg/settings"
 	"github.com/binuud/avatar-conscious/pkg/slashCommands"
-	"github.com/binuud/avatar-conscious/pkg/tools"
 	"github.com/binuud/avatar-conscious/pkg/utils"
 	"github.com/openai/openai-go/v3"
 	"github.com/sirupsen/logrus"
@@ -29,51 +28,53 @@ func (s *grpcConsciousServer) MakeLLMChatRequest(prompt string) (*openai.ChatCom
 
 // handleTool
 // returns a bool, and error. The boolean is to indicate whether the tool was handled
-func (s *grpcConsciousServer) handleTool(in *pb.ContextMesssage, stream grpc.ServerStreamingServer[pb.ContextMesssage]) (bool, error) {
+func (s *grpcConsciousServer) handleTool(in *pb.ContextMesssage, stream grpc.ServerStreamingServer[pb.ContextMesssage]) (bool, *pb.ContextMesssage, error) {
 
-	// to track if the tool was handled or not
-	s.memory.Messages = append(s.memory.Messages, openai.UserMessage(in.Prompt))
 	// message := []openai.ChatCompletionMessageParamUnion{openai.UserMessage(in.Prompt)}
 	completions, err := llm.MakeLLMSingleToolRequest(s.memory.Messages,
 		s.memory.Model,
-		s.commonTools,
+		s.memory.Tools,
 		s.memory.Temperature)
 	if err != nil {
+		s.memory.AppendInMessage(in)
 		logrus.Errorf("client: error llm chat request: %v \n", err)
-		return false, err
+		return false, nil, err
 	}
 
 	msg := completions.Choices[0].Message
 	if len(msg.ToolCalls) > 0 {
 		s.memory.AppendInMessage(in)
-		out, err := tools.GlobalCommonToolsRegistry.HandleToolCalls(msg.ToolCalls, in.Prompt)
+		out, err := s.memory.ToolRegistry.HandleToolCalls(msg.ToolCalls, in.Prompt)
 		if err != nil {
 			logrus.Errorf("HandleToolCalls: %v \n", err)
-			return true, err
+			return false, nil, err
 		}
-		s.memory.Messages = append(s.memory.Messages, openai.ToolMessage(out.Response, msg.ToolCalls[0].ID))
-
+		toolMessage := out.Response
+		if out.ResponseImage != "" {
+			toolMessage = out.ResponseImage
+		}
+		s.memory.AppendMessage(openai.ToolMessage(toolMessage, msg.ToolCalls[0].ID))
 		// for metrics, populate the time stamps
 		out.CreatedAt = in.CreatedAt
 		out.CompletedAt = utils.GetTimeStamp()
 
 		logrus.Debugf("Generate Out Msg : %s", out)
-		s.memory.AppendOutMessage(out)
+		// s.memory.AppendOutMessage(out)
 		if err := stream.Send(out); err != nil {
-			return true, err
+			return true, out, err
 		}
-		return true, nil
+		return true, out, nil
 	} else {
 
-		logrus.Debugf("Generate Tool function NOT selected\n")
-		logrus.Debugf("Generate Out Msg : %s", msg.Content)
-		if in.Data != "" {
-			// if an image is in the attachment, do a describe image
-			in.Type = pb.ContextMesssage_LLM_IMAGE_DESCRIBE
-			in.Model = settings.Global.GetValue("VISION_MODEL")
-		}
+		// logrus.Debugf("Generate Tool function NOT selected\n")
+		// logrus.Debugf("Generate Out Msg : %s", msg.Content)
+		// if in.Data != "" {
+		// 	// if an image is in the attachment, do a describe image
+		// 	in.Type = pb.ContextMesssage_LLM_IMAGE_DESCRIBE
+		// 	in.Model = settings.Global.GetValue("VISION_MODEL")
+		// }
 	}
-	return false, nil
+	return false, nil, nil
 }
 
 // handleSlashCommandStream, first checks if the slash command is in the list

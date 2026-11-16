@@ -11,7 +11,6 @@ import (
 	"github.com/binuud/avatar-conscious/pkg/servers/mcpManagerServer"
 	"github.com/binuud/avatar-conscious/pkg/tools/aiGenTools"
 	"github.com/binuud/avatar-conscious/pkg/tools/apiTools"
-	"github.com/binuud/avatar-conscious/pkg/tools/mcpCommandTool"
 
 	"github.com/binuud/avatar-conscious/pkg/tools/commonTools"
 	"github.com/binuud/avatar-conscious/pkg/tools/toolRegistry"
@@ -48,7 +47,7 @@ func (a *AvatarWrapper) InitTools() error {
 		if mcpServer.Enabled == false {
 			return fmt.Errorf("error the requested mcp server is not enabled %s")
 		}
-		mcpCommandTool.AddMcpServerToTool(mcpServer, avatarTools)
+		mcpManagerServer.AddMcpServerToTool(mcpServer, avatarTools)
 	}
 
 	// now add common tools
@@ -56,7 +55,7 @@ func (a *AvatarWrapper) InitTools() error {
 	avatarTools.AddTool(apiTools.NewApiGetTool())
 	avatarTools.AddTool(aiGenTools.NewAiGenerateImageTool())
 	avatarTools.AddTool(aiGenTools.NewAiGenerateImageEditTool())
-	avatarTools.AddTool(aiGenTools.NewAiGenerateImageDescriptionTool())
+	avatarTools.AddTool(aiGenTools.NewAiImageDescriptionTool())
 	// avatarTools.AddTool(aiGenTools.NewUiLaunchTool())
 	a.Memory.ToolRegistry = avatarTools
 	a.Memory.Tools = avatarTools.GetCommonTools()
@@ -68,7 +67,7 @@ func (a *AvatarWrapper) InitTools() error {
 // waits for run by step command
 func (a *AvatarWrapper) Start() {
 	// create an use and throw memory
-	a.Memory = memory.NewMemory("")
+	a.Memory = memory.NewScratchMemory()
 	err := a.InitTools()
 	if err != nil {
 		logrus.Errorf("error - avatar Start() cannot init tools %v", err)
@@ -84,7 +83,7 @@ func (a *AvatarWrapper) RunStep(stepNo int, step *pb.Step) (*pbConcsious.Context
 
 	out := &pbConcsious.ContextMesssage{}
 	logrus.Infof("%s (%d) : %s", step.Name, stepNo, step.Prompt)
-	a.Memory.AppendMemory(openai.UserMessage(fmt.Sprintf("Step No: %d, %s", (stepNo + 1), step.Prompt)))
+	a.Memory.AppendMessage(openai.UserMessage(fmt.Sprintf("Step No: %d, %s", (stepNo + 1), step.Prompt)))
 
 	// a.Memory.DumpMemory(nil)
 
@@ -109,7 +108,7 @@ func (a *AvatarWrapper) RunStep(stepNo int, step *pb.Step) (*pbConcsious.Context
 	msg := completions.Choices[0].Message
 	if len(msg.ToolCalls) > 0 {
 		logrus.Infof("ToolCalling in RunStep %s called, Out Msg : %s", msg.ToolCalls[0].Function.Name, msg.ToolCalls[0].Type)
-		// a.Memory.AppendMemory(openai.ToolMessage(msg.ToolCalls[0].RawJSON(), msg.ToolCalls[0].ID))
+		// a.Memory.AppendMessage(openai.ToolMessage(msg.ToolCalls[0].RawJSON(), msg.ToolCalls[0].ID))
 		out, err = a.Memory.ToolRegistry.HandleToolCalls(msg.ToolCalls, step.Prompt)
 		if err != nil {
 			logrus.Errorf("HandleToolCalls: %v \n", err)
@@ -123,8 +122,8 @@ func (a *AvatarWrapper) RunStep(stepNo int, step *pb.Step) (*pbConcsious.Context
 			// data will be id of the UI
 			out.Action = "SHOW-UI"
 			logrus.Infof("RunStep : SHOW-UI called with id %s", out.Data)
-			a.Memory.AppendMemory(openai.ToolMessage(fmt.Sprintf("Avatar UI Interface with id %s shown to the user by the tool function", out.Data), msg.ToolCalls[0].ID))
-			a.Memory.AppendMemory(openai.DeveloperMessage(fmt.Sprintf("Avatar UI Interface with id %s shown to the user by the tool function", out.Data)))
+			a.Memory.AppendMessage(openai.ToolMessage(fmt.Sprintf("Avatar UI Interface with id %s shown to the user by the tool function", out.Data), msg.ToolCalls[0].ID))
+			a.Memory.AppendMessage(openai.DeveloperMessage(fmt.Sprintf("Avatar UI Interface with id %s shown to the user by the tool function", out.Data)))
 			// check if ui is present if not bail out
 			_, err := a.CheckUiExists(out.Data)
 			if err != nil {
@@ -134,7 +133,7 @@ func (a *AvatarWrapper) RunStep(stepNo int, step *pb.Step) (*pbConcsious.Context
 		} else {
 			// proceed by adding the tool output to memory
 			// so subsequent steps can use the data
-			a.Memory.AppendMemory(openai.ToolMessage(fmt.Sprintf("%s", out.Response), msg.ToolCalls[0].ID))
+			a.Memory.AppendMessage(openai.ToolMessage(fmt.Sprintf("%s", out.Response), msg.ToolCalls[0].ID))
 		}
 	} else {
 		out.Response = msg.Content
@@ -149,8 +148,8 @@ func (a *AvatarWrapper) RunSlashCommand(prompt string, out *pbConcsious.ContextM
 	if len(result) == 2 {
 		cmd := strings.ToLower(result[0])
 		if cmd == "/launch-ui" {
-			a.Memory.AppendMemory(openai.ToolMessage(fmt.Sprintf("Avatar UI Interface with id %s shown to the user by the tool function", out.Data), ""))
-			a.Memory.AppendMemory(openai.DeveloperMessage(fmt.Sprintf("Avatar UI Interface with id %s shown to the user by the tool function", out.Data)))
+			a.Memory.AppendMessage(openai.ToolMessage(fmt.Sprintf("Avatar UI Interface with id %s shown to the user by the tool function", out.Data), ""))
+			a.Memory.AppendMessage(openai.DeveloperMessage(fmt.Sprintf("Avatar UI Interface with id %s shown to the user by the tool function", out.Data)))
 			out.Action = "SHOW-UI"
 			out.Data = result[1]
 			// check if ui is present if not bail out

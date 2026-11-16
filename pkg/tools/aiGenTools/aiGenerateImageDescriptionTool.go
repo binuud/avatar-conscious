@@ -8,7 +8,6 @@ import (
 
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	"github.com/binuud/avatar-conscious/pkg/llm"
-	"github.com/binuud/avatar-conscious/pkg/memory"
 	"github.com/binuud/avatar-conscious/pkg/settings"
 	"github.com/binuud/avatar-conscious/pkg/tools/toolMeta"
 	"github.com/binuud/avatar-conscious/pkg/utils"
@@ -19,7 +18,7 @@ import (
 // LLM returns a json string
 // which has to be parsed into a equivalent structure
 // this provides the input structure
-type AiGenerateImageDescriptionTool_Input struct {
+type AiImageDescribeTool_Input struct {
 	// the uploaded or reference image file
 	ImageFile string `json:"imagefile"`
 	// the original prompt given by the user
@@ -27,17 +26,17 @@ type AiGenerateImageDescriptionTool_Input struct {
 }
 
 // implements the CommonToolInterface
-type AiGenerateImageDescriptionTool struct {
+type AiImageDescribeTool struct {
 	toolMeta.CommonToolInterface
 }
 
-func NewAiGenerateImageDescriptionTool() *AiGenerateImageDescriptionTool {
-	return &AiGenerateImageDescriptionTool{}
+func NewAiImageDescriptionTool() *AiImageDescribeTool {
+	return &AiImageDescribeTool{}
 }
 
 // Name() returns the tool name
 // this is the name which is identified by LLM during tool call decision
-func (t AiGenerateImageDescriptionTool) Name() string {
+func (t AiImageDescribeTool) Name() string {
 	return "describe_image"
 }
 
@@ -45,21 +44,21 @@ func (t AiGenerateImageDescriptionTool) Name() string {
 // returns the description
 // which is used by LLM, to decide if this tool has to be called,
 // for the given prompt
-func (t AiGenerateImageDescriptionTool) Description() string {
+func (t AiImageDescribeTool) Description() string {
 	return "Describe the given image or photograph, and collect some data from it. Do not edit the image or generate an image"
 }
 
-func (t AiGenerateImageDescriptionTool) InputSchema() string {
+func (t AiImageDescribeTool) InputSchema() string {
 	return "Describe the given image or photograph, and collect some data from it. Do not edit the image or generate an image"
 }
 
-func (t AiGenerateImageDescriptionTool) InputSchemaAsOpenAiParam() openai.FunctionParameters {
+func (t AiImageDescribeTool) InputSchemaAsOpenAiParam() openai.FunctionParameters {
 	return openai.FunctionParameters{
 		"type": "object",
 		"properties": map[string]any{
 			"imagefile": map[string]string{
 				"type":        "string",
-				"description": "The file which has to be described using ai",
+				"description": "The file which has to be described",
 			},
 			"prompt": map[string]string{
 				"type":        "string",
@@ -70,9 +69,9 @@ func (t AiGenerateImageDescriptionTool) InputSchemaAsOpenAiParam() openai.Functi
 	}
 }
 
-func (t AiGenerateImageDescriptionTool) Handler(in *pb.ContextMesssage) (*pb.ContextMesssage, error) {
-	logrus.Infof("AiGenerateImageTool Handler Arguments received %v", in.Prompt)
-	var inpObj AiGenerateImageDescriptionTool_Input
+func (t AiImageDescribeTool) Handler(in *pb.ContextMesssage) (*pb.ContextMesssage, error) {
+	logrus.Infof("AiImageDescribeTool Handler Arguments received %v", in.Prompt)
+	var inpObj AiImageDescribeTool_Input
 	if err := json.Unmarshal([]byte(in.Prompt), &inpObj); err != nil {
 		return nil, err
 	}
@@ -93,11 +92,7 @@ func (t AiGenerateImageDescriptionTool) Handler(in *pb.ContextMesssage) (*pb.Con
 
 func DescribeImage(prompt string, model string, fileName string) (string, error) {
 
-	memory := memory.NewMemory("")
-	memory.Model = model
-	memory.AppendMemory(openai.UserMessage(prompt))
-
-	logrus.Infof("DescribeImage -> %s, %s", memory.Model, prompt)
+	logrus.Infof("DescribeImage -> %s, %s", model, prompt)
 
 	imageFileName := utils.GetUploadsFolder() + fileName
 	image, err := os.ReadFile(imageFileName)
@@ -106,7 +101,7 @@ func DescribeImage(prompt string, model string, fileName string) (string, error)
 	}
 	base64Data := "data:image/jpeg;base64," + base64.StdEncoding.EncodeToString(image)
 
-	result, err := llm.MakeImageDescribeRequest(prompt, "", memory.Model, base64Data)
+	result, err := llm.MakeImageDescribeRequest(prompt, "", model, base64Data)
 	if err != nil {
 		return "", err
 	}

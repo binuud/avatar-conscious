@@ -8,7 +8,6 @@ import (
 	"github.com/binuud/avatar-conscious/pkg/bootstrap"
 	"github.com/binuud/avatar-conscious/pkg/llm"
 	"github.com/binuud/avatar-conscious/pkg/memory"
-	"github.com/binuud/avatar-conscious/pkg/tools"
 	"github.com/openai/openai-go/v3"
 )
 
@@ -16,7 +15,7 @@ func Test_Tool_Registry(t *testing.T) {
 	bootstrap.Bootstrap()
 	memoryName := ""
 	memory := memory.NewMemory(memoryName)
-	memory.Tools = tools.GlobalCommonTools
+	memory.InitTools()
 
 	tests := []struct {
 		name       string

@@ -1,36 +1,39 @@
 package tools
 
 import (
-	"github.com/binuud/avatar-conscious/pkg/servers/mcpManagerServer"
+	"encoding/gob"
+
 	"github.com/binuud/avatar-conscious/pkg/tools/aiGenTools"
 	"github.com/binuud/avatar-conscious/pkg/tools/apiTools"
 	"github.com/binuud/avatar-conscious/pkg/tools/commonTools"
-	"github.com/binuud/avatar-conscious/pkg/tools/mcpCommandTool"
-	"github.com/binuud/avatar-conscious/pkg/tools/toolRegistry"
-	"github.com/openai/openai-go/v3"
 )
 
-var GlobalCommonToolsRegistry = toolRegistry.NewToolRegistry()
-var GlobalCommonTools []openai.ChatCompletionToolUnionParam
+// var GlobalCommonToolsRegistry *toolRegistry.ToolRegistry
+// var GlobalCommonTools []openai.ChatCompletionToolUnionParam
 
-func Bootstrap() {
+// func Bootstrap() {
 
-	GlobalCommonToolsRegistry.AddTool(commonTools.NewToolFileContents())
-	GlobalCommonToolsRegistry.AddTool(apiTools.NewApiGetTool())
+// 	GlobalCommonToolsRegistry = nil
+// 	GlobalCommonToolsRegistry = toolRegistry.NewToolRegistry()
+// 	GlobalCommonToolsRegistry.AddTool(commonTools.NewToolFileContents())
+// 	GlobalCommonToolsRegistry.AddTool(apiTools.NewApiGetTool())
 
-	// GlobalCommonToolsRegistry.AddTool(aiGenTools.NewAiGenerateImageTool())
-	GlobalCommonToolsRegistry.AddTool(aiGenTools.NewAiGenerateImageEditTool())
-	GlobalCommonToolsRegistry.AddTool(aiGenTools.NewAiGenerateImageDescriptionTool())
-	// GlobalCommonToolsRegistry.AddTool(aiGenTools.NewUiLaunchTool())
+// 	// GlobalCommonToolsRegistry.AddTool(aiGenTools.NewAiGenerateImageTool())
+// 	GlobalCommonToolsRegistry.AddTool(aiGenTools.NewAiGenerateImageEditTool())
+// 	GlobalCommonToolsRegistry.AddTool(aiGenTools.NewAiGenerateImageDescriptionTool())
+// 	// GlobalCommonToolsRegistry.AddTool(aiGenTools.NewUiLaunchTool())
 
-	// now add mcp tools
-	mcpServers := mcpManagerServer.NewMcpServers()
-	for _, mcpServer := range mcpServers.Servers.Configs {
+// 	GlobalCommonTools = GlobalCommonToolsRegistry.GetCommonTools()
 
-		mcpCommandTool.AddMcpServerToTool(mcpServer, GlobalCommonToolsRegistry)
+// }
 
-	}
-
-	GlobalCommonTools = GlobalCommonToolsRegistry.GetCommonTools()
+func init() {
+	gob.Register(commonTools.ToolFileContents{})
+	gob.Register(apiTools.ApiGetTool{})
+	gob.Register(aiGenTools.AiGenerateImageTool{})
+	gob.Register(aiGenTools.AiGenerateImageEditTool{})
+	gob.Register(aiGenTools.AiImageDescribeTool{})
+	gob.Register(map[string]interface{}{})
+	gob.Register(map[string]string{})
 
 }

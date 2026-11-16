@@ -5,7 +5,7 @@ import (
 	"io"
 
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/avatar"
-	datalayer "github.com/binuud/avatar-conscious/pkg/dataLayer"
+	"github.com/binuud/avatar-conscious/pkg/dataLayer"
 	"github.com/binuud/avatar-conscious/pkg/memory"
 	"github.com/binuud/avatar-conscious/pkg/servers/avatarStoreServer"
 	"github.com/sirupsen/logrus"
@@ -83,7 +83,7 @@ func NewAvatarFromStore(name string) *AvatarWrapper {
 }
 
 func (a *AvatarWrapper) GetAvatarDir() string {
-	return datalayer.GetFileAbsolutePath(AVATAR_STORE_DIRECTORY, a.Meta.Name)
+	return dataLayer.GetFileAbsolutePath(AVATAR_STORE_DIRECTORY, a.Meta.Name)
 }
 
 // Get
@@ -105,10 +105,10 @@ func (a *AvatarWrapper) Get(name string) error {
 // load avatar details from cached binary file
 func (a *AvatarWrapper) Load(name string) error {
 
-	filePath := datalayer.GetFileAbsolutePath(AVATAR_DIRECTORY, name+".avatar")
+	filePath := dataLayer.GetFileAbsolutePath(AVATAR_DIRECTORY, name+".avatar")
 
 	// Read AvatarWrapper back (Go automatically infers type T from your variable assignment)
-	localAvatar, err := datalayer.ReadBinary[AvatarWrapper](filePath)
+	localAvatar, err := dataLayer.ReadBinary[AvatarWrapper](filePath)
 	if err != nil {
 		return err
 	}
@@ -123,9 +123,9 @@ func (a *AvatarWrapper) Save() error {
 		return fmt.Errorf("avatar name missing, cannot save")
 	}
 
-	filePath := datalayer.GetFileAbsolutePath(AVATAR_DIRECTORY, a.Avatar.Meta.Name+".avatar")
+	filePath := dataLayer.GetFileAbsolutePath(AVATAR_DIRECTORY, a.Avatar.Meta.Name+".avatar")
 	// Save list of configs
-	if err := datalayer.SaveBinary(filePath, a); err != nil {
+	if err := dataLayer.SaveBinary(filePath, a); err != nil {
 		logrus.Errorf("Cannot save avatar file %s %v", filePath, err)
 		return err
 	}

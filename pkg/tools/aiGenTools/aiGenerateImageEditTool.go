@@ -7,7 +7,6 @@ import (
 
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	"github.com/binuud/avatar-conscious/pkg/llm"
-	"github.com/binuud/avatar-conscious/pkg/memory"
 	"github.com/binuud/avatar-conscious/pkg/settings"
 	"github.com/binuud/avatar-conscious/pkg/tools/toolMeta"
 	"github.com/binuud/avatar-conscious/pkg/utils"
@@ -45,11 +44,11 @@ func (t AiGenerateImageEditTool) Name() string {
 // which is used by LLM, to decide if this tool has to be called,
 // for the given prompt
 func (t AiGenerateImageEditTool) Description() string {
-	return "Edit the given image, or use the given image as reference to create a new image"
+	return "Edit the image, or use the given image as reference to create a new image"
 }
 
 func (t AiGenerateImageEditTool) InputSchema() string {
-	return "Edit the given image, or use the given image as reference to create a new image"
+	return "Edit the image, or use the given image as reference to create a new image"
 }
 
 func (t AiGenerateImageEditTool) InputSchemaAsOpenAiParam() openai.FunctionParameters {
@@ -96,10 +95,7 @@ func (t AiGenerateImageEditTool) Handler(in *pb.ContextMesssage) (*pb.ContextMes
 
 func GetAiImageEdit(inpObj *AiGenerateImageEditTool_Input, model string) (string, error) {
 
-	memory := memory.NewMemory("")
-	memory.Model = model
-	memory.AppendMemory(openai.UserMessage(inpObj.Prompt))
-	logrus.Infof("GetAiImageEdit -> %s, %s, %s", memory.Model, inpObj.ImageFiles, inpObj.Prompt)
+	logrus.Infof("GetAiImageEdit -> %s, %s, %s", model, inpObj.ImageFiles, inpObj.Prompt)
 
 	imageFileNames := make([]string, 0)
 	// create abosule paths of the file names provided by llm
@@ -113,7 +109,7 @@ func GetAiImageEdit(inpObj *AiGenerateImageEditTool_Input, model string) (string
 		}
 	}
 
-	result, err := llm.MakeOpenAiImageEditRequest(inpObj.Prompt, memory.Model, imageFileNames)
+	result, err := llm.MakeOpenAiImageEditRequest(inpObj.Prompt, model, imageFileNames)
 	if err != nil {
 		return "", err
 	}
