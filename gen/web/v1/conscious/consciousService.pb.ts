@@ -26,6 +26,9 @@ export class Conscious {
   static ClearMemory(req: ConsciousCommon.ClearMemoryRequest, initReq?: fm.InitReq): Promise<ConsciousCommon.ClearMemoryResponse> {
     return fm.fetchReq<ConsciousCommon.ClearMemoryRequest, ConsciousCommon.ClearMemoryResponse>(`/v1/conscious/clearMemory`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
   }
+  static ReloadTools(req: ConsciousCommon.ReloadToolsRequest, initReq?: fm.InitReq): Promise<ConsciousCommon.ReloadToolsResponse> {
+    return fm.fetchReq<ConsciousCommon.ReloadToolsRequest, ConsciousCommon.ReloadToolsResponse>(`/v1/conscious/reloadTools?${fm.renderURLSearchParams(req, [])}`, {...initReq, method: "GET"})
+  }
   static Health(req: ConsciousCommon.HealthRequest, initReq?: fm.InitReq): Promise<ConsciousCommon.HealthResponse> {
     return fm.fetchReq<ConsciousCommon.HealthRequest, ConsciousCommon.HealthResponse>(`/v1/health?${fm.renderURLSearchParams(req, [])}`, {...initReq, method: "GET"})
   }

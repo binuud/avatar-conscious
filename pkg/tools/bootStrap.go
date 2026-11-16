@@ -3,6 +3,7 @@ package tools
 import (
 	"encoding/gob"
 
+	"github.com/binuud/avatar-conscious/pkg/servers/mcpManagerServer"
 	"github.com/binuud/avatar-conscious/pkg/tools/aiGenTools"
 	"github.com/binuud/avatar-conscious/pkg/tools/apiTools"
 	"github.com/binuud/avatar-conscious/pkg/tools/commonTools"
@@ -33,7 +34,9 @@ func init() {
 	gob.Register(aiGenTools.AiGenerateImageTool{})
 	gob.Register(aiGenTools.AiGenerateImageEditTool{})
 	gob.Register(aiGenTools.AiImageDescribeTool{})
+	gob.Register(mcpManagerServer.MCPCommandTool{})
 	gob.Register(map[string]interface{}{})
 	gob.Register(map[string]string{})
+	gob.Register([]interface{}{})
 
 }

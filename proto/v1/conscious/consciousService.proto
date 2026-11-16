@@ -62,6 +62,13 @@ service Conscious {
     };
   }
 
+  // Reloads Tools
+  rpc ReloadTools(ReloadToolsRequest) returns (ReloadToolsResponse) {
+    option (google.api.http) = {
+      get : "/v1/conscious/reloadTools"
+    };
+  }
+
   // Get the current Health Status of the AI Module
   rpc Health(HealthRequest) returns (HealthResponse) {
     option (google.api.http) = {

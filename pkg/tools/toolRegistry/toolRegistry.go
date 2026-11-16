@@ -92,6 +92,11 @@ func (t *ToolRegistry) GetCommonTools() []openai.ChatCompletionToolUnionParam {
 	return myTools
 
 }
+func (t *ToolRegistry) DumpTools(tools []openai.ChatCompletionToolUnionParam) {
+	for _, tool := range tools {
+		logrus.Debugf("Tool tool - %s, %s", tool.GetFunction().Name, tool.GetFunction().Description)
+	}
+}
 
 // HandleToolCalls()
 // When LLM returns a set of tools to be handled,

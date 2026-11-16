@@ -95,6 +95,16 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ModelResponse'
+  /v1/conscious/reloadTools:
+    get:
+      operationId: reloadTools
+      responses:
+        "200":
+          description: conscious.Conscious.ReloadTools response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReloadToolsResponse'
   /v1/consciousMetrics/getSystemMetrics:
     post:
       operationId: getSystemMetrics
@@ -269,6 +279,11 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Model'
+    ReloadToolsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
     SystemMetrics:
       type: object
       properties:

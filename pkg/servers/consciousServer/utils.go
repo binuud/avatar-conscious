@@ -30,20 +30,20 @@ func (s *grpcConsciousServer) MakeLLMChatRequest(prompt string) (*openai.ChatCom
 // returns a bool, and error. The boolean is to indicate whether the tool was handled
 func (s *grpcConsciousServer) handleTool(in *pb.ContextMesssage, stream grpc.ServerStreamingServer[pb.ContextMesssage]) (bool, *pb.ContextMesssage, error) {
 
-	// message := []openai.ChatCompletionMessageParamUnion{openai.UserMessage(in.Prompt)}
+	// adding user prompt, so that the tooling call can decide what tool to use
+	s.memory.AppendInMessage(in)
 	completions, err := llm.MakeLLMSingleToolRequest(s.memory.Messages,
 		s.memory.Model,
 		s.memory.Tools,
 		s.memory.Temperature)
 	if err != nil {
-		s.memory.AppendInMessage(in)
 		logrus.Errorf("client: error llm chat request: %v \n", err)
 		return false, nil, err
 	}
 
 	msg := completions.Choices[0].Message
 	if len(msg.ToolCalls) > 0 {
-		s.memory.AppendInMessage(in)
+
 		out, err := s.memory.ToolRegistry.HandleToolCalls(msg.ToolCalls, in.Prompt)
 		if err != nil {
 			logrus.Errorf("HandleToolCalls: %v \n", err)

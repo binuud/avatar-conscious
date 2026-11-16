@@ -6,7 +6,6 @@ import (
 
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	"github.com/binuud/avatar-conscious/pkg/dataLayer"
-	"github.com/binuud/avatar-conscious/pkg/servers/mcpManagerServer"
 	"github.com/binuud/avatar-conscious/pkg/settings"
 	"github.com/binuud/avatar-conscious/pkg/tools/aiGenTools"
 	"github.com/binuud/avatar-conscious/pkg/tools/toolRegistry"
@@ -32,6 +31,27 @@ type Memory struct {
 	ToolRegistry   *toolRegistry.ToolRegistry
 	Tools          []openai.ChatCompletionToolUnionParam
 	CurrentContext *pb.SingleContext
+}
+
+// NewScratchMemory
+// scratch memory is not saved
+func NewScratchMemory() *Memory {
+	messages := []openai.ChatCompletionMessageParamUnion{
+		openai.SystemMessage(SYSTEM_PROMPT),
+	}
+
+	model := settings.Global.GetValue("LLM_MODEL")
+
+	memory := &Memory{
+		Model:        model,
+		SystemPrompt: SYSTEM_PROMPT,
+		Temperature:  0.8,
+		Messages:     messages,
+		Tools:        nil,
+		Contexts:     make([]*pb.SingleContext, 0),
+	}
+
+	return memory
 }
 
 // NewMemory
@@ -66,19 +86,15 @@ func NewMemory(name string) *Memory {
 	return memory
 }
 
-// NewScratchMemory
-// scratch memory is not saved
-func NewScratchMemory() *Memory {
-	return NewScratchMemory()
-}
-
 func (m *Memory) SetModel() {
 	m.Model = settings.Global.GetValue("LLM_MODEL")
 }
 
 func (m *Memory) InitTools() {
+
 	myTools := toolRegistry.NewToolRegistry()
-	mcpManagerServer.AddEnabledMCPServers(myTools)
+
+	// mcpManagerServer.AddEnabledMCPServers(myTools)
 
 	// now add common tools
 
@@ -93,6 +109,11 @@ func (m *Memory) InitTools() {
 	m.ToolRegistry = myTools
 	m.Tools = myTools.GetCommonTools()
 	logrus.Debugf("Tools Added to conscious memory %s", m.Name)
+
+}
+
+func (m *Memory) DumpTools() {
+	m.ToolRegistry.DumpTools(m.Tools)
 }
 
 func (m *Memory) DumpMemory(w io.Writer) {
@@ -164,6 +185,29 @@ func (m *Memory) AppendOutMessage(out *pb.ContextMesssage) {
 // AppendMemory
 // append to memory, only append user and assistant message to memory
 func (m *Memory) AppendMessage(message openai.ChatCompletionMessageParamUnion) {
+
+	// there is a change for user prompt to get duplicated
+	// check if the current message is user message, then compare with last 2 messages
+	if message.OfUser != nil {
+		lastMessage := m.Messages[len(m.Messages)-1]
+		if lastMessage.OfUser != nil {
+			if message.OfUser.Content.OfString == lastMessage.OfUser.Content.OfString {
+				logrus.Infof("user message duplication prevented %s", message.OfUser.Content.OfString)
+				return
+			}
+		}
+		if lastMessage.OfTool != nil && len(m.Messages) >= 2 {
+			// if the last message was a tool message, lets compare the previous message
+			lastMessage = m.Messages[len(m.Messages)-2]
+			if lastMessage.OfUser != nil {
+				if message.OfUser.Content.OfString == lastMessage.OfUser.Content.OfString {
+					logrus.Infof("user message duplication prevented %s", message.OfUser.Content.OfString)
+					return
+				}
+			}
+		}
+	}
+
 	m.Messages = append(m.Messages, message)
 	m.Save()
 }
@@ -189,43 +233,15 @@ func (m *Memory) Save() error {
 	return nil
 }
 
-// // SaveBinary write any type 'T' to file in binary format
-// func SaveBinary[T any](filePath string, data T) error {
-// 	file, err := os.Create(filePath)
-// 	if err != nil {
-// 		return fmt.Errorf("failed to create file: %w", err)
-// 	}
-// 	defer file.Close()
-
-// 	encoder := gob.NewEncoder(file)
-
-// 	if err := encoder.Encode(data); err != nil {
-// 		return fmt.Errorf("failed to encode data: %w", err)
-// 	}
-// 	return nil
-// }
-
 // LoadMemory
 func LoadMemory(name string) (*Memory, error) {
 	// Read profile back (Go automatically infers type T from your variable assignment)
 	fullFileName := dataLayer.GetFileAbsolutePath(MEMORY_DIRECTORY, name)
 	localMemory, err := dataLayer.ReadBinary[Memory](fullFileName)
 	if err != nil {
-		logrus.Errorf("error memory file %s not found", name)
+		logrus.Errorf("error reading memory file %s, %v", name, err)
 		return nil, err
 	}
-
-	// // model has to be from settings
-	// m.Messages = localMemory.Messages
-	// m.ToolRegistry = localMemory.ToolRegistry
-	// m.Tools = localMemory.Tools
-	// m.CurrentContext = localMemory.CurrentContext
-
-	// m.Memory.CreatedAt = localMemory.Memory.CreatedAt
-	// m.Memory.Description = localMemory.Memory.Description
-	// m.Memory.Model = localMemory.Memory.Model
-	// m.Memory.Seed = localMemory.Memory.Seed
-	// m.Memory.Temperature = localMemory.Memory.Temperature
 
 	// override model from load with settings value
 	localMemory.Model = settings.Global.GetValue("LLM_MODEL")

@@ -39,7 +39,9 @@ func DetectImageIntent(prompt string) PromptIntent {
 
 	// Check for CREATE intent
 	createKeywords := []string{
-		"generate an image", "generate a picture", "create an image",
+		"generate an image", "generate a picture", "generate image",
+		"create image", "create an image",
+		"create photograph", "create a photograph", "create photo", "create a photo",
 		"create a picture", "draw", "paint", "render", "illustrate",
 		"sketch", "design a logo", "make an image", "text to image",
 		"photo of", "illustration of", "3d render of",

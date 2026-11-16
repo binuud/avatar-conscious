@@ -227,10 +227,25 @@ func (s *grpcConsciousServer) FileUpload(ctx context.Context, in *pb.UploadReque
 // Handle mutex ##TBD Binu
 func (s *grpcConsciousServer) ClearMemory(ctx context.Context, in *pb.ClearMemoryRequest) (*pb.ClearMemoryResponse, error) {
 
+	logrus.Info("Recieved ClearMemory")
 	memory.DeleteMemory(DEFAULT_MEMORY_NAME)
 	s.memory = memory.NewMemory(DEFAULT_MEMORY_NAME)
 
 	return &pb.ClearMemoryResponse{}, nil
+}
+
+// ReloadTools
+// Deletes the memory from storage and creates new
+// Handle mutex ##TBD Binu
+func (s *grpcConsciousServer) ReloadTools(ctx context.Context, in *pb.ReloadToolsRequest) (*pb.ReloadToolsResponse, error) {
+
+	logrus.Info("Recieved ReloadTools")
+	s.memory.InitTools()
+	s.memory.Save()
+	s.memory.DumpTools()
+	return &pb.ReloadToolsResponse{
+		Success: true,
+	}, nil
 }
 
 func (s *grpcConsciousServer) Health(ctx context.Context, in *pb.HealthRequest) (*pb.HealthResponse, error) {

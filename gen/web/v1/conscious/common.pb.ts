@@ -42,3 +42,10 @@ export type ClearMemoryRequest = {
 
 export type ClearMemoryResponse = {
 }
+
+export type ReloadToolsRequest = {
+}
+
+export type ReloadToolsResponse = {
+  success?: boolean
+}
