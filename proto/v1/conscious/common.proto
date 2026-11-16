@@ -44,3 +44,9 @@ message ModelResponse {
 message ClearMemoryRequest{}
 
 message ClearMemoryResponse{}
+
+message ReloadToolsRequest{}
+
+message ReloadToolsResponse{
+  bool success = 1;
+}
