@@ -70,7 +70,7 @@ func (t ApiGetTool) InputSchemaAsOpenAiParam() openai.FunctionParameters {
 }
 
 func (t ApiGetTool) Handler(in *pb.ContextMesssage) (*pb.ContextMesssage, error) {
-	logrus.Infof("AiGenerateImageTool Handler Arguments received %v", in.Prompt)
+	logrus.Infof("ApiGetTool Handler Arguments received %v", in.Prompt)
 	var inpObj ApiGetTool_Input
 	if err := json.Unmarshal([]byte(in.Prompt), &inpObj); err != nil {
 		return nil, err

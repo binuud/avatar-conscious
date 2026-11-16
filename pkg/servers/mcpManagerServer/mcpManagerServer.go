@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	pbMcp "github.com/binuud/avatar-conscious/gen/go/v1/mcpManager"
-	"github.com/binuud/avatar-conscious/pkg/mcpHandler"
 	"github.com/sirupsen/logrus"
 )
 
@@ -134,22 +133,9 @@ func (s *mcpManagerGrpcServer) Delete(ctx context.Context, in *pbMcp.DeleteReque
 
 func (s *mcpManagerGrpcServer) HandleTool(ctx context.Context, in *pbMcp.HandleToolRequest) (*pbMcp.HandleToolResponse, error) {
 
-	logrus.Infof("HandleTool called on MCP Manager %v", in)
+	logrus.Debugf("HandleTool called on MCP Manager %v", in)
 	mcp := NewMcpServers()
-	entry, err := mcp.FindByUUIDName(in.Uuid, "")
-	if err != nil {
-		logrus.Errorf("error - %v", err)
-		return nil, err
-	}
-	logrus.Debugf("HandleTool MCP Server with name %s found", entry.Name)
-	command := ""
-	switch entry.McpType {
-	case pbMcp.MCPTransportType_MCP_TYPE_STDIO:
-		command = entry.Command
-	case pbMcp.MCPTransportType_MCP_TYPE_HTTP, pbMcp.MCPTransportType_MCP_TYPE_SSE:
-		command = entry.Url
-	}
-	outMsg, err := mcpHandler.HandleMcpTool(command, in.ToolName, in.InputData)
+	outMsg, err := mcp.HandleTool(in.Uuid, "", in.ToolName, in.InputData)
 	if err != nil {
 		return nil, err
 	}

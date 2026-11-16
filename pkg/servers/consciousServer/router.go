@@ -33,8 +33,8 @@ func (s *grpcConsciousServer) RouteStreamingPromptIntent(in *pb.ContextMesssage,
 	// 	out, err = s.RouteOpenAiImageEditRequest(in)
 	default:
 		// for tool calling, do not send the history
-		handled, err := s.handleTool(in, stream)
-		if handled {
+		_, err := s.handleTool(in, stream)
+		if err != nil {
 			return err
 		}
 		// this is a normal chat streaming call

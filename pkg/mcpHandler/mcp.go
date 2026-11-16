@@ -77,7 +77,7 @@ func NewMcpCommandHandler(name string, cmd string, url string) (*McpCommandHandl
 func HandleMcp(mcpServerName string, mcpFunction string, mcpParams any) (string, error) {
 
 	ctx := context.Background()
-
+	logrus.Debugf("HandleMcp %s->%s (%v)", mcpServerName, mcpFunction, mcpParams)
 	// Create a new client, with no features.
 	client := mcp.NewClient(&mcp.Implementation{Name: "mcp-client", Version: "v1.0.0"}, nil)
 	var session *mcp.ClientSession

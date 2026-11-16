@@ -51,7 +51,7 @@ func (s *grpcConsciousServer) handleTool(in *pb.ContextMesssage, stream grpc.Ser
 			logrus.Errorf("HandleToolCalls: %v \n", err)
 			return true, err
 		}
-		// s.memory.Messages = append(s.memory.Messages, openai.AssistantMessage(toolMessage))
+		s.memory.Messages = append(s.memory.Messages, openai.ToolMessage(out.Response, msg.ToolCalls[0].ID))
 
 		// for metrics, populate the time stamps
 		out.CreatedAt = in.CreatedAt
