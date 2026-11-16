@@ -11,6 +11,7 @@ import (
 	"github.com/binuud/avatar-conscious/pkg/servers/mcpManagerServer"
 	"github.com/binuud/avatar-conscious/pkg/tools/aiGenTools"
 	"github.com/binuud/avatar-conscious/pkg/tools/apiTools"
+	"github.com/binuud/avatar-conscious/pkg/tools/mcpCommandTool"
 
 	"github.com/binuud/avatar-conscious/pkg/tools/commonTools"
 	"github.com/binuud/avatar-conscious/pkg/tools/toolRegistry"
@@ -47,7 +48,7 @@ func (a *AvatarWrapper) InitTools() error {
 		if mcpServer.Enabled == false {
 			return fmt.Errorf("error the requested mcp server is not enabled %s")
 		}
-		mcpManagerServer.AddMcpServerToTool(mcpServer, avatarTools)
+		mcpCommandTool.AddMcpServerToTool(mcpServer, avatarTools)
 	}
 
 	// now add common tools

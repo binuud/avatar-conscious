@@ -12,9 +12,13 @@ import (
 	"fmt"
 
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
+	"github.com/binuud/avatar-conscious/gen/go/v1/mcpManager"
 
 	"github.com/binuud/avatar-conscious/pkg/mcpHandler"
+	"github.com/binuud/avatar-conscious/pkg/servers/mcpManagerServer"
+
 	"github.com/binuud/avatar-conscious/pkg/tools/toolMeta"
+	"github.com/binuud/avatar-conscious/pkg/tools/toolRegistry"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/openai/openai-go/v3"
 	"github.com/sirupsen/logrus"
@@ -71,7 +75,9 @@ func (t *MCPCommandTool) Handler(in *pb.ContextMesssage) (*pb.ContextMesssage, e
 
 	logrus.Infof("MCPCommandTool handler Arguments received %v", in.Prompt)
 
-	outMsg, err := mcpHandler.HandleMcpTool(t.name, t.mcpTool.Name, in.Prompt)
+	mcpServers := mcpManagerServer.NewMcpServers()
+	// since we do not have UUID in tooling, pass empty string for UUID
+	outMsg, err := mcpServers.HandleTool("", t.name, t.mcpTool.Name, in.Prompt)
 	if err != nil {
 		return nil, err
 	}
@@ -81,5 +87,44 @@ func (t *MCPCommandTool) Handler(in *pb.ContextMesssage) (*pb.ContextMesssage, e
 		Prompt:   in.Prompt,
 		Response: outMsg,
 	}, nil
+
+}
+
+// AddMcpServerToTool
+// add mcp server name to the tool
+// on handling, we search the enabled list of mcp servers for matching server name
+// then run the tool on that server
+func AddMcpServerToTool(mcpServer *mcpManager.MCPServerConfig, linkToolRegisty *toolRegistry.ToolRegistry) {
+	// only add mcp server which are enabled
+	if mcpServer.Enabled == false {
+		return
+	}
+	logrus.Debugf("AddMcpServerToTool - %s %+v", mcpServer.Name, mcpServer)
+
+	if mcpServer.McpType == mcpManager.MCPTransportType_MCP_TYPE_STDIO {
+		mcp, err := mcpHandler.NewMcpCommandHandler(mcpServer.Name, mcpServer.Command, "")
+		if err != nil {
+			logrus.Fatalf("Cannot get tools from mcp server/commnad %s : %v", mcpServer, err)
+		}
+
+		// for each tool in mcp create an entry in GlobalTools
+		for _, tool := range mcp.Tools {
+			mcpTool := NewMCPCommandTool(mcpServer.Name, tool)
+			linkToolRegisty.AddMCPTool(mcpServer.Name, mcpTool)
+		}
+	}
+	if mcpServer.McpType == mcpManager.MCPTransportType_MCP_TYPE_HTTP {
+		logrus.Debugf("AddMcpServerTool remote tool %s", mcpServer.Name)
+		mcp, err := mcpHandler.NewMcpCommandHandler(mcpServer.Name, "", mcpServer.Url)
+		if err != nil {
+			logrus.Fatalf("Cannot get tools from mcp server/commnad %s : %v", mcpServer, err)
+		}
+
+		// for each tool in mcp create an entry in GlobalTools
+		for _, tool := range mcp.Tools {
+			mcpTool := NewMCPCommandTool(mcpServer.Name, tool)
+			linkToolRegisty.AddMCPTool(mcpServer.Name, mcpTool)
+		}
+	}
 
 }

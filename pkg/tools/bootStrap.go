@@ -5,6 +5,7 @@ import (
 	"github.com/binuud/avatar-conscious/pkg/tools/aiGenTools"
 	"github.com/binuud/avatar-conscious/pkg/tools/apiTools"
 	"github.com/binuud/avatar-conscious/pkg/tools/commonTools"
+	"github.com/binuud/avatar-conscious/pkg/tools/mcpCommandTool"
 	"github.com/binuud/avatar-conscious/pkg/tools/toolRegistry"
 	"github.com/openai/openai-go/v3"
 )
@@ -26,7 +27,7 @@ func Bootstrap() {
 	mcpServers := mcpManagerServer.NewMcpServers()
 	for _, mcpServer := range mcpServers.Servers.Configs {
 
-		mcpManagerServer.AddMcpServerToTool(mcpServer, GlobalCommonToolsRegistry)
+		mcpCommandTool.AddMcpServerToTool(mcpServer, GlobalCommonToolsRegistry)
 
 	}
 

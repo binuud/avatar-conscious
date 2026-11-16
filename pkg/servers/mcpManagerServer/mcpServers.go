@@ -27,7 +27,9 @@ func NewMcpServers() *mcpServers {
 	err := mcpServers.Load()
 	if err != nil {
 		// probably list emtpy
-		// handle scenario later
+		// try creating an emtpy mcpServer config
+		mcpServers.Servers = &pbMcp.MCPServerConfigs{}
+		mcpServers.save()
 	}
 	return mcpServers
 }
@@ -212,4 +214,25 @@ func (s *mcpServers) GetInstanceDetails(config *pbMcp.MCPServerConfig) (*pbMcp.M
 		Tools:  mcpTools,
 		PrmDoc: prmDoc,
 	}, nil
+}
+
+func (s *mcpServers) HandleTool(uuid string, mcpServerName string, toolName string, params string) (string, error) {
+	entry, err := s.FindByUUIDName(uuid, mcpServerName)
+	if err != nil {
+		logrus.Errorf("error - %v", err)
+		return "", err
+	}
+	logrus.Debugf("HandleTool MCP Server with name %s found", entry.Name)
+	command := ""
+	switch entry.McpType {
+	case pbMcp.MCPTransportType_MCP_TYPE_STDIO:
+		command = entry.Command
+	case pbMcp.MCPTransportType_MCP_TYPE_HTTP, pbMcp.MCPTransportType_MCP_TYPE_SSE:
+		command = entry.Url
+	}
+	outMsg, err := mcpHandler.HandleMcpTool(command, toolName, params)
+	if err != nil {
+		return "", err
+	}
+	return outMsg, err
 }
