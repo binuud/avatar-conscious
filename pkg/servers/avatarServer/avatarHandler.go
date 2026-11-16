@@ -164,8 +164,8 @@ func (s *avatarGrpcServer) handleAvatarRun(in *pb.ControlRequest,
 					prompt = fmt.Sprintf("Step No: %d, %s", (currentStep + 1), currentStepObj.Response)
 				}
 
-				s.avatar.Memory.AppendMemory(openai.UserMessage(prompt))
-				s.avatar.Memory.AppendMemory(openai.AssistantMessage("Ok."))
+				s.avatar.Memory.AppendMessage(openai.UserMessage(prompt))
+				s.avatar.Memory.AppendMessage(openai.AssistantMessage("Ok."))
 
 			}
 			in.Control.CurrentStep++

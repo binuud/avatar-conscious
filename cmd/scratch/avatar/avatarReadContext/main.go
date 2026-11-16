@@ -36,13 +36,13 @@ func registerTools() {
 	tools.AddTool(commonTools.NewToolFileContents())
 	tools.AddTool(apitools.NewApiGetTool())
 	tools.AddTool(aiGenTools.NewAiGenerateImageTool())
-	tools.AddTool(aiGenTools.NewAiGenerateImageDescriptionTool())
+	tools.AddTool(aiGenTools.NewAiImageDescriptionTool())
 }
 
 func parseAvatar() {
 
 	logrus.Infof("Read avatar file")
-	memory := memory.NewMemory("")
+	memory := memory.NewScratchMemory()
 	// Read the avatar.md file
 	filePath := "dataVolume/avatarStore/election-officer.md"
 	fileBytes, err := os.ReadFile(filePath)
@@ -158,7 +158,7 @@ func runAvatar() {
 		logrus.Fatalf("Cannot unmarshall %v", err)
 	}
 
-	memory := memory.NewMemory("")
+	memory := memory.NewScratchMemory()
 	memory.Tools = tools.GetCommonTools()
 
 	for i, step := range in.Steps {

@@ -6,7 +6,7 @@ import (
 	"log"
 
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/avatar"
-	datalayer "github.com/binuud/avatar-conscious/pkg/dataLayer"
+	"github.com/binuud/avatar-conscious/pkg/dataLayer"
 	"github.com/binuud/avatar-conscious/pkg/llm"
 	"github.com/binuud/avatar-conscious/pkg/memory"
 	"github.com/binuud/avatar-conscious/pkg/utils"
@@ -52,7 +52,7 @@ func (a *AvatarWrapper) BuildUsingLLM() error {
 		a.Content,
 	)
 
-	buildMemory := memory.NewMemory()
+	buildMemory := memory.NewScratchMemory()
 
 	buildMemory.Messages = []openai.ChatCompletionMessageParamUnion{
 		openai.SystemMessage(a.SystemPrompt),
@@ -105,7 +105,7 @@ func (a *AvatarWrapper) ReadAvatarStepsFromYaml() error {
 	avatarStepsFile := fmt.Sprintf("%s/%s-steps.yaml", a.GetAvatarDir(), a.Meta.Name)
 	if utils.FileExists(avatarStepsFile) {
 		steps := &pb.Steps{}
-		err := datalayer.ReadProtoYAML(avatarStepsFile, steps)
+		err := dataLayer.ReadProtoYAML(avatarStepsFile, steps)
 		if err != nil {
 			return err
 		}
@@ -119,7 +119,7 @@ func (a *AvatarWrapper) ReadAvatarUiFromYaml() error {
 	avatarUiFile := fmt.Sprintf("%s/%s-ui.yaml", a.GetAvatarDir(), a.Meta.Name)
 	if utils.FileExists(avatarUiFile) {
 		uiCollection := &pb.UiCollection{}
-		err := datalayer.ReadProtoYAML(avatarUiFile, uiCollection)
+		err := dataLayer.ReadProtoYAML(avatarUiFile, uiCollection)
 		if err != nil {
 			return err
 		}

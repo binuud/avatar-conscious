@@ -6,7 +6,6 @@ import (
 	"github.com/binuud/avatar-conscious/pkg/bootstrap"
 	"github.com/binuud/avatar-conscious/pkg/llm"
 	"github.com/binuud/avatar-conscious/pkg/memory"
-	"github.com/binuud/avatar-conscious/pkg/tools"
 	"github.com/openai/openai-go/v3"
 	"github.com/sirupsen/logrus"
 )
@@ -16,10 +15,10 @@ func Test_ImageEdit(t *testing.T) {
 	bootstrap.Bootstrap()
 	memoryName := ""
 	memory := memory.NewMemory(memoryName)
-	memory.Tools = tools.GlobalCommonTools
-	memory.AppendMemory(openai.UserMessage("what is 10 + 10"))
-	memory.AppendMemory(openai.AssistantMessage("20"))
-	memory.AppendMemory(openai.UserMessage(`Edit the image "e9420877-7407-4c79-95ee-932065a99ac0.png", 
+	memory.InitTools()
+	memory.AppendMessage(openai.UserMessage("what is 10 + 10"))
+	memory.AppendMessage(openai.AssistantMessage("20"))
+	memory.AppendMessage(openai.UserMessage(`Edit the image "e9420877-7407-4c79-95ee-932065a99ac0.png", 
 		use the dress provided in image "shirt.jpg"
 		using the image of the person from webcamera as reference, 
 		Do not modify the face of the person.
@@ -30,8 +29,8 @@ func Test_ImageEdit(t *testing.T) {
 	var expectedParams = []string{"e9420877-7407-4c79-95ee-932065a99ac0.png", "shirt.jpg"}
 	_test_tool_request_params(t, memory, expectedTool, expectedParams)
 
-	memory.AppendMemory(openai.AssistantMessage("Image was generated"))
-	memory.AppendMemory(openai.UserMessage(`Edit the image "e9420877-7407-4c79-95ee-932065a99ac0.png", 
+	memory.AppendMessage(openai.AssistantMessage("Image was generated"))
+	memory.AppendMessage(openai.UserMessage(`Edit the image "e9420877-7407-4c79-95ee-932065a99ac0.png", 
 		using the image of the person from webcamera as reference, 
 		Do not modify the face of the person.
 		Keep the facial features, skin tone of the person exactly as they are in the original image.

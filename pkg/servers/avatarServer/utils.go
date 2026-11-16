@@ -3,12 +3,12 @@ package avatarServer
 import (
 	"os"
 
-	datalayer "github.com/binuud/avatar-conscious/pkg/dataLayer"
+	"github.com/binuud/avatar-conscious/pkg/dataLayer"
 )
 
 func ListAvatars() ([]string, error) {
 	// Read the current directory
-	entries, err := os.ReadDir(datalayer.GetFileAbsolutePath(AVATAR_DIRECTORY, "."))
+	entries, err := os.ReadDir(dataLayer.GetFileAbsolutePath(AVATAR_DIRECTORY, "."))
 	if err != nil {
 		return nil, err
 	}

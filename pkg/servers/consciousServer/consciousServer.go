@@ -16,10 +16,8 @@ import (
 	"time"
 
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
-	datalayer "github.com/binuud/avatar-conscious/pkg/dataLayer"
 	"github.com/binuud/avatar-conscious/pkg/llm"
 	"github.com/binuud/avatar-conscious/pkg/memory"
-	"github.com/binuud/avatar-conscious/pkg/tools"
 	"github.com/binuud/avatar-conscious/pkg/utils"
 	grpc "google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -38,7 +36,6 @@ type grpcConsciousServer struct {
 	pb.UnimplementedConsciousServer
 	memory       *memory.Memory
 	openAiClient *openai.Client
-	commonTools  []openai.ChatCompletionToolUnionParam
 }
 
 const (
@@ -60,9 +57,6 @@ func NewGrpcConsciousServer() *grpcConsciousServer {
 		memory:       memory,
 		openAiClient: &client,
 	}
-	grpcServer.commonTools = tools.GlobalCommonTools
-
-	datalayer.SaveJSON(datalayer.GetFileAbsolutePath("configs", "config.json"), grpcServer.commonTools)
 
 	return grpcServer
 }
@@ -190,7 +184,9 @@ func (s *grpcConsciousServer) Generate(in *pb.ContextMesssage, stream grpc.Serve
 		return s.handleSlashCommandStream(in, stream)
 	}
 
-	return s.RouteStreamingPromptIntent(in, stream)
+	err := s.RouteStreamingPromptIntent(in, stream)
+	s.memory.DumpMemory(nil)
+	return err
 }
 
 func (s *grpcConsciousServer) FileUpload(ctx context.Context, in *pb.UploadRequest) (*pb.UploadResponse, error) {

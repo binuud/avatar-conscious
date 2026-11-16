@@ -5,8 +5,10 @@ import (
 	"io"
 
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
-	datalayer "github.com/binuud/avatar-conscious/pkg/dataLayer"
+	"github.com/binuud/avatar-conscious/pkg/dataLayer"
+	"github.com/binuud/avatar-conscious/pkg/servers/mcpManagerServer"
 	"github.com/binuud/avatar-conscious/pkg/settings"
+	"github.com/binuud/avatar-conscious/pkg/tools/aiGenTools"
 	"github.com/binuud/avatar-conscious/pkg/tools/toolRegistry"
 
 	"github.com/openai/openai-go/v3"
@@ -15,6 +17,12 @@ import (
 
 const (
 	MEMORY_DIRECTORY = "memories"
+	SYSTEM_PROMPT    = `You are a helpful assistant. 
+		You must use the tools provided to answer questions. 
+		Very polite, friendly with children. Do not use curse words. 
+		Do not use bad words. Do not use any smilies, emojis, or symbols in your responses from now on.
+		If tool call response if a filename or a filename with path, give output as "\render [filename]"
+		`
 )
 
 type Memory struct {
@@ -30,46 +38,68 @@ type Memory struct {
 // if name is provided, it will be persisted
 // emtpy name will be used as scratch memory
 // which will be removed after the session
-func NewMemory(name ...string) *Memory {
+// if existing memory is found, the same is loaded and returned
+// else a new memory object is created
+func NewMemory(name string) *Memory {
 
-	systemPrompt := "You are a helpful assistant. You must use the tools provided to answer questions. Very polite, friendly with children. Do not use curse words. Do not use bad words. Do not use any smilies, emojis, or symbols in your responses from now on."
+	memory, err := LoadMemory(name)
+	if err != nil {
+		messages := []openai.ChatCompletionMessageParamUnion{
+			openai.SystemMessage(SYSTEM_PROMPT),
+		}
 
-	messages := []openai.ChatCompletionMessageParamUnion{
-		openai.SystemMessage(systemPrompt),
-	}
+		model := settings.Global.GetValue("LLM_MODEL")
 
-	model := settings.Global.GetValue("LLM_MODEL")
-
-	memoryName := ""
-	if len(name) > 0 {
-		memoryName = name[0]
-	}
-
-	memory := &Memory{
-		Name:         memoryName,
-		Model:        model,
-		SystemPrompt: systemPrompt,
-		Temperature:  0.8,
-		Messages:     messages,
-		Tools:        nil,
-		Contexts:     make([]*pb.SingleContext, 0),
-	}
-
-	if memoryName == "" {
-		// unnamed memory is use and throw, they are not saved
-	} else {
-		// if memory is named, try to load it from cache
-		// memory with names _, is use and throw memory, ignore same
-		memory.Load(memoryName)
+		memory = &Memory{
+			Name:         name,
+			Model:        model,
+			SystemPrompt: SYSTEM_PROMPT,
+			Temperature:  0.8,
+			Messages:     messages,
+			Tools:        nil,
+			Contexts:     make([]*pb.SingleContext, 0),
+		}
+		memory.InitTools()
+		memory.Save()
 	}
 
 	return memory
 }
 
+// NewScratchMemory
+// scratch memory is not saved
+func NewScratchMemory() *Memory {
+	return NewScratchMemory()
+}
+
+func (m *Memory) SetModel() {
+	m.Model = settings.Global.GetValue("LLM_MODEL")
+}
+
+func (m *Memory) InitTools() {
+	myTools := toolRegistry.NewToolRegistry()
+	mcpManagerServer.AddEnabledMCPServers(myTools)
+
+	// now add common tools
+
+	myTools.AddTool(aiGenTools.NewAiGenerateImageEditTool())
+	myTools.AddTool(aiGenTools.NewAiImageDescriptionTool())
+
+	// myTools.AddTool(commonTools.NewToolFileContents())
+	// myTools.AddTool(aiGenTools.NewAiGenerateImageTool())
+	// avatarTools.AddTool(aiGenTools.NewUiLaunchTool())
+	// myTools.AddTool(apiTools.NewApiGetTool())
+
+	m.ToolRegistry = myTools
+	m.Tools = myTools.GetCommonTools()
+	logrus.Debugf("Tools Added to conscious memory %s", m.Name)
+}
+
 func (m *Memory) DumpMemory(w io.Writer) {
 	logrus.Debug("-----------------------------------------------------------------")
 	logrus.Debugf("Name: %s, Model: %s, Temp: %f", m.Name, m.Model, m.Temperature)
-	logrus.Debugf("System Prompt: %s", m.SystemPrompt)
+	logrus.Debugf("Num Tools %d", len(m.Tools))
+	// logrus.Debugf("System Prompt: %s", m.SystemPrompt)
 	for _, msg := range m.Messages {
 		var role string
 		var content string
@@ -92,6 +122,8 @@ func (m *Memory) DumpMemory(w io.Writer) {
 		case msg.OfTool != nil:
 			role = "Tool"
 			content = msg.OfTool.Content.OfString.Value
+		default:
+			logrus.Debug("Non standard message found in memory *****")
 		}
 		if w != nil {
 			// write to an io writer, so UI client or non standard client
@@ -113,7 +145,7 @@ func (m *Memory) AppendInMessage(in *pb.ContextMesssage) {
 	m.CurrentContext = &pb.SingleContext{
 		In: in,
 	}
-	m.AppendMemory(openai.UserMessage(in.Prompt))
+	m.AppendMessage(openai.UserMessage(in.Prompt))
 }
 
 // AppendOutMessage
@@ -126,41 +158,76 @@ func (m *Memory) AppendOutMessage(out *pb.ContextMesssage) {
 	}
 	m.CurrentContext.Out = out
 	m.Contexts = append(m.Contexts, m.CurrentContext)
-	m.AppendMemory(openai.AssistantMessage(out.Response))
+	m.AppendMessage(openai.AssistantMessage(out.Response))
 }
 
 // AppendMemory
 // append to memory, only append user and assistant message to memory
-func (m *Memory) AppendMemory(message openai.ChatCompletionMessageParamUnion) {
+func (m *Memory) AppendMessage(message openai.ChatCompletionMessageParamUnion) {
 	m.Messages = append(m.Messages, message)
 	m.Save()
 }
 
-// Load function to load from model file
-func (m *Memory) Load(name string) error {
+// // Load function to load from model file
+// func (m *Memory) Load(name string) (*Memory, error) {
 
-	// Read profile back (Go automatically infers type T from your variable assignment)
-	localMemory, err := datalayer.ReadBinary[Memory](datalayer.GetFileAbsolutePath(MEMORY_DIRECTORY, name))
-	if err != nil {
-		return err
-	}
-	// avoid loading model details from memory
-	// model has to be from settings
-	m.Messages = localMemory.Messages
-	return nil
-}
+// }
 
 func (m *Memory) Save() error {
 
+	// scratch memory, which are unnamed memory
+	// are not saved
 	if m.Name == "" {
 		return nil
 	}
-	fullFileName := datalayer.GetFileAbsolutePath(MEMORY_DIRECTORY, m.Name)
-	// Save list of configs
-	if err := datalayer.SaveBinary(fullFileName, m); err != nil {
+	fullFileName := dataLayer.GetFileAbsolutePath(MEMORY_DIRECTORY, m.Name)
+	if err := dataLayer.SaveBinary(fullFileName, m); err != nil {
 		logrus.Errorf("Cannot save file %s %v", fullFileName, err)
 		return err
 	}
 	logrus.Infof("Saved memory to file %s", fullFileName)
 	return nil
+}
+
+// // SaveBinary write any type 'T' to file in binary format
+// func SaveBinary[T any](filePath string, data T) error {
+// 	file, err := os.Create(filePath)
+// 	if err != nil {
+// 		return fmt.Errorf("failed to create file: %w", err)
+// 	}
+// 	defer file.Close()
+
+// 	encoder := gob.NewEncoder(file)
+
+// 	if err := encoder.Encode(data); err != nil {
+// 		return fmt.Errorf("failed to encode data: %w", err)
+// 	}
+// 	return nil
+// }
+
+// LoadMemory
+func LoadMemory(name string) (*Memory, error) {
+	// Read profile back (Go automatically infers type T from your variable assignment)
+	fullFileName := dataLayer.GetFileAbsolutePath(MEMORY_DIRECTORY, name)
+	localMemory, err := dataLayer.ReadBinary[Memory](fullFileName)
+	if err != nil {
+		logrus.Errorf("error memory file %s not found", name)
+		return nil, err
+	}
+
+	// // model has to be from settings
+	// m.Messages = localMemory.Messages
+	// m.ToolRegistry = localMemory.ToolRegistry
+	// m.Tools = localMemory.Tools
+	// m.CurrentContext = localMemory.CurrentContext
+
+	// m.Memory.CreatedAt = localMemory.Memory.CreatedAt
+	// m.Memory.Description = localMemory.Memory.Description
+	// m.Memory.Model = localMemory.Memory.Model
+	// m.Memory.Seed = localMemory.Memory.Seed
+	// m.Memory.Temperature = localMemory.Memory.Temperature
+
+	// override model from load with settings value
+	localMemory.Model = settings.Global.GetValue("LLM_MODEL")
+	return &localMemory, nil
 }

@@ -7,8 +7,9 @@ import (
 	"slices"
 
 	pbMcp "github.com/binuud/avatar-conscious/gen/go/v1/mcpManager"
-	datalayer "github.com/binuud/avatar-conscious/pkg/dataLayer"
+	"github.com/binuud/avatar-conscious/pkg/dataLayer"
 	"github.com/binuud/avatar-conscious/pkg/mcpHandler"
+
 	"github.com/binuud/avatar-conscious/pkg/utils"
 	"github.com/sirupsen/logrus"
 )
@@ -37,9 +38,9 @@ func NewMcpServers() *mcpServers {
 // Save
 func (s *mcpServers) save() error {
 
-	filePath := datalayer.GetFileAbsolutePath(SETTINGS_DIRECTORY, MCP_CONFIG_FILE)
+	filePath := dataLayer.GetFileAbsolutePath(SETTINGS_DIRECTORY, MCP_CONFIG_FILE)
 	// Save list of configs
-	if err := datalayer.SaveProtoYAML(filePath, s.Servers); err != nil {
+	if err := dataLayer.SaveProtoYAML(filePath, s.Servers); err != nil {
 		logrus.Errorf("Cannot save config file %s %v", filePath, err)
 		return err
 	}
@@ -53,11 +54,11 @@ func (s *mcpServers) save() error {
 // Do not add entries, only updation to existing entries happens here
 func (s *mcpServers) Load() error {
 
-	filePath := datalayer.GetFileAbsolutePath(SETTINGS_DIRECTORY, MCP_CONFIG_FILE)
+	filePath := dataLayer.GetFileAbsolutePath(SETTINGS_DIRECTORY, MCP_CONFIG_FILE)
 	s.Servers = &pbMcp.MCPServerConfigs{}
 
 	// note: only the proto msg has to be sent, not the wrapper
-	err := datalayer.ReadProtoYAML(filePath, s.Servers)
+	err := dataLayer.ReadProtoYAML(filePath, s.Servers)
 	if err != nil {
 		return err
 	}
@@ -150,6 +151,10 @@ func (s *mcpServers) Toggle(uuid string, name string) (*pbMcp.MCPServerConfig, e
 
 	s.Servers.Configs[found].Enabled = !s.Servers.Configs[found].Enabled
 	s.save()
+
+	// now bootstrap the tools again, so the toggled MCP servers are removed or added
+	// sharedHandlers.ReloadTools()
+
 	return s.Servers.Configs[found], nil
 
 }

@@ -3,12 +3,12 @@ package memory
 import (
 	"os"
 
-	datalayer "github.com/binuud/avatar-conscious/pkg/dataLayer"
+	"github.com/binuud/avatar-conscious/pkg/dataLayer"
 )
 
 func ListMemory() ([]string, error) {
 	// Read the current directory
-	entries, err := os.ReadDir(datalayer.GetFileAbsolutePath(MEMORY_DIRECTORY, "."))
+	entries, err := os.ReadDir(dataLayer.GetFileAbsolutePath(MEMORY_DIRECTORY, "."))
 	if err != nil {
 		return nil, err
 	}
@@ -24,5 +24,5 @@ func ListMemory() ([]string, error) {
 }
 
 func DeleteMemory(name string) error {
-	return os.Remove(datalayer.GetFileAbsolutePath(MEMORY_DIRECTORY, name))
+	return os.Remove(dataLayer.GetFileAbsolutePath(MEMORY_DIRECTORY, name))
 }

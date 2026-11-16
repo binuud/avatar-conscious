@@ -33,9 +33,16 @@ func (s *grpcConsciousServer) RouteStreamingPromptIntent(in *pb.ContextMesssage,
 	// 	out, err = s.RouteOpenAiImageEditRequest(in)
 	default:
 		// for tool calling, do not send the history
-		_, err := s.handleTool(in, stream)
+		_, out, err = s.handleTool(in, stream)
 		if err != nil {
 			return err
+		}
+		// special case, when there is an image generation,
+		// we do not want llm to handle it
+		if out != nil && out.ResponseImage != "" {
+			assistantMsgContent := "Image generated and saved to file: " + out.ResponseImage
+			s.memory.AppendMessage(openai.AssistantMessage(assistantMsgContent))
+			return nil
 		}
 		// this is a normal chat streaming call
 		// user has not asked for any tools
@@ -69,7 +76,7 @@ func (s *grpcConsciousServer) RouteRequest(in *protoV1.ContextMesssage) (*protoV
 
 func (s *grpcConsciousServer) RouteLLMChatRequest(in *protoV1.ContextMesssage) (*protoV1.ContextMesssage, error) {
 
-	s.memory.AppendMemory(openai.UserMessage(in.Prompt))
+	s.memory.AppendMessage(openai.UserMessage(in.Prompt))
 	completions, err := llm.MakeLLMChatRequest(s.memory.Messages, s.memory.Tools, s.memory.Model, s.memory.Temperature)
 	if err != nil {
 		return nil, err
@@ -96,7 +103,8 @@ func (s *grpcConsciousServer) RouteLLMChatRequest(in *protoV1.ContextMesssage) (
 			assistantMsgContent = fmt.Sprintf("Weather in %s, is Sunny, and the temperature is 35C", args.Location)
 			logrus.Infof("Tools args %v", args)
 			logrus.Println("Tool execution result:", assistantMsgContent)
-			s.memory.Messages = append(s.memory.Messages, openai.AssistantMessage(assistantMsgContent))
+			s.memory.AppendMessage(openai.AssistantMessage(assistantMsgContent))
+
 		}
 
 	} else {
@@ -105,7 +113,7 @@ func (s *grpcConsciousServer) RouteLLMChatRequest(in *protoV1.ContextMesssage) (
 		// provided response is not a tool call and a direct assistant response
 		logrus.Println("Model direct response:", assistantMsgContent)
 		// add response to memory
-		s.memory.AppendMemory(openai.AssistantMessage(assistantMsgContent))
+		s.memory.AppendMessage(openai.AssistantMessage(assistantMsgContent))
 		s.memory.Save()
 
 		// send to tts, for it to generate voice over of the text
@@ -126,7 +134,7 @@ func (s *grpcConsciousServer) RouteLLMChatRequest(in *protoV1.ContextMesssage) (
 
 func (s *grpcConsciousServer) RouteLLMImageDescribeRequest(in *protoV1.ContextMesssage) (*protoV1.ContextMesssage, error) {
 
-	s.memory.Messages = append(s.memory.Messages, openai.UserMessage(in.Prompt))
+	s.memory.AppendInMessage(in)
 
 	result, err := aiGenTools.DescribeImage(in.Prompt, in.Model, in.Data)
 	if err != nil {
@@ -137,7 +145,7 @@ func (s *grpcConsciousServer) RouteLLMImageDescribeRequest(in *protoV1.ContextMe
 	logrus.Infof("RouteLLMImageDescribeRequest -> %s, %s, %s", in.Model, in.Prompt, result)
 
 	assistantMsgContent := result
-	s.memory.AppendMemory(openai.AssistantMessage(assistantMsgContent))
+	s.memory.AppendMessage(openai.AssistantMessage(assistantMsgContent))
 
 	return &protoV1.ContextMesssage{
 		Uuid:        in.Uuid,
@@ -153,7 +161,8 @@ func (s *grpcConsciousServer) RouteLLMImageDescribeRequest(in *protoV1.ContextMe
 func (s *grpcConsciousServer) RouteOpenAiImageGenerationRequest(in *protoV1.ContextMesssage) (*protoV1.ContextMesssage, error) {
 
 	logrus.Infof("RouteOpenAiImageGenerationRequest -> %s, %s", in.Model, in.Prompt)
-	s.memory.Messages = append(s.memory.Messages, openai.UserMessage(in.Prompt))
+
+	s.memory.AppendInMessage(in)
 
 	imageFileName, err := aiGenTools.GetAiImage(in.Prompt, in.Model)
 	if err != nil {
@@ -162,9 +171,9 @@ func (s *grpcConsciousServer) RouteOpenAiImageGenerationRequest(in *protoV1.Cont
 	}
 
 	logrus.Infof("RouteImageCreateRequest -> %s, %s, %s", in.Model, in.Prompt, imageFileName)
-
+	s.memory.AppendMessage(openai.ToolMessage(imageFileName, ""))
 	assistantMsgContent := "Image generated and saved to file: " + imageFileName
-	s.memory.AppendMemory(openai.AssistantMessage(assistantMsgContent))
+	s.memory.AppendMessage(openai.AssistantMessage(assistantMsgContent))
 
 	return &protoV1.ContextMesssage{
 		Uuid:          in.Uuid,
@@ -180,7 +189,7 @@ func (s *grpcConsciousServer) RouteOpenAiImageGenerationRequest(in *protoV1.Cont
 func (s *grpcConsciousServer) RouteOpenAiImageEditRequest(in *protoV1.ContextMesssage) (*protoV1.ContextMesssage, error) {
 
 	logrus.Infof("RouteOpenAiImageEditRequest -> %s, %s", in.Model, in.Prompt)
-	s.memory.Messages = append(s.memory.Messages, openai.UserMessage(in.Prompt))
+	s.memory.AppendInMessage(in)
 
 	inpObj := &aiGenTools.AiGenerateImageEditTool_Input{
 		Prompt:     in.Prompt,
@@ -196,7 +205,7 @@ func (s *grpcConsciousServer) RouteOpenAiImageEditRequest(in *protoV1.ContextMes
 	logrus.Infof("RouteOpenAiImageEditRequest -> %s, %s, %s", in.Model, in.Prompt, imageFileName)
 
 	assistantMsgContent := "Image edited and saved to file: " + imageFileName
-	s.memory.AppendMemory(openai.AssistantMessage(assistantMsgContent))
+	s.memory.AppendMessage(openai.AssistantMessage(assistantMsgContent))
 
 	return &protoV1.ContextMesssage{
 		Uuid:          in.Uuid,

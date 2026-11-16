@@ -7,7 +7,6 @@ import (
 	"github.com/binuud/avatar-conscious/pkg/bootstrap"
 	"github.com/binuud/avatar-conscious/pkg/llm"
 	"github.com/binuud/avatar-conscious/pkg/memory"
-	"github.com/binuud/avatar-conscious/pkg/tools"
 	"github.com/binuud/avatar-conscious/pkg/utils"
 	"github.com/openai/openai-go/v3"
 	"github.com/sirupsen/logrus"
@@ -15,8 +14,8 @@ import (
 
 func CheckImageDescriber() string {
 
-	memory := memory.NewMemory("")
-	memory.Tools = tools.GlobalCommonTools
+	memory := memory.NewScratchMemory()
+	memory.InitTools()
 
 	prompt := "Describe the image from file sampleLicense.jpg, and get the license number and driver name, in format {'license': [LICENSE NUMBER],'name':'[NAME OF PERSON']}"
 	memory.Messages = append(memory.Messages, openai.UserMessage(prompt))
@@ -34,7 +33,7 @@ func CheckImageDescriber() string {
 
 	msg := completions.Choices[0].Message
 	if len(msg.ToolCalls) > 0 {
-		out, err := tools.GlobalCommonToolsRegistry.HandleToolCalls(msg.ToolCalls, prompt)
+		out, err := memory.ToolRegistry.HandleToolCalls(msg.ToolCalls, prompt)
 		if err != nil {
 			logrus.Errorf("HandleToolCalls: %v \n", err)
 			return ""
@@ -47,8 +46,8 @@ func CheckImageDescriber() string {
 
 func CheckImageGeneration() string {
 
-	memory := memory.NewMemory("")
-	memory.Tools = tools.GlobalCommonTools
+	memory := memory.NewScratchMemory()
+	memory.InitTools()
 
 	prompt := "Create an image of a cat, crawling on a desk, trying to catch a mouse"
 	memory.Messages = append(memory.Messages, openai.UserMessage(prompt))
@@ -65,7 +64,7 @@ func CheckImageGeneration() string {
 
 	msg := completions.Choices[0].Message
 	if len(msg.ToolCalls) > 0 {
-		out, err := tools.GlobalCommonToolsRegistry.HandleToolCalls(msg.ToolCalls, prompt)
+		out, err := memory.ToolRegistry.HandleToolCalls(msg.ToolCalls, prompt)
 		if err == nil {
 			logrus.Infof("Output received %s", out)
 			return out.Response
@@ -75,8 +74,8 @@ func CheckImageGeneration() string {
 }
 
 func CheckImageUpgradeGeneration() {
-	memory := memory.NewMemory("")
-	memory.Tools = tools.GlobalCommonTools
+	memory := memory.NewScratchMemory()
+	memory.InitTools()
 
 	prompt := "Create an image of a tourist card, use the photo of the person from image samplePerson.jpg as reference, show the person in front of eiffel tower"
 	memory.Messages = append(memory.Messages, openai.UserMessage(prompt))
@@ -93,7 +92,7 @@ func CheckImageUpgradeGeneration() {
 
 	msg := completions.Choices[0].Message
 	if len(msg.ToolCalls) > 0 {
-		out, err := tools.GlobalCommonToolsRegistry.HandleToolCalls(msg.ToolCalls, prompt)
+		out, err := memory.ToolRegistry.HandleToolCalls(msg.ToolCalls, prompt)
 		if err == nil {
 			logrus.Infof("Output received %s", out)
 
@@ -137,8 +136,8 @@ func CheckDirectImageUpgradeGeneration() {
 }
 
 func CheckWebFetch(systemPrompt string) string {
-	memory := memory.NewMemory("")
-	memory.Tools = tools.GlobalCommonTools
+	memory := memory.NewScratchMemory()
+	memory.InitTools()
 
 	prompt := "Get license details of the person, strip spaces in the license number , using http get api request to url http://localhost:8081/checklicense/[license Number]"
 	memory.Messages = append(memory.Messages, openai.AssistantMessage("License details are as follows "+systemPrompt))
@@ -155,7 +154,7 @@ func CheckWebFetch(systemPrompt string) string {
 
 	msg := completions.Choices[0].Message
 	if len(msg.ToolCalls) > 0 {
-		out, err := tools.GlobalCommonToolsRegistry.HandleToolCalls(msg.ToolCalls, prompt)
+		out, err := memory.ToolRegistry.HandleToolCalls(msg.ToolCalls, prompt)
 		if err == nil {
 			logrus.Infof("Output received %s", out)
 			return out.Response
@@ -166,8 +165,8 @@ func CheckWebFetch(systemPrompt string) string {
 
 func CheckFileContents() string {
 
-	memory := memory.NewMemory("")
-	memory.Tools = tools.GlobalCommonTools
+	memory := memory.NewScratchMemory()
+	memory.InitTools()
 
 	prompt := "What is the contents of AGENTS.md file"
 	memory.Messages = append(memory.Messages, openai.UserMessage(prompt))
@@ -183,7 +182,7 @@ func CheckFileContents() string {
 
 	msg := completions.Choices[0].Message
 	if len(msg.ToolCalls) > 0 {
-		out, err := tools.GlobalCommonToolsRegistry.HandleToolCalls(msg.ToolCalls, prompt)
+		out, err := memory.ToolRegistry.HandleToolCalls(msg.ToolCalls, prompt)
 		if err == nil {
 			logrus.Infof("Output received %s", out)
 			return out.Response

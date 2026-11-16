@@ -7,7 +7,6 @@ import (
 
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	"github.com/binuud/avatar-conscious/pkg/llm"
-	"github.com/binuud/avatar-conscious/pkg/memory"
 	"github.com/binuud/avatar-conscious/pkg/settings"
 	"github.com/binuud/avatar-conscious/pkg/tools/toolMeta"
 	"github.com/binuud/avatar-conscious/pkg/utils"
@@ -87,13 +86,9 @@ func (t AiGenerateImageTool) Handler(in *pb.ContextMesssage) (*pb.ContextMesssag
 
 func GetAiImage(prompt string, model string) (string, error) {
 
-	memory := memory.NewMemory("")
-	memory.Model = model
-	memory.AppendMemory(openai.UserMessage(prompt))
+	logrus.Infof("GetAiImage -> %s, %s", model, prompt)
 
-	logrus.Infof("GetAiImage -> %s, %s", memory.Model, prompt)
-
-	result, err := llm.MakeOpenAiImageGenerationRequest(prompt, memory.Model)
+	result, err := llm.MakeOpenAiImageGenerationRequest(prompt, model)
 	if err != nil {
 		return "", err
 	}
@@ -109,7 +104,7 @@ func GetAiImage(prompt string, model string) (string, error) {
 	servableFile := "/gen/images/" + utils.GenerateUUID() + ".png"
 	imageFileName := SERVABLE_DIRECTORY + servableFile
 
-	logrus.Infof("GetAiImage -> %s, %s, %s", memory.Model, prompt, imageFileName)
+	logrus.Infof("GetAiImage -> %s, %s, %s", model, prompt, imageFileName)
 	if err := os.WriteFile(imageFileName, image, 0o600); err != nil {
 		panic(err)
 	}

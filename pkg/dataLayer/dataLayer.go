@@ -1,4 +1,4 @@
-package datalayer
+package dataLayer
 
 import (
 	"bytes"

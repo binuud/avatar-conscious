@@ -6,7 +6,6 @@ import (
 	"github.com/binuud/avatar-conscious/pkg/global"
 	"github.com/binuud/avatar-conscious/pkg/settings"
 	"github.com/binuud/avatar-conscious/pkg/slashCommands"
-	"github.com/binuud/avatar-conscious/pkg/tools"
 	"github.com/sirupsen/logrus"
 )
 
@@ -36,8 +35,5 @@ func Bootstrap(buildEnv ...string) {
 
 	// initiate all slash commands
 	slashCommands.Bootstrap()
-
-	// create a GlobalCommonTools, for LLM to use
-	tools.Bootstrap()
 
 }

@@ -10,7 +10,7 @@ import (
 
 	"buf.build/go/protoyaml"
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/avatar"
-	datalayer "github.com/binuud/avatar-conscious/pkg/dataLayer"
+	"github.com/binuud/avatar-conscious/pkg/dataLayer"
 	"github.com/binuud/avatar-conscious/pkg/utils"
 	"github.com/sirupsen/logrus"
 )
@@ -23,7 +23,7 @@ import (
 // -- avatar-name.png (the store image)
 func ListAvatarsFromStore() ([]*pb.Avatar, error) {
 	// Read the current directory
-	entries, err := os.ReadDir(datalayer.GetFileAbsolutePath(AVATAR_STORE_DIRECTORY, "."))
+	entries, err := os.ReadDir(dataLayer.GetFileAbsolutePath(AVATAR_STORE_DIRECTORY, "."))
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +60,7 @@ func ListAvatarsFromStore() ([]*pb.Avatar, error) {
 func ReadAvatarFromStore(avatarName string) (*pb.Avatar, error) {
 
 	// the directory containing all avatar files
-	avatarDir := datalayer.GetFileAbsolutePath(AVATAR_STORE_DIRECTORY, avatarName)
+	avatarDir := dataLayer.GetFileAbsolutePath(AVATAR_STORE_DIRECTORY, avatarName)
 
 	avatarFile := fmt.Sprintf("%s/%s.md", avatarDir, avatarName)
 
