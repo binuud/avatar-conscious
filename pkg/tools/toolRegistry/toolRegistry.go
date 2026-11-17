@@ -64,9 +64,16 @@ func (t *ToolRegistry) AddMCPTool(name string, tool toolMeta.CommonToolInterface
 // AddTool()
 // Tools have to be defined and added to registry
 // Even skills can only call tools already registered with tool registry
+// if avatar restarts, we loose the runtime interface to the tools
+// try rebuilding the handlers on demand
 func (t *ToolRegistry) GetTool(name string) (toolMeta.CommonToolInterface, error) {
 	if tool, ok := t.Tools[name]; ok {
 		return tool, nil
+	} else {
+		// try to register the Tool
+		// this is for building tool handlers back from a saved config file
+		// or from a persisted tool list, we are rebuilding the runtime for tools
+		// #TODO Binu
 	}
 	return nil, fmt.Errorf("tool with name %s, not registered", name)
 

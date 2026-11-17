@@ -21,7 +21,7 @@ import (
 
 // 	// GlobalCommonToolsRegistry.AddTool(aiGenTools.NewAiGenerateImageTool())
 // 	GlobalCommonToolsRegistry.AddTool(aiGenTools.NewAiGenerateImageEditTool())
-// 	GlobalCommonToolsRegistry.AddTool(aiGenTools.NewAiGenerateImageDescriptionTool())
+// 	GlobalCommonToolsRegistry.AddTool(aiGenTools.NewAiImageDescriptionTool())
 // 	// GlobalCommonToolsRegistry.AddTool(aiGenTools.NewUiLaunchTool())
 
 // 	GlobalCommonTools = GlobalCommonToolsRegistry.GetCommonTools()

@@ -117,7 +117,7 @@ func (s *mcpManagerGrpcServer) Get(ctx context.Context, in *pbMcp.GetRequest) (*
 
 func (s *mcpManagerGrpcServer) Delete(ctx context.Context, in *pbMcp.DeleteRequest) (*pbMcp.DeleteResponse, error) {
 
-	logrus.Infof("Delete called on MCP Manager %v", in)
+	logrus.Infof("Delete called on MCP Manager %v", in.Uuid)
 
 	mcp := NewMcpServers()
 	err := mcp.Delete(in.Uuid, "")
