@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"net/http"
 	"os/exec"
 	"strings"
 
@@ -12,6 +13,23 @@ import (
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 	"github.com/sirupsen/logrus"
 )
+
+// bearerTransport injects the Bearer token into every HTTP request.
+type bearerTransport struct {
+	base  http.RoundTripper
+	token string
+}
+
+func (t *bearerTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+	reqCopy := req.Clone(req.Context())
+	reqCopy.Header.Set("Authorization", "Bearer "+t.token)
+
+	base := t.base
+	if base == nil {
+		base = http.DefaultTransport
+	}
+	return base.RoundTrip(reqCopy)
+}
 
 type McpCommandHandler struct {
 	name  string
@@ -74,7 +92,7 @@ func NewMcpCommandHandler(name string, cmd string, url string) (*McpCommandHandl
 	}, nil
 }
 
-func HandleMcp(mcpServerName string, mcpFunction string, mcpParams any) (string, error) {
+func HandleMcp(mcpServerName string, mcpFunction string, mcpParams any, token string) (string, error) {
 
 	ctx := context.Background()
 	logrus.Debugf("HandleMcp %s->%s (%v)", mcpServerName, mcpFunction, mcpParams)
@@ -86,16 +104,30 @@ func HandleMcp(mcpServerName string, mcpFunction string, mcpParams any) (string,
 	url := strings.ToLower(mcpServerName)
 	isHTTP := strings.HasPrefix(url, "http://") || strings.HasPrefix(url, "https://")
 	if isHTTP {
+
 		logrus.Debugf("HandleMcp trying to connect mcp remote server %s->%s", mcpServerName, mcpFunction)
-		transport := &mcp.StreamableClientTransport{
-			Endpoint: url,
+
+		var authHTTPClient *http.Client = nil
+		if token != "" {
+			logrus.Debugf("HandleMcp with token %s", token)
+			authHTTPClient = &http.Client{
+				Transport: &bearerTransport{token: token},
+			}
 		}
+		logrus.Debugf("HandleMcp auth client %v", authHTTPClient)
+		transport := &mcp.StreamableClientTransport{
+			Endpoint:   url,
+			HTTPClient: authHTTPClient,
+		}
+
 		// Connect to a server over stdin/stdout.
 		session, err = client.Connect(ctx, transport, nil)
 		if err != nil {
 			return "", err
 		}
+
 	} else {
+
 		logrus.Debugf("HandleMcp trying to connect mcp command %s->%s", mcpServerName, mcpFunction)
 		transport := &mcp.CommandTransport{Command: exec.Command(mcpServerName)}
 		// Connect to a server over stdin/stdout.
@@ -103,6 +135,7 @@ func HandleMcp(mcpServerName string, mcpFunction string, mcpParams any) (string,
 		if err != nil {
 			return "", err
 		}
+
 	}
 
 	defer session.Close()
@@ -133,12 +166,12 @@ func HandleMcp(mcpServerName string, mcpFunction string, mcpParams any) (string,
 // HandleMcpTool
 // takes in a string inoutData converts it into map<<String>
 // and executes the tool call
-func HandleMcpTool(mcpServer string, toolName string, inputData string) (string, error) {
+func HandleMcpTool(mcpServer string, toolName string, inputData string, token string) (string, error) {
 	var inObj Tool_MCP_Input
 	if err := json.Unmarshal([]byte(inputData), &inObj); err != nil {
 		return "", err
 	}
-	outMsg, err := HandleMcp(mcpServer, toolName, inObj)
+	outMsg, err := HandleMcp(mcpServer, toolName, inObj, token)
 	if err != nil {
 		return "", err
 	}

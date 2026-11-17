@@ -240,7 +240,7 @@ func (s *mcpServers) HandleTool(uuid string, mcpServerName string, toolName stri
 	case pbMcp.MCPTransportType_MCP_TYPE_HTTP, pbMcp.MCPTransportType_MCP_TYPE_SSE:
 		command = entry.Url
 	}
-	outMsg, err := mcpHandler.HandleMcpTool(command, toolName, params)
+	outMsg, err := mcpHandler.HandleMcpTool(command, toolName, params, entry.Token)
 	if err != nil {
 		return "", err
 	}

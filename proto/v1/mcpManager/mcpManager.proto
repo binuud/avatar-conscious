@@ -28,6 +28,15 @@ enum MCPServerStatus {
   SERVER_STATUS_ERROR = 4;
 }
 
+enum MCPAuthType {
+  MCP_AUTH_TYPE_IGNORE = 0;
+  MCP_AUTH_TYPE_NONE = 1;
+  MCP_AUTH_TYPE_BEARER = 2;
+  MCP_AUTH_TYPE_API_KEY = 3;
+  // this would return a bearer token eventually
+  MCP_AUTH_TYPE_OAUTH = 4;
+}
+
 // MCPServerConfig holds the static configuration to launch or connect to an MCP server.
 message MCPServerConfig {
   string uuid = 1;
@@ -46,6 +55,19 @@ message MCPServerConfig {
   bool enabled = 8;
 
   common.Timestamp timeout = 9;
+  
+  common.Timestamp createdAt = 11;
+
+  MCPAuthType authType = 21;
+  // Used for BEARER and OAUTH access tokens
+  string token = 22;
+
+  // Used for API_KEY authentication (e.g., "X-API-Key" or "Authorization")
+  string headerName = 23;
+
+  // Optional OAuth-specific details
+  string refreshToken = 24;
+  common.Timestamp tokenExpiresAt = 25;
 }
 
 message MCPTool {

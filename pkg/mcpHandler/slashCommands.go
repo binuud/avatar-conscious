@@ -84,7 +84,7 @@ func NewMCPServerCommand() *cobra.Command {
 				return
 			}
 
-			outMsg, err := HandleMcp(mcpName, toolName, paramMap)
+			outMsg, err := HandleMcp(mcpName, toolName, paramMap, "")
 			if err != nil {
 				cmd.PrintErrf("error calling tool %s / %s -  %v\n", mcpName, toolName, err)
 				logrus.Errorf("tool call %v", err)
