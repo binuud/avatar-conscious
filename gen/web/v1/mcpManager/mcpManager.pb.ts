@@ -22,6 +22,14 @@ export enum MCPServerStatus {
   SERVER_STATUS_ERROR = "SERVER_STATUS_ERROR",
 }
 
+export enum MCPAuthType {
+  MCP_AUTH_TYPE_IGNORE = "MCP_AUTH_TYPE_IGNORE",
+  MCP_AUTH_TYPE_NONE = "MCP_AUTH_TYPE_NONE",
+  MCP_AUTH_TYPE_BEARER = "MCP_AUTH_TYPE_BEARER",
+  MCP_AUTH_TYPE_API_KEY = "MCP_AUTH_TYPE_API_KEY",
+  MCP_AUTH_TYPE_OAUTH = "MCP_AUTH_TYPE_OAUTH",
+}
+
 export type MCPServerConfig = {
   uuid?: string
   name?: string
@@ -32,6 +40,12 @@ export type MCPServerConfig = {
   url?: string
   enabled?: boolean
   timeout?: CommonCommon.Timestamp
+  createdAt?: CommonCommon.Timestamp
+  authType?: MCPAuthType
+  token?: string
+  headerName?: string
+  refreshToken?: string
+  tokenExpiresAt?: CommonCommon.Timestamp
 }
 
 export type MCPTool = {

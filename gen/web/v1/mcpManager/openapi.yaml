@@ -168,6 +168,14 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/MCPServerConfig'
+    MCPAuthType:
+      type: string
+      enum:
+        - "MCP_AUTH_TYPE_IGNORE"
+        - "MCP_AUTH_TYPE_NONE"
+        - "MCP_AUTH_TYPE_BEARER"
+        - "MCP_AUTH_TYPE_API_KEY"
+        - "MCP_AUTH_TYPE_OAUTH"
     MCPServerConfig:
       type: object
       properties:
@@ -192,6 +200,18 @@ components:
         enabled:
           type: boolean
         timeout:
+          $ref: '#/components/schemas/Timestamp'
+        createdAt:
+          $ref: '#/components/schemas/Timestamp'
+        authType:
+          $ref: '#/components/schemas/MCPAuthType'
+        token:
+          type: string
+        headerName:
+          type: string
+        refreshToken:
+          type: string
+        tokenExpiresAt:
           $ref: '#/components/schemas/Timestamp'
     MCPServerInstance:
       type: object

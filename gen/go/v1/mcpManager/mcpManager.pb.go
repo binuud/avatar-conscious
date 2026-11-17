@@ -135,6 +135,62 @@ func (MCPServerStatus) EnumDescriptor() ([]byte, []int) {
 	return file_v1_mcpManager_mcpManager_proto_rawDescGZIP(), []int{1}
 }
 
+type MCPAuthType int32
+
+const (
+	MCPAuthType_MCP_AUTH_TYPE_IGNORE  MCPAuthType = 0
+	MCPAuthType_MCP_AUTH_TYPE_NONE    MCPAuthType = 1
+	MCPAuthType_MCP_AUTH_TYPE_BEARER  MCPAuthType = 2
+	MCPAuthType_MCP_AUTH_TYPE_API_KEY MCPAuthType = 3
+	// this would return a bearer token eventually
+	MCPAuthType_MCP_AUTH_TYPE_OAUTH MCPAuthType = 4
+)
+
+// Enum value maps for MCPAuthType.
+var (
+	MCPAuthType_name = map[int32]string{
+		0: "MCP_AUTH_TYPE_IGNORE",
+		1: "MCP_AUTH_TYPE_NONE",
+		2: "MCP_AUTH_TYPE_BEARER",
+		3: "MCP_AUTH_TYPE_API_KEY",
+		4: "MCP_AUTH_TYPE_OAUTH",
+	}
+	MCPAuthType_value = map[string]int32{
+		"MCP_AUTH_TYPE_IGNORE":  0,
+		"MCP_AUTH_TYPE_NONE":    1,
+		"MCP_AUTH_TYPE_BEARER":  2,
+		"MCP_AUTH_TYPE_API_KEY": 3,
+		"MCP_AUTH_TYPE_OAUTH":   4,
+	}
+)
+
+func (x MCPAuthType) Enum() *MCPAuthType {
+	p := new(MCPAuthType)
+	*p = x
+	return p
+}
+
+func (x MCPAuthType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (MCPAuthType) Descriptor() protoreflect.EnumDescriptor {
+	return file_v1_mcpManager_mcpManager_proto_enumTypes[2].Descriptor()
+}
+
+func (MCPAuthType) Type() protoreflect.EnumType {
+	return &file_v1_mcpManager_mcpManager_proto_enumTypes[2]
+}
+
+func (x MCPAuthType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use MCPAuthType.Descriptor instead.
+func (MCPAuthType) EnumDescriptor() ([]byte, []int) {
+	return file_v1_mcpManager_mcpManager_proto_rawDescGZIP(), []int{2}
+}
+
 // MCPServerConfig holds the static configuration to launch or connect to an MCP server.
 type MCPServerConfig struct {
 	state   protoimpl.MessageState `protogen:"open.v1"`
@@ -148,10 +204,19 @@ type MCPServerConfig struct {
 	// SSE/HTTP-specific configuration
 	Url string `protobuf:"bytes,7,opt,name=url,proto3" json:"url,omitempty"`
 	// is the MCP Server enabled for the current chat
-	Enabled       bool              `protobuf:"varint,8,opt,name=enabled,proto3" json:"enabled,omitempty"`
-	Timeout       *common.Timestamp `protobuf:"bytes,9,opt,name=timeout,proto3" json:"timeout,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
+	Enabled   bool              `protobuf:"varint,8,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	Timeout   *common.Timestamp `protobuf:"bytes,9,opt,name=timeout,proto3" json:"timeout,omitempty"`
+	CreatedAt *common.Timestamp `protobuf:"bytes,11,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
+	AuthType  MCPAuthType       `protobuf:"varint,21,opt,name=authType,proto3,enum=mcpManager.MCPAuthType" json:"authType,omitempty"`
+	// Used for BEARER and OAUTH access tokens
+	Token string `protobuf:"bytes,22,opt,name=token,proto3" json:"token,omitempty"`
+	// Used for API_KEY authentication (e.g., "X-API-Key" or "Authorization")
+	HeaderName string `protobuf:"bytes,23,opt,name=headerName,proto3" json:"headerName,omitempty"`
+	// Optional OAuth-specific details
+	RefreshToken   string            `protobuf:"bytes,24,opt,name=refreshToken,proto3" json:"refreshToken,omitempty"`
+	TokenExpiresAt *common.Timestamp `protobuf:"bytes,25,opt,name=tokenExpiresAt,proto3" json:"tokenExpiresAt,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
 }
 
 func (x *MCPServerConfig) Reset() {
@@ -243,6 +308,48 @@ func (x *MCPServerConfig) GetEnabled() bool {
 func (x *MCPServerConfig) GetTimeout() *common.Timestamp {
 	if x != nil {
 		return x.Timeout
+	}
+	return nil
+}
+
+func (x *MCPServerConfig) GetCreatedAt() *common.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *MCPServerConfig) GetAuthType() MCPAuthType {
+	if x != nil {
+		return x.AuthType
+	}
+	return MCPAuthType_MCP_AUTH_TYPE_IGNORE
+}
+
+func (x *MCPServerConfig) GetToken() string {
+	if x != nil {
+		return x.Token
+	}
+	return ""
+}
+
+func (x *MCPServerConfig) GetHeaderName() string {
+	if x != nil {
+		return x.HeaderName
+	}
+	return ""
+}
+
+func (x *MCPServerConfig) GetRefreshToken() string {
+	if x != nil {
+		return x.RefreshToken
+	}
+	return ""
+}
+
+func (x *MCPServerConfig) GetTokenExpiresAt() *common.Timestamp {
+	if x != nil {
+		return x.TokenExpiresAt
 	}
 	return nil
 }
@@ -1131,7 +1238,7 @@ var File_v1_mcpManager_mcpManager_proto protoreflect.FileDescriptor
 const file_v1_mcpManager_mcpManager_proto_rawDesc = "" +
 	"\n" +
 	"\x1ev1/mcpManager/mcpManager.proto\x12\n" +
-	"mcpManager\x1a\x16v1/common/common.proto\x1a\x1cgoogle/api/annotations.proto\"\xe8\x02\n" +
+	"mcpManager\x1a\x16v1/common/common.proto\x1a\x1cgoogle/api/annotations.proto\"\xe3\x04\n" +
 	"\x0fMCPServerConfig\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x126\n" +
@@ -1141,7 +1248,15 @@ const file_v1_mcpManager_mcpManager_proto_rawDesc = "" +
 	"\x03env\x18\x06 \x03(\v2$.mcpManager.MCPServerConfig.EnvEntryR\x03env\x12\x10\n" +
 	"\x03url\x18\a \x01(\tR\x03url\x12\x18\n" +
 	"\aenabled\x18\b \x01(\bR\aenabled\x12+\n" +
-	"\atimeout\x18\t \x01(\v2\x11.common.TimestampR\atimeout\x1a6\n" +
+	"\atimeout\x18\t \x01(\v2\x11.common.TimestampR\atimeout\x12/\n" +
+	"\tcreatedAt\x18\v \x01(\v2\x11.common.TimestampR\tcreatedAt\x123\n" +
+	"\bauthType\x18\x15 \x01(\x0e2\x17.mcpManager.MCPAuthTypeR\bauthType\x12\x14\n" +
+	"\x05token\x18\x16 \x01(\tR\x05token\x12\x1e\n" +
+	"\n" +
+	"headerName\x18\x17 \x01(\tR\n" +
+	"headerName\x12\"\n" +
+	"\frefreshToken\x18\x18 \x01(\tR\frefreshToken\x129\n" +
+	"\x0etokenExpiresAt\x18\x19 \x01(\v2\x11.common.TimestampR\x0etokenExpiresAt\x1a6\n" +
 	"\bEnvEntry\x12\x10\n" +
 	"\x03key\x18\x01 \x01(\tR\x03key\x12\x14\n" +
 	"\x05value\x18\x02 \x01(\tR\x05value:\x028\x01\"}\n" +
@@ -1207,7 +1322,13 @@ const file_v1_mcpManager_mcpManager_proto_rawDesc = "" +
 	"\x18SERVER_STATUS_CONNECTING\x10\x01\x12\x1b\n" +
 	"\x17SERVER_STATUS_CONNECTED\x10\x02\x12\x1e\n" +
 	"\x1aSERVER_STATUS_DISCONNECTED\x10\x03\x12\x17\n" +
-	"\x13SERVER_STATUS_ERROR\x10\x042\xc2\x05\n" +
+	"\x13SERVER_STATUS_ERROR\x10\x04*\x8d\x01\n" +
+	"\vMCPAuthType\x12\x18\n" +
+	"\x14MCP_AUTH_TYPE_IGNORE\x10\x00\x12\x16\n" +
+	"\x12MCP_AUTH_TYPE_NONE\x10\x01\x12\x18\n" +
+	"\x14MCP_AUTH_TYPE_BEARER\x10\x02\x12\x19\n" +
+	"\x15MCP_AUTH_TYPE_API_KEY\x10\x03\x12\x17\n" +
+	"\x13MCP_AUTH_TYPE_OAUTH\x10\x042\xc2\x05\n" +
 	"\x11MCPManagerService\x12]\n" +
 	"\x05Check\x12\x18.mcpManager.CheckRequest\x1a\x19.mcpManager.CheckResponse\"\x1f\x82\xd3\xe4\x93\x02\x19:\x01*\"\x14/v1/mcpManager/check\x12i\n" +
 	"\bRegister\x12\x1b.mcpManager.RegisterRequest\x1a\x1c.mcpManager.RegisterResponse\"\"\x82\xd3\xe4\x93\x02\x1c:\x01*\"\x17/v1/mcpManager/register\x12R\n" +
@@ -1230,67 +1351,71 @@ func file_v1_mcpManager_mcpManager_proto_rawDescGZIP() []byte {
 	return file_v1_mcpManager_mcpManager_proto_rawDescData
 }
 
-var file_v1_mcpManager_mcpManager_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
+var file_v1_mcpManager_mcpManager_proto_enumTypes = make([]protoimpl.EnumInfo, 3)
 var file_v1_mcpManager_mcpManager_proto_msgTypes = make([]protoimpl.MessageInfo, 19)
 var file_v1_mcpManager_mcpManager_proto_goTypes = []any{
 	(MCPTransportType)(0),      // 0: mcpManager.MCPTransportType
 	(MCPServerStatus)(0),       // 1: mcpManager.MCPServerStatus
-	(*MCPServerConfig)(nil),    // 2: mcpManager.MCPServerConfig
-	(*MCPTool)(nil),            // 3: mcpManager.MCPTool
-	(*MCPServerConfigs)(nil),   // 4: mcpManager.MCPServerConfigs
-	(*MCPServerInstance)(nil),  // 5: mcpManager.MCPServerInstance
-	(*CheckRequest)(nil),       // 6: mcpManager.CheckRequest
-	(*CheckResponse)(nil),      // 7: mcpManager.CheckResponse
-	(*RegisterRequest)(nil),    // 8: mcpManager.RegisterRequest
-	(*RegisterResponse)(nil),   // 9: mcpManager.RegisterResponse
-	(*GetRequest)(nil),         // 10: mcpManager.GetRequest
-	(*GetResponse)(nil),        // 11: mcpManager.GetResponse
-	(*ToggleRequest)(nil),      // 12: mcpManager.ToggleRequest
-	(*ToggleResponse)(nil),     // 13: mcpManager.ToggleResponse
-	(*ListRequest)(nil),        // 14: mcpManager.ListRequest
-	(*ListResponse)(nil),       // 15: mcpManager.ListResponse
-	(*DeleteRequest)(nil),      // 16: mcpManager.DeleteRequest
-	(*DeleteResponse)(nil),     // 17: mcpManager.DeleteResponse
-	(*HandleToolRequest)(nil),  // 18: mcpManager.HandleToolRequest
-	(*HandleToolResponse)(nil), // 19: mcpManager.HandleToolResponse
-	nil,                        // 20: mcpManager.MCPServerConfig.EnvEntry
-	(*common.Timestamp)(nil),   // 21: common.Timestamp
+	(MCPAuthType)(0),           // 2: mcpManager.MCPAuthType
+	(*MCPServerConfig)(nil),    // 3: mcpManager.MCPServerConfig
+	(*MCPTool)(nil),            // 4: mcpManager.MCPTool
+	(*MCPServerConfigs)(nil),   // 5: mcpManager.MCPServerConfigs
+	(*MCPServerInstance)(nil),  // 6: mcpManager.MCPServerInstance
+	(*CheckRequest)(nil),       // 7: mcpManager.CheckRequest
+	(*CheckResponse)(nil),      // 8: mcpManager.CheckResponse
+	(*RegisterRequest)(nil),    // 9: mcpManager.RegisterRequest
+	(*RegisterResponse)(nil),   // 10: mcpManager.RegisterResponse
+	(*GetRequest)(nil),         // 11: mcpManager.GetRequest
+	(*GetResponse)(nil),        // 12: mcpManager.GetResponse
+	(*ToggleRequest)(nil),      // 13: mcpManager.ToggleRequest
+	(*ToggleResponse)(nil),     // 14: mcpManager.ToggleResponse
+	(*ListRequest)(nil),        // 15: mcpManager.ListRequest
+	(*ListResponse)(nil),       // 16: mcpManager.ListResponse
+	(*DeleteRequest)(nil),      // 17: mcpManager.DeleteRequest
+	(*DeleteResponse)(nil),     // 18: mcpManager.DeleteResponse
+	(*HandleToolRequest)(nil),  // 19: mcpManager.HandleToolRequest
+	(*HandleToolResponse)(nil), // 20: mcpManager.HandleToolResponse
+	nil,                        // 21: mcpManager.MCPServerConfig.EnvEntry
+	(*common.Timestamp)(nil),   // 22: common.Timestamp
 }
 var file_v1_mcpManager_mcpManager_proto_depIdxs = []int32{
 	0,  // 0: mcpManager.MCPServerConfig.mcpType:type_name -> mcpManager.MCPTransportType
-	20, // 1: mcpManager.MCPServerConfig.env:type_name -> mcpManager.MCPServerConfig.EnvEntry
-	21, // 2: mcpManager.MCPServerConfig.timeout:type_name -> common.Timestamp
-	2,  // 3: mcpManager.MCPServerConfigs.configs:type_name -> mcpManager.MCPServerConfig
-	2,  // 4: mcpManager.MCPServerInstance.config:type_name -> mcpManager.MCPServerConfig
-	1,  // 5: mcpManager.MCPServerInstance.status:type_name -> mcpManager.MCPServerStatus
-	21, // 6: mcpManager.MCPServerInstance.last_checked:type_name -> common.Timestamp
-	3,  // 7: mcpManager.MCPServerInstance.tools:type_name -> mcpManager.MCPTool
-	2,  // 8: mcpManager.CheckRequest.config:type_name -> mcpManager.MCPServerConfig
-	5,  // 9: mcpManager.CheckResponse.instance:type_name -> mcpManager.MCPServerInstance
-	2,  // 10: mcpManager.RegisterRequest.config:type_name -> mcpManager.MCPServerConfig
-	5,  // 11: mcpManager.RegisterResponse.instance:type_name -> mcpManager.MCPServerInstance
-	5,  // 12: mcpManager.GetResponse.instance:type_name -> mcpManager.MCPServerInstance
-	2,  // 13: mcpManager.ToggleResponse.config:type_name -> mcpManager.MCPServerConfig
-	2,  // 14: mcpManager.ListResponse.servers:type_name -> mcpManager.MCPServerConfig
-	6,  // 15: mcpManager.MCPManagerService.Check:input_type -> mcpManager.CheckRequest
-	8,  // 16: mcpManager.MCPManagerService.Register:input_type -> mcpManager.RegisterRequest
-	10, // 17: mcpManager.MCPManagerService.Get:input_type -> mcpManager.GetRequest
-	12, // 18: mcpManager.MCPManagerService.Toggle:input_type -> mcpManager.ToggleRequest
-	14, // 19: mcpManager.MCPManagerService.List:input_type -> mcpManager.ListRequest
-	16, // 20: mcpManager.MCPManagerService.Delete:input_type -> mcpManager.DeleteRequest
-	18, // 21: mcpManager.MCPManagerService.HandleTool:input_type -> mcpManager.HandleToolRequest
-	7,  // 22: mcpManager.MCPManagerService.Check:output_type -> mcpManager.CheckResponse
-	9,  // 23: mcpManager.MCPManagerService.Register:output_type -> mcpManager.RegisterResponse
-	11, // 24: mcpManager.MCPManagerService.Get:output_type -> mcpManager.GetResponse
-	13, // 25: mcpManager.MCPManagerService.Toggle:output_type -> mcpManager.ToggleResponse
-	15, // 26: mcpManager.MCPManagerService.List:output_type -> mcpManager.ListResponse
-	17, // 27: mcpManager.MCPManagerService.Delete:output_type -> mcpManager.DeleteResponse
-	19, // 28: mcpManager.MCPManagerService.HandleTool:output_type -> mcpManager.HandleToolResponse
-	22, // [22:29] is the sub-list for method output_type
-	15, // [15:22] is the sub-list for method input_type
-	15, // [15:15] is the sub-list for extension type_name
-	15, // [15:15] is the sub-list for extension extendee
-	0,  // [0:15] is the sub-list for field type_name
+	21, // 1: mcpManager.MCPServerConfig.env:type_name -> mcpManager.MCPServerConfig.EnvEntry
+	22, // 2: mcpManager.MCPServerConfig.timeout:type_name -> common.Timestamp
+	22, // 3: mcpManager.MCPServerConfig.createdAt:type_name -> common.Timestamp
+	2,  // 4: mcpManager.MCPServerConfig.authType:type_name -> mcpManager.MCPAuthType
+	22, // 5: mcpManager.MCPServerConfig.tokenExpiresAt:type_name -> common.Timestamp
+	3,  // 6: mcpManager.MCPServerConfigs.configs:type_name -> mcpManager.MCPServerConfig
+	3,  // 7: mcpManager.MCPServerInstance.config:type_name -> mcpManager.MCPServerConfig
+	1,  // 8: mcpManager.MCPServerInstance.status:type_name -> mcpManager.MCPServerStatus
+	22, // 9: mcpManager.MCPServerInstance.last_checked:type_name -> common.Timestamp
+	4,  // 10: mcpManager.MCPServerInstance.tools:type_name -> mcpManager.MCPTool
+	3,  // 11: mcpManager.CheckRequest.config:type_name -> mcpManager.MCPServerConfig
+	6,  // 12: mcpManager.CheckResponse.instance:type_name -> mcpManager.MCPServerInstance
+	3,  // 13: mcpManager.RegisterRequest.config:type_name -> mcpManager.MCPServerConfig
+	6,  // 14: mcpManager.RegisterResponse.instance:type_name -> mcpManager.MCPServerInstance
+	6,  // 15: mcpManager.GetResponse.instance:type_name -> mcpManager.MCPServerInstance
+	3,  // 16: mcpManager.ToggleResponse.config:type_name -> mcpManager.MCPServerConfig
+	3,  // 17: mcpManager.ListResponse.servers:type_name -> mcpManager.MCPServerConfig
+	7,  // 18: mcpManager.MCPManagerService.Check:input_type -> mcpManager.CheckRequest
+	9,  // 19: mcpManager.MCPManagerService.Register:input_type -> mcpManager.RegisterRequest
+	11, // 20: mcpManager.MCPManagerService.Get:input_type -> mcpManager.GetRequest
+	13, // 21: mcpManager.MCPManagerService.Toggle:input_type -> mcpManager.ToggleRequest
+	15, // 22: mcpManager.MCPManagerService.List:input_type -> mcpManager.ListRequest
+	17, // 23: mcpManager.MCPManagerService.Delete:input_type -> mcpManager.DeleteRequest
+	19, // 24: mcpManager.MCPManagerService.HandleTool:input_type -> mcpManager.HandleToolRequest
+	8,  // 25: mcpManager.MCPManagerService.Check:output_type -> mcpManager.CheckResponse
+	10, // 26: mcpManager.MCPManagerService.Register:output_type -> mcpManager.RegisterResponse
+	12, // 27: mcpManager.MCPManagerService.Get:output_type -> mcpManager.GetResponse
+	14, // 28: mcpManager.MCPManagerService.Toggle:output_type -> mcpManager.ToggleResponse
+	16, // 29: mcpManager.MCPManagerService.List:output_type -> mcpManager.ListResponse
+	18, // 30: mcpManager.MCPManagerService.Delete:output_type -> mcpManager.DeleteResponse
+	20, // 31: mcpManager.MCPManagerService.HandleTool:output_type -> mcpManager.HandleToolResponse
+	25, // [25:32] is the sub-list for method output_type
+	18, // [18:25] is the sub-list for method input_type
+	18, // [18:18] is the sub-list for extension type_name
+	18, // [18:18] is the sub-list for extension extendee
+	0,  // [0:18] is the sub-list for field type_name
 }
 
 func init() { file_v1_mcpManager_mcpManager_proto_init() }
@@ -1303,7 +1428,7 @@ func file_v1_mcpManager_mcpManager_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_v1_mcpManager_mcpManager_proto_rawDesc), len(file_v1_mcpManager_mcpManager_proto_rawDesc)),
-			NumEnums:      2,
+			NumEnums:      3,
 			NumMessages:   19,
 			NumExtensions: 0,
 			NumServices:   1,
