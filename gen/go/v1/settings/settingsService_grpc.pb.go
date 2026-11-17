@@ -27,6 +27,7 @@ const (
 	Settings_Get_FullMethodName  = "/settings.Settings/Get"
 	Settings_List_FullMethodName = "/settings.Settings/List"
 	Settings_Set_FullMethodName  = "/settings.Settings/Set"
+	Settings_Save_FullMethodName = "/settings.Settings/Save"
 )
 
 // SettingsClient is the client API for Settings service.
@@ -39,6 +40,8 @@ type SettingsClient interface {
 	List(ctx context.Context, in *SettingsListRequest, opts ...grpc.CallOption) (*SettingsListResponse, error)
 	// set a Settings by name or key
 	Set(ctx context.Context, in *SettingsSetRequest, opts ...grpc.CallOption) (*SettingsSetResponse, error)
+	// save a group of setting entries
+	Save(ctx context.Context, in *SettingsSaveRequest, opts ...grpc.CallOption) (*SettingsSaveResponse, error)
 }
 
 type settingsClient struct {
@@ -79,6 +82,16 @@ func (c *settingsClient) Set(ctx context.Context, in *SettingsSetRequest, opts .
 	return out, nil
 }
 
+func (c *settingsClient) Save(ctx context.Context, in *SettingsSaveRequest, opts ...grpc.CallOption) (*SettingsSaveResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SettingsSaveResponse)
+	err := c.cc.Invoke(ctx, Settings_Save_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // SettingsServer is the server API for Settings service.
 // All implementations must embed UnimplementedSettingsServer
 // for forward compatibility.
@@ -89,6 +102,8 @@ type SettingsServer interface {
 	List(context.Context, *SettingsListRequest) (*SettingsListResponse, error)
 	// set a Settings by name or key
 	Set(context.Context, *SettingsSetRequest) (*SettingsSetResponse, error)
+	// save a group of setting entries
+	Save(context.Context, *SettingsSaveRequest) (*SettingsSaveResponse, error)
 	mustEmbedUnimplementedSettingsServer()
 }
 
@@ -107,6 +122,9 @@ func (UnimplementedSettingsServer) List(context.Context, *SettingsListRequest) (
 }
 func (UnimplementedSettingsServer) Set(context.Context, *SettingsSetRequest) (*SettingsSetResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Set not implemented")
+}
+func (UnimplementedSettingsServer) Save(context.Context, *SettingsSaveRequest) (*SettingsSaveResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Save not implemented")
 }
 func (UnimplementedSettingsServer) mustEmbedUnimplementedSettingsServer() {}
 func (UnimplementedSettingsServer) testEmbeddedByValue()                  {}
@@ -183,6 +201,24 @@ func _Settings_Set_Handler(srv interface{}, ctx context.Context, dec func(interf
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Settings_Save_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SettingsSaveRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SettingsServer).Save(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Settings_Save_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SettingsServer).Save(ctx, req.(*SettingsSaveRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Settings_ServiceDesc is the grpc.ServiceDesc for Settings service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -201,6 +237,10 @@ var Settings_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Set",
 			Handler:    _Settings_Set_Handler,
+		},
+		{
+			MethodName: "Save",
+			Handler:    _Settings_Save_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

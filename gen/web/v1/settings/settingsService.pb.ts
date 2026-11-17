@@ -31,14 +31,28 @@ export type SettingsSetResponse = {
   entry?: SettingsSettings.Config
 }
 
+export type SettingsSaveRequest = {
+  groupKey?: string
+  configs?: SettingsSettings.ConfigList
+}
+
+export type SettingsSaveResponse = {
+  groupKey?: string
+  configs?: SettingsSettings.ConfigList
+  success?: boolean
+}
+
 export class Settings {
   static Get(req: SettingsGetRequest, initReq?: fm.InitReq): Promise<SettingsGetResponse> {
-    return fm.fetchReq<SettingsGetRequest, SettingsGetResponse>(`/v1/Settings/get?${fm.renderURLSearchParams(req, [])}`, {...initReq, method: "GET"})
+    return fm.fetchReq<SettingsGetRequest, SettingsGetResponse>(`/v1/settings/get?${fm.renderURLSearchParams(req, [])}`, {...initReq, method: "GET"})
   }
   static List(req: SettingsListRequest, initReq?: fm.InitReq): Promise<SettingsListResponse> {
-    return fm.fetchReq<SettingsListRequest, SettingsListResponse>(`/v1/Settings/list?${fm.renderURLSearchParams(req, [])}`, {...initReq, method: "GET"})
+    return fm.fetchReq<SettingsListRequest, SettingsListResponse>(`/v1/settings/list?${fm.renderURLSearchParams(req, [])}`, {...initReq, method: "GET"})
   }
   static Set(req: SettingsSetRequest, initReq?: fm.InitReq): Promise<SettingsSetResponse> {
-    return fm.fetchReq<SettingsSetRequest, SettingsSetResponse>(`/v1/Settings/set`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
+    return fm.fetchReq<SettingsSetRequest, SettingsSetResponse>(`/v1/settings/set`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
+  }
+  static Save(req: SettingsSaveRequest, initReq?: fm.InitReq): Promise<SettingsSaveResponse> {
+    return fm.fetchReq<SettingsSaveRequest, SettingsSaveResponse>(`/v1/settings/save`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
   }
 }

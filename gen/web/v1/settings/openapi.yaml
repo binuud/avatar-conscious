@@ -5,7 +5,7 @@ info:
   title: ""
   version: ""
 paths:
-  /v1/Settings/get:
+  /v1/settings/get:
     get:
       operationId: get
       parameters:
@@ -20,7 +20,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SettingsGetResponse'
-  /v1/Settings/list:
+  /v1/settings/list:
     get:
       operationId: list
       parameters:
@@ -35,7 +35,23 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SettingsListResponse'
-  /v1/Settings/set:
+  /v1/settings/save:
+    post:
+      operationId: save
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SettingsSaveRequest'
+        required: true
+      responses:
+        "200":
+          description: settings.Settings.Save response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SettingsSaveResponse'
+  /v1/settings/set:
     post:
       operationId: set
       requestBody:
@@ -97,6 +113,22 @@ components:
           type: object
           additionalProperties:
             $ref: '#/components/schemas/ConfigList'
+    SettingsSaveRequest:
+      type: object
+      properties:
+        groupKey:
+          type: string
+        configs:
+          $ref: '#/components/schemas/ConfigList'
+    SettingsSaveResponse:
+      type: object
+      properties:
+        groupKey:
+          type: string
+        configs:
+          $ref: '#/components/schemas/ConfigList'
+        success:
+          type: boolean
     SettingsSetRequest:
       type: object
       properties:

@@ -16,24 +16,32 @@ service Settings {
   // get a Settings by name or key
   rpc Get(SettingsGetRequest) returns (SettingsGetResponse) {
     option (google.api.http) = {
-      get : "/v1/Settings/get"
+      get : "/v1/settings/get"
     };
   }
 
   // get all non internal Settings
   rpc List(SettingsListRequest) returns (SettingsListResponse) {
     option (google.api.http) = {
-      get : "/v1/Settings/list"
+      get : "/v1/settings/list"
     };
   }
 
   // set a Settings by name or key
   rpc Set(SettingsSetRequest) returns (SettingsSetResponse) {
     option (google.api.http) = {
-      post : "/v1/Settings/set"
+      post : "/v1/settings/set"
       body : "*"
     };
   }
+
+  // save a group of setting entries
+  rpc Save(SettingsSaveRequest) returns (SettingsSaveResponse) {
+    option (google.api.http) = {
+      post : "/v1/settings/save"
+      body : "*"
+    };
+  }  
 
 }
 
@@ -65,4 +73,16 @@ message SettingsSetRequest {
 
 message SettingsSetResponse {
   Config entry = 1;
+}
+
+// allows for a subset of settings keys to be saved
+message SettingsSaveRequest {
+  string groupKey = 1;
+  ConfigList configs = 2;
+}
+
+message SettingsSaveResponse {
+  string groupKey = 1;
+  ConfigList configs = 2;
+  bool success = 3;
 }
