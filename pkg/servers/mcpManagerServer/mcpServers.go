@@ -161,16 +161,21 @@ func (s *mcpServers) Toggle(uuid string, name string) (*pbMcp.MCPServerConfig, e
 
 // Delete
 // search MCP servers in config by UUID or name
-// then delete and save the list
+// then delete the server, if it is not enabled
+// and save the list
 func (s *mcpServers) Delete(uuid string, name string) error {
 
 	found, err := s.GetIndexByUUIDName(uuid, name)
 	if err != nil {
 		return err
 	}
+	if s.Servers.Configs[found].Enabled {
+		return fmt.Errorf("error - disable the MCP server before deleting")
+	}
 
-	s.Servers.Configs = slices.Delete(s.Servers.Configs, found, 1)
+	s.Servers.Configs = slices.Delete(s.Servers.Configs, found, found+1)
 	s.save()
+
 	return nil
 
 }

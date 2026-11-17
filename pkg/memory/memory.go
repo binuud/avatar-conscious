@@ -6,6 +6,7 @@ import (
 
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	"github.com/binuud/avatar-conscious/pkg/dataLayer"
+	"github.com/binuud/avatar-conscious/pkg/servers/mcpManagerServer"
 	"github.com/binuud/avatar-conscious/pkg/settings"
 	"github.com/binuud/avatar-conscious/pkg/tools/aiGenTools"
 	"github.com/binuud/avatar-conscious/pkg/tools/toolRegistry"
@@ -31,6 +32,14 @@ type Memory struct {
 	ToolRegistry   *toolRegistry.ToolRegistry
 	Tools          []openai.ChatCompletionToolUnionParam
 	CurrentContext *pb.SingleContext
+}
+
+// Storage-only struct
+// when saving to binary
+// we do not want to save tools
+type memoryBinary struct {
+	pb.Memory
+	Messages []openai.ChatCompletionMessageParamUnion
 }
 
 // NewScratchMemory
@@ -94,7 +103,7 @@ func (m *Memory) InitTools() {
 
 	myTools := toolRegistry.NewToolRegistry()
 
-	// mcpManagerServer.AddEnabledMCPServers(myTools)
+	mcpManagerServer.AddEnabledMCPServers(myTools)
 
 	// now add common tools
 
@@ -217,6 +226,9 @@ func (m *Memory) AppendMessage(message openai.ChatCompletionMessageParamUnion) {
 
 // }
 
+// Save
+// create a new structure, without the tools and tool Interfaces
+// we do not want to save the tooling in file
 func (m *Memory) Save() error {
 
 	// scratch memory, which are unnamed memory
@@ -224,11 +236,24 @@ func (m *Memory) Save() error {
 	if m.Name == "" {
 		return nil
 	}
+
+	toSave := &memoryBinary{
+		Uuid:         m.Uuid,
+		Name:         m.Name,
+		Description:  m.Description,
+		SystemPrompt: m.SystemPrompt,
+		Model:        m.Model,
+		Seed:         m.Seed,
+		Temperature:  m.Temperature,
+		Messages:     m.Messages,
+	}
+
 	fullFileName := dataLayer.GetFileAbsolutePath(MEMORY_DIRECTORY, m.Name)
-	if err := dataLayer.SaveBinary(fullFileName, m); err != nil {
+	if err := dataLayer.SaveBinary(fullFileName, toSave); err != nil {
 		logrus.Errorf("Cannot save file %s %v", fullFileName, err)
 		return err
 	}
+
 	logrus.Infof("Saved memory to file %s", fullFileName)
 	return nil
 }
@@ -245,5 +270,9 @@ func LoadMemory(name string) (*Memory, error) {
 
 	// override model from load with settings value
 	localMemory.Model = settings.Global.GetValue("LLM_MODEL")
+
+	// rebuild tooling
+	// since we are not persisting tooling information
+	localMemory.InitTools()
 	return &localMemory, nil
 }
