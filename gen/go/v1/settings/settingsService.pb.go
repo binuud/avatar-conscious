@@ -303,6 +303,119 @@ func (x *SettingsSetResponse) GetEntry() *Config {
 	return nil
 }
 
+// allows for a subset of settings keys to be saved
+type SettingsSaveRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	GroupKey      string                 `protobuf:"bytes,1,opt,name=groupKey,proto3" json:"groupKey,omitempty"`
+	Configs       *ConfigList            `protobuf:"bytes,2,opt,name=configs,proto3" json:"configs,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SettingsSaveRequest) Reset() {
+	*x = SettingsSaveRequest{}
+	mi := &file_v1_settings_settingsService_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SettingsSaveRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SettingsSaveRequest) ProtoMessage() {}
+
+func (x *SettingsSaveRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_settings_settingsService_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SettingsSaveRequest.ProtoReflect.Descriptor instead.
+func (*SettingsSaveRequest) Descriptor() ([]byte, []int) {
+	return file_v1_settings_settingsService_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *SettingsSaveRequest) GetGroupKey() string {
+	if x != nil {
+		return x.GroupKey
+	}
+	return ""
+}
+
+func (x *SettingsSaveRequest) GetConfigs() *ConfigList {
+	if x != nil {
+		return x.Configs
+	}
+	return nil
+}
+
+type SettingsSaveResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	GroupKey      string                 `protobuf:"bytes,1,opt,name=groupKey,proto3" json:"groupKey,omitempty"`
+	Configs       *ConfigList            `protobuf:"bytes,2,opt,name=configs,proto3" json:"configs,omitempty"`
+	Success       bool                   `protobuf:"varint,3,opt,name=success,proto3" json:"success,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *SettingsSaveResponse) Reset() {
+	*x = SettingsSaveResponse{}
+	mi := &file_v1_settings_settingsService_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *SettingsSaveResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*SettingsSaveResponse) ProtoMessage() {}
+
+func (x *SettingsSaveResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_settings_settingsService_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use SettingsSaveResponse.ProtoReflect.Descriptor instead.
+func (*SettingsSaveResponse) Descriptor() ([]byte, []int) {
+	return file_v1_settings_settingsService_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *SettingsSaveResponse) GetGroupKey() string {
+	if x != nil {
+		return x.GroupKey
+	}
+	return ""
+}
+
+func (x *SettingsSaveResponse) GetConfigs() *ConfigList {
+	if x != nil {
+		return x.Configs
+	}
+	return nil
+}
+
+func (x *SettingsSaveResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
 var File_v1_settings_settingsService_proto protoreflect.FileDescriptor
 
 const file_v1_settings_settingsService_proto_rawDesc = "" +
@@ -323,11 +436,19 @@ const file_v1_settings_settingsService_proto_rawDesc = "" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12&\n" +
 	"\x05entry\x18\x02 \x01(\v2\x10.settings.ConfigR\x05entry\"=\n" +
 	"\x13SettingsSetResponse\x12&\n" +
-	"\x05entry\x18\x01 \x01(\v2\x10.settings.ConfigR\x05entry2\xab\x02\n" +
+	"\x05entry\x18\x01 \x01(\v2\x10.settings.ConfigR\x05entry\"a\n" +
+	"\x13SettingsSaveRequest\x12\x1a\n" +
+	"\bgroupKey\x18\x01 \x01(\tR\bgroupKey\x12.\n" +
+	"\aconfigs\x18\x02 \x01(\v2\x14.settings.ConfigListR\aconfigs\"|\n" +
+	"\x14SettingsSaveResponse\x12\x1a\n" +
+	"\bgroupKey\x18\x01 \x01(\tR\bgroupKey\x12.\n" +
+	"\aconfigs\x18\x02 \x01(\v2\x14.settings.ConfigListR\aconfigs\x12\x18\n" +
+	"\asuccess\x18\x03 \x01(\bR\asuccess2\x90\x03\n" +
 	"\bSettings\x12\\\n" +
-	"\x03Get\x12\x1c.settings.SettingsGetRequest\x1a\x1d.settings.SettingsGetResponse\"\x18\x82\xd3\xe4\x93\x02\x12\x12\x10/v1/Settings/get\x12`\n" +
-	"\x04List\x12\x1d.settings.SettingsListRequest\x1a\x1e.settings.SettingsListResponse\"\x19\x82\xd3\xe4\x93\x02\x13\x12\x11/v1/Settings/list\x12_\n" +
-	"\x03Set\x12\x1c.settings.SettingsSetRequest\x1a\x1d.settings.SettingsSetResponse\"\x1b\x82\xd3\xe4\x93\x02\x15:\x01*\"\x10/v1/Settings/setB7Z5github.com/binuud/avatar-conscious/gen/go/v1/settingsb\x06proto3"
+	"\x03Get\x12\x1c.settings.SettingsGetRequest\x1a\x1d.settings.SettingsGetResponse\"\x18\x82\xd3\xe4\x93\x02\x12\x12\x10/v1/settings/get\x12`\n" +
+	"\x04List\x12\x1d.settings.SettingsListRequest\x1a\x1e.settings.SettingsListResponse\"\x19\x82\xd3\xe4\x93\x02\x13\x12\x11/v1/settings/list\x12_\n" +
+	"\x03Set\x12\x1c.settings.SettingsSetRequest\x1a\x1d.settings.SettingsSetResponse\"\x1b\x82\xd3\xe4\x93\x02\x15:\x01*\"\x10/v1/settings/set\x12c\n" +
+	"\x04Save\x12\x1d.settings.SettingsSaveRequest\x1a\x1e.settings.SettingsSaveResponse\"\x1c\x82\xd3\xe4\x93\x02\x16:\x01*\"\x11/v1/settings/saveB7Z5github.com/binuud/avatar-conscious/gen/go/v1/settingsb\x06proto3"
 
 var (
 	file_v1_settings_settingsService_proto_rawDescOnce sync.Once
@@ -341,7 +462,7 @@ func file_v1_settings_settingsService_proto_rawDescGZIP() []byte {
 	return file_v1_settings_settingsService_proto_rawDescData
 }
 
-var file_v1_settings_settingsService_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_v1_settings_settingsService_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_v1_settings_settingsService_proto_goTypes = []any{
 	(*SettingsGetRequest)(nil),   // 0: settings.SettingsGetRequest
 	(*SettingsGetResponse)(nil),  // 1: settings.SettingsGetResponse
@@ -349,27 +470,33 @@ var file_v1_settings_settingsService_proto_goTypes = []any{
 	(*SettingsListResponse)(nil), // 3: settings.SettingsListResponse
 	(*SettingsSetRequest)(nil),   // 4: settings.SettingsSetRequest
 	(*SettingsSetResponse)(nil),  // 5: settings.SettingsSetResponse
-	nil,                          // 6: settings.SettingsListResponse.GroupsEntry
-	(*Config)(nil),               // 7: settings.Config
-	(*ConfigList)(nil),           // 8: settings.ConfigList
+	(*SettingsSaveRequest)(nil),  // 6: settings.SettingsSaveRequest
+	(*SettingsSaveResponse)(nil), // 7: settings.SettingsSaveResponse
+	nil,                          // 8: settings.SettingsListResponse.GroupsEntry
+	(*Config)(nil),               // 9: settings.Config
+	(*ConfigList)(nil),           // 10: settings.ConfigList
 }
 var file_v1_settings_settingsService_proto_depIdxs = []int32{
-	7, // 0: settings.SettingsGetResponse.entry:type_name -> settings.Config
-	6, // 1: settings.SettingsListResponse.groups:type_name -> settings.SettingsListResponse.GroupsEntry
-	7, // 2: settings.SettingsSetRequest.entry:type_name -> settings.Config
-	7, // 3: settings.SettingsSetResponse.entry:type_name -> settings.Config
-	8, // 4: settings.SettingsListResponse.GroupsEntry.value:type_name -> settings.ConfigList
-	0, // 5: settings.Settings.Get:input_type -> settings.SettingsGetRequest
-	2, // 6: settings.Settings.List:input_type -> settings.SettingsListRequest
-	4, // 7: settings.Settings.Set:input_type -> settings.SettingsSetRequest
-	1, // 8: settings.Settings.Get:output_type -> settings.SettingsGetResponse
-	3, // 9: settings.Settings.List:output_type -> settings.SettingsListResponse
-	5, // 10: settings.Settings.Set:output_type -> settings.SettingsSetResponse
-	8, // [8:11] is the sub-list for method output_type
-	5, // [5:8] is the sub-list for method input_type
-	5, // [5:5] is the sub-list for extension type_name
-	5, // [5:5] is the sub-list for extension extendee
-	0, // [0:5] is the sub-list for field type_name
+	9,  // 0: settings.SettingsGetResponse.entry:type_name -> settings.Config
+	8,  // 1: settings.SettingsListResponse.groups:type_name -> settings.SettingsListResponse.GroupsEntry
+	9,  // 2: settings.SettingsSetRequest.entry:type_name -> settings.Config
+	9,  // 3: settings.SettingsSetResponse.entry:type_name -> settings.Config
+	10, // 4: settings.SettingsSaveRequest.configs:type_name -> settings.ConfigList
+	10, // 5: settings.SettingsSaveResponse.configs:type_name -> settings.ConfigList
+	10, // 6: settings.SettingsListResponse.GroupsEntry.value:type_name -> settings.ConfigList
+	0,  // 7: settings.Settings.Get:input_type -> settings.SettingsGetRequest
+	2,  // 8: settings.Settings.List:input_type -> settings.SettingsListRequest
+	4,  // 9: settings.Settings.Set:input_type -> settings.SettingsSetRequest
+	6,  // 10: settings.Settings.Save:input_type -> settings.SettingsSaveRequest
+	1,  // 11: settings.Settings.Get:output_type -> settings.SettingsGetResponse
+	3,  // 12: settings.Settings.List:output_type -> settings.SettingsListResponse
+	5,  // 13: settings.Settings.Set:output_type -> settings.SettingsSetResponse
+	7,  // 14: settings.Settings.Save:output_type -> settings.SettingsSaveResponse
+	11, // [11:15] is the sub-list for method output_type
+	7,  // [7:11] is the sub-list for method input_type
+	7,  // [7:7] is the sub-list for extension type_name
+	7,  // [7:7] is the sub-list for extension extendee
+	0,  // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_v1_settings_settingsService_proto_init() }
@@ -384,7 +511,7 @@ func file_v1_settings_settingsService_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_v1_settings_settingsService_proto_rawDesc), len(file_v1_settings_settingsService_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   7,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
