@@ -15,7 +15,7 @@ func NewMemoryCommand() *cobra.Command {
 		Use:   "list",
 		Short: "lists all memory files",
 		Run: func(cmd *cobra.Command, args []string) {
-			memories, err := ListMemory()
+			memories, err := ListMemoryFiles()
 			if err != nil {
 				cmd.PrintErrf("cannot list memories, check if dataVolumes is mounted, %v \n", err)
 				return

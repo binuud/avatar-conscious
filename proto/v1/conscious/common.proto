@@ -41,6 +41,14 @@ message ModelResponse {
   repeated Model models = 1;
 }
 
+message SetModelRequest{
+  string model = 1;
+}
+
+message SetModelResponse {
+  string model = 1;
+}
+
 message ClearMemoryRequest{}
 
 message ClearMemoryResponse{}

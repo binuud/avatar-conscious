@@ -13,6 +13,7 @@ import (
 	"github.com/binuud/avatar-conscious/pkg/servers/avatarStoreServer"
 	"github.com/binuud/avatar-conscious/pkg/servers/consciousServer"
 	"github.com/binuud/avatar-conscious/pkg/servers/mcpManagerServer"
+	"github.com/binuud/avatar-conscious/pkg/servers/memoryServer"
 	"github.com/binuud/avatar-conscious/pkg/servers/settingsServer"
 	"github.com/binuud/avatar-conscious/pkg/servers/systemMetricsServer"
 	"github.com/sirupsen/logrus"
@@ -33,19 +34,22 @@ func Bootstrap_GRPC_Services(server_grpc_port int) {
 	pbConscious.RegisterConsciousServer(insecureServer, consciousServer.NewGrpcConsciousServer())
 
 	// GRPC Avatar Server
-	pbAvatar.RegisterAvatarServiceServer(insecureServer, avatarServer.NewAvatarGrpcServer())
+	pbAvatar.RegisterAvatarServiceServer(insecureServer, avatarServer.NewGrpcAvatarServer())
 
 	// GRPC Avatar Store Server
-	pbAvatar.RegisterAvatarStoreServiceServer(insecureServer, avatarStoreServer.NewAvatarStoreGrpcServer())
+	pbAvatar.RegisterAvatarStoreServiceServer(insecureServer, avatarStoreServer.NewGrpcAvatarStoreServer())
 
 	// GRPC SystemMetrics Server
 	pbConscious.RegisterMetricsServer(insecureServer, systemMetricsServer.NewGrpcSystemMetricsServer())
 
 	// GRPC MCP Server
-	pbMcp.RegisterMCPManagerServiceServer(insecureServer, mcpManagerServer.NewMCPManagerGrpcServer())
+	pbMcp.RegisterMCPManagerServiceServer(insecureServer, mcpManagerServer.NewGrpcMCPManagerServer())
+
+	// GRPC Memory Server
+	pbConscious.RegisterMemoryServiceServer(insecureServer, memoryServer.NewGrpcMemoryServer())
 
 	// GRPC Settings Server
-	pbSettings.RegisterSettingsServer(insecureServer, settingsServer.NewSettingsGrpcServer())
+	pbSettings.RegisterSettingsServer(insecureServer, settingsServer.NewGrpcSettingsServer())
 
 	// Register reflection service on gRPC server.
 	reflection.Register(insecureServer)

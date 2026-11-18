@@ -78,8 +78,8 @@ func (a *AvatarWrapper) BuildUsingLLM() error {
 
 	// now use LLM to get the steps, that this avatar needs to run
 	output, err := llm.MakeLLMSchemaResponseRequest(userPrompt,
-		buildMemory.SystemPrompt,
-		buildMemory.Model,
+		buildMemory.Meta.SystemPrompt,
+		buildMemory.Meta.Model,
 		stepsSchema)
 	if err != nil {
 		logrus.Errorf("client: error llm chat request: %v \n", err)

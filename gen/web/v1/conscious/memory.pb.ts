@@ -11,7 +11,7 @@ export type SingleContext = {
   out?: ConsciousContextMessage.ContextMesssage
 }
 
-export type Memory = {
+export type MemoryMeta = {
   uuid?: string
   name?: string
   description?: string
@@ -19,6 +19,52 @@ export type Memory = {
   systemPrompt?: string
   seed?: string
   temperature?: number
-  contexts?: SingleContext[]
   createdAt?: CommonCommon.Timestamp
+}
+
+export type Memory = {
+  meta?: MemoryMeta
+  contexts?: SingleContext[]
+}
+
+export type ListMemoryRequest = {
+  name?: string
+}
+
+export type ListMemoryResponse = {
+  memories?: MemoryMeta[]
+}
+
+export type GetMemoryRequest = {
+  uuid?: string
+  name?: string
+}
+
+export type GetMemoryResponse = {
+  meta?: MemoryMeta
+}
+
+export type AddMemoryRequest = {
+  meta?: MemoryMeta
+}
+
+export type AddMemoryResponse = {
+  meta?: MemoryMeta
+}
+
+export type UpdateMemoryRequest = {
+  meta?: MemoryMeta
+}
+
+export type UpdateMemoryResponse = {
+  meta?: MemoryMeta
+}
+
+export type DeleteMemoryRequest = {
+  uuid?: string
+  name?: string
+}
+
+export type DeleteMemoryResponse = {
+  success?: boolean
 }

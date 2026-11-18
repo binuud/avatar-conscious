@@ -10,18 +10,18 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type avatarGrpcStoreServer struct {
+type grpcAvatarStoreServer struct {
 	pb.UnimplementedAvatarStoreServiceServer
 	store *avatarStore
 }
 
-func NewAvatarStoreGrpcServer() *avatarGrpcStoreServer {
-	return &avatarGrpcStoreServer{
+func NewGrpcAvatarStoreServer() *grpcAvatarStoreServer {
+	return &grpcAvatarStoreServer{
 		store: NewAvatarStore(),
 	}
 }
 
-func (s *avatarGrpcStoreServer) List(ctx context.Context, in *pb.AvatarStoreListRequest) (*pb.AvatarStoreListResponse, error) {
+func (s *grpcAvatarStoreServer) List(ctx context.Context, in *pb.AvatarStoreListRequest) (*pb.AvatarStoreListResponse, error) {
 	logrus.Infof("ListAvatar called with limit=%d, offset=%d", in.GetLimit(), in.GetOffset())
 
 	avatars, totalCount := s.store.List(in.GetLimit(), in.GetOffset())
@@ -32,7 +32,7 @@ func (s *avatarGrpcStoreServer) List(ctx context.Context, in *pb.AvatarStoreList
 	}, nil
 }
 
-func (s *avatarGrpcStoreServer) Get(ctx context.Context, in *pb.AvatarStoreGetRequest) (*pb.AvatarStoreGetResponse, error) {
+func (s *grpcAvatarStoreServer) Get(ctx context.Context, in *pb.AvatarStoreGetRequest) (*pb.AvatarStoreGetResponse, error) {
 	logrus.Infof("GetAvatar called with uuid=%s", in.GetUuid())
 
 	avatar, err := s.store.Get(in.GetUuid())
@@ -45,7 +45,7 @@ func (s *avatarGrpcStoreServer) Get(ctx context.Context, in *pb.AvatarStoreGetRe
 	}, nil
 }
 
-func (s *avatarGrpcStoreServer) Create(ctx context.Context, in *pb.AvatarStoreCreateRequest) (*pb.AvatarStoreCreateResponse, error) {
+func (s *grpcAvatarStoreServer) Create(ctx context.Context, in *pb.AvatarStoreCreateRequest) (*pb.AvatarStoreCreateResponse, error) {
 	logrus.Infof("CreateAvatar called with name=%s, description=%s, permissions=%v, systemPrompt=%s",
 		in.GetName(), in.GetDescription(), in.GetPermissions(), in.GetSystemPrompt())
 
@@ -56,7 +56,7 @@ func (s *avatarGrpcStoreServer) Create(ctx context.Context, in *pb.AvatarStoreCr
 	}, nil
 }
 
-func (s *avatarGrpcStoreServer) Update(ctx context.Context, in *pb.AvatarStoreUpdateRequest) (*pb.AvatarStoreUpdateResponse, error) {
+func (s *grpcAvatarStoreServer) Update(ctx context.Context, in *pb.AvatarStoreUpdateRequest) (*pb.AvatarStoreUpdateResponse, error) {
 	logrus.Infof("UpdateAvatar called with uuid=%s, name=%s, description=%s, permissions=%v, systemPrompt=%s",
 		in.GetUuid(), in.GetName(), in.GetDescription(), in.GetPermissions(), in.GetSystemPrompt())
 
@@ -70,7 +70,7 @@ func (s *avatarGrpcStoreServer) Update(ctx context.Context, in *pb.AvatarStoreUp
 	}, nil
 }
 
-func (s *avatarGrpcStoreServer) Delete(ctx context.Context, in *pb.AvatarStoreDeleteRequest) (*pb.AvatarStoreDeleteResponse, error) {
+func (s *grpcAvatarStoreServer) Delete(ctx context.Context, in *pb.AvatarStoreDeleteRequest) (*pb.AvatarStoreDeleteResponse, error) {
 	logrus.Infof("DeleteAvatar called with uuid=%s", in.GetUuid())
 
 	avatar, err := s.store.Get(in.GetUuid())

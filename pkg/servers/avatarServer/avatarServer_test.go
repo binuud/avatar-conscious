@@ -38,7 +38,7 @@ func init() {
 func Test_AvatarServer_Start(t *testing.T) {
 	t.Logf("Test_AvatarServer_Start")
 
-	a := NewAvatarGrpcServer()
+	a := NewGrpcAvatarServer()
 
 	got, err := a.Start(context.Background(), &pb.StartRequest{
 		Name: "election-officer",

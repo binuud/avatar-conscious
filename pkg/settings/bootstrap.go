@@ -6,6 +6,14 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+const (
+	SYSTEM_PROMPT = "You are a helpful assistant." +
+		"You must use the tools provided to answer questions." +
+		"Very polite, friendly with children. Do not use curse words." +
+		"Do not use bad words. Do not use any smilies, emojis, or symbols in your responses from now on." +
+		"If tool call response if a filename or a filename with path, give output as \"\render [filename]\""
+)
+
 func Bootstrap() {
 
 	// override defaults localhost
@@ -35,6 +43,14 @@ func Bootstrap() {
 		Default:     "dummy",
 		Description: "LLM API Key, use use third party llm providers",
 		Type:        pbSettings.Config_STRING,
+	})
+
+	Global.Add(&pbSettings.Config{
+		Name:        "LLM_SYSTEM_PROMPT",
+		Group:       "LLM",
+		Default:     SYSTEM_PROMPT,
+		Description: "System Prompt used in chat interface and streaming chat",
+		Type:        pbSettings.Config_MULTI_LINE_STRING,
 	})
 
 	Global.Add(&pbSettings.Config{

@@ -41,9 +41,9 @@ func Test_ImageEdit(t *testing.T) {
 
 func _test_tool_request_params(t *testing.T, memory *memory.Memory, expectedTool string, expectedParams []string) {
 	completions, err := llm.MakeLLMSingleToolRequest(memory.Messages,
-		memory.Model,
+		memory.Meta.Model,
 		memory.Tools,
-		memory.Temperature)
+		memory.Meta.Temperature)
 	if err != nil {
 		t.Fatalf("client: error llm chat request: %v \n", err)
 	}

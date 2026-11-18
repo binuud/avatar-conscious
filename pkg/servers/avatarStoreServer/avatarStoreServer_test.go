@@ -10,7 +10,7 @@ import (
 
 func Test_Avatar_Store_List(t *testing.T) {
 	t.Logf("Test_Avatar_Store_List")
-	s := NewAvatarStoreGrpcServer()
+	s := NewGrpcAvatarStoreServer()
 
 	got, err := s.List(context.Background(), &pb.AvatarStoreListRequest{
 		Limit: 100,

@@ -17,7 +17,7 @@ import (
 func (s *grpcConsciousServer) MakeLLMChatRequest(prompt string) (*openai.ChatCompletion, error) {
 
 	s.memory.Messages = append(s.memory.Messages, openai.UserMessage(prompt))
-	completions, err := llm.MakeLLMChatRequest(s.memory.Messages, s.memory.Tools, s.memory.Model, s.memory.Temperature)
+	completions, err := llm.MakeLLMChatRequest(s.memory.Messages, s.memory.Tools, s.memory.Meta.Model, s.memory.Meta.Temperature)
 	if err != nil {
 		return nil, err
 	}
@@ -33,9 +33,9 @@ func (s *grpcConsciousServer) handleTool(in *pb.ContextMesssage, stream grpc.Ser
 	// adding user prompt, so that the tooling call can decide what tool to use
 	s.memory.AppendInMessage(in)
 	completions, err := llm.MakeLLMSingleToolRequest(s.memory.Messages,
-		s.memory.Model,
+		s.memory.Meta.Model,
 		s.memory.Tools,
-		s.memory.Temperature)
+		s.memory.Meta.Temperature)
 	if err != nil {
 		logrus.Errorf("client: error llm chat request: %v \n", err)
 		return false, nil, err

@@ -105,6 +105,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ReloadToolsResponse'
+  /v1/conscious/setModel:
+    post:
+      operationId: setModel
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SetModelRequest'
+        required: true
+      responses:
+        "200":
+          description: conscious.Conscious.SetModel response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SetModelResponse'
   /v1/consciousMetrics/getSystemMetrics:
     post:
       operationId: getSystemMetrics
@@ -136,8 +152,100 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HealthResponse'
+  /v1/memory/add:
+    post:
+      operationId: add
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddMemoryRequest'
+        required: true
+      responses:
+        "200":
+          description: conscious.MemoryService.Add response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AddMemoryResponse'
+  /v1/memory/delete:
+    post:
+      operationId: delete
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteMemoryRequest'
+        required: true
+      responses:
+        "200":
+          description: conscious.MemoryService.Delete response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteMemoryResponse'
+  /v1/memory/get:
+    get:
+      operationId: get
+      parameters:
+        - name: name
+          in: query
+          schema:
+            type: string
+        - name: uuid
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: conscious.MemoryService.Get response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetMemoryResponse'
+  /v1/memory/list:
+    get:
+      operationId: list
+      parameters:
+        - name: name
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: conscious.MemoryService.List response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ListMemoryResponse'
+  /v1/memory/update:
+    post:
+      operationId: update
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateMemoryRequest'
+        required: true
+      responses:
+        "200":
+          description: conscious.MemoryService.Update response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateMemoryResponse'
 components:
   schemas:
+    AddMemoryRequest:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/MemoryMeta'
+    AddMemoryResponse:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/MemoryMeta'
     ClearMemoryRequest:
       type: object
     ClearMemoryResponse:
@@ -233,6 +341,23 @@ components:
         - "IMAGE_GENERATION"
         - "IMAGE_EDIT"
         - "TTS"
+    DeleteMemoryRequest:
+      type: object
+      properties:
+        uuid:
+          type: string
+        name:
+          type: string
+    DeleteMemoryResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+    GetMemoryResponse:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/MemoryMeta'
     GetSystemMetricsRequest:
       type: object
       properties:
@@ -260,6 +385,34 @@ components:
         - "Active"
         - "Waiting"
         - "Down"
+    ListMemoryResponse:
+      type: object
+      properties:
+        memories:
+          type: array
+          items:
+            $ref: '#/components/schemas/MemoryMeta'
+    MemoryMeta:
+      type: object
+      properties:
+        uuid:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        model:
+          type: string
+        systemPrompt:
+          type: string
+        seed:
+          type: integer
+          format: int64
+        temperature:
+          type: number
+          format: double
+        createdAt:
+          $ref: '#/components/schemas/Timestamp'
     Model:
       type: object
       properties:
@@ -284,6 +437,16 @@ components:
       properties:
         success:
           type: boolean
+    SetModelRequest:
+      type: object
+      properties:
+        model:
+          type: string
+    SetModelResponse:
+      type: object
+      properties:
+        model:
+          type: string
     SystemMetrics:
       type: object
       properties:
@@ -316,6 +479,16 @@ components:
         createdAt:
           type: integer
           format: int64
+    UpdateMemoryRequest:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/MemoryMeta'
+    UpdateMemoryResponse:
+      type: object
+      properties:
+        meta:
+          $ref: '#/components/schemas/MemoryMeta'
     UploadRequest:
       type: object
       properties:

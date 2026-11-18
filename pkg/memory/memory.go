@@ -17,12 +17,6 @@ import (
 
 const (
 	MEMORY_DIRECTORY = "memories"
-	SYSTEM_PROMPT    = `You are a helpful assistant. 
-		You must use the tools provided to answer questions. 
-		Very polite, friendly with children. Do not use curse words. 
-		Do not use bad words. Do not use any smilies, emojis, or symbols in your responses from now on.
-		If tool call response if a filename or a filename with path, give output as "\render [filename]"
-		`
 )
 
 type Memory struct {
@@ -46,20 +40,20 @@ type memoryBinary struct {
 // scratch memory is not saved
 func NewScratchMemory() *Memory {
 	messages := []openai.ChatCompletionMessageParamUnion{
-		openai.SystemMessage(SYSTEM_PROMPT),
+		openai.SystemMessage(settings.Global.GetValue("LLM_SYSTEM_PROMPT")),
 	}
-
-	model := settings.Global.GetValue("LLM_MODEL")
 
 	memory := &Memory{
-		Model:        model,
-		SystemPrompt: SYSTEM_PROMPT,
-		Temperature:  0.8,
-		Messages:     messages,
-		Tools:        nil,
-		Contexts:     make([]*pb.SingleContext, 0),
+		Meta: &pb.MemoryMeta{
+			Name:         "",
+			SystemPrompt: settings.Global.GetValue("LLM_SYSTEM_PROMPT"),
+			Temperature:  0.8,
+		},
+		Messages: messages,
+		Tools:    nil,
+		Contexts: make([]*pb.SingleContext, 0),
 	}
-
+	memory.SetModel(settings.Global.GetValue("LLM_MODEL"))
 	return memory
 }
 
@@ -74,20 +68,20 @@ func NewMemory(name string) *Memory {
 	memory, err := LoadMemory(name)
 	if err != nil {
 		messages := []openai.ChatCompletionMessageParamUnion{
-			openai.SystemMessage(SYSTEM_PROMPT),
+			openai.SystemMessage(settings.Global.GetValue("LLM_SYSTEM_PROMPT")),
 		}
-
-		model := settings.Global.GetValue("LLM_MODEL")
 
 		memory = &Memory{
-			Name:         name,
-			Model:        model,
-			SystemPrompt: SYSTEM_PROMPT,
-			Temperature:  0.8,
-			Messages:     messages,
-			Tools:        nil,
-			Contexts:     make([]*pb.SingleContext, 0),
+			Meta: &pb.MemoryMeta{
+				Name:         name,
+				SystemPrompt: settings.Global.GetValue("LLM_SYSTEM_PROMPT"),
+				Temperature:  0.8,
+			},
+			Messages: messages,
+			Tools:    nil,
+			Contexts: make([]*pb.SingleContext, 0),
 		}
+		memory.SetModel(settings.Global.GetValue("LLM_MODEL"))
 		memory.InitTools()
 		memory.Save()
 	}
@@ -95,8 +89,13 @@ func NewMemory(name string) *Memory {
 	return memory
 }
 
-func (m *Memory) SetModel() {
-	m.Model = settings.Global.GetValue("LLM_MODEL")
+func (m *Memory) SetModel(model string) {
+	if model != "" {
+		m.Meta.Model = model
+	} else {
+		m.Meta.Model = settings.Global.GetValue("LLM_MODEL")
+	}
+
 }
 
 func (m *Memory) InitTools() {
@@ -117,7 +116,7 @@ func (m *Memory) InitTools() {
 
 	m.ToolRegistry = myTools
 	m.Tools = myTools.GetCommonTools()
-	logrus.Debugf("Tools Added to conscious memory %s", m.Name)
+	logrus.Debugf("Tools Added to conscious memory %s", m.Meta.Name)
 
 }
 
@@ -127,7 +126,7 @@ func (m *Memory) DumpTools() {
 
 func (m *Memory) DumpMemory(w io.Writer) {
 	logrus.Debug("-----------------------------------------------------------------")
-	logrus.Debugf("Name: %s, Model: %s, Temp: %f", m.Name, m.Model, m.Temperature)
+	logrus.Debugf("Name: %s, Model: %s, Temp: %f", m.Meta.Name, m.Meta.Model, m.Meta.Temperature)
 	logrus.Debugf("Num Tools %d", len(m.Tools))
 	// logrus.Debugf("System Prompt: %s", m.SystemPrompt)
 	for _, msg := range m.Messages {
@@ -224,11 +223,11 @@ func (m *Memory) AppendMessage(message openai.ChatCompletionMessageParamUnion) {
 // SetSystemPrompt
 // hotswap system prompt
 func (m *Memory) SetSystemPrompt(systemPrompt string) error {
-	m.SystemPrompt = systemPrompt
+	m.Meta.SystemPrompt = systemPrompt
 	if len(m.Messages) > 0 {
 		if m.Messages[0].OfSystem != nil {
-			m.Messages[0] = openai.SystemMessage(m.SystemPrompt)
-			logrus.Debugf("New System prompt %s", m.SystemPrompt)
+			m.Messages[0] = openai.SystemMessage(m.GetSystemPrompt())
+			logrus.Debugf("New System prompt %s", m.GetSystemPrompt())
 		}
 	}
 	return fmt.Errorf("cannot set system prompt")
@@ -247,22 +246,25 @@ func (m *Memory) Save() error {
 
 	// scratch memory, which are unnamed memory
 	// are not saved
-	if m.Name == "" {
+	if m.Meta.Name == "" {
 		return nil
 	}
 
 	toSave := &memoryBinary{
-		Uuid:         m.Uuid,
-		Name:         m.Name,
-		Description:  m.Description,
-		SystemPrompt: m.SystemPrompt,
-		Model:        m.Model,
-		Seed:         m.Seed,
-		Temperature:  m.Temperature,
-		Messages:     m.Messages,
+		Meta: &pb.MemoryMeta{
+			Uuid:         m.Meta.Uuid,
+			Name:         m.Meta.Name,
+			Description:  m.Meta.Description,
+			SystemPrompt: m.Meta.SystemPrompt,
+			Model:        m.Meta.Model,
+			Seed:         m.Meta.Seed,
+			Temperature:  m.Meta.Temperature,
+		},
+
+		Messages: m.Messages,
 	}
 
-	fullFileName := dataLayer.GetFileAbsolutePath(MEMORY_DIRECTORY, m.Name)
+	fullFileName := dataLayer.GetFileAbsolutePath(MEMORY_DIRECTORY, m.Meta.Name)
 	if err := dataLayer.SaveBinary(fullFileName, toSave); err != nil {
 		logrus.Errorf("Cannot save file %s %v", fullFileName, err)
 		return err
@@ -270,6 +272,15 @@ func (m *Memory) Save() error {
 
 	logrus.Infof("Saved memory to file %s", fullFileName)
 	return nil
+}
+
+func (m *Memory) ReadSystemPromptFromSettings() {
+	// override system prompt from the config
+	m.SetSystemPrompt(settings.Global.GetValue("LLM_SYSTEM_PROMPT"))
+}
+
+func (m *Memory) GetSystemPrompt() string {
+	return m.Meta.SystemPrompt
 }
 
 // LoadMemory
@@ -282,8 +293,20 @@ func LoadMemory(name string) (*Memory, error) {
 		return nil, err
 	}
 
-	// override model from load with settings value
-	localMemory.Model = settings.Global.GetValue("LLM_MODEL")
+	// rebuild tooling
+	// since we are not persisting tooling information
+	localMemory.InitTools()
+	return &localMemory, nil
+}
+
+func Delete(name string) (*Memory, error) {
+	// Read profile back (Go automatically infers type T from your variable assignment)
+	fullFileName := dataLayer.GetFileAbsolutePath(MEMORY_DIRECTORY, name)
+	localMemory, err := dataLayer.ReadBinary[Memory](fullFileName)
+	if err != nil {
+		logrus.Errorf("error reading memory file %s, %v", name, err)
+		return nil, err
+	}
 
 	// rebuild tooling
 	// since we are not persisting tooling information

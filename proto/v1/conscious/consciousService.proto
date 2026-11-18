@@ -47,6 +47,13 @@ service Conscious {
     };
   }
 
+  rpc SetModel(SetModelRequest) returns (SetModelResponse) {
+    option (google.api.http) = {
+      post : "/v1/conscious/setModel"
+      body : "*"
+    };
+  }
+
   rpc FileUpload(UploadRequest) returns (UploadResponse) {
     option (google.api.http) = {
       post : "/v1/conscious/fileUpload"

@@ -40,7 +40,7 @@ func Test_MCP_Manager(t *testing.T) {
 }
 
 func _register(t *testing.T) {
-	s := mcpManagerServer.NewMCPManagerGrpcServer()
+	s := mcpManagerServer.NewGrpcMCPManagerServer()
 
 	got, err := s.Register(context.Background(), &pbMcp.RegisterRequest{
 		Config: &pbMcp.MCPServerConfig{
@@ -102,7 +102,7 @@ func _register(t *testing.T) {
 
 func _list(t *testing.T) {
 
-	s := mcpManagerServer.NewMCPManagerGrpcServer()
+	s := mcpManagerServer.NewGrpcMCPManagerServer()
 
 	got, err := s.List(context.Background(), &pbMcp.ListRequest{})
 	if err != nil {
