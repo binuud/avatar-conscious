@@ -13,7 +13,7 @@ type avatarGrpcServer struct {
 	avatar *AvatarWrapper
 }
 
-func NewAvatarGrpcServer() *avatarGrpcServer {
+func NewGrpcAvatarServer() *avatarGrpcServer {
 	return &avatarGrpcServer{
 		avatar: &AvatarWrapper{},
 	}

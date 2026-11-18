@@ -44,6 +44,15 @@ message ListMemoryResponse {
   repeated MemoryMeta memories = 1;
 }
 
+message GetMemoryRequest {
+  string uuid = 1;
+  string name = 2;
+}
+
+message GetMemoryResponse {
+  MemoryMeta meta = 1;
+}
+
 message AddMemoryRequest {
   MemoryMeta meta = 1;
 }
@@ -58,4 +67,13 @@ message UpdateMemoryRequest {
 
 message UpdateMemoryResponse {
   MemoryMeta meta = 1;
+}
+
+message DeleteMemoryRequest {
+  string uuid = 1;
+  string name = 2;
+}
+
+message DeleteMemoryResponse {
+  bool success = 1;
 }

@@ -9,17 +9,17 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type mcpManagerGrpcServer struct {
+type grpcMcpManagerServer struct {
 	pbMcp.UnimplementedMCPManagerServiceServer
 }
 
-func NewMCPManagerGrpcServer() *mcpManagerGrpcServer {
-	return &mcpManagerGrpcServer{}
+func NewGrpcMCPManagerServer() *grpcMcpManagerServer {
+	return &grpcMcpManagerServer{}
 }
 
 // Check
 // check tools, reachability of the mcp server
-func (s *mcpManagerGrpcServer) Check(ctx context.Context, in *pbMcp.CheckRequest) (*pbMcp.CheckResponse, error) {
+func (s *grpcMcpManagerServer) Check(ctx context.Context, in *pbMcp.CheckRequest) (*pbMcp.CheckResponse, error) {
 
 	logrus.Infof("Check called on MCP Manager %v", in)
 	mcp := NewMcpServers()
@@ -37,7 +37,7 @@ func (s *mcpManagerGrpcServer) Check(ctx context.Context, in *pbMcp.CheckRequest
 // Register
 // check if endpoint is already register, if so flag an error
 // if new mcp server, save it in list after checking reachability
-func (s *mcpManagerGrpcServer) Register(ctx context.Context, in *pbMcp.RegisterRequest) (*pbMcp.RegisterResponse, error) {
+func (s *grpcMcpManagerServer) Register(ctx context.Context, in *pbMcp.RegisterRequest) (*pbMcp.RegisterResponse, error) {
 
 	logrus.Infof("Register called on MCP Manager %v", in)
 
@@ -71,7 +71,7 @@ func (s *mcpManagerGrpcServer) Register(ctx context.Context, in *pbMcp.RegisterR
 
 // List
 // Read the mcp config file and return all entries
-func (s *mcpManagerGrpcServer) List(ctx context.Context, in *pbMcp.ListRequest) (*pbMcp.ListResponse, error) {
+func (s *grpcMcpManagerServer) List(ctx context.Context, in *pbMcp.ListRequest) (*pbMcp.ListResponse, error) {
 
 	logrus.Infof("List called on MCP Manager %v", in)
 	mcp := NewMcpServers()
@@ -81,7 +81,7 @@ func (s *mcpManagerGrpcServer) List(ctx context.Context, in *pbMcp.ListRequest) 
 	}, nil
 }
 
-func (s *mcpManagerGrpcServer) Toggle(ctx context.Context, in *pbMcp.ToggleRequest) (*pbMcp.ToggleResponse, error) {
+func (s *grpcMcpManagerServer) Toggle(ctx context.Context, in *pbMcp.ToggleRequest) (*pbMcp.ToggleResponse, error) {
 
 	logrus.Infof("Toggle called on MCP Manager %v", in.Uuid)
 
@@ -97,7 +97,7 @@ func (s *mcpManagerGrpcServer) Toggle(ctx context.Context, in *pbMcp.ToggleReque
 	}, nil
 }
 
-func (s *mcpManagerGrpcServer) Get(ctx context.Context, in *pbMcp.GetRequest) (*pbMcp.GetResponse, error) {
+func (s *grpcMcpManagerServer) Get(ctx context.Context, in *pbMcp.GetRequest) (*pbMcp.GetResponse, error) {
 
 	logrus.Infof("Get called on MCP Manager %v", in)
 	mcp := NewMcpServers()
@@ -115,7 +115,7 @@ func (s *mcpManagerGrpcServer) Get(ctx context.Context, in *pbMcp.GetRequest) (*
 
 }
 
-func (s *mcpManagerGrpcServer) Delete(ctx context.Context, in *pbMcp.DeleteRequest) (*pbMcp.DeleteResponse, error) {
+func (s *grpcMcpManagerServer) Delete(ctx context.Context, in *pbMcp.DeleteRequest) (*pbMcp.DeleteResponse, error) {
 
 	logrus.Infof("Delete called on MCP Manager %v", in.Uuid)
 
@@ -131,7 +131,7 @@ func (s *mcpManagerGrpcServer) Delete(ctx context.Context, in *pbMcp.DeleteReque
 	}, nil
 }
 
-func (s *mcpManagerGrpcServer) HandleTool(ctx context.Context, in *pbMcp.HandleToolRequest) (*pbMcp.HandleToolResponse, error) {
+func (s *grpcMcpManagerServer) HandleTool(ctx context.Context, in *pbMcp.HandleToolRequest) (*pbMcp.HandleToolResponse, error) {
 
 	logrus.Debugf("HandleTool called on MCP Manager %v", in)
 	mcp := NewMcpServers()

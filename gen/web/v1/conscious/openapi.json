@@ -281,19 +281,78 @@
         }
       }
     },
-    "/v1/memory/list": {
+    "/v1/memory/delete": {
       "post": {
-        "operationId": "list",
+        "operationId": "delete",
         "requestBody": {
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ListMemoryRequest"
+                "$ref": "#/components/schemas/DeleteMemoryRequest"
               }
             }
           },
           "required": true
         },
+        "responses": {
+          "200": {
+            "description": "conscious.MemoryService.Delete response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteMemoryResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/memory/get": {
+      "get": {
+        "operationId": "get",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "uuid",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "conscious.MemoryService.Get response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMemoryResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/memory/list": {
+      "get": {
+        "operationId": "list",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "conscious.MemoryService.List response",
@@ -487,6 +546,33 @@
           "TTS"
         ]
       },
+      "DeleteMemoryRequest": {
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "DeleteMemoryResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          }
+        }
+      },
+      "GetMemoryResponse": {
+        "type": "object",
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/MemoryMeta"
+          }
+        }
+      },
       "GetSystemMetricsRequest": {
         "type": "object",
         "properties": {
@@ -525,14 +611,6 @@
           "Waiting",
           "Down"
         ]
-      },
-      "ListMemoryRequest": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string"
-          }
-        }
       },
       "ListMemoryResponse": {
         "type": "object",

@@ -298,3 +298,18 @@ func LoadMemory(name string) (*Memory, error) {
 	localMemory.InitTools()
 	return &localMemory, nil
 }
+
+func Delete(name string) (*Memory, error) {
+	// Read profile back (Go automatically infers type T from your variable assignment)
+	fullFileName := dataLayer.GetFileAbsolutePath(MEMORY_DIRECTORY, name)
+	localMemory, err := dataLayer.ReadBinary[Memory](fullFileName)
+	if err != nil {
+		logrus.Errorf("error reading memory file %s, %v", name, err)
+		return nil, err
+	}
+
+	// rebuild tooling
+	// since we are not persisting tooling information
+	localMemory.InitTools()
+	return &localMemory, nil
+}

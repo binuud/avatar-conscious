@@ -17,8 +17,13 @@ service MemoryService {
 
   rpc List(ListMemoryRequest) returns (ListMemoryResponse) {
     option (google.api.http) = {
-      post : "/v1/memory/list"
-      body : "*"
+      get : "/v1/memory/list"
+    };
+  }
+
+  rpc Get(GetMemoryRequest) returns (GetMemoryResponse) {
+    option (google.api.http) = {
+      get : "/v1/memory/get"
     };
   }
 
@@ -32,6 +37,13 @@ service MemoryService {
   rpc Update(UpdateMemoryRequest) returns (UpdateMemoryResponse) {
     option (google.api.http) = {
       post : "/v1/memory/update"
+      body : "*"
+    };
+  }
+
+  rpc Delete(DeleteMemoryRequest) returns (DeleteMemoryResponse) {
+    option (google.api.http) = {
+      post : "/v1/memory/delete"
       body : "*"
     };
   }

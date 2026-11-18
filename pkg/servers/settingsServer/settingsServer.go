@@ -8,15 +8,15 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-type settingsGrpcServer struct {
+type grpcSettingsServer struct {
 	pb.UnimplementedSettingsServer
 }
 
-func NewSettingsGrpcServer() *settingsGrpcServer {
-	return &settingsGrpcServer{}
+func NewGrpcSettingsServer() *grpcSettingsServer {
+	return &grpcSettingsServer{}
 }
 
-func (s *settingsGrpcServer) List(ctx context.Context, in *pb.SettingsListRequest) (*pb.SettingsListResponse, error) {
+func (s *grpcSettingsServer) List(ctx context.Context, in *pb.SettingsListRequest) (*pb.SettingsListResponse, error) {
 
 	logrus.Debug("Settings Server List")
 
@@ -25,7 +25,7 @@ func (s *settingsGrpcServer) List(ctx context.Context, in *pb.SettingsListReques
 	}, nil
 }
 
-func (s *settingsGrpcServer) Save(ctx context.Context, in *pb.SettingsSaveRequest) (*pb.SettingsSaveResponse, error) {
+func (s *grpcSettingsServer) Save(ctx context.Context, in *pb.SettingsSaveRequest) (*pb.SettingsSaveResponse, error) {
 
 	logrus.Debugf("Settings Server Save")
 

@@ -25,8 +25,10 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	MemoryService_List_FullMethodName   = "/conscious.MemoryService/List"
+	MemoryService_Get_FullMethodName    = "/conscious.MemoryService/Get"
 	MemoryService_Add_FullMethodName    = "/conscious.MemoryService/Add"
 	MemoryService_Update_FullMethodName = "/conscious.MemoryService/Update"
+	MemoryService_Delete_FullMethodName = "/conscious.MemoryService/Delete"
 )
 
 // MemoryServiceClient is the client API for MemoryService service.
@@ -34,8 +36,10 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MemoryServiceClient interface {
 	List(ctx context.Context, in *ListMemoryRequest, opts ...grpc.CallOption) (*ListMemoryResponse, error)
+	Get(ctx context.Context, in *GetMemoryRequest, opts ...grpc.CallOption) (*GetMemoryResponse, error)
 	Add(ctx context.Context, in *AddMemoryRequest, opts ...grpc.CallOption) (*AddMemoryResponse, error)
 	Update(ctx context.Context, in *UpdateMemoryRequest, opts ...grpc.CallOption) (*UpdateMemoryResponse, error)
+	Delete(ctx context.Context, in *DeleteMemoryRequest, opts ...grpc.CallOption) (*DeleteMemoryResponse, error)
 }
 
 type memoryServiceClient struct {
@@ -50,6 +54,16 @@ func (c *memoryServiceClient) List(ctx context.Context, in *ListMemoryRequest, o
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListMemoryResponse)
 	err := c.cc.Invoke(ctx, MemoryService_List_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *memoryServiceClient) Get(ctx context.Context, in *GetMemoryRequest, opts ...grpc.CallOption) (*GetMemoryResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetMemoryResponse)
+	err := c.cc.Invoke(ctx, MemoryService_Get_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -76,13 +90,25 @@ func (c *memoryServiceClient) Update(ctx context.Context, in *UpdateMemoryReques
 	return out, nil
 }
 
+func (c *memoryServiceClient) Delete(ctx context.Context, in *DeleteMemoryRequest, opts ...grpc.CallOption) (*DeleteMemoryResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(DeleteMemoryResponse)
+	err := c.cc.Invoke(ctx, MemoryService_Delete_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MemoryServiceServer is the server API for MemoryService service.
 // All implementations must embed UnimplementedMemoryServiceServer
 // for forward compatibility.
 type MemoryServiceServer interface {
 	List(context.Context, *ListMemoryRequest) (*ListMemoryResponse, error)
+	Get(context.Context, *GetMemoryRequest) (*GetMemoryResponse, error)
 	Add(context.Context, *AddMemoryRequest) (*AddMemoryResponse, error)
 	Update(context.Context, *UpdateMemoryRequest) (*UpdateMemoryResponse, error)
+	Delete(context.Context, *DeleteMemoryRequest) (*DeleteMemoryResponse, error)
 	mustEmbedUnimplementedMemoryServiceServer()
 }
 
@@ -96,11 +122,17 @@ type UnimplementedMemoryServiceServer struct{}
 func (UnimplementedMemoryServiceServer) List(context.Context, *ListMemoryRequest) (*ListMemoryResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method List not implemented")
 }
+func (UnimplementedMemoryServiceServer) Get(context.Context, *GetMemoryRequest) (*GetMemoryResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Get not implemented")
+}
 func (UnimplementedMemoryServiceServer) Add(context.Context, *AddMemoryRequest) (*AddMemoryResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Add not implemented")
 }
 func (UnimplementedMemoryServiceServer) Update(context.Context, *UpdateMemoryRequest) (*UpdateMemoryResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Update not implemented")
+}
+func (UnimplementedMemoryServiceServer) Delete(context.Context, *DeleteMemoryRequest) (*DeleteMemoryResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
 }
 func (UnimplementedMemoryServiceServer) mustEmbedUnimplementedMemoryServiceServer() {}
 func (UnimplementedMemoryServiceServer) testEmbeddedByValue()                       {}
@@ -141,6 +173,24 @@ func _MemoryService_List_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MemoryService_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMemoryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MemoryServiceServer).Get(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MemoryService_Get_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MemoryServiceServer).Get(ctx, req.(*GetMemoryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _MemoryService_Add_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AddMemoryRequest)
 	if err := dec(in); err != nil {
@@ -177,6 +227,24 @@ func _MemoryService_Update_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MemoryService_Delete_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteMemoryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MemoryServiceServer).Delete(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MemoryService_Delete_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MemoryServiceServer).Delete(ctx, req.(*DeleteMemoryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MemoryService_ServiceDesc is the grpc.ServiceDesc for MemoryService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -189,12 +257,20 @@ var MemoryService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _MemoryService_List_Handler,
 		},
 		{
+			MethodName: "Get",
+			Handler:    _MemoryService_Get_Handler,
+		},
+		{
 			MethodName: "Add",
 			Handler:    _MemoryService_Add_Handler,
 		},
 		{
 			MethodName: "Update",
 			Handler:    _MemoryService_Update_Handler,
+		},
+		{
+			MethodName: "Delete",
+			Handler:    _MemoryService_Delete_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
