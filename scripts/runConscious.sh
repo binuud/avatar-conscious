@@ -25,6 +25,9 @@ export VISION_MODEL="lmstudio-community/Qwen3.5-9B-MLX-4bit"
 export FILE_STORE_PATH=$PWD/dataVolume
 export SERVABLE_DIRECTORY=$PWD/dataVolume/static
 
+# for astro mcp server
+export DATA_PATH=$HOME/Code/astro/astro/data/
+
 ## get the LLM API KEY
 source .env
 

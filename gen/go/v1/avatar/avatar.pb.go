@@ -478,12 +478,13 @@ func (x *UiCollection) GetUi() []*quantumUI.QuantumUI {
 }
 
 type Step struct {
-	state       protoimpl.MessageState `protogen:"open.v1"`
-	Name        string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Description string                 `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
-	Prompt      string                 `protobuf:"bytes,3,opt,name=prompt,proto3" json:"prompt,omitempty"`
+	state        protoimpl.MessageState `protogen:"open.v1"`
+	Name         string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Description  string                 `protobuf:"bytes,2,opt,name=description,proto3" json:"description,omitempty"`
+	Prompt       string                 `protobuf:"bytes,3,opt,name=prompt,proto3" json:"prompt,omitempty"`
+	SystemPrompt string                 `protobuf:"bytes,4,opt,name=systemPrompt,proto3" json:"systemPrompt,omitempty"`
 	// not using as enum, because of issues with parsing by AI
-	StepType      Step_StepType `protobuf:"varint,4,opt,name=step_type,json=stepType,proto3,enum=avatar.Step_StepType" json:"step_type,omitempty"`
+	StepType      Step_StepType `protobuf:"varint,5,opt,name=step_type,json=stepType,proto3,enum=avatar.Step_StepType" json:"step_type,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -535,6 +536,13 @@ func (x *Step) GetDescription() string {
 func (x *Step) GetPrompt() string {
 	if x != nil {
 		return x.Prompt
+	}
+	return ""
+}
+
+func (x *Step) GetSystemPrompt() string {
+	if x != nil {
+		return x.SystemPrompt
 	}
 	return ""
 }
@@ -714,12 +722,13 @@ const file_v1_avatar_avatar_proto_rawDesc = "" +
 	"\vmcp_servers\x18\a \x03(\tR\n" +
 	"mcpServers\"3\n" +
 	"\fUiCollection\x12#\n" +
-	"\x02ui\x18\x01 \x03(\v2\x13.quatumUI.QuantumUIR\x02ui\"\xde\x01\n" +
+	"\x02ui\x18\x01 \x03(\v2\x13.quatumUI.QuantumUIR\x02ui\"\x82\x02\n" +
 	"\x04Step\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x16\n" +
-	"\x06prompt\x18\x03 \x01(\tR\x06prompt\x122\n" +
-	"\tstep_type\x18\x04 \x01(\x0e2\x15.avatar.Step.StepTypeR\bstepType\"T\n" +
+	"\x06prompt\x18\x03 \x01(\tR\x06prompt\x12\"\n" +
+	"\fsystemPrompt\x18\x04 \x01(\tR\fsystemPrompt\x122\n" +
+	"\tstep_type\x18\x05 \x01(\x0e2\x15.avatar.Step.StepTypeR\bstepType\"T\n" +
 	"\bStepType\x12\x1a\n" +
 	"\x16STEP_TYPE_ENUM_DEFAULT\x10\x00\x12\x15\n" +
 	"\x11STEP_TYPE_ENUM_AI\x10\x01\x12\x15\n" +

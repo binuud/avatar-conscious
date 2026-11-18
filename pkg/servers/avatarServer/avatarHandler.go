@@ -227,6 +227,8 @@ func (s *avatarGrpcServer) handleAvatarRun(in *pb.ControlRequest,
 			return nil
 		}
 
+		// current Step completed
+		// send interim step output
 		if outContextMsg.ResponseImage != "" {
 			lastResponse.ResponseImage = outContextMsg.ResponseImage
 			outControlStepStatus.Response = outContextMsg.ResponseImage
@@ -242,6 +244,8 @@ func (s *avatarGrpcServer) handleAvatarRun(in *pb.ControlRequest,
 		currentStepNo++
 	}
 
+	// avatar run completed
+	// set final output
 	logrus.Infof("Avatar run completed")
 	out.Control.CompletedAt = utils.GetTimeStamp()
 	out.Control.Action = pb.AvatarAction_ACTION_COMPLETE
