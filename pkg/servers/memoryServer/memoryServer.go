@@ -2,6 +2,7 @@ package memoryServer
 
 import (
 	"context"
+	"fmt"
 
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	"github.com/binuud/avatar-conscious/pkg/memory"
@@ -49,8 +50,10 @@ func (s *grpcMemoryServiceServer) Get(ctx context.Context, in *pb.GetMemoryReque
 
 func (s *grpcMemoryServiceServer) Delete(ctx context.Context, in *pb.DeleteMemoryRequest) (*pb.DeleteMemoryResponse, error) {
 
-	logrus.Infof("Get called on Memory Server %v", in)
-
+	logrus.Infof("Delete called on Memory Server %v", in)
+	if in.Name == "" {
+		return nil, fmt.Errorf("memory name is emtpy")
+	}
 	err := memory.DeleteMemory(in.Name)
 	if err != nil {
 		return nil, err
@@ -66,6 +69,10 @@ func (s *grpcMemoryServiceServer) Add(ctx context.Context, in *pb.AddMemoryReque
 
 	logrus.Infof("Add called on Memory Server %v", in)
 
+	if in.Meta.Name == "" {
+		return nil, fmt.Errorf("memory name is emtpy")
+	}
+
 	memory := memory.NewMemory(in.Meta.Name)
 	memory.Meta.Uuid = in.Meta.Uuid
 	memory.Meta.Description = in.Meta.Description
@@ -73,6 +80,7 @@ func (s *grpcMemoryServiceServer) Add(ctx context.Context, in *pb.AddMemoryReque
 	memory.Meta.Seed = in.Meta.Seed
 	memory.Meta.Temperature = in.Meta.Temperature
 	memory.Meta.SystemPrompt = in.Meta.SystemPrompt
+	memory.Save()
 
 	return &pb.AddMemoryResponse{
 		Meta: memory.Meta,
@@ -84,6 +92,10 @@ func (s *grpcMemoryServiceServer) Update(ctx context.Context, in *pb.UpdateMemor
 
 	logrus.Infof("Update called on Memory Server  %v", in)
 
+	if in.Meta.Name == "" {
+		return nil, fmt.Errorf("memory name is emtpy")
+	}
+
 	memory := memory.NewMemory(in.Meta.Name)
 	memory.Meta.Uuid = in.Meta.Uuid
 	memory.Meta.Description = in.Meta.Description
@@ -91,6 +103,7 @@ func (s *grpcMemoryServiceServer) Update(ctx context.Context, in *pb.UpdateMemor
 	memory.Meta.Seed = in.Meta.Seed
 	memory.Meta.Temperature = in.Meta.Temperature
 	memory.Meta.SystemPrompt = in.Meta.SystemPrompt
+	memory.Save()
 
 	return &pb.UpdateMemoryResponse{
 		Meta: memory.Meta,
