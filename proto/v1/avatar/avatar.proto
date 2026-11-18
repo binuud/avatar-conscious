@@ -77,13 +77,14 @@ message Step {
   string name = 1;
   string description = 2;
   string prompt = 3;
+  string systemPrompt = 4;
   enum StepType {
     STEP_TYPE_ENUM_DEFAULT = 0;
     STEP_TYPE_ENUM_AI = 1;
     STEP_TYPE_ENUM_UI = 2;
   }
   // not using as enum, because of issues with parsing by AI
-  StepType step_type = 4;
+  StepType step_type = 5;
 }
 
 // this is required as a seperate message

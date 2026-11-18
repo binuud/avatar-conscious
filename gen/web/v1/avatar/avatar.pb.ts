@@ -65,6 +65,7 @@ export type Step = {
   name?: string
   description?: string
   prompt?: string
+  systemPrompt?: string
   stepType?: StepStepType
 }
 

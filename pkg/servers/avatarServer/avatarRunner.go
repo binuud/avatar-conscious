@@ -59,6 +59,7 @@ func (a *AvatarWrapper) InitTools() error {
 	// avatarTools.AddTool(aiGenTools.NewUiLaunchTool())
 	a.Memory.ToolRegistry = avatarTools
 	a.Memory.Tools = avatarTools.GetCommonTools()
+	a.Memory.DumpTools()
 	return nil
 }
 
@@ -68,6 +69,7 @@ func (a *AvatarWrapper) InitTools() error {
 func (a *AvatarWrapper) Start() {
 	// create an use and throw memory
 	a.Memory = memory.NewScratchMemory()
+	a.Memory.SetSystemPrompt(SYSTEM_PROMPT)
 	err := a.InitTools()
 	if err != nil {
 		logrus.Errorf("error - avatar Start() cannot init tools %v", err)
@@ -82,11 +84,18 @@ func (a *AvatarWrapper) Start() {
 func (a *AvatarWrapper) RunStep(stepNo int, step *pb.Step) (*pbConcsious.ContextMesssage, error) {
 
 	out := &pbConcsious.ContextMesssage{}
-	logrus.Infof("%s (%d) : %s", step.Name, stepNo, step.Prompt)
+
 	a.Memory.AppendMessage(openai.UserMessage(fmt.Sprintf("Step No: %d, %s", (stepNo + 1), step.Prompt)))
 
-	// a.Memory.DumpMemory(nil)
+	// hot swap system memory if the step needs it
+	if step.SystemPrompt != "" {
+		a.Memory.SetSystemPrompt(step.SystemPrompt)
+	} else {
+		a.Memory.SetSystemPrompt(SYSTEM_PROMPT)
+	}
 
+	a.Memory.DumpMemory(nil)
+	logrus.Infof("RunStep %s (%d) : %s", step.Name, stepNo, step.Prompt)
 	// handle slash commands if any in the prompt
 	if strings.HasPrefix(step.Prompt, "/") {
 		err := a.RunSlashCommand(step.Prompt, out)
@@ -107,7 +116,7 @@ func (a *AvatarWrapper) RunStep(stepNo int, step *pb.Step) (*pbConcsious.Context
 	// if so call hanldle the tool and return the output response
 	msg := completions.Choices[0].Message
 	if len(msg.ToolCalls) > 0 {
-		logrus.Infof("ToolCalling in RunStep %s called, Out Msg : %s", msg.ToolCalls[0].Function.Name, msg.ToolCalls[0].Type)
+		logrus.Infof("ToolCalling in RunStep %d:  %s called, Out Msg : %s", stepNo, msg.ToolCalls[0].Function.Name, msg.ToolCalls[0].Type)
 		// a.Memory.AppendMessage(openai.ToolMessage(msg.ToolCalls[0].RawJSON(), msg.ToolCalls[0].ID))
 		out, err = a.Memory.ToolRegistry.HandleToolCalls(msg.ToolCalls, step.Prompt)
 		if err != nil {
@@ -134,8 +143,23 @@ func (a *AvatarWrapper) RunStep(stepNo int, step *pb.Step) (*pbConcsious.Context
 			// proceed by adding the tool output to memory
 			// so subsequent steps can use the data
 			a.Memory.AppendMessage(openai.ToolMessage(fmt.Sprintf("%s", out.Response), msg.ToolCalls[0].ID))
+			if out != nil && out.ResponseImage != "" {
+				assistantMsgContent := "Image generated and saved to file: " + out.ResponseImage
+				a.Memory.AppendMessage(openai.AssistantMessage(assistantMsgContent))
+			} else {
+				// we need LLM handle the tool output
+				response, err := llm.MakeLLMChatRequest(a.Memory.Messages, nil, a.Memory.Model,
+					a.Memory.Temperature)
+				if err != nil {
+					logrus.Errorf("client: error llm chat request: %v \n", err)
+					return nil, err
+				}
+				msg := response.Choices[0].Message
+				a.Memory.AppendMessage(openai.AssistantMessage(msg.Content))
+			}
 		}
 	} else {
+		// no tool calling happened
 		out.Response = msg.Content
 		logrus.Infof("No Tools Called !!, Out Msg : %s", msg.Content)
 	}

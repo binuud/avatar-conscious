@@ -1029,6 +1029,9 @@
           "prompt": {
             "type": "string"
           },
+          "systemPrompt": {
+            "type": "string"
+          },
           "stepType": {
             "$ref": "#/components/schemas/Step.StepType"
           }

@@ -221,6 +221,20 @@ func (m *Memory) AppendMessage(message openai.ChatCompletionMessageParamUnion) {
 	m.Save()
 }
 
+// SetSystemPrompt
+// hotswap system prompt
+func (m *Memory) SetSystemPrompt(systemPrompt string) error {
+	m.SystemPrompt = systemPrompt
+	if len(m.Messages) > 0 {
+		if m.Messages[0].OfSystem != nil {
+			m.Messages[0] = openai.SystemMessage(m.SystemPrompt)
+			logrus.Debugf("New System prompt %s", m.SystemPrompt)
+		}
+	}
+	return fmt.Errorf("cannot set system prompt")
+
+}
+
 // // Load function to load from model file
 // func (m *Memory) Load(name string) (*Memory, error) {
 

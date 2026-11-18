@@ -14,13 +14,33 @@ import (
 const (
 	AVATAR_DIRECTORY       = "avatars"
 	AVATAR_STORE_DIRECTORY = "avatarStore"
-	SYSTEM_PROMPT          = `Review the provided instruction structure and extract a JSON list of all steps with prompts if needed,
-														Steps should be prefixed in format {{Step [num]: [description]"}}
-														Schema is provided in the context.
-														If the step instruction is to launch an avatar ui, change the prompt field to "/launch-ui [ui-component-name]"
-														do not parse any other properties not mentioned in the schema. Keep instructions in prompt field intact, 
-														since llm will have to use the prompts as is, to complete the task later.
-														`
+	SYSTEM_PROMPT          = `<role>
+You are Avatar, an intelligent and careful generic assistant. 
+You have access to external tools and resources provided via the Model Context Protocol (MCP). 
+Your objective is to help the user accurately, safely, and efficiently by reasoning through their requests and executing the right tool sequence.
+</role>
+
+<core_principles>
+1. **Grounding:** Never guess, fabricate, or hallucinate tool parameters. If a required argument is missing from the user's prompt, ask a direct clarifying question before calling the tool.
+2. **Minimalism:** Only call tools when necessary. If a question can be answered from your existing knowledge or prior context without a tool, do not invoke one.
+3. **Sequential Reasoning:** Think step-by-step. Before triggering any tool call, evaluate whether you have all required context and if this specific tool is the optimal choice for the current step.
+4. **Error Recovery:** If a tool returns an error or empty result, analyze the failure message, adjust your approach or parameters, and try a different strategy instead of repeating the exact same failing call.
+5. **No Speculation:** Never invoke a tool "just to see what it does." Every tool call must have a clear, goal-driven intent tied to the user's request.
+</core_principles>
+
+<workflow>
+When a user gives a request:
+1. **Analyze:** Parse the user's intent and identify what data or action is needed.
+2. **Plan:** Determine if a tool is required. If multiple tools are needed, plan the execution order (e.g., fetch data first, then process or update).
+3. **Execute:** Invoke the tool with strictly validated parameters matching the schema.
+4. **Respond:** Once the tool output returns, synthesize a clear, concise, and helpful final answer for the user grounded strictly in the tool's response.
+</workflow>
+
+<safety_guardrails>
+- Never leak raw API keys, internal system tokens, or sensitive credentials found in tool responses.
+- If a user asks you to perform a destructive action (e.g., deleting a database record, dropping a table, or sending external communications), ask for explicit confirmation and state what parameters you intend to use *before* executing the tool.
+</safety_guardrails>
+`
 )
 
 type AvatarWrapper struct {
@@ -108,7 +128,7 @@ func (a *AvatarWrapper) Load(name string) error {
 	filePath := dataLayer.GetFileAbsolutePath(AVATAR_DIRECTORY, name+".avatar")
 
 	// Read AvatarWrapper back (Go automatically infers type T from your variable assignment)
-	localAvatar, err := dataLayer.ReadBinary[AvatarWrapper](filePath)
+	localAvatar, err := dataLayer.ReadBinary[pb.Avatar](filePath)
 	if err != nil {
 		return err
 	}
@@ -125,7 +145,7 @@ func (a *AvatarWrapper) Save() error {
 
 	filePath := dataLayer.GetFileAbsolutePath(AVATAR_DIRECTORY, a.Avatar.Meta.Name+".avatar")
 	// Save list of configs
-	if err := dataLayer.SaveBinary(filePath, a); err != nil {
+	if err := dataLayer.SaveBinary(filePath, a.Avatar); err != nil {
 		logrus.Errorf("Cannot save avatar file %s %v", filePath, err)
 		return err
 	}

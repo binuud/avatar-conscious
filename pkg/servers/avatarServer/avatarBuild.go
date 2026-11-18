@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"strings"
 
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/avatar"
 	"github.com/binuud/avatar-conscious/pkg/dataLayer"
@@ -13,6 +14,16 @@ import (
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/openai/openai-go/v3"
 	"github.com/sirupsen/logrus"
+)
+
+const (
+	SYSTEM_PROMPT_FORBUILDER = `You are an assistant, that reads MD file and parses them into Steps.
+Review the provided instruction structure and extract a JSON list of all steps with prompts if needed,
+Steps should be prefixed in format {{Step [num]: [description]"}}
+Schema is provided in the context.
+If the step instruction is to launch an avatar ui, change the prompt field to "/launch-ui [ui-component-name]"
+do not parse any other properties not mentioned in the schema. Keep instructions in prompt field intact, 
+since llm will have to use the prompts as is, to complete the task later.`
 )
 
 // Build()
@@ -53,11 +64,8 @@ func (a *AvatarWrapper) BuildUsingLLM() error {
 	)
 
 	buildMemory := memory.NewScratchMemory()
-
-	buildMemory.Messages = []openai.ChatCompletionMessageParamUnion{
-		openai.SystemMessage(a.SystemPrompt),
-		openai.UserMessage(userPrompt),
-	}
+	buildMemory.SetSystemPrompt(strings.TrimSpace(SYSTEM_PROMPT_FORBUILDER))
+	buildMemory.AppendMessage(openai.UserMessage(userPrompt))
 
 	stepsSchema, err := a.getAvatarStepsJsonSchemaMap()
 	if err != nil {
@@ -70,7 +78,7 @@ func (a *AvatarWrapper) BuildUsingLLM() error {
 
 	// now use LLM to get the steps, that this avatar needs to run
 	output, err := llm.MakeLLMSchemaResponseRequest(userPrompt,
-		a.SystemPrompt,
+		buildMemory.SystemPrompt,
 		buildMemory.Model,
 		stepsSchema)
 	if err != nil {
