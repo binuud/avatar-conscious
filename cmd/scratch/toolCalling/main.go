@@ -23,9 +23,9 @@ func CheckImageDescriber() string {
 	logrus.Infof("LLM Prompt: %s", prompt)
 
 	completions, err := llm.MakeLLMSingleToolRequest(memory.Messages,
-		memory.Model,
+		memory.Meta.Model,
 		memory.Tools,
-		memory.Temperature)
+		memory.Meta.Temperature)
 	if err != nil {
 		logrus.Errorf("client: error llm chat request: %v \n", err)
 		return ""
@@ -54,9 +54,9 @@ func CheckImageGeneration() string {
 
 	logrus.Infof("LLM Prompt: %s", prompt)
 	completions, err := llm.MakeLLMSingleToolRequest(memory.Messages,
-		memory.Model,
+		memory.Meta.Model,
 		memory.Tools,
-		memory.Temperature)
+		memory.Meta.Temperature)
 	if err != nil {
 		logrus.Errorf("client: error llm chat request: %v \n", err)
 		return ""
@@ -82,9 +82,9 @@ func CheckImageUpgradeGeneration() {
 
 	logrus.Infof("LLM Prompt: %s", prompt)
 	completions, err := llm.MakeLLMSingleToolRequest(memory.Messages,
-		memory.Model,
+		memory.Meta.Model,
 		memory.Tools,
-		memory.Temperature)
+		memory.Meta.Temperature)
 	if err != nil {
 		logrus.Fatalf("client: error llm chat request: %v \n", err)
 
@@ -144,9 +144,9 @@ func CheckWebFetch(systemPrompt string) string {
 	memory.Messages = append(memory.Messages, openai.UserMessage(prompt))
 	logrus.Infof("LLM Prompt: %s", prompt)
 	completions, err := llm.MakeLLMSingleToolRequest(memory.Messages,
-		memory.Model,
+		memory.Meta.Model,
 		memory.Tools,
-		memory.Temperature)
+		memory.Meta.Temperature)
 	if err != nil {
 		logrus.Errorf("client: error llm chat request: %v \n", err)
 		return ""
@@ -172,9 +172,9 @@ func CheckFileContents() string {
 	memory.Messages = append(memory.Messages, openai.UserMessage(prompt))
 	logrus.Infof("LLM Prompt: %s", prompt)
 	completions, err := llm.MakeLLMSingleToolRequest(memory.Messages,
-		memory.Model,
+		memory.Meta.Model,
 		memory.Tools,
-		memory.Temperature)
+		memory.Meta.Temperature)
 	if err != nil {
 		logrus.Errorf("client: error llm chat request: %v \n", err)
 		return ""

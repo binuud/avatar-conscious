@@ -28,6 +28,7 @@ const (
 	Conscious_Generate_FullMethodName    = "/conscious.Conscious/Generate"
 	Conscious_InStream_FullMethodName    = "/conscious.Conscious/InStream"
 	Conscious_GetModels_FullMethodName   = "/conscious.Conscious/GetModels"
+	Conscious_SetModel_FullMethodName    = "/conscious.Conscious/SetModel"
 	Conscious_FileUpload_FullMethodName  = "/conscious.Conscious/FileUpload"
 	Conscious_ClearMemory_FullMethodName = "/conscious.Conscious/ClearMemory"
 	Conscious_ReloadTools_FullMethodName = "/conscious.Conscious/ReloadTools"
@@ -44,6 +45,7 @@ type ConsciousClient interface {
 	Generate(ctx context.Context, in *ContextMesssage, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ContextMesssage], error)
 	InStream(ctx context.Context, in *ContextMesssage, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ContextMesssage], error)
 	GetModels(ctx context.Context, in *ModelRequest, opts ...grpc.CallOption) (*ModelResponse, error)
+	SetModel(ctx context.Context, in *SetModelRequest, opts ...grpc.CallOption) (*SetModelResponse, error)
 	FileUpload(ctx context.Context, in *UploadRequest, opts ...grpc.CallOption) (*UploadResponse, error)
 	// Clears the memory
 	ClearMemory(ctx context.Context, in *ClearMemoryRequest, opts ...grpc.CallOption) (*ClearMemoryResponse, error)
@@ -119,6 +121,16 @@ func (c *consciousClient) GetModels(ctx context.Context, in *ModelRequest, opts 
 	return out, nil
 }
 
+func (c *consciousClient) SetModel(ctx context.Context, in *SetModelRequest, opts ...grpc.CallOption) (*SetModelResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(SetModelResponse)
+	err := c.cc.Invoke(ctx, Conscious_SetModel_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *consciousClient) FileUpload(ctx context.Context, in *UploadRequest, opts ...grpc.CallOption) (*UploadResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UploadResponse)
@@ -169,6 +181,7 @@ type ConsciousServer interface {
 	Generate(*ContextMesssage, grpc.ServerStreamingServer[ContextMesssage]) error
 	InStream(*ContextMesssage, grpc.ServerStreamingServer[ContextMesssage]) error
 	GetModels(context.Context, *ModelRequest) (*ModelResponse, error)
+	SetModel(context.Context, *SetModelRequest) (*SetModelResponse, error)
 	FileUpload(context.Context, *UploadRequest) (*UploadResponse, error)
 	// Clears the memory
 	ClearMemory(context.Context, *ClearMemoryRequest) (*ClearMemoryResponse, error)
@@ -197,6 +210,9 @@ func (UnimplementedConsciousServer) InStream(*ContextMesssage, grpc.ServerStream
 }
 func (UnimplementedConsciousServer) GetModels(context.Context, *ModelRequest) (*ModelResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetModels not implemented")
+}
+func (UnimplementedConsciousServer) SetModel(context.Context, *SetModelRequest) (*SetModelResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method SetModel not implemented")
 }
 func (UnimplementedConsciousServer) FileUpload(context.Context, *UploadRequest) (*UploadResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method FileUpload not implemented")
@@ -289,6 +305,24 @@ func _Conscious_GetModels_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Conscious_SetModel_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetModelRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ConsciousServer).SetModel(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Conscious_SetModel_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ConsciousServer).SetModel(ctx, req.(*SetModelRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Conscious_FileUpload_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UploadRequest)
 	if err := dec(in); err != nil {
@@ -375,6 +409,10 @@ var Conscious_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetModels",
 			Handler:    _Conscious_GetModels_Handler,
+		},
+		{
+			MethodName: "SetModel",
+			Handler:    _Conscious_SetModel_Handler,
 		},
 		{
 			MethodName: "FileUpload",

@@ -42,7 +42,7 @@ func TestConsciousServer_LLMChat(t *testing.T) {
 	prompt := "What is 8 + 8"
 	t.Logf("LLM Prompt: %s", prompt)
 	memory.Messages = append(memory.Messages, openai.UserMessage(prompt))
-	completions, err := llm.MakeLLMChatRequest(memory.Messages, memory.Tools, memory.Model, memory.Temperature)
+	completions, err := llm.MakeLLMChatRequest(memory.Messages, memory.Tools, memory.Meta.Model, memory.Meta.Temperature)
 	if err != nil {
 		t.Fatalf("client: error llm chat request: %v \n", err)
 	}
@@ -53,7 +53,7 @@ func TestConsciousServer_LLMChat(t *testing.T) {
 	prompt = "My name is RumpleStutskin"
 	t.Logf("LLM Prompt: %s", prompt)
 	memory.Messages = append(memory.Messages, openai.UserMessage(prompt))
-	completions, err = llm.MakeLLMChatRequest(memory.Messages, memory.Tools, memory.Model, memory.Temperature)
+	completions, err = llm.MakeLLMChatRequest(memory.Messages, memory.Tools, memory.Meta.Model, memory.Meta.Temperature)
 	if err != nil {
 		t.Errorf("client: error llm chat request: %v \n", err)
 	}
@@ -64,7 +64,7 @@ func TestConsciousServer_LLMChat(t *testing.T) {
 	prompt = "What is my name"
 	t.Logf("LLM Prompt: %s", prompt)
 	memory.Messages = append(memory.Messages, openai.UserMessage(prompt))
-	completions, err = llm.MakeLLMChatRequest(memory.Messages, memory.Tools, memory.Model, memory.Temperature)
+	completions, err = llm.MakeLLMChatRequest(memory.Messages, memory.Tools, memory.Meta.Model, memory.Meta.Temperature)
 	if err != nil {
 		t.Errorf("client: error llm chat request: %v \n", err)
 	}
@@ -99,7 +99,7 @@ func TestConsciousServer_LLMImageProcess(t *testing.T) {
 	}
 	imageDataURL := "data:image/jpeg;base64," + base64.StdEncoding.EncodeToString(image)
 
-	response, err := llm.MakeImageDescribeRequest("What's in this image? ", "answer in less than 10 words.", memory.Model, imageDataURL)
+	response, err := llm.MakeImageDescribeRequest("What's in this image? ", "answer in less than 10 words.", memory.Meta.Model, imageDataURL)
 	if err != nil {
 		t.Errorf("client: error llm image request: %v \n", err)
 	} else {
@@ -146,7 +146,7 @@ func TestConsciousServer_LLMToolFunction(t *testing.T) {
 	prompt := "What is the current weather in Chennai City"
 	t.Logf("LLM Prompt: %s", prompt)
 	memory.Messages = append(memory.Messages, openai.UserMessage(prompt))
-	completions, err := llm.MakeLLMChatRequest(memory.Messages, memory.Tools, memory.Model, memory.Temperature)
+	completions, err := llm.MakeLLMChatRequest(memory.Messages, memory.Tools, memory.Meta.Model, memory.Meta.Temperature)
 	if err != nil {
 		t.Errorf("client: error llm chat request: %v \n", err)
 	}

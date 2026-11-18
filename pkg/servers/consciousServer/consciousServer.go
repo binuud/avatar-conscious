@@ -18,6 +18,7 @@ import (
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	"github.com/binuud/avatar-conscious/pkg/llm"
 	"github.com/binuud/avatar-conscious/pkg/memory"
+	"github.com/binuud/avatar-conscious/pkg/settings"
 	"github.com/binuud/avatar-conscious/pkg/utils"
 	grpc "google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -46,7 +47,11 @@ func NewGrpcConsciousServer() *grpcConsciousServer {
 
 	memory := memory.NewMemory(DEFAULT_MEMORY_NAME)
 
-	logrus.Infof("Starting Conscious with %s model", memory.Model)
+	// override model from load with settings value
+	memory.Meta.Model = settings.Global.GetValue("LLM_MODEL")
+	memory.ReadSystemPromptFromSettings()
+
+	logrus.Infof("Starting Conscious with %s model", memory.Meta.Model)
 
 	client := openai.NewClient(
 		option.WithBaseURL(llm.GetLLMEndpoint()),
@@ -112,7 +117,7 @@ func (s *grpcConsciousServer) InStream(in *pb.ContextMesssage, stream grpc.Serve
 
 	s.memory.AppendInMessage(in)
 
-	llmStream := llm.MakeLLMChatStreamingChatRequest(s.memory.Messages, s.memory.Tools, s.memory.Model, s.memory.Temperature)
+	llmStream := llm.MakeLLMChatStreamingChatRequest(s.memory.Messages, s.memory.Tools, s.memory.Meta.Model, s.memory.Meta.Temperature)
 
 	defer func() {
 		_ = llmStream.Close()
@@ -220,6 +225,17 @@ func (s *grpcConsciousServer) FileUpload(ctx context.Context, in *pb.UploadReque
 		Status:       "success",
 		ErrorMessage: "",
 	}, nil
+}
+
+// SetModel
+// SetModel in the current chat session
+func (s *grpcConsciousServer) SetModel(ctx context.Context, in *pb.SetModelRequest) (*pb.SetModelResponse, error) {
+
+	logrus.Info("Recieved SetModel")
+	s.memory.SetModel(in.Model)
+	s.memory.Save()
+
+	return &pb.SetModelResponse{Model: s.memory.Meta.Model}, nil
 }
 
 // ClearMemory

@@ -91,6 +91,7 @@ components:
       enum:
         - "DATA_IGNORE"
         - "STRING"
+        - "MULTI_LINE_STRING"
         - "NUMBER"
         - "FLOAT"
         - "BOOLEAN"

@@ -24,11 +24,12 @@ const (
 type Config_Type int32
 
 const (
-	Config_DATA_IGNORE Config_Type = 0
-	Config_STRING      Config_Type = 1
-	Config_NUMBER      Config_Type = 2
-	Config_FLOAT       Config_Type = 3
-	Config_BOOLEAN     Config_Type = 4
+	Config_DATA_IGNORE       Config_Type = 0
+	Config_STRING            Config_Type = 1
+	Config_MULTI_LINE_STRING Config_Type = 2
+	Config_NUMBER            Config_Type = 3
+	Config_FLOAT             Config_Type = 4
+	Config_BOOLEAN           Config_Type = 5
 )
 
 // Enum value maps for Config_Type.
@@ -36,16 +37,18 @@ var (
 	Config_Type_name = map[int32]string{
 		0: "DATA_IGNORE",
 		1: "STRING",
-		2: "NUMBER",
-		3: "FLOAT",
-		4: "BOOLEAN",
+		2: "MULTI_LINE_STRING",
+		3: "NUMBER",
+		4: "FLOAT",
+		5: "BOOLEAN",
 	}
 	Config_Type_value = map[string]int32{
-		"DATA_IGNORE": 0,
-		"STRING":      1,
-		"NUMBER":      2,
-		"FLOAT":       3,
-		"BOOLEAN":     4,
+		"DATA_IGNORE":       0,
+		"STRING":            1,
+		"MULTI_LINE_STRING": 2,
+		"NUMBER":            3,
+		"FLOAT":             4,
+		"BOOLEAN":           5,
 	}
 )
 
@@ -270,7 +273,7 @@ var File_v1_settings_settings_proto protoreflect.FileDescriptor
 
 const file_v1_settings_settings_proto_rawDesc = "" +
 	"\n" +
-	"\x1av1/settings/settings.proto\x12\bsettings\"\x94\x02\n" +
+	"\x1av1/settings/settings.proto\x12\bsettings\"\xab\x02\n" +
 	"\x06Config\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x14\n" +
@@ -278,15 +281,16 @@ const file_v1_settings_settings_proto_rawDesc = "" +
 	"\x05value\x18\x04 \x01(\tR\x05value\x12\x18\n" +
 	"\adefault\x18\x05 \x01(\tR\adefault\x12\x1a\n" +
 	"\benvValue\x18\x06 \x01(\tR\benvValue\x12)\n" +
-	"\x04type\x18\a \x01(\x0e2\x15.settings.Config.TypeR\x04type\"G\n" +
+	"\x04type\x18\a \x01(\x0e2\x15.settings.Config.TypeR\x04type\"^\n" +
 	"\x04Type\x12\x0f\n" +
 	"\vDATA_IGNORE\x10\x00\x12\n" +
 	"\n" +
-	"\x06STRING\x10\x01\x12\n" +
+	"\x06STRING\x10\x01\x12\x15\n" +
+	"\x11MULTI_LINE_STRING\x10\x02\x12\n" +
 	"\n" +
-	"\x06NUMBER\x10\x02\x12\t\n" +
-	"\x05FLOAT\x10\x03\x12\v\n" +
-	"\aBOOLEAN\x10\x04\"8\n" +
+	"\x06NUMBER\x10\x03\x12\t\n" +
+	"\x05FLOAT\x10\x04\x12\v\n" +
+	"\aBOOLEAN\x10\x05\"8\n" +
 	"\n" +
 	"ConfigList\x12*\n" +
 	"\aconfigs\x18\x01 \x03(\v2\x10.settings.ConfigR\aconfigs\"\x9d\x01\n" +

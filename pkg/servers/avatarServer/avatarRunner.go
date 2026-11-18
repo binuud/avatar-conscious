@@ -74,7 +74,7 @@ func (a *AvatarWrapper) Start() {
 	if err != nil {
 		logrus.Errorf("error - avatar Start() cannot init tools %v", err)
 	}
-	logrus.Infof("Start() Avatar %s, with Model : %s", a.Meta.Name, a.Memory.Model)
+	logrus.Infof("Start() Avatar %s, with Model : %s", a.Meta.Name, a.Memory.Meta.Model)
 	logrus.Infof("Description %s", a.Meta.Description)
 }
 
@@ -105,8 +105,8 @@ func (a *AvatarWrapper) RunStep(stepNo int, step *pb.Step) (*pbConcsious.Context
 		return out, nil
 	}
 
-	completions, err := llm.MakeLLMSingleToolRequest(a.Memory.Messages, a.Memory.Model,
-		a.Memory.Tools, a.Memory.Temperature)
+	completions, err := llm.MakeLLMSingleToolRequest(a.Memory.Messages, a.Memory.Meta.Model,
+		a.Memory.Tools, a.Memory.Meta.Temperature)
 	if err != nil {
 		logrus.Errorf("client: error llm chat request: %v \n", err)
 		return nil, err
@@ -148,8 +148,8 @@ func (a *AvatarWrapper) RunStep(stepNo int, step *pb.Step) (*pbConcsious.Context
 				a.Memory.AppendMessage(openai.AssistantMessage(assistantMsgContent))
 			} else {
 				// we need LLM handle the tool output
-				response, err := llm.MakeLLMChatRequest(a.Memory.Messages, nil, a.Memory.Model,
-					a.Memory.Temperature)
+				response, err := llm.MakeLLMChatRequest(a.Memory.Messages, nil, a.Memory.Meta.Model,
+					a.Memory.Meta.Temperature)
 				if err != nil {
 					logrus.Errorf("client: error llm chat request: %v \n", err)
 					return nil, err

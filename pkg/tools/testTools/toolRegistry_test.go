@@ -101,9 +101,9 @@ func _getLLMToolName(prompt string, memory *memory.Memory, t *testing.T) (*opena
 		openai.UserMessage(prompt),
 	}
 	completions, err := llm.MakeLLMSingleToolRequest(messages,
-		memory.Model,
+		memory.Meta.Model,
 		memory.Tools,
-		memory.Temperature)
+		memory.Meta.Temperature)
 	if err != nil {
 		t.Fatalf("client: error llm chat request: %v \n", err)
 	}

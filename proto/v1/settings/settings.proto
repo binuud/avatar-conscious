@@ -8,9 +8,10 @@ message Config {
   enum Type {
     DATA_IGNORE = 0;
     STRING = 1;
-    NUMBER = 2;
-    FLOAT = 3;
-    BOOLEAN = 4;
+    MULTI_LINE_STRING = 2;
+    NUMBER = 3;
+    FLOAT = 4;
+    BOOLEAN = 5;
   }
   string name = 1;
   string description = 2;

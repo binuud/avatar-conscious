@@ -20,6 +20,9 @@ export class Conscious {
   static GetModels(req: ConsciousCommon.ModelRequest, initReq?: fm.InitReq): Promise<ConsciousCommon.ModelResponse> {
     return fm.fetchReq<ConsciousCommon.ModelRequest, ConsciousCommon.ModelResponse>(`/v1/conscious/models?${fm.renderURLSearchParams(req, [])}`, {...initReq, method: "GET"})
   }
+  static SetModel(req: ConsciousCommon.SetModelRequest, initReq?: fm.InitReq): Promise<ConsciousCommon.SetModelResponse> {
+    return fm.fetchReq<ConsciousCommon.SetModelRequest, ConsciousCommon.SetModelResponse>(`/v1/conscious/setModel`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
+  }
   static FileUpload(req: ConsciousContextMessage.UploadRequest, initReq?: fm.InitReq): Promise<ConsciousContextMessage.UploadResponse> {
     return fm.fetchReq<ConsciousContextMessage.UploadRequest, ConsciousContextMessage.UploadResponse>(`/v1/conscious/fileUpload`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
   }

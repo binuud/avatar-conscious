@@ -37,6 +37,14 @@ export type ModelResponse = {
   models?: Model[]
 }
 
+export type SetModelRequest = {
+  model?: string
+}
+
+export type SetModelResponse = {
+  model?: string
+}
+
 export type ClearMemoryRequest = {
 }
 
