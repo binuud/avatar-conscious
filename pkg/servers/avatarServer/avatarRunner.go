@@ -68,6 +68,7 @@ func (a *AvatarWrapper) InitTools() error {
 func (a *AvatarWrapper) Start() {
 	// create an use and throw memory
 	a.Memory = memory.NewEmtpyMemory()
+	a.Memory.Meta.Name = "_av_" + a.Meta.Name
 	a.Memory.SetSystemPrompt(SYSTEM_PROMPT)
 	err := a.InitTools()
 	if err != nil {
@@ -137,13 +138,16 @@ func (a *AvatarWrapper) RunStep(stepNo int, step *pb.Step) (*pbConcsious.Context
 				logrus.Errorf("RunStep %v", err)
 				return nil, err
 			}
+
 		} else {
 			// proceed by adding the tool output to memory
 			// so subsequent steps can use the data
+
 			a.Memory.AppendToolMessage(fmt.Sprintf("%s", out.Response), msg.ToolCalls[0].ID)
 			if out != nil && out.ResponseImage != "" {
 				assistantMsgContent := "Image generated and saved to file: " + out.ResponseImage
-				a.Memory.AppendAssistantMessage(assistantMsgContent)
+				out.Response = assistantMsgContent
+				a.Memory.AppendOutMessage(out)
 			} else {
 				// we need LLM handle the tool output
 				response, err := llm.MakeLLMChatRequest(a.Memory.Messages, nil, a.Memory.Meta.Model,
@@ -159,6 +163,7 @@ func (a *AvatarWrapper) RunStep(stepNo int, step *pb.Step) (*pbConcsious.Context
 	} else {
 		// no tool calling happened
 		out.Response = msg.Content
+		a.Memory.AppendAssistantMessage(msg.Content)
 		logrus.Infof("No Tools Called !!, Out Msg : %s", msg.Content)
 	}
 	return out, nil
@@ -170,7 +175,6 @@ func (a *AvatarWrapper) RunSlashCommand(prompt string, out *pbConcsious.ContextM
 	if len(result) == 2 {
 		cmd := strings.ToLower(result[0])
 		if cmd == "/launch-ui" {
-			a.Memory.AppendToolMessage(fmt.Sprintf("Avatar UI Interface with id %s shown to the user by the tool function", out.Data), "")
 			a.Memory.AppendDevelopmentMessage(fmt.Sprintf("Avatar UI Interface with id %s shown to the user by the tool function", out.Data))
 			out.Action = "SHOW-UI"
 			out.Data = result[1]
