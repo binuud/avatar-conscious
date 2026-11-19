@@ -187,14 +187,17 @@ func TestConsciousServer_LLMToolFunction(t *testing.T) {
 func TestConsciousServer_ImageGeneration(t *testing.T) {
 
 	t.Logf("Testing Image creation, then validate same by using ai, to see if the image matches the prompt")
-	s := NewGrpcConsciousServer()
+
 	in := &pb.ContextMesssage{
 		Uuid:   uuid.New().String(),
 		Prompt: "Create an realistic phot of a cat throwing a ball to an elephant. The ball should have the words 'binuud'. The cat on the left side, and elephant on the right",
 		Model:  "Runpod/FLUX.2-klein-4B-mflux-4bit",
 		Type:   pb.ContextMesssage_IMAGE_GENERATION,
 	}
-	out, err := s.RouteRequest(in)
+
+	r := NewRouter(in)
+
+	out, err := r.RouteRequest(in)
 	if err != nil {
 		t.Errorf("TestConsciousServer_ImageGeneration: cannot create image : %v \n", err)
 	} else {
@@ -221,7 +224,7 @@ func TestConsciousServer_ImageGeneration(t *testing.T) {
 			BodyText:     imageDataURL,
 		}
 
-		out, err := s.RouteRequest(in)
+		out, err := r.RouteRequest(in)
 		if err != nil {
 			t.Errorf("cannot describe the image : %v \n", err)
 		} else {

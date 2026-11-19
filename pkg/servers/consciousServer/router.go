@@ -1,5 +1,9 @@
 package consciousServer
 
+// Model Router
+// Handles memory on per request basis, allowing users to
+// use different tabs with chats connecting to different models
+
 import (
 	"encoding/json"
 	"fmt"
@@ -8,6 +12,7 @@ import (
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	protoV1 "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	"github.com/binuud/avatar-conscious/pkg/llm"
+	"github.com/binuud/avatar-conscious/pkg/memory"
 	"github.com/binuud/avatar-conscious/pkg/settings"
 	"github.com/binuud/avatar-conscious/pkg/tools/aiGenTools"
 	"github.com/binuud/avatar-conscious/pkg/utils"
@@ -16,7 +21,24 @@ import (
 	grpc "google.golang.org/grpc"
 )
 
-func (s *grpcConsciousServer) RouteStreamingPromptIntent(in *pb.ContextMesssage, stream grpc.ServerStreamingServer[pb.ContextMesssage]) error {
+type router struct {
+	memory *memory.Memory
+	in     *pb.ContextMesssage
+}
+
+func NewRouter(in *pb.ContextMesssage) *router {
+	memory := memory.NewMemory(in.MemoryName)
+	in.Model = memory.Meta.Model
+	in.Seed = memory.Meta.Seed
+	in.Temperature = float32(memory.Meta.Temperature)
+	logrus.Infof("Initialized new Router with memory %s", in.MemoryName)
+	return &router{
+		memory: memory,
+		in:     in,
+	}
+}
+
+func (r *router) RouteStreamingPromptIntent(in *pb.ContextMesssage, stream grpc.ServerStreamingServer[pb.ContextMesssage]) error {
 
 	out := &pb.ContextMesssage{}
 	var err error
@@ -24,29 +46,28 @@ func (s *grpcConsciousServer) RouteStreamingPromptIntent(in *pb.ContextMesssage,
 	switch utils.DetectImageIntent(in.Prompt) {
 	// case utils.IntentDescribe:
 	// 	in.Model = settings.Global.GetValue("VISION_MODEL")
-	// 	out, err = s.RouteLLMImageDescribeRequest(in)
+	// 	out, err = r.RouteLLMImageDescribeRequest(in)
 	case utils.IntentCreate:
 		in.Model = settings.Global.GetValue("IMAGE_MODEL")
-		out, err = s.RouteOpenAiImageGenerationRequest(in)
+		out, err = r.RouteOpenAiImageGenerationRequest(in)
 	// case utils.IntentEdit:
 	// 	in.Model = settings.Global.GetValue("IMAGE_MODEL")
-	// 	out, err = s.RouteOpenAiImageEditRequest(in)
+	// 	out, err = r.RouteOpenAiImageEditRequest(in)
 	default:
 		// for tool calling, do not send the history
-		_, out, err = s.handleTool(in, stream)
+		_, out, err = r.handleTool(in, stream)
 		if err != nil {
 			return err
 		}
 		// special case, when there is an image generation,
 		// we do not want llm to handle it
 		if out != nil && out.ResponseImage != "" {
-			assistantMsgContent := "Image generated and saved to file: " + out.ResponseImage
-			s.memory.AppendMessage(openai.AssistantMessage(assistantMsgContent))
+			r.memory.AppendOutMessage(out)
 			return nil
 		}
 		// this is a normal chat streaming call
 		// user has not asked for any tools
-		return s.InStream(in, stream)
+		return r.RouteStreamRequest(in, stream)
 	}
 	if err = stream.Send(out); err != nil {
 		return err
@@ -54,30 +75,30 @@ func (s *grpcConsciousServer) RouteStreamingPromptIntent(in *pb.ContextMesssage,
 	return nil
 }
 
-func (s *grpcConsciousServer) RouteRequest(in *protoV1.ContextMesssage) (*protoV1.ContextMesssage, error) {
+func (r *router) RouteRequest(in *protoV1.ContextMesssage) (*protoV1.ContextMesssage, error) {
 
 	logrus.Infof("Router %s, %s", in.Type, in.Prompt)
 	switch in.Type {
 	case protoV1.ContextMesssage_LLM_QUERY:
-		return s.RouteLLMChatRequest(in)
+		return r.RouteLLMChatRequest(in)
 	case protoV1.ContextMesssage_LLM_IMAGE_DESCRIBE:
-		return s.RouteLLMImageDescribeRequest(in)
+		return r.RouteLLMImageDescribeRequest(in)
 	case protoV1.ContextMesssage_IMAGE_GENERATION:
 		// use open AI API supporting generation
-		return s.RouteOpenAiImageGenerationRequest(in)
+		return r.RouteOpenAiImageGenerationRequest(in)
 	case protoV1.ContextMesssage_IMAGE_EDIT:
 		// use open AI API supporting generation
-		return s.RouteOpenAiImageEditRequest(in)
+		return r.RouteOpenAiImageEditRequest(in)
 	default:
 		return nil, nil
 	}
 
 }
 
-func (s *grpcConsciousServer) RouteLLMChatRequest(in *protoV1.ContextMesssage) (*protoV1.ContextMesssage, error) {
+func (r *router) RouteLLMChatRequest(in *protoV1.ContextMesssage) (*protoV1.ContextMesssage, error) {
 
-	s.memory.AppendMessage(openai.UserMessage(in.Prompt))
-	completions, err := llm.MakeLLMChatRequest(s.memory.Messages, s.memory.Tools, s.memory.Meta.Model, s.memory.Meta.Temperature)
+	r.memory.AppendInMessage(in)
+	completions, err := llm.MakeLLMChatRequest(r.memory.Messages, r.memory.Tools, r.memory.Meta.Model, r.memory.Meta.Temperature)
 	if err != nil {
 		return nil, err
 	}
@@ -103,66 +124,47 @@ func (s *grpcConsciousServer) RouteLLMChatRequest(in *protoV1.ContextMesssage) (
 			assistantMsgContent = fmt.Sprintf("Weather in %s, is Sunny, and the temperature is 35C", args.Location)
 			logrus.Infof("Tools args %v", args)
 			logrus.Println("Tool execution result:", assistantMsgContent)
-			s.memory.AppendMessage(openai.AssistantMessage(assistantMsgContent))
-
+			out := r.CreateAndAppendOutMessage(in, assistantMsgContent)
+			return out, nil
 		}
-
-	} else {
-
-		// add prompt and response to memory
-		// provided response is not a tool call and a direct assistant response
-		logrus.Println("Model direct response:", assistantMsgContent)
-		// add response to memory
-		s.memory.AppendMessage(openai.AssistantMessage(assistantMsgContent))
-		s.memory.Save()
-
-		// send to tts, for it to generate voice over of the text
-		// mqttServer.SendOnTTS(assistantMsgContent)
-
 	}
 
-	return &protoV1.ContextMesssage{
-		Uuid:        in.Uuid,
-		Model:       in.Model,
-		Prompt:      in.Prompt,
-		CreatedAt:   in.CreatedAt,
-		CompletedAt: utils.GetTimeStamp(),
-		Data:        completions.Choices[0].Message.Content,
-	}, nil
+	logrus.Println("Model direct response:", assistantMsgContent)
+	out := r.CreateAndAppendOutMessage(in, assistantMsgContent)
+	return out, nil
+	// return &protoV1.ContextMesssage{
+	// 	Uuid:        in.Uuid,
+	// 	Model:       in.Model,
+	// 	Prompt:      in.Prompt,
+	// 	CreatedAt:   in.CreatedAt,
+	// 	CompletedAt: utils.GetTimeStamp(),
+	// 	Data:        completions.Choices[0].Message.Content,
+	// }, nil
 
 }
 
-func (s *grpcConsciousServer) RouteLLMImageDescribeRequest(in *protoV1.ContextMesssage) (*protoV1.ContextMesssage, error) {
+func (r *router) RouteLLMImageDescribeRequest(in *protoV1.ContextMesssage) (*protoV1.ContextMesssage, error) {
 
-	s.memory.AppendInMessage(in)
+	r.memory.AppendInMessage(in)
 
-	result, err := aiGenTools.DescribeImage(in.Prompt, in.Model, in.Data)
+	assistantMsgContent, err := aiGenTools.DescribeImage(in.Prompt, in.Model, in.Data)
 	if err != nil {
-		logrus.Errorf("RouteLLMImageDescribeRequest -> DescribeImage result(%v), %v", result, err)
+		logrus.Errorf("RouteLLMImageDescribeRequest -> DescribeImage result(%v), %v", assistantMsgContent, err)
 		return nil, err
 	}
 
-	logrus.Infof("RouteLLMImageDescribeRequest -> %s, %s, %s", in.Model, in.Prompt, result)
+	logrus.Infof("RouteLLMImageDescribeRequest -> %s, %s, %s", in.Model, in.Prompt, assistantMsgContent)
+	out := r.CreateAndAppendOutMessage(in, assistantMsgContent)
 
-	assistantMsgContent := result
-	s.memory.AppendMessage(openai.AssistantMessage(assistantMsgContent))
-
-	return &protoV1.ContextMesssage{
-		Uuid:        in.Uuid,
-		Model:       in.Model,
-		Prompt:      in.Prompt,
-		CreatedAt:   in.CreatedAt,
-		CompletedAt: utils.GetTimeStamp(),
-		Response:    assistantMsgContent,
-	}, nil
+	return out, nil
 
 }
 
-func (s *grpcConsciousServer) RouteOpenAiImageGenerationRequest(in *protoV1.ContextMesssage) (*protoV1.ContextMesssage, error) {
+func (r *router) RouteOpenAiImageGenerationRequest(in *protoV1.ContextMesssage) (*protoV1.ContextMesssage, error) {
 
 	logrus.Infof("RouteOpenAiImageGenerationRequest -> %s, %s", in.Model, in.Prompt)
 
-	s.memory.AppendInMessage(in)
+	r.memory.AppendInMessage(in)
 
 	imageFileName, err := aiGenTools.GetAiImage(in.Prompt, in.Model)
 	if err != nil {
@@ -171,25 +173,20 @@ func (s *grpcConsciousServer) RouteOpenAiImageGenerationRequest(in *protoV1.Cont
 	}
 
 	logrus.Infof("RouteImageCreateRequest -> %s, %s, %s", in.Model, in.Prompt, imageFileName)
-	s.memory.AppendMessage(openai.ToolMessage(imageFileName, ""))
+	r.memory.AppendToolMessage(imageFileName, "")
 	assistantMsgContent := "Image generated and saved to file: " + imageFileName
-	s.memory.AppendMessage(openai.AssistantMessage(assistantMsgContent))
+	out := r.CreateOutMessage(in, assistantMsgContent)
+	out.ResponseImage = imageFileName
+	r.memory.AppendOutMessage(out)
 
-	return &protoV1.ContextMesssage{
-		Uuid:          in.Uuid,
-		Model:         in.Model,
-		Prompt:        in.Prompt,
-		CreatedAt:     in.CreatedAt,
-		CompletedAt:   utils.GetTimeStamp(),
-		ResponseImage: imageFileName,
-	}, nil
+	return out, nil
 
 }
 
-func (s *grpcConsciousServer) RouteOpenAiImageEditRequest(in *protoV1.ContextMesssage) (*protoV1.ContextMesssage, error) {
+func (r *router) RouteOpenAiImageEditRequest(in *protoV1.ContextMesssage) (*protoV1.ContextMesssage, error) {
 
 	logrus.Infof("RouteOpenAiImageEditRequest -> %s, %s", in.Model, in.Prompt)
-	s.memory.AppendInMessage(in)
+	r.memory.AppendInMessage(in)
 
 	inpObj := &aiGenTools.AiGenerateImageEditTool_Input{
 		Prompt:     in.Prompt,
@@ -205,15 +202,140 @@ func (s *grpcConsciousServer) RouteOpenAiImageEditRequest(in *protoV1.ContextMes
 	logrus.Infof("RouteOpenAiImageEditRequest -> %s, %s, %s", in.Model, in.Prompt, imageFileName)
 
 	assistantMsgContent := "Image edited and saved to file: " + imageFileName
-	s.memory.AppendMessage(openai.AssistantMessage(assistantMsgContent))
+	out := r.CreateOutMessage(in, assistantMsgContent)
+	out.ResponseImage = imageFileName
+	r.memory.AppendOutMessage(out)
 
-	return &protoV1.ContextMesssage{
-		Uuid:          in.Uuid,
-		Model:         in.Model,
-		Prompt:        in.Prompt,
-		CreatedAt:     in.CreatedAt,
-		CompletedAt:   utils.GetTimeStamp(),
-		ResponseImage: imageFileName,
-	}, nil
+	return out, nil
 
+}
+
+func (r *router) RouteStreamRequest(in *protoV1.ContextMesssage, stream grpc.ServerStreamingServer[pb.ContextMesssage]) error {
+
+	// thinking := ""
+	completeResponse := ""
+
+	r.memory.AppendInMessage(in)
+
+	llmStream := llm.MakeLLMChatStreamingChatRequest(r.memory.Messages, r.memory.Tools, r.memory.Meta.Model, r.memory.Meta.Temperature)
+
+	defer func() {
+		_ = llmStream.Close()
+	}()
+
+	logrus.Infof("InStream Received -> Request: %s, %s", in.Type, in.Prompt)
+
+	// Iterate through the stream chunks as they arrive
+	for llmStream.Next() {
+		evt := llmStream.Current()
+		if len(evt.Choices) > 0 {
+			// Print each chunk to stdout in real-time
+			fmt.Print(evt.Choices[0].Delta.Content)
+			out := &pb.ContextMesssage{
+				Uuid:     in.Uuid,
+				Response: evt.Choices[0].Delta.Content,
+			}
+			completeResponse = completeResponse + evt.Choices[0].Delta.Content
+			// 	// send the out message
+			if err := stream.Send(out); err != nil {
+				return err
+			}
+		}
+	}
+	logrus.Info("Stream closed")
+
+	// if streaming is done
+	// send last out message with completeAt timestamp
+	out := r.CreateAndAppendOutMessage(in, completeResponse)
+
+	// send the out message
+	if err := stream.Send(out); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// handleTool
+// returns a bool, and error. The boolean is to indicate whether the tool was handled
+func (r *router) handleTool(in *pb.ContextMesssage, stream grpc.ServerStreamingServer[pb.ContextMesssage]) (bool, *pb.ContextMesssage, error) {
+
+	// adding user prompt, so that the tooling call can decide what tool to use
+	r.memory.AppendInMessage(in)
+	completions, err := llm.MakeLLMSingleToolRequest(r.memory.Messages,
+		r.memory.Meta.Model,
+		r.memory.Tools,
+		r.memory.Meta.Temperature)
+	if err != nil {
+		logrus.Errorf("client: error llm chat request: %v \n", err)
+		return false, nil, err
+	}
+
+	msg := completions.Choices[0].Message
+	if len(msg.ToolCalls) > 0 {
+
+		out, err := r.memory.ToolRegistry.HandleToolCalls(msg.ToolCalls, in.Prompt)
+		if err != nil {
+			logrus.Errorf("HandleToolCalls: %v \n", err)
+			return false, nil, err
+		}
+		toolMessage := out.Response
+		if out.ResponseImage != "" {
+			toolMessage = out.ResponseImage
+		}
+		r.memory.AppendToolMessage(toolMessage, msg.ToolCalls[0].ID)
+		// for metrics, populate the time stamps
+		out.CreatedAt = in.CreatedAt
+		out.CompletedAt = utils.GetTimeStamp()
+
+		logrus.Debugf("Generate Out Msg : %s", out)
+		// s.memory.AppendOutMessage(out)
+		if err := stream.Send(out); err != nil {
+			return true, out, err
+		}
+		return true, out, nil
+	} else {
+
+		// logrus.Debugf("Generate Tool function NOT selected\n")
+		// logrus.Debugf("Generate Out Msg : %s", msg.Content)
+		// if in.Data != "" {
+		// 	// if an image is in the attachment, do a describe image
+		// 	in.Type = pb.ContextMesssage_LLM_IMAGE_DESCRIBE
+		// 	in.Model = settings.Global.GetValue("VISION_MODEL")
+		// }
+	}
+	return false, nil, nil
+}
+
+func (r *router) MakeLLMChatRequest(prompt string) (*openai.ChatCompletion, error) {
+
+	r.memory.AppendUserMessage(prompt)
+	completions, err := llm.MakeLLMChatRequest(r.memory.Messages, r.memory.Tools, r.memory.Meta.Model, r.memory.Meta.Temperature)
+	if err != nil {
+		return nil, err
+	}
+
+	return completions, nil
+
+}
+
+// CreateAndAppendOutMessage
+// Created and clones an out Context message from an in message
+// sets the assistant content, and appends to memory
+func (r *router) CreateAndAppendOutMessage(in *pb.ContextMesssage, assistantMessage string) *pb.ContextMesssage {
+	out := r.CreateOutMessage(in, assistantMessage)
+	r.memory.AppendOutMessage(out)
+	return out
+}
+
+func (r *router) CreateOutMessage(in *pb.ContextMesssage, assistantMessage string) *pb.ContextMesssage {
+	out := &protoV1.ContextMesssage{
+		Uuid:        in.Uuid,
+		Model:       in.Model,
+		Prompt:      in.Prompt,
+		CreatedAt:   in.CreatedAt,
+		CompletedAt: utils.GetTimeStamp(),
+		Response:    assistantMessage,
+	}
+	return out
 }

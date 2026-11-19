@@ -11,8 +11,8 @@ import "v1/conscious/contextMessage.proto";
 
 
 message SingleContext {
-  ContextMesssage In = 1;
-  ContextMesssage Out = 2;
+  ContextMesssage in = 1;
+  ContextMesssage out = 2;
 }
 
 message MemoryMeta {
@@ -44,13 +44,23 @@ message ListMemoryResponse {
   repeated MemoryMeta memories = 1;
 }
 
+
+message GetMemoryMetaRequest {
+  string uuid = 1;
+  string name = 2;
+}
+
+message GetMemoryMetaResponse {
+  MemoryMeta meta = 1;
+}
+
 message GetMemoryRequest {
   string uuid = 1;
   string name = 2;
 }
 
 message GetMemoryResponse {
-  MemoryMeta meta = 1;
+  Memory memory = 1;
 }
 
 message AddMemoryRequest {
@@ -75,5 +85,14 @@ message DeleteMemoryRequest {
 }
 
 message DeleteMemoryResponse {
+  bool success = 1;
+}
+
+message ClearMemoryRequest {
+  string uuid = 1;
+  string name = 2;
+}
+
+message ClearMemoryResponse {
   bool success = 1;
 }

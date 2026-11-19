@@ -17,8 +17,6 @@ import (
 
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	"github.com/binuud/avatar-conscious/pkg/llm"
-	"github.com/binuud/avatar-conscious/pkg/memory"
-	"github.com/binuud/avatar-conscious/pkg/settings"
 	"github.com/binuud/avatar-conscious/pkg/utils"
 	grpc "google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -35,7 +33,7 @@ import (
 
 type grpcConsciousServer struct {
 	pb.UnimplementedConsciousServer
-	memory       *memory.Memory
+	// memory       *memory.Memory
 	openAiClient *openai.Client
 }
 
@@ -45,13 +43,14 @@ const (
 
 func NewGrpcConsciousServer() *grpcConsciousServer {
 
-	memory := memory.NewMemory(DEFAULT_MEMORY_NAME)
+	// memory := memory.NewMemory(DEFAULT_MEMORY_NAME)
 
-	// override model from load with settings value
-	memory.Meta.Model = settings.Global.GetValue("LLM_MODEL")
-	memory.ReadSystemPromptFromSettings()
+	// // override model from load with settings value
+	// memory.Meta.Model = settings.Global.GetValue("LLM_MODEL")
+	// memory.ReadSystemPromptFromSettings()
 
-	logrus.Infof("Starting Conscious with %s model", memory.Meta.Model)
+	// logrus.Infof("Starting Conscious with %s model", memory.Meta.Model)
+	logrus.Infof("Starting Conscious")
 
 	client := openai.NewClient(
 		option.WithBaseURL(llm.GetLLMEndpoint()),
@@ -59,7 +58,7 @@ func NewGrpcConsciousServer() *grpcConsciousServer {
 	)
 
 	grpcServer := &grpcConsciousServer{
-		memory:       memory,
+		// memory:       memory,
 		openAiClient: &client,
 	}
 
@@ -98,7 +97,8 @@ func (s *grpcConsciousServer) In(ctx context.Context, in *pb.ContextMesssage) (*
 		return out, nil
 	}
 
-	out, err := s.RouteRequest(in)
+	r := NewRouter(in)
+	out, err := r.RouteRequest(in)
 	if err != nil {
 		logrus.Errorf("LLM Error %v", err)
 		return nil, err
@@ -112,57 +112,8 @@ func (s *grpcConsciousServer) In(ctx context.Context, in *pb.ContextMesssage) (*
 
 func (s *grpcConsciousServer) InStream(in *pb.ContextMesssage, stream grpc.ServerStreamingServer[pb.ContextMesssage]) error {
 
-	// thinking := ""
-	completeResponse := ""
-
-	s.memory.AppendInMessage(in)
-
-	llmStream := llm.MakeLLMChatStreamingChatRequest(s.memory.Messages, s.memory.Tools, s.memory.Meta.Model, s.memory.Meta.Temperature)
-
-	defer func() {
-		_ = llmStream.Close()
-	}()
-
-	logrus.Infof("InStream Received -> Request: %s, %s", in.Type, in.Prompt)
-
-	// Iterate through the stream chunks as they arrive
-	for llmStream.Next() {
-		evt := llmStream.Current()
-		if len(evt.Choices) > 0 {
-			// Print each chunk to stdout in real-time
-			fmt.Print(evt.Choices[0].Delta.Content)
-			out := &pb.ContextMesssage{
-				Uuid:     in.Uuid,
-				Response: evt.Choices[0].Delta.Content,
-			}
-			completeResponse = completeResponse + evt.Choices[0].Delta.Content
-			// 	// send the out message
-			if err := stream.Send(out); err != nil {
-				return err
-			}
-		}
-	}
-	logrus.Info("Stream closed")
-
-	// if streaming is done
-	// send last out message with completeAt timestamp
-	out := &pb.ContextMesssage{
-		Uuid:        in.Uuid,
-		Model:       in.Model,
-		Prompt:      in.Prompt,
-		CreatedAt:   in.CreatedAt,
-		CompletedAt: utils.GetTimeStamp(),
-		Response:    completeResponse,
-	}
-
-	s.memory.AppendOutMessage(out)
-
-	// send the out message
-	if err := stream.Send(out); err != nil {
-		return err
-	}
-
-	return nil
+	r := NewRouter(in)
+	return r.RouteStreamingPromptIntent(in, stream)
 
 }
 
@@ -170,18 +121,17 @@ func (s *grpcConsciousServer) InStream(in *pb.ContextMesssage, stream grpc.Serve
 // uses tool handler
 // tool handler to checnk if intent of user is to create image or describe an image
 // was slowing the system, so using a slash command handler, user can specify his intent by giving
+// loads temperature, seed settings from memory
 // /image create /image edit or /image describe
 func (s *grpcConsciousServer) Generate(in *pb.ContextMesssage, stream grpc.ServerStreamingServer[pb.ContextMesssage]) error {
 
 	in.CreatedAt = utils.GetTimeStamp()
-	logrus.Infof("Generate Received -> Request: %s", in.Prompt)
+	logrus.Info("")
+	logrus.Info("")
+	logrus.Infof("Generate Received          -----------> Request: %s", in.Prompt)
 
 	if in.Prompt == "" {
 		return fmt.Errorf("error prompt emtpy")
-	}
-
-	if in.Model == "" {
-		return fmt.Errorf("error - no model provided")
 	}
 
 	// do not add to memory for slash commands
@@ -189,8 +139,9 @@ func (s *grpcConsciousServer) Generate(in *pb.ContextMesssage, stream grpc.Serve
 		return s.handleSlashCommandStream(in, stream)
 	}
 
-	err := s.RouteStreamingPromptIntent(in, stream)
-	s.memory.DumpMemory(nil)
+	r := NewRouter(in)
+	err := r.RouteStreamingPromptIntent(in, stream)
+	r.memory.DumpMemory(nil)
 	return err
 }
 
@@ -227,42 +178,30 @@ func (s *grpcConsciousServer) FileUpload(ctx context.Context, in *pb.UploadReque
 	}, nil
 }
 
-// SetModel
-// SetModel in the current chat session
-func (s *grpcConsciousServer) SetModel(ctx context.Context, in *pb.SetModelRequest) (*pb.SetModelResponse, error) {
+// // SetModel
+// // SetModel in the current chat session
+// func (s *grpcConsciousServer) SetModel(ctx context.Context, in *pb.SetModelRequest) (*pb.SetModelResponse, error) {
 
-	logrus.Info("Recieved SetModel")
-	s.memory.SetModel(in.Model)
-	s.memory.Save()
+// 	logrus.Info("Recieved SetModel")
+// 	s.memory.SetModel(in.Model)
+// 	s.memory.Save()
 
-	return &pb.SetModelResponse{Model: s.memory.Meta.Model}, nil
-}
-
-// ClearMemory
-// Deletes the memory from storage and creates new
-// Handle mutex ##TBD Binu
-func (s *grpcConsciousServer) ClearMemory(ctx context.Context, in *pb.ClearMemoryRequest) (*pb.ClearMemoryResponse, error) {
-
-	logrus.Info("Recieved ClearMemory")
-	memory.DeleteMemory(DEFAULT_MEMORY_NAME)
-	s.memory = memory.NewMemory(DEFAULT_MEMORY_NAME)
-
-	return &pb.ClearMemoryResponse{}, nil
-}
+// 	return &pb.SetModelResponse{Model: s.memory.Meta.Model}, nil
+// }
 
 // ReloadTools
 // Deletes the memory from storage and creates new
 // Handle mutex ##TBD Binu
-func (s *grpcConsciousServer) ReloadTools(ctx context.Context, in *pb.ReloadToolsRequest) (*pb.ReloadToolsResponse, error) {
+// func (s *grpcConsciousServer) ReloadTools(ctx context.Context, in *pb.ReloadToolsRequest) (*pb.ReloadToolsResponse, error) {
 
-	logrus.Info("Recieved ReloadTools")
-	s.memory.InitTools()
-	s.memory.Save()
-	s.memory.DumpTools()
-	return &pb.ReloadToolsResponse{
-		Success: true,
-	}, nil
-}
+// 	logrus.Info("Recieved ReloadTools")
+// 	s.memory.InitTools()
+// 	s.memory.Save()
+// 	s.memory.DumpTools()
+// 	return &pb.ReloadToolsResponse{
+// 		Success: true,
+// 	}, nil
+// }
 
 func (s *grpcConsciousServer) Health(ctx context.Context, in *pb.HealthRequest) (*pb.HealthResponse, error) {
 

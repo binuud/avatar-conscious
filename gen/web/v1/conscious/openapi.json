@@ -5,33 +5,6 @@
     "version": ""
   },
   "paths": {
-    "/v1/conscious/clearMemory": {
-      "post": {
-        "operationId": "clearMemory",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/ClearMemoryRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "conscious.Conscious.ClearMemory response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ClearMemoryResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/v1/conscious/fileUpload": {
       "post": {
         "operationId": "fileUpload",
@@ -174,33 +147,6 @@
         }
       }
     },
-    "/v1/conscious/setModel": {
-      "post": {
-        "operationId": "setModel",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/SetModelRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "conscious.Conscious.SetModel response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/SetModelResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/v1/consciousMetrics/getSystemMetrics": {
       "post": {
         "operationId": "getSystemMetrics",
@@ -281,6 +227,33 @@
         }
       }
     },
+    "/v1/memory/clear": {
+      "post": {
+        "operationId": "clearMemory",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClearMemoryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "conscious.MemoryService.ClearMemory response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ClearMemoryResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/memory/delete": {
       "post": {
         "operationId": "delete",
@@ -334,6 +307,39 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/GetMemoryResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/memory/getMemoryMeta": {
+      "get": {
+        "operationId": "getMemoryMeta",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "uuid",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "conscious.MemoryService.GetMemoryMeta response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetMemoryMetaResponse"
                 }
               }
             }
@@ -414,10 +420,23 @@
         }
       },
       "ClearMemoryRequest": {
-        "type": "object"
+        "type": "object",
+        "properties": {
+          "uuid": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
       },
       "ClearMemoryResponse": {
-        "type": "object"
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          }
+        }
       },
       "ContextMesssage": {
         "type": "object",
@@ -442,6 +461,9 @@
           },
           "stream": {
             "type": "boolean"
+          },
+          "memoryName": {
+            "type": "string"
           },
           "prompt": {
             "type": "string"
@@ -565,11 +587,19 @@
           }
         }
       },
-      "GetMemoryResponse": {
+      "GetMemoryMetaResponse": {
         "type": "object",
         "properties": {
           "meta": {
             "$ref": "#/components/schemas/MemoryMeta"
+          }
+        }
+      },
+      "GetMemoryResponse": {
+        "type": "object",
+        "properties": {
+          "memory": {
+            "$ref": "#/components/schemas/Memory"
           }
         }
       },
@@ -619,6 +649,20 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/MemoryMeta"
+            }
+          }
+        }
+      },
+      "Memory": {
+        "type": "object",
+        "properties": {
+          "meta": {
+            "$ref": "#/components/schemas/MemoryMeta"
+          },
+          "contexts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SingleContext"
             }
           }
         }
@@ -691,19 +735,14 @@
           }
         }
       },
-      "SetModelRequest": {
+      "SingleContext": {
         "type": "object",
         "properties": {
-          "model": {
-            "type": "string"
-          }
-        }
-      },
-      "SetModelResponse": {
-        "type": "object",
-        "properties": {
-          "model": {
-            "type": "string"
+          "in": {
+            "$ref": "#/components/schemas/ContextMesssage"
+          },
+          "out": {
+            "$ref": "#/components/schemas/ContextMesssage"
           }
         }
       },

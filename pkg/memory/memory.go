@@ -3,13 +3,14 @@ package memory
 import (
 	"fmt"
 	"io"
+	"math/rand/v2"
 
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	"github.com/binuud/avatar-conscious/pkg/dataLayer"
-	"github.com/binuud/avatar-conscious/pkg/servers/mcpManagerServer"
 	"github.com/binuud/avatar-conscious/pkg/settings"
-	"github.com/binuud/avatar-conscious/pkg/tools/aiGenTools"
+	"github.com/binuud/avatar-conscious/pkg/tools"
 	"github.com/binuud/avatar-conscious/pkg/tools/toolRegistry"
+	"github.com/binuud/avatar-conscious/pkg/utils"
 
 	"github.com/openai/openai-go/v3"
 	"github.com/sirupsen/logrus"
@@ -36,24 +37,26 @@ type memoryBinary struct {
 	Messages []openai.ChatCompletionMessageParamUnion
 }
 
-// NewScratchMemory
-// scratch memory is not saved
-func NewScratchMemory() *Memory {
+func NewEmtpyMemory() *Memory {
 	messages := []openai.ChatCompletionMessageParamUnion{
 		openai.SystemMessage(settings.Global.GetValue("LLM_SYSTEM_PROMPT")),
 	}
-
 	memory := &Memory{
 		Meta: &pb.MemoryMeta{
+			Uuid:         utils.GenerateUUID(),
 			Name:         "",
 			SystemPrompt: settings.Global.GetValue("LLM_SYSTEM_PROMPT"),
+			Model:        settings.Global.GetValue("LLM_MODEL"),
 			Temperature:  0.8,
+			Seed:         rand.Int64(),
+			CreatedAt:    utils.GetTimeStamp(),
 		},
 		Messages: messages,
 		Tools:    nil,
 		Contexts: make([]*pb.SingleContext, 0),
 	}
 	memory.SetModel(settings.Global.GetValue("LLM_MODEL"))
+
 	return memory
 }
 
@@ -67,21 +70,8 @@ func NewMemory(name string) *Memory {
 
 	memory, err := LoadMemory(name)
 	if err != nil {
-		messages := []openai.ChatCompletionMessageParamUnion{
-			openai.SystemMessage(settings.Global.GetValue("LLM_SYSTEM_PROMPT")),
-		}
-
-		memory = &Memory{
-			Meta: &pb.MemoryMeta{
-				Name:         name,
-				SystemPrompt: settings.Global.GetValue("LLM_SYSTEM_PROMPT"),
-				Temperature:  0.8,
-			},
-			Messages: messages,
-			Tools:    nil,
-			Contexts: make([]*pb.SingleContext, 0),
-		}
-		memory.SetModel(settings.Global.GetValue("LLM_MODEL"))
+		memory := NewEmtpyMemory()
+		memory.Meta.Name = name
 		memory.InitTools()
 		memory.Save()
 	}
@@ -95,27 +85,30 @@ func (m *Memory) SetModel(model string) {
 	} else {
 		m.Meta.Model = settings.Global.GetValue("LLM_MODEL")
 	}
-
 }
 
 func (m *Memory) InitTools() {
 
-	myTools := toolRegistry.NewToolRegistry()
+	// myTools := toolRegistry.NewToolRegistry()
 
-	mcpManagerServer.AddEnabledMCPServers(myTools)
+	// mcpManagerServer.AddEnabledMCPServers(myTools)
 
-	// now add common tools
+	// // now add common tools
 
-	myTools.AddTool(aiGenTools.NewAiGenerateImageEditTool())
-	myTools.AddTool(aiGenTools.NewAiImageDescriptionTool())
+	// myTools.AddTool(aiGenTools.NewAiGenerateImageEditTool())
+	// myTools.AddTool(aiGenTools.NewAiImageDescriptionTool())
 
 	// myTools.AddTool(commonTools.NewToolFileContents())
 	// myTools.AddTool(aiGenTools.NewAiGenerateImageTool())
 	// avatarTools.AddTool(aiGenTools.NewUiLaunchTool())
 	// myTools.AddTool(apiTools.NewApiGetTool())
 
-	m.ToolRegistry = myTools
-	m.Tools = myTools.GetCommonTools()
+	// m.ToolRegistry = myTools
+	// m.Tools = myTools.GetCommonTools()
+
+	// using global tools to prevent tool init at each call
+	m.ToolRegistry = tools.GlobalCommonToolsRegistry
+	m.Tools = tools.GlobalCommonTools
 	logrus.Debugf("Tools Added to conscious memory %s", m.Meta.Name)
 
 }
@@ -162,8 +155,31 @@ func (m *Memory) DumpMemory(w io.Writer) {
 		}
 		logrus.Debugf("Name: %s, content: %s", role, content)
 	}
+	logrus.Debug("--------------------------  Contexts  ----------------------------------")
+	for _, cntx := range m.Contexts {
+		logrus.Debugf("In Prompt: %s", cntx.In.Prompt)
+		logrus.Debugf("Out Response: %s", cntx.Out.Response)
+	}
 	logrus.Debug("--------------------------  END  ----------------------------------")
 
+}
+
+func (m *Memory) AppendToolMessage(message string, toolId string) {
+	m.appendMessage(openai.ToolMessage(message, toolId))
+}
+
+func (m *Memory) AppendDevelopmentMessage(message string) {
+	m.appendMessage(openai.DeveloperMessage(message))
+}
+
+// we need this for debuging avatar thru UI
+func (m *Memory) AppendAssistantMessage(message string) {
+	m.AppendOutMessage(&pb.ContextMesssage{Response: message})
+}
+
+// we need this for debuging avatar thru UI
+func (m *Memory) AppendUserMessage(message string) {
+	m.AppendInMessage(&pb.ContextMesssage{Prompt: message})
 }
 
 // AppendInMessage()
@@ -174,7 +190,7 @@ func (m *Memory) AppendInMessage(in *pb.ContextMesssage) {
 	m.CurrentContext = &pb.SingleContext{
 		In: in,
 	}
-	m.AppendMessage(openai.UserMessage(in.Prompt))
+	m.appendMessage(openai.UserMessage(in.Prompt))
 }
 
 // AppendOutMessage
@@ -185,14 +201,17 @@ func (m *Memory) AppendOutMessage(out *pb.ContextMesssage) {
 		m.CurrentContext = &pb.SingleContext{}
 		logrus.Errorf("AppendOutMessage: received an out message, without an in message")
 	}
+	if m.Contexts == nil {
+		m.Contexts = make([]*pb.SingleContext, 0)
+	}
 	m.CurrentContext.Out = out
 	m.Contexts = append(m.Contexts, m.CurrentContext)
-	m.AppendMessage(openai.AssistantMessage(out.Response))
+	m.appendMessage(openai.AssistantMessage(out.Response))
 }
 
 // AppendMemory
 // append to memory, only append user and assistant message to memory
-func (m *Memory) AppendMessage(message openai.ChatCompletionMessageParamUnion) {
+func (m *Memory) appendMessage(message openai.ChatCompletionMessageParamUnion) {
 
 	// there is a change for user prompt to get duplicated
 	// check if the current message is user message, then compare with last 2 messages
@@ -260,7 +279,7 @@ func (m *Memory) Save() error {
 			Seed:         m.Meta.Seed,
 			Temperature:  m.Meta.Temperature,
 		},
-
+		Contexts: m.Contexts,
 		Messages: m.Messages,
 	}
 
@@ -299,7 +318,17 @@ func LoadMemory(name string) (*Memory, error) {
 	return &localMemory, nil
 }
 
-func Delete(name string) (*Memory, error) {
+func (m *Memory) ClearMemory() *Memory {
+	m.Messages = []openai.ChatCompletionMessageParamUnion{
+		openai.SystemMessage(m.Meta.SystemPrompt),
+	}
+	m.CurrentContext = nil
+	m.Contexts = make([]*pb.SingleContext, 0)
+	m.Save()
+	return m
+}
+
+func oldDelete(name string) (*Memory, error) {
 	// Read profile back (Go automatically infers type T from your variable assignment)
 	fullFileName := dataLayer.GetFileAbsolutePath(MEMORY_DIRECTORY, name)
 	localMemory, err := dataLayer.ReadBinary[Memory](fullFileName)

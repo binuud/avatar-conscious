@@ -21,6 +21,12 @@ service MemoryService {
     };
   }
 
+  rpc GetMemoryMeta(GetMemoryMetaRequest) returns (GetMemoryMetaResponse) {
+    option (google.api.http) = {
+      get : "/v1/memory/getMemoryMeta"
+    };
+  }
+
   rpc Get(GetMemoryRequest) returns (GetMemoryResponse) {
     option (google.api.http) = {
       get : "/v1/memory/get"
@@ -44,6 +50,15 @@ service MemoryService {
   rpc Delete(DeleteMemoryRequest) returns (DeleteMemoryResponse) {
     option (google.api.http) = {
       post : "/v1/memory/delete"
+      body : "*"
+    };
+  }
+
+  // for keeping the memory meta
+  // but deleting all interactions between user, assistant and agent
+  rpc ClearMemory(ClearMemoryRequest) returns (ClearMemoryResponse) {
+    option (google.api.http) = {
+      post : "/v1/memory/clear"
       body : "*"
     };
   }

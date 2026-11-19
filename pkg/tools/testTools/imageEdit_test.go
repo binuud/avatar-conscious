@@ -6,7 +6,6 @@ import (
 	"github.com/binuud/avatar-conscious/pkg/bootstrap"
 	"github.com/binuud/avatar-conscious/pkg/llm"
 	"github.com/binuud/avatar-conscious/pkg/memory"
-	"github.com/openai/openai-go/v3"
 	"github.com/sirupsen/logrus"
 )
 
@@ -16,25 +15,25 @@ func Test_ImageEdit(t *testing.T) {
 	memoryName := ""
 	memory := memory.NewMemory(memoryName)
 	memory.InitTools()
-	memory.AppendMessage(openai.UserMessage("what is 10 + 10"))
-	memory.AppendMessage(openai.AssistantMessage("20"))
-	memory.AppendMessage(openai.UserMessage(`Edit the image "e9420877-7407-4c79-95ee-932065a99ac0.png", 
+	memory.AppendUserMessage("what is 10 + 10")
+	memory.AppendAssistantMessage("20")
+	memory.AppendUserMessage(`Edit the image "e9420877-7407-4c79-95ee-932065a99ac0.png", 
 		use the dress provided in image "shirt.jpg"
 		using the image of the person from webcamera as reference, 
 		Do not modify the face of the person.
 		Keep the facial features, skin tone of the person exactly as they are in the original image.
-		create a new image of the person wearing the dress, do not change face or skin tone`))
+		create a new image of the person wearing the dress, do not change face or skin tone`)
 
 	var expectedTool = "get_ai_edit_image"
 	var expectedParams = []string{"e9420877-7407-4c79-95ee-932065a99ac0.png", "shirt.jpg"}
 	_test_tool_request_params(t, memory, expectedTool, expectedParams)
 
-	memory.AppendMessage(openai.AssistantMessage("Image was generated"))
-	memory.AppendMessage(openai.UserMessage(`Edit the image "e9420877-7407-4c79-95ee-932065a99ac0.png", 
+	memory.AppendAssistantMessage("Image was generated")
+	memory.AppendUserMessage(`Edit the image "e9420877-7407-4c79-95ee-932065a99ac0.png", 
 		using the image of the person from webcamera as reference, 
 		Do not modify the face of the person.
 		Keep the facial features, skin tone of the person exactly as they are in the original image.
-		create a new image of the person wearing the dress, do not change face or skin tone`))
+		create a new image of the person wearing the dress, do not change face or skin tone`)
 
 	_test_tool_request_params(t, memory, expectedTool, expectedParams)
 }

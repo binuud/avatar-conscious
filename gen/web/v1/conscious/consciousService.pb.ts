@@ -20,14 +20,8 @@ export class Conscious {
   static GetModels(req: ConsciousCommon.ModelRequest, initReq?: fm.InitReq): Promise<ConsciousCommon.ModelResponse> {
     return fm.fetchReq<ConsciousCommon.ModelRequest, ConsciousCommon.ModelResponse>(`/v1/conscious/models?${fm.renderURLSearchParams(req, [])}`, {...initReq, method: "GET"})
   }
-  static SetModel(req: ConsciousCommon.SetModelRequest, initReq?: fm.InitReq): Promise<ConsciousCommon.SetModelResponse> {
-    return fm.fetchReq<ConsciousCommon.SetModelRequest, ConsciousCommon.SetModelResponse>(`/v1/conscious/setModel`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
-  }
   static FileUpload(req: ConsciousContextMessage.UploadRequest, initReq?: fm.InitReq): Promise<ConsciousContextMessage.UploadResponse> {
     return fm.fetchReq<ConsciousContextMessage.UploadRequest, ConsciousContextMessage.UploadResponse>(`/v1/conscious/fileUpload`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
-  }
-  static ClearMemory(req: ConsciousCommon.ClearMemoryRequest, initReq?: fm.InitReq): Promise<ConsciousCommon.ClearMemoryResponse> {
-    return fm.fetchReq<ConsciousCommon.ClearMemoryRequest, ConsciousCommon.ClearMemoryResponse>(`/v1/conscious/clearMemory`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
   }
   static ReloadTools(req: ConsciousCommon.ReloadToolsRequest, initReq?: fm.InitReq): Promise<ConsciousCommon.ReloadToolsResponse> {
     return fm.fetchReq<ConsciousCommon.ReloadToolsRequest, ConsciousCommon.ReloadToolsResponse>(`/v1/conscious/reloadTools?${fm.renderURLSearchParams(req, [])}`, {...initReq, method: "GET"})

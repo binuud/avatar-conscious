@@ -14,7 +14,6 @@ import (
 
 	"github.com/binuud/avatar-conscious/pkg/tools/commonTools"
 	"github.com/binuud/avatar-conscious/pkg/tools/toolRegistry"
-	"github.com/openai/openai-go/v3"
 	"github.com/sirupsen/logrus"
 )
 
@@ -68,7 +67,7 @@ func (a *AvatarWrapper) InitTools() error {
 // waits for run by step command
 func (a *AvatarWrapper) Start() {
 	// create an use and throw memory
-	a.Memory = memory.NewScratchMemory()
+	a.Memory = memory.NewEmtpyMemory()
 	a.Memory.SetSystemPrompt(SYSTEM_PROMPT)
 	err := a.InitTools()
 	if err != nil {
@@ -84,8 +83,7 @@ func (a *AvatarWrapper) Start() {
 func (a *AvatarWrapper) RunStep(stepNo int, step *pb.Step) (*pbConcsious.ContextMesssage, error) {
 
 	out := &pbConcsious.ContextMesssage{}
-
-	a.Memory.AppendMessage(openai.UserMessage(fmt.Sprintf("Step No: %d, %s", (stepNo + 1), step.Prompt)))
+	a.Memory.AppendUserMessage(fmt.Sprintf("Step No: %d, %s", (stepNo + 1), step.Prompt))
 
 	// hot swap system memory if the step needs it
 	if step.SystemPrompt != "" {
@@ -131,8 +129,8 @@ func (a *AvatarWrapper) RunStep(stepNo int, step *pb.Step) (*pbConcsious.Context
 			// data will be id of the UI
 			out.Action = "SHOW-UI"
 			logrus.Infof("RunStep : SHOW-UI called with id %s", out.Data)
-			a.Memory.AppendMessage(openai.ToolMessage(fmt.Sprintf("Avatar UI Interface with id %s shown to the user by the tool function", out.Data), msg.ToolCalls[0].ID))
-			a.Memory.AppendMessage(openai.DeveloperMessage(fmt.Sprintf("Avatar UI Interface with id %s shown to the user by the tool function", out.Data)))
+			a.Memory.AppendToolMessage(fmt.Sprintf("Avatar UI Interface with id %s shown to the user by the tool function", out.Data), msg.ToolCalls[0].ID)
+			a.Memory.AppendDevelopmentMessage(fmt.Sprintf("Avatar UI Interface with id %s shown to the user by the tool function", out.Data))
 			// check if ui is present if not bail out
 			_, err := a.CheckUiExists(out.Data)
 			if err != nil {
@@ -142,10 +140,10 @@ func (a *AvatarWrapper) RunStep(stepNo int, step *pb.Step) (*pbConcsious.Context
 		} else {
 			// proceed by adding the tool output to memory
 			// so subsequent steps can use the data
-			a.Memory.AppendMessage(openai.ToolMessage(fmt.Sprintf("%s", out.Response), msg.ToolCalls[0].ID))
+			a.Memory.AppendToolMessage(fmt.Sprintf("%s", out.Response), msg.ToolCalls[0].ID)
 			if out != nil && out.ResponseImage != "" {
 				assistantMsgContent := "Image generated and saved to file: " + out.ResponseImage
-				a.Memory.AppendMessage(openai.AssistantMessage(assistantMsgContent))
+				a.Memory.AppendAssistantMessage(assistantMsgContent)
 			} else {
 				// we need LLM handle the tool output
 				response, err := llm.MakeLLMChatRequest(a.Memory.Messages, nil, a.Memory.Meta.Model,
@@ -155,7 +153,7 @@ func (a *AvatarWrapper) RunStep(stepNo int, step *pb.Step) (*pbConcsious.Context
 					return nil, err
 				}
 				msg := response.Choices[0].Message
-				a.Memory.AppendMessage(openai.AssistantMessage(msg.Content))
+				a.Memory.AppendAssistantMessage(msg.Content)
 			}
 		}
 	} else {
@@ -172,8 +170,8 @@ func (a *AvatarWrapper) RunSlashCommand(prompt string, out *pbConcsious.ContextM
 	if len(result) == 2 {
 		cmd := strings.ToLower(result[0])
 		if cmd == "/launch-ui" {
-			a.Memory.AppendMessage(openai.ToolMessage(fmt.Sprintf("Avatar UI Interface with id %s shown to the user by the tool function", out.Data), ""))
-			a.Memory.AppendMessage(openai.DeveloperMessage(fmt.Sprintf("Avatar UI Interface with id %s shown to the user by the tool function", out.Data)))
+			a.Memory.AppendToolMessage(fmt.Sprintf("Avatar UI Interface with id %s shown to the user by the tool function", out.Data), "")
+			a.Memory.AppendDevelopmentMessage(fmt.Sprintf("Avatar UI Interface with id %s shown to the user by the tool function", out.Data))
 			out.Action = "SHOW-UI"
 			out.Data = result[1]
 			// check if ui is present if not bail out

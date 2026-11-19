@@ -52,6 +52,7 @@ export type ContextMesssage = {
   type?: ContextMesssageContextType
   role?: ContextMesssageContextRole
   stream?: boolean
+  memoryName?: string
   prompt?: string
   systemPrompt?: string
   seed?: string

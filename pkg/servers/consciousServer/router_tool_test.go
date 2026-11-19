@@ -212,7 +212,7 @@ func Test_LLM_TOOL(t *testing.T) {
 func routerViaTool(prompt string, memory *memory.Memory, t *testing.T) (*openai.ChatCompletionMessageToolCallUnion, error) {
 
 	t.Logf("LLM Prompt: %s", prompt)
-	memory.AppendMessage(openai.UserMessage(prompt))
+	memory.AppendUserMessage(prompt)
 	completions, err := llm.MakeLLMSingleToolRequest(memory.Messages, memory.Meta.Model, memory.Tools, memory.Meta.Temperature)
 	if err != nil {
 		// t.Errorf("client: error llm chat request: %v \n", err)

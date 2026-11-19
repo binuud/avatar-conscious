@@ -12,7 +12,6 @@ import (
 	"github.com/binuud/avatar-conscious/pkg/memory"
 	"github.com/binuud/avatar-conscious/pkg/utils"
 	"github.com/google/jsonschema-go/jsonschema"
-	"github.com/openai/openai-go/v3"
 	"github.com/sirupsen/logrus"
 )
 
@@ -63,9 +62,9 @@ func (a *AvatarWrapper) BuildUsingLLM() error {
 		a.Content,
 	)
 
-	buildMemory := memory.NewScratchMemory()
+	buildMemory := memory.NewEmtpyMemory()
 	buildMemory.SetSystemPrompt(strings.TrimSpace(SYSTEM_PROMPT_FORBUILDER))
-	buildMemory.AppendMessage(openai.UserMessage(userPrompt))
+	buildMemory.AppendUserMessage(userPrompt)
 
 	stepsSchema, err := a.getAvatarStepsJsonSchemaMap()
 	if err != nil {

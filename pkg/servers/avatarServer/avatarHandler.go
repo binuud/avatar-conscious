@@ -9,7 +9,6 @@ import (
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/avatar"
 	pbConscious "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	"github.com/binuud/avatar-conscious/pkg/utils"
-	"github.com/openai/openai-go/v3"
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 	"google.golang.org/protobuf/proto"
@@ -163,10 +162,8 @@ func (s *avatarGrpcServer) handleAvatarRun(in *pb.ControlRequest,
 				} else {
 					prompt = fmt.Sprintf("Step No: %d, %s", (currentStep + 1), currentStepObj.Response)
 				}
-
-				s.avatar.Memory.AppendMessage(openai.UserMessage(prompt))
-				s.avatar.Memory.AppendMessage(openai.AssistantMessage("Ok."))
-
+				s.avatar.Memory.AppendUserMessage(prompt)
+				s.avatar.Memory.AppendAssistantMessage("Ok.")
 			}
 			in.Control.CurrentStep++
 		}
