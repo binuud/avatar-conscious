@@ -4,6 +4,7 @@ import (
 	"runtime"
 
 	"github.com/binuud/avatar-conscious/pkg/global"
+	"github.com/binuud/avatar-conscious/pkg/memory"
 	"github.com/binuud/avatar-conscious/pkg/settings"
 	"github.com/binuud/avatar-conscious/pkg/slashCommands"
 	"github.com/binuud/avatar-conscious/pkg/tools"
@@ -39,5 +40,8 @@ func Bootstrap(buildEnv ...string) {
 
 	// initiate tools
 	tools.Bootstrap()
+
+	// initialize default memory
+	memory.Bootstrap()
 
 }

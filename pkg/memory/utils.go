@@ -19,6 +19,10 @@ func ListMemories() ([]*pb.MemoryMeta, error) {
 	for _, entry := range entries {
 		// Filter out directories if you only want files
 		if !entry.IsDir() {
+			if entry.Name() == ".DS_Store" {
+				continue
+			}
+
 			memory, err := LoadMemory(entry.Name())
 			if err != nil {
 				logrus.Errorf("error cannot load memory %s", memory)
