@@ -10,6 +10,9 @@ export class MemoryService {
   static List(req: ConsciousMemory.ListMemoryRequest, initReq?: fm.InitReq): Promise<ConsciousMemory.ListMemoryResponse> {
     return fm.fetchReq<ConsciousMemory.ListMemoryRequest, ConsciousMemory.ListMemoryResponse>(`/v1/memory/list?${fm.renderURLSearchParams(req, [])}`, {...initReq, method: "GET"})
   }
+  static GetMemoryMeta(req: ConsciousMemory.GetMemoryMetaRequest, initReq?: fm.InitReq): Promise<ConsciousMemory.GetMemoryMetaResponse> {
+    return fm.fetchReq<ConsciousMemory.GetMemoryMetaRequest, ConsciousMemory.GetMemoryMetaResponse>(`/v1/memory/getMemoryMeta?${fm.renderURLSearchParams(req, [])}`, {...initReq, method: "GET"})
+  }
   static Get(req: ConsciousMemory.GetMemoryRequest, initReq?: fm.InitReq): Promise<ConsciousMemory.GetMemoryResponse> {
     return fm.fetchReq<ConsciousMemory.GetMemoryRequest, ConsciousMemory.GetMemoryResponse>(`/v1/memory/get?${fm.renderURLSearchParams(req, [])}`, {...initReq, method: "GET"})
   }
@@ -21,5 +24,8 @@ export class MemoryService {
   }
   static Delete(req: ConsciousMemory.DeleteMemoryRequest, initReq?: fm.InitReq): Promise<ConsciousMemory.DeleteMemoryResponse> {
     return fm.fetchReq<ConsciousMemory.DeleteMemoryRequest, ConsciousMemory.DeleteMemoryResponse>(`/v1/memory/delete`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
+  }
+  static ClearMemory(req: ConsciousMemory.ClearMemoryRequest, initReq?: fm.InitReq): Promise<ConsciousMemory.ClearMemoryResponse> {
+    return fm.fetchReq<ConsciousMemory.ClearMemoryRequest, ConsciousMemory.ClearMemoryResponse>(`/v1/memory/clear`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
   }
 }

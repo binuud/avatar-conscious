@@ -81,6 +81,8 @@ message ContextMesssage {
   // if streaming response is required
   bool stream = 8;
 
+  string memoryName = 9;
+
   // user prompt
   string prompt = 11;
   // system prompt

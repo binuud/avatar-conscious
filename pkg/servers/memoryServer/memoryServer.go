@@ -33,17 +33,48 @@ func (s *grpcMemoryServiceServer) List(ctx context.Context, in *pb.ListMemoryReq
 
 }
 
-func (s *grpcMemoryServiceServer) Get(ctx context.Context, in *pb.GetMemoryRequest) (*pb.GetMemoryResponse, error) {
+func (s *grpcMemoryServiceServer) GetMemoryMeta(ctx context.Context, in *pb.GetMemoryMetaRequest) (*pb.GetMemoryMetaResponse, error) {
 
 	logrus.Infof("Get called on Memory Server %v", in)
+
+	if in.Name == "" {
+		// return empty memory
+		m := memory.NewEmtpyMemory()
+		return &pb.GetMemoryMetaResponse{
+			Meta: m.Memory.Meta,
+		}, nil
+	}
 
 	memory, err := memory.LoadMemory(in.Name)
 	if err != nil {
 		return nil, err
 	}
 
-	return &pb.GetMemoryResponse{
+	return &pb.GetMemoryMetaResponse{
 		Meta: memory.Meta,
+	}, nil
+
+}
+
+func (s *grpcMemoryServiceServer) Get(ctx context.Context, in *pb.GetMemoryRequest) (*pb.GetMemoryResponse, error) {
+
+	logrus.Infof("Get called on Memory Server %v", in)
+
+	if in.Name == "" {
+		// return empty memory
+		m := memory.NewEmtpyMemory()
+		return &pb.GetMemoryResponse{
+			Memory: &m.Memory,
+		}, nil
+	}
+
+	m, err := memory.LoadMemory(in.Name)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.GetMemoryResponse{
+		Memory: &m.Memory,
 	}, nil
 
 }
@@ -65,6 +96,18 @@ func (s *grpcMemoryServiceServer) Delete(ctx context.Context, in *pb.DeleteMemor
 
 }
 
+// ClearMemory
+// Deletes the memory from storage and creates new
+// Handle mutex ##TBD Binu
+func (s *grpcMemoryServiceServer) ClearMemory(ctx context.Context, in *pb.ClearMemoryRequest) (*pb.ClearMemoryResponse, error) {
+
+	logrus.Info("Recieved ClearMemory")
+	m := memory.NewMemory(in.Name)
+	m.ClearMemory()
+	m.DumpMemory(nil)
+	return &pb.ClearMemoryResponse{Success: true}, nil
+}
+
 func (s *grpcMemoryServiceServer) Add(ctx context.Context, in *pb.AddMemoryRequest) (*pb.AddMemoryResponse, error) {
 
 	logrus.Infof("Add called on Memory Server %v", in)
@@ -79,9 +122,9 @@ func (s *grpcMemoryServiceServer) Add(ctx context.Context, in *pb.AddMemoryReque
 	memory.Meta.Model = in.Meta.Model
 	memory.Meta.Seed = in.Meta.Seed
 	memory.Meta.Temperature = in.Meta.Temperature
-	memory.Meta.SystemPrompt = in.Meta.SystemPrompt
+	memory.SetSystemPrompt(in.Meta.SystemPrompt)
 	memory.Save()
-
+	memory.DumpMemory(nil)
 	return &pb.AddMemoryResponse{
 		Meta: memory.Meta,
 	}, nil
@@ -102,9 +145,9 @@ func (s *grpcMemoryServiceServer) Update(ctx context.Context, in *pb.UpdateMemor
 	memory.Meta.Model = in.Meta.Model
 	memory.Meta.Seed = in.Meta.Seed
 	memory.Meta.Temperature = in.Meta.Temperature
-	memory.Meta.SystemPrompt = in.Meta.SystemPrompt
+	memory.SetSystemPrompt(in.Meta.SystemPrompt)
 	memory.Save()
-
+	memory.DumpMemory(nil)
 	return &pb.UpdateMemoryResponse{
 		Meta: memory.Meta,
 	}, nil

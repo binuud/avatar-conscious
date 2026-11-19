@@ -24,11 +24,13 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	MemoryService_List_FullMethodName   = "/conscious.MemoryService/List"
-	MemoryService_Get_FullMethodName    = "/conscious.MemoryService/Get"
-	MemoryService_Add_FullMethodName    = "/conscious.MemoryService/Add"
-	MemoryService_Update_FullMethodName = "/conscious.MemoryService/Update"
-	MemoryService_Delete_FullMethodName = "/conscious.MemoryService/Delete"
+	MemoryService_List_FullMethodName          = "/conscious.MemoryService/List"
+	MemoryService_GetMemoryMeta_FullMethodName = "/conscious.MemoryService/GetMemoryMeta"
+	MemoryService_Get_FullMethodName           = "/conscious.MemoryService/Get"
+	MemoryService_Add_FullMethodName           = "/conscious.MemoryService/Add"
+	MemoryService_Update_FullMethodName        = "/conscious.MemoryService/Update"
+	MemoryService_Delete_FullMethodName        = "/conscious.MemoryService/Delete"
+	MemoryService_ClearMemory_FullMethodName   = "/conscious.MemoryService/ClearMemory"
 )
 
 // MemoryServiceClient is the client API for MemoryService service.
@@ -36,10 +38,14 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type MemoryServiceClient interface {
 	List(ctx context.Context, in *ListMemoryRequest, opts ...grpc.CallOption) (*ListMemoryResponse, error)
+	GetMemoryMeta(ctx context.Context, in *GetMemoryMetaRequest, opts ...grpc.CallOption) (*GetMemoryMetaResponse, error)
 	Get(ctx context.Context, in *GetMemoryRequest, opts ...grpc.CallOption) (*GetMemoryResponse, error)
 	Add(ctx context.Context, in *AddMemoryRequest, opts ...grpc.CallOption) (*AddMemoryResponse, error)
 	Update(ctx context.Context, in *UpdateMemoryRequest, opts ...grpc.CallOption) (*UpdateMemoryResponse, error)
 	Delete(ctx context.Context, in *DeleteMemoryRequest, opts ...grpc.CallOption) (*DeleteMemoryResponse, error)
+	// for keeping the memory meta
+	// but deleting all interactions between user, assistant and agent
+	ClearMemory(ctx context.Context, in *ClearMemoryRequest, opts ...grpc.CallOption) (*ClearMemoryResponse, error)
 }
 
 type memoryServiceClient struct {
@@ -54,6 +60,16 @@ func (c *memoryServiceClient) List(ctx context.Context, in *ListMemoryRequest, o
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(ListMemoryResponse)
 	err := c.cc.Invoke(ctx, MemoryService_List_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *memoryServiceClient) GetMemoryMeta(ctx context.Context, in *GetMemoryMetaRequest, opts ...grpc.CallOption) (*GetMemoryMetaResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetMemoryMetaResponse)
+	err := c.cc.Invoke(ctx, MemoryService_GetMemoryMeta_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -100,15 +116,29 @@ func (c *memoryServiceClient) Delete(ctx context.Context, in *DeleteMemoryReques
 	return out, nil
 }
 
+func (c *memoryServiceClient) ClearMemory(ctx context.Context, in *ClearMemoryRequest, opts ...grpc.CallOption) (*ClearMemoryResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ClearMemoryResponse)
+	err := c.cc.Invoke(ctx, MemoryService_ClearMemory_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // MemoryServiceServer is the server API for MemoryService service.
 // All implementations must embed UnimplementedMemoryServiceServer
 // for forward compatibility.
 type MemoryServiceServer interface {
 	List(context.Context, *ListMemoryRequest) (*ListMemoryResponse, error)
+	GetMemoryMeta(context.Context, *GetMemoryMetaRequest) (*GetMemoryMetaResponse, error)
 	Get(context.Context, *GetMemoryRequest) (*GetMemoryResponse, error)
 	Add(context.Context, *AddMemoryRequest) (*AddMemoryResponse, error)
 	Update(context.Context, *UpdateMemoryRequest) (*UpdateMemoryResponse, error)
 	Delete(context.Context, *DeleteMemoryRequest) (*DeleteMemoryResponse, error)
+	// for keeping the memory meta
+	// but deleting all interactions between user, assistant and agent
+	ClearMemory(context.Context, *ClearMemoryRequest) (*ClearMemoryResponse, error)
 	mustEmbedUnimplementedMemoryServiceServer()
 }
 
@@ -122,6 +152,9 @@ type UnimplementedMemoryServiceServer struct{}
 func (UnimplementedMemoryServiceServer) List(context.Context, *ListMemoryRequest) (*ListMemoryResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method List not implemented")
 }
+func (UnimplementedMemoryServiceServer) GetMemoryMeta(context.Context, *GetMemoryMetaRequest) (*GetMemoryMetaResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method GetMemoryMeta not implemented")
+}
 func (UnimplementedMemoryServiceServer) Get(context.Context, *GetMemoryRequest) (*GetMemoryResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Get not implemented")
 }
@@ -133,6 +166,9 @@ func (UnimplementedMemoryServiceServer) Update(context.Context, *UpdateMemoryReq
 }
 func (UnimplementedMemoryServiceServer) Delete(context.Context, *DeleteMemoryRequest) (*DeleteMemoryResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedMemoryServiceServer) ClearMemory(context.Context, *ClearMemoryRequest) (*ClearMemoryResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ClearMemory not implemented")
 }
 func (UnimplementedMemoryServiceServer) mustEmbedUnimplementedMemoryServiceServer() {}
 func (UnimplementedMemoryServiceServer) testEmbeddedByValue()                       {}
@@ -169,6 +205,24 @@ func _MemoryService_List_Handler(srv interface{}, ctx context.Context, dec func(
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MemoryServiceServer).List(ctx, req.(*ListMemoryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MemoryService_GetMemoryMeta_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetMemoryMetaRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MemoryServiceServer).GetMemoryMeta(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MemoryService_GetMemoryMeta_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MemoryServiceServer).GetMemoryMeta(ctx, req.(*GetMemoryMetaRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -245,6 +299,24 @@ func _MemoryService_Delete_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MemoryService_ClearMemory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ClearMemoryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MemoryServiceServer).ClearMemory(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MemoryService_ClearMemory_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MemoryServiceServer).ClearMemory(ctx, req.(*ClearMemoryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // MemoryService_ServiceDesc is the grpc.ServiceDesc for MemoryService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -255,6 +327,10 @@ var MemoryService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "List",
 			Handler:    _MemoryService_List_Handler,
+		},
+		{
+			MethodName: "GetMemoryMeta",
+			Handler:    _MemoryService_GetMemoryMeta_Handler,
 		},
 		{
 			MethodName: "Get",
@@ -271,6 +347,10 @@ var MemoryService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Delete",
 			Handler:    _MemoryService_Delete_Handler,
+		},
+		{
+			MethodName: "ClearMemory",
+			Handler:    _MemoryService_ClearMemory_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

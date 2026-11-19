@@ -106,7 +106,7 @@ func MakeLLMChatStreamingChatRequest(messages []openai.ChatCompletionMessagePara
 
 	ctx := context.Background()
 
-	// logrus.Infof("MakeLLMChatRequest :%s:%s", model, prompt)
+	// logrus.Infof("MakeLLMChatRequest :%s:%s", model, messages)
 	param := openai.ChatCompletionNewParams{
 		Messages:        messages,
 		Model:           model,

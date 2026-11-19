@@ -49,10 +49,6 @@ message SetModelResponse {
   string model = 1;
 }
 
-message ClearMemoryRequest{}
-
-message ClearMemoryResponse{}
-
 message ReloadToolsRequest{}
 
 message ReloadToolsResponse{

@@ -256,6 +256,10 @@ paths:
           in: query
           schema:
             type: string
+        - name: control.response.memoryName
+          in: query
+          schema:
+            type: string
         - name: control.response.model
           in: query
           schema:

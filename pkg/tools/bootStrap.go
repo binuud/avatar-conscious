@@ -7,26 +7,28 @@ import (
 	"github.com/binuud/avatar-conscious/pkg/tools/aiGenTools"
 	"github.com/binuud/avatar-conscious/pkg/tools/apiTools"
 	"github.com/binuud/avatar-conscious/pkg/tools/commonTools"
+	"github.com/binuud/avatar-conscious/pkg/tools/toolRegistry"
+	"github.com/openai/openai-go/v3"
 )
 
-// var GlobalCommonToolsRegistry *toolRegistry.ToolRegistry
-// var GlobalCommonTools []openai.ChatCompletionToolUnionParam
+var GlobalCommonToolsRegistry *toolRegistry.ToolRegistry
+var GlobalCommonTools []openai.ChatCompletionToolUnionParam
 
-// func Bootstrap() {
+func Bootstrap() {
 
-// 	GlobalCommonToolsRegistry = nil
-// 	GlobalCommonToolsRegistry = toolRegistry.NewToolRegistry()
-// 	GlobalCommonToolsRegistry.AddTool(commonTools.NewToolFileContents())
-// 	GlobalCommonToolsRegistry.AddTool(apiTools.NewApiGetTool())
+	GlobalCommonToolsRegistry = nil
+	GlobalCommonToolsRegistry = toolRegistry.NewToolRegistry()
+	GlobalCommonToolsRegistry.AddTool(commonTools.NewToolFileContents())
+	GlobalCommonToolsRegistry.AddTool(apiTools.NewApiGetTool())
 
-// 	// GlobalCommonToolsRegistry.AddTool(aiGenTools.NewAiGenerateImageTool())
-// 	GlobalCommonToolsRegistry.AddTool(aiGenTools.NewAiGenerateImageEditTool())
-// 	GlobalCommonToolsRegistry.AddTool(aiGenTools.NewAiImageDescriptionTool())
-// 	// GlobalCommonToolsRegistry.AddTool(aiGenTools.NewUiLaunchTool())
+	// GlobalCommonToolsRegistry.AddTool(aiGenTools.NewAiGenerateImageTool())
+	GlobalCommonToolsRegistry.AddTool(aiGenTools.NewAiGenerateImageEditTool())
+	GlobalCommonToolsRegistry.AddTool(aiGenTools.NewAiImageDescriptionTool())
+	// GlobalCommonToolsRegistry.AddTool(aiGenTools.NewUiLaunchTool())
 
-// 	GlobalCommonTools = GlobalCommonToolsRegistry.GetCommonTools()
+	GlobalCommonTools = GlobalCommonToolsRegistry.GetCommonTools()
 
-// }
+}
 
 func init() {
 	gob.Register(commonTools.ToolFileContents{})

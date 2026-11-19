@@ -12,8 +12,6 @@ import "v1/conscious/contextMessage.proto";
 // for http annotations
 import "google/api/annotations.proto";
 
-
-
 // Conscious
 
 service Conscious {
@@ -47,12 +45,12 @@ service Conscious {
     };
   }
 
-  rpc SetModel(SetModelRequest) returns (SetModelResponse) {
-    option (google.api.http) = {
-      post : "/v1/conscious/setModel"
-      body : "*"
-    };
-  }
+  // rpc SetModel(SetModelRequest) returns (SetModelResponse) {
+  //   option (google.api.http) = {
+  //     post : "/v1/conscious/setModel"
+  //     body : "*"
+  //   };
+  // }
 
   rpc FileUpload(UploadRequest) returns (UploadResponse) {
     option (google.api.http) = {
@@ -61,13 +59,13 @@ service Conscious {
     };
   }
 
-  // Clears the memory
-  rpc ClearMemory(ClearMemoryRequest) returns (ClearMemoryResponse) {
-    option (google.api.http) = {
-      post : "/v1/conscious/clearMemory"
-      body : "*"
-    };
-  }
+  // // Clears the memory
+  // rpc ClearMemory(ClearMemoryRequest) returns (ClearMemoryResponse) {
+  //   option (google.api.http) = {
+  //     post : "/v1/conscious/clearMemory"
+  //     body : "*"
+  //   };
+  // }
 
   // Reloads Tools
   rpc ReloadTools(ReloadToolsRequest) returns (ReloadToolsResponse) {

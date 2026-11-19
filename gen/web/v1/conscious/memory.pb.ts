@@ -35,13 +35,22 @@ export type ListMemoryResponse = {
   memories?: MemoryMeta[]
 }
 
+export type GetMemoryMetaRequest = {
+  uuid?: string
+  name?: string
+}
+
+export type GetMemoryMetaResponse = {
+  meta?: MemoryMeta
+}
+
 export type GetMemoryRequest = {
   uuid?: string
   name?: string
 }
 
 export type GetMemoryResponse = {
-  meta?: MemoryMeta
+  memory?: Memory
 }
 
 export type AddMemoryRequest = {
@@ -66,5 +75,14 @@ export type DeleteMemoryRequest = {
 }
 
 export type DeleteMemoryResponse = {
+  success?: boolean
+}
+
+export type ClearMemoryRequest = {
+  uuid?: string
+  name?: string
+}
+
+export type ClearMemoryResponse = {
   success?: boolean
 }

@@ -346,7 +346,8 @@ type ContextMesssage struct {
 	Type  ContextMesssage_ContextType `protobuf:"varint,6,opt,name=type,proto3,enum=conscious.ContextMesssage_ContextType" json:"type,omitempty"`
 	Role  ContextMesssage_ContextRole `protobuf:"varint,7,opt,name=role,proto3,enum=conscious.ContextMesssage_ContextRole" json:"role,omitempty"`
 	// if streaming response is required
-	Stream bool `protobuf:"varint,8,opt,name=stream,proto3" json:"stream,omitempty"`
+	Stream     bool   `protobuf:"varint,8,opt,name=stream,proto3" json:"stream,omitempty"`
+	MemoryName string `protobuf:"bytes,9,opt,name=memoryName,proto3" json:"memoryName,omitempty"`
 	// user prompt
 	Prompt string `protobuf:"bytes,11,opt,name=prompt,proto3" json:"prompt,omitempty"`
 	// system prompt
@@ -455,6 +456,13 @@ func (x *ContextMesssage) GetStream() bool {
 		return x.Stream
 	}
 	return false
+}
+
+func (x *ContextMesssage) GetMemoryName() string {
+	if x != nil {
+		return x.MemoryName
+	}
+	return ""
 }
 
 func (x *ContextMesssage) GetPrompt() string {
@@ -616,7 +624,7 @@ const file_v1_conscious_contextMessage_proto_rawDesc = "" +
 	"\x0eUploadResponse\x12\x1b\n" +
 	"\tupload_id\x18\x01 \x01(\tR\buploadId\x12\x16\n" +
 	"\x06status\x18\x02 \x01(\tR\x06status\x12#\n" +
-	"\rerror_message\x18\x03 \x01(\tR\ferrorMessage\"\xd9\t\n" +
+	"\rerror_message\x18\x03 \x01(\tR\ferrorMessage\"\xf9\t\n" +
 	"\x0fContextMesssage\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
@@ -624,7 +632,10 @@ const file_v1_conscious_contextMessage_proto_rawDesc = "" +
 	"\x05model\x18\x04 \x01(\tR\x05model\x12:\n" +
 	"\x04type\x18\x06 \x01(\x0e2&.conscious.ContextMesssage.ContextTypeR\x04type\x12:\n" +
 	"\x04role\x18\a \x01(\x0e2&.conscious.ContextMesssage.ContextRoleR\x04role\x12\x16\n" +
-	"\x06stream\x18\b \x01(\bR\x06stream\x12\x16\n" +
+	"\x06stream\x18\b \x01(\bR\x06stream\x12\x1e\n" +
+	"\n" +
+	"memoryName\x18\t \x01(\tR\n" +
+	"memoryName\x12\x16\n" +
 	"\x06prompt\x18\v \x01(\tR\x06prompt\x12\"\n" +
 	"\fsystemPrompt\x18\f \x01(\tR\fsystemPrompt\x12\x12\n" +
 	"\x04seed\x18\r \x01(\x03R\x04seed\x12 \n" +

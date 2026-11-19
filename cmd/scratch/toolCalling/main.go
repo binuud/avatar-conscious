@@ -14,7 +14,7 @@ import (
 
 func CheckImageDescriber() string {
 
-	memory := memory.NewScratchMemory()
+	memory := memory.NewEmtpyMemory()
 	memory.InitTools()
 
 	prompt := "Describe the image from file sampleLicense.jpg, and get the license number and driver name, in format {'license': [LICENSE NUMBER],'name':'[NAME OF PERSON']}"
@@ -46,7 +46,7 @@ func CheckImageDescriber() string {
 
 func CheckImageGeneration() string {
 
-	memory := memory.NewScratchMemory()
+	memory := memory.NewEmtpyMemory()
 	memory.InitTools()
 
 	prompt := "Create an image of a cat, crawling on a desk, trying to catch a mouse"
@@ -74,7 +74,7 @@ func CheckImageGeneration() string {
 }
 
 func CheckImageUpgradeGeneration() {
-	memory := memory.NewScratchMemory()
+	memory := memory.NewEmtpyMemory()
 	memory.InitTools()
 
 	prompt := "Create an image of a tourist card, use the photo of the person from image samplePerson.jpg as reference, show the person in front of eiffel tower"
@@ -136,7 +136,7 @@ func CheckDirectImageUpgradeGeneration() {
 }
 
 func CheckWebFetch(systemPrompt string) string {
-	memory := memory.NewScratchMemory()
+	memory := memory.NewEmtpyMemory()
 	memory.InitTools()
 
 	prompt := "Get license details of the person, strip spaces in the license number , using http get api request to url http://localhost:8081/checklicense/[license Number]"
@@ -165,7 +165,7 @@ func CheckWebFetch(systemPrompt string) string {
 
 func CheckFileContents() string {
 
-	memory := memory.NewScratchMemory()
+	memory := memory.NewEmtpyMemory()
 	memory.InitTools()
 
 	prompt := "What is the contents of AGENTS.md file"

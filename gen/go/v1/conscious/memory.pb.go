@@ -29,8 +29,8 @@ const (
 
 type SingleContext struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	In            *ContextMesssage       `protobuf:"bytes,1,opt,name=In,proto3" json:"In,omitempty"`
-	Out           *ContextMesssage       `protobuf:"bytes,2,opt,name=Out,proto3" json:"Out,omitempty"`
+	In            *ContextMesssage       `protobuf:"bytes,1,opt,name=in,proto3" json:"in,omitempty"`
+	Out           *ContextMesssage       `protobuf:"bytes,2,opt,name=out,proto3" json:"out,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -319,6 +319,102 @@ func (x *ListMemoryResponse) GetMemories() []*MemoryMeta {
 	return nil
 }
 
+type GetMemoryMetaRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Uuid          string                 `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetMemoryMetaRequest) Reset() {
+	*x = GetMemoryMetaRequest{}
+	mi := &file_v1_conscious_memory_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetMemoryMetaRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetMemoryMetaRequest) ProtoMessage() {}
+
+func (x *GetMemoryMetaRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_conscious_memory_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetMemoryMetaRequest.ProtoReflect.Descriptor instead.
+func (*GetMemoryMetaRequest) Descriptor() ([]byte, []int) {
+	return file_v1_conscious_memory_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *GetMemoryMetaRequest) GetUuid() string {
+	if x != nil {
+		return x.Uuid
+	}
+	return ""
+}
+
+func (x *GetMemoryMetaRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+type GetMemoryMetaResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Meta          *MemoryMeta            `protobuf:"bytes,1,opt,name=meta,proto3" json:"meta,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetMemoryMetaResponse) Reset() {
+	*x = GetMemoryMetaResponse{}
+	mi := &file_v1_conscious_memory_proto_msgTypes[6]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetMemoryMetaResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetMemoryMetaResponse) ProtoMessage() {}
+
+func (x *GetMemoryMetaResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_conscious_memory_proto_msgTypes[6]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetMemoryMetaResponse.ProtoReflect.Descriptor instead.
+func (*GetMemoryMetaResponse) Descriptor() ([]byte, []int) {
+	return file_v1_conscious_memory_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *GetMemoryMetaResponse) GetMeta() *MemoryMeta {
+	if x != nil {
+		return x.Meta
+	}
+	return nil
+}
+
 type GetMemoryRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Uuid          string                 `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
@@ -329,7 +425,7 @@ type GetMemoryRequest struct {
 
 func (x *GetMemoryRequest) Reset() {
 	*x = GetMemoryRequest{}
-	mi := &file_v1_conscious_memory_proto_msgTypes[5]
+	mi := &file_v1_conscious_memory_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -341,7 +437,7 @@ func (x *GetMemoryRequest) String() string {
 func (*GetMemoryRequest) ProtoMessage() {}
 
 func (x *GetMemoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_conscious_memory_proto_msgTypes[5]
+	mi := &file_v1_conscious_memory_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -354,7 +450,7 @@ func (x *GetMemoryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetMemoryRequest.ProtoReflect.Descriptor instead.
 func (*GetMemoryRequest) Descriptor() ([]byte, []int) {
-	return file_v1_conscious_memory_proto_rawDescGZIP(), []int{5}
+	return file_v1_conscious_memory_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *GetMemoryRequest) GetUuid() string {
@@ -373,14 +469,14 @@ func (x *GetMemoryRequest) GetName() string {
 
 type GetMemoryResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Meta          *MemoryMeta            `protobuf:"bytes,1,opt,name=meta,proto3" json:"meta,omitempty"`
+	Memory        *Memory                `protobuf:"bytes,1,opt,name=memory,proto3" json:"memory,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
 func (x *GetMemoryResponse) Reset() {
 	*x = GetMemoryResponse{}
-	mi := &file_v1_conscious_memory_proto_msgTypes[6]
+	mi := &file_v1_conscious_memory_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -392,7 +488,7 @@ func (x *GetMemoryResponse) String() string {
 func (*GetMemoryResponse) ProtoMessage() {}
 
 func (x *GetMemoryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_conscious_memory_proto_msgTypes[6]
+	mi := &file_v1_conscious_memory_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -405,12 +501,12 @@ func (x *GetMemoryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetMemoryResponse.ProtoReflect.Descriptor instead.
 func (*GetMemoryResponse) Descriptor() ([]byte, []int) {
-	return file_v1_conscious_memory_proto_rawDescGZIP(), []int{6}
+	return file_v1_conscious_memory_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *GetMemoryResponse) GetMeta() *MemoryMeta {
+func (x *GetMemoryResponse) GetMemory() *Memory {
 	if x != nil {
-		return x.Meta
+		return x.Memory
 	}
 	return nil
 }
@@ -424,7 +520,7 @@ type AddMemoryRequest struct {
 
 func (x *AddMemoryRequest) Reset() {
 	*x = AddMemoryRequest{}
-	mi := &file_v1_conscious_memory_proto_msgTypes[7]
+	mi := &file_v1_conscious_memory_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -436,7 +532,7 @@ func (x *AddMemoryRequest) String() string {
 func (*AddMemoryRequest) ProtoMessage() {}
 
 func (x *AddMemoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_conscious_memory_proto_msgTypes[7]
+	mi := &file_v1_conscious_memory_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -449,7 +545,7 @@ func (x *AddMemoryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddMemoryRequest.ProtoReflect.Descriptor instead.
 func (*AddMemoryRequest) Descriptor() ([]byte, []int) {
-	return file_v1_conscious_memory_proto_rawDescGZIP(), []int{7}
+	return file_v1_conscious_memory_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *AddMemoryRequest) GetMeta() *MemoryMeta {
@@ -468,7 +564,7 @@ type AddMemoryResponse struct {
 
 func (x *AddMemoryResponse) Reset() {
 	*x = AddMemoryResponse{}
-	mi := &file_v1_conscious_memory_proto_msgTypes[8]
+	mi := &file_v1_conscious_memory_proto_msgTypes[10]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -480,7 +576,7 @@ func (x *AddMemoryResponse) String() string {
 func (*AddMemoryResponse) ProtoMessage() {}
 
 func (x *AddMemoryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_conscious_memory_proto_msgTypes[8]
+	mi := &file_v1_conscious_memory_proto_msgTypes[10]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -493,7 +589,7 @@ func (x *AddMemoryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AddMemoryResponse.ProtoReflect.Descriptor instead.
 func (*AddMemoryResponse) Descriptor() ([]byte, []int) {
-	return file_v1_conscious_memory_proto_rawDescGZIP(), []int{8}
+	return file_v1_conscious_memory_proto_rawDescGZIP(), []int{10}
 }
 
 func (x *AddMemoryResponse) GetMeta() *MemoryMeta {
@@ -512,7 +608,7 @@ type UpdateMemoryRequest struct {
 
 func (x *UpdateMemoryRequest) Reset() {
 	*x = UpdateMemoryRequest{}
-	mi := &file_v1_conscious_memory_proto_msgTypes[9]
+	mi := &file_v1_conscious_memory_proto_msgTypes[11]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -524,7 +620,7 @@ func (x *UpdateMemoryRequest) String() string {
 func (*UpdateMemoryRequest) ProtoMessage() {}
 
 func (x *UpdateMemoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_conscious_memory_proto_msgTypes[9]
+	mi := &file_v1_conscious_memory_proto_msgTypes[11]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -537,7 +633,7 @@ func (x *UpdateMemoryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateMemoryRequest.ProtoReflect.Descriptor instead.
 func (*UpdateMemoryRequest) Descriptor() ([]byte, []int) {
-	return file_v1_conscious_memory_proto_rawDescGZIP(), []int{9}
+	return file_v1_conscious_memory_proto_rawDescGZIP(), []int{11}
 }
 
 func (x *UpdateMemoryRequest) GetMeta() *MemoryMeta {
@@ -556,7 +652,7 @@ type UpdateMemoryResponse struct {
 
 func (x *UpdateMemoryResponse) Reset() {
 	*x = UpdateMemoryResponse{}
-	mi := &file_v1_conscious_memory_proto_msgTypes[10]
+	mi := &file_v1_conscious_memory_proto_msgTypes[12]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -568,7 +664,7 @@ func (x *UpdateMemoryResponse) String() string {
 func (*UpdateMemoryResponse) ProtoMessage() {}
 
 func (x *UpdateMemoryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_conscious_memory_proto_msgTypes[10]
+	mi := &file_v1_conscious_memory_proto_msgTypes[12]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -581,7 +677,7 @@ func (x *UpdateMemoryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateMemoryResponse.ProtoReflect.Descriptor instead.
 func (*UpdateMemoryResponse) Descriptor() ([]byte, []int) {
-	return file_v1_conscious_memory_proto_rawDescGZIP(), []int{10}
+	return file_v1_conscious_memory_proto_rawDescGZIP(), []int{12}
 }
 
 func (x *UpdateMemoryResponse) GetMeta() *MemoryMeta {
@@ -601,7 +697,7 @@ type DeleteMemoryRequest struct {
 
 func (x *DeleteMemoryRequest) Reset() {
 	*x = DeleteMemoryRequest{}
-	mi := &file_v1_conscious_memory_proto_msgTypes[11]
+	mi := &file_v1_conscious_memory_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -613,7 +709,7 @@ func (x *DeleteMemoryRequest) String() string {
 func (*DeleteMemoryRequest) ProtoMessage() {}
 
 func (x *DeleteMemoryRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_conscious_memory_proto_msgTypes[11]
+	mi := &file_v1_conscious_memory_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -626,7 +722,7 @@ func (x *DeleteMemoryRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteMemoryRequest.ProtoReflect.Descriptor instead.
 func (*DeleteMemoryRequest) Descriptor() ([]byte, []int) {
-	return file_v1_conscious_memory_proto_rawDescGZIP(), []int{11}
+	return file_v1_conscious_memory_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *DeleteMemoryRequest) GetUuid() string {
@@ -652,7 +748,7 @@ type DeleteMemoryResponse struct {
 
 func (x *DeleteMemoryResponse) Reset() {
 	*x = DeleteMemoryResponse{}
-	mi := &file_v1_conscious_memory_proto_msgTypes[12]
+	mi := &file_v1_conscious_memory_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -664,7 +760,7 @@ func (x *DeleteMemoryResponse) String() string {
 func (*DeleteMemoryResponse) ProtoMessage() {}
 
 func (x *DeleteMemoryResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_v1_conscious_memory_proto_msgTypes[12]
+	mi := &file_v1_conscious_memory_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -677,10 +773,106 @@ func (x *DeleteMemoryResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteMemoryResponse.ProtoReflect.Descriptor instead.
 func (*DeleteMemoryResponse) Descriptor() ([]byte, []int) {
-	return file_v1_conscious_memory_proto_rawDescGZIP(), []int{12}
+	return file_v1_conscious_memory_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *DeleteMemoryResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+type ClearMemoryRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Uuid          string                 `protobuf:"bytes,1,opt,name=uuid,proto3" json:"uuid,omitempty"`
+	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ClearMemoryRequest) Reset() {
+	*x = ClearMemoryRequest{}
+	mi := &file_v1_conscious_memory_proto_msgTypes[15]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ClearMemoryRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ClearMemoryRequest) ProtoMessage() {}
+
+func (x *ClearMemoryRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_conscious_memory_proto_msgTypes[15]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ClearMemoryRequest.ProtoReflect.Descriptor instead.
+func (*ClearMemoryRequest) Descriptor() ([]byte, []int) {
+	return file_v1_conscious_memory_proto_rawDescGZIP(), []int{15}
+}
+
+func (x *ClearMemoryRequest) GetUuid() string {
+	if x != nil {
+		return x.Uuid
+	}
+	return ""
+}
+
+func (x *ClearMemoryRequest) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+type ClearMemoryResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ClearMemoryResponse) Reset() {
+	*x = ClearMemoryResponse{}
+	mi := &file_v1_conscious_memory_proto_msgTypes[16]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ClearMemoryResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ClearMemoryResponse) ProtoMessage() {}
+
+func (x *ClearMemoryResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_conscious_memory_proto_msgTypes[16]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ClearMemoryResponse.ProtoReflect.Descriptor instead.
+func (*ClearMemoryResponse) Descriptor() ([]byte, []int) {
+	return file_v1_conscious_memory_proto_rawDescGZIP(), []int{16}
+}
+
+func (x *ClearMemoryResponse) GetSuccess() bool {
 	if x != nil {
 		return x.Success
 	}
@@ -693,8 +885,8 @@ const file_v1_conscious_memory_proto_rawDesc = "" +
 	"\n" +
 	"\x19v1/conscious/memory.proto\x12\tconscious\x1a\x16v1/common/common.proto\x1a!v1/conscious/contextMessage.proto\"i\n" +
 	"\rSingleContext\x12*\n" +
-	"\x02In\x18\x01 \x01(\v2\x1a.conscious.ContextMesssageR\x02In\x12,\n" +
-	"\x03Out\x18\x02 \x01(\v2\x1a.conscious.ContextMesssageR\x03Out\"\xf7\x01\n" +
+	"\x02in\x18\x01 \x01(\v2\x1a.conscious.ContextMesssageR\x02in\x12,\n" +
+	"\x03out\x18\x02 \x01(\v2\x1a.conscious.ContextMesssageR\x03out\"\xf7\x01\n" +
 	"\n" +
 	"MemoryMeta\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
@@ -711,12 +903,17 @@ const file_v1_conscious_memory_proto_rawDesc = "" +
 	"\x11ListMemoryRequest\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\"G\n" +
 	"\x12ListMemoryResponse\x121\n" +
-	"\bmemories\x18\x01 \x03(\v2\x15.conscious.MemoryMetaR\bmemories\":\n" +
+	"\bmemories\x18\x01 \x03(\v2\x15.conscious.MemoryMetaR\bmemories\">\n" +
+	"\x14GetMemoryMetaRequest\x12\x12\n" +
+	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\"B\n" +
+	"\x15GetMemoryMetaResponse\x12)\n" +
+	"\x04meta\x18\x01 \x01(\v2\x15.conscious.MemoryMetaR\x04meta\":\n" +
 	"\x10GetMemoryRequest\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\">\n" +
 	"\x11GetMemoryResponse\x12)\n" +
-	"\x04meta\x18\x01 \x01(\v2\x15.conscious.MemoryMetaR\x04meta\"=\n" +
+	"\x06memory\x18\x01 \x01(\v2\x11.conscious.MemoryR\x06memory\"=\n" +
 	"\x10AddMemoryRequest\x12)\n" +
 	"\x04meta\x18\x01 \x01(\v2\x15.conscious.MemoryMetaR\x04meta\">\n" +
 	"\x11AddMemoryResponse\x12)\n" +
@@ -729,6 +926,11 @@ const file_v1_conscious_memory_proto_rawDesc = "" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\"0\n" +
 	"\x14DeleteMemoryResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\"<\n" +
+	"\x12ClearMemoryRequest\x12\x12\n" +
+	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
+	"\x04name\x18\x02 \x01(\tR\x04name\"/\n" +
+	"\x13ClearMemoryResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccessB8Z6github.com/binuud/avatar-conscious/gen/go/v1/consciousb\x06proto3"
 
 var (
@@ -743,41 +945,46 @@ func file_v1_conscious_memory_proto_rawDescGZIP() []byte {
 	return file_v1_conscious_memory_proto_rawDescData
 }
 
-var file_v1_conscious_memory_proto_msgTypes = make([]protoimpl.MessageInfo, 13)
+var file_v1_conscious_memory_proto_msgTypes = make([]protoimpl.MessageInfo, 17)
 var file_v1_conscious_memory_proto_goTypes = []any{
-	(*SingleContext)(nil),        // 0: conscious.SingleContext
-	(*MemoryMeta)(nil),           // 1: conscious.MemoryMeta
-	(*Memory)(nil),               // 2: conscious.Memory
-	(*ListMemoryRequest)(nil),    // 3: conscious.ListMemoryRequest
-	(*ListMemoryResponse)(nil),   // 4: conscious.ListMemoryResponse
-	(*GetMemoryRequest)(nil),     // 5: conscious.GetMemoryRequest
-	(*GetMemoryResponse)(nil),    // 6: conscious.GetMemoryResponse
-	(*AddMemoryRequest)(nil),     // 7: conscious.AddMemoryRequest
-	(*AddMemoryResponse)(nil),    // 8: conscious.AddMemoryResponse
-	(*UpdateMemoryRequest)(nil),  // 9: conscious.UpdateMemoryRequest
-	(*UpdateMemoryResponse)(nil), // 10: conscious.UpdateMemoryResponse
-	(*DeleteMemoryRequest)(nil),  // 11: conscious.DeleteMemoryRequest
-	(*DeleteMemoryResponse)(nil), // 12: conscious.DeleteMemoryResponse
-	(*ContextMesssage)(nil),      // 13: conscious.ContextMesssage
-	(*common.Timestamp)(nil),     // 14: common.Timestamp
+	(*SingleContext)(nil),         // 0: conscious.SingleContext
+	(*MemoryMeta)(nil),            // 1: conscious.MemoryMeta
+	(*Memory)(nil),                // 2: conscious.Memory
+	(*ListMemoryRequest)(nil),     // 3: conscious.ListMemoryRequest
+	(*ListMemoryResponse)(nil),    // 4: conscious.ListMemoryResponse
+	(*GetMemoryMetaRequest)(nil),  // 5: conscious.GetMemoryMetaRequest
+	(*GetMemoryMetaResponse)(nil), // 6: conscious.GetMemoryMetaResponse
+	(*GetMemoryRequest)(nil),      // 7: conscious.GetMemoryRequest
+	(*GetMemoryResponse)(nil),     // 8: conscious.GetMemoryResponse
+	(*AddMemoryRequest)(nil),      // 9: conscious.AddMemoryRequest
+	(*AddMemoryResponse)(nil),     // 10: conscious.AddMemoryResponse
+	(*UpdateMemoryRequest)(nil),   // 11: conscious.UpdateMemoryRequest
+	(*UpdateMemoryResponse)(nil),  // 12: conscious.UpdateMemoryResponse
+	(*DeleteMemoryRequest)(nil),   // 13: conscious.DeleteMemoryRequest
+	(*DeleteMemoryResponse)(nil),  // 14: conscious.DeleteMemoryResponse
+	(*ClearMemoryRequest)(nil),    // 15: conscious.ClearMemoryRequest
+	(*ClearMemoryResponse)(nil),   // 16: conscious.ClearMemoryResponse
+	(*ContextMesssage)(nil),       // 17: conscious.ContextMesssage
+	(*common.Timestamp)(nil),      // 18: common.Timestamp
 }
 var file_v1_conscious_memory_proto_depIdxs = []int32{
-	13, // 0: conscious.SingleContext.In:type_name -> conscious.ContextMesssage
-	13, // 1: conscious.SingleContext.Out:type_name -> conscious.ContextMesssage
-	14, // 2: conscious.MemoryMeta.createdAt:type_name -> common.Timestamp
+	17, // 0: conscious.SingleContext.in:type_name -> conscious.ContextMesssage
+	17, // 1: conscious.SingleContext.out:type_name -> conscious.ContextMesssage
+	18, // 2: conscious.MemoryMeta.createdAt:type_name -> common.Timestamp
 	1,  // 3: conscious.Memory.meta:type_name -> conscious.MemoryMeta
 	0,  // 4: conscious.Memory.contexts:type_name -> conscious.SingleContext
 	1,  // 5: conscious.ListMemoryResponse.memories:type_name -> conscious.MemoryMeta
-	1,  // 6: conscious.GetMemoryResponse.meta:type_name -> conscious.MemoryMeta
-	1,  // 7: conscious.AddMemoryRequest.meta:type_name -> conscious.MemoryMeta
-	1,  // 8: conscious.AddMemoryResponse.meta:type_name -> conscious.MemoryMeta
-	1,  // 9: conscious.UpdateMemoryRequest.meta:type_name -> conscious.MemoryMeta
-	1,  // 10: conscious.UpdateMemoryResponse.meta:type_name -> conscious.MemoryMeta
-	11, // [11:11] is the sub-list for method output_type
-	11, // [11:11] is the sub-list for method input_type
-	11, // [11:11] is the sub-list for extension type_name
-	11, // [11:11] is the sub-list for extension extendee
-	0,  // [0:11] is the sub-list for field type_name
+	1,  // 6: conscious.GetMemoryMetaResponse.meta:type_name -> conscious.MemoryMeta
+	2,  // 7: conscious.GetMemoryResponse.memory:type_name -> conscious.Memory
+	1,  // 8: conscious.AddMemoryRequest.meta:type_name -> conscious.MemoryMeta
+	1,  // 9: conscious.AddMemoryResponse.meta:type_name -> conscious.MemoryMeta
+	1,  // 10: conscious.UpdateMemoryRequest.meta:type_name -> conscious.MemoryMeta
+	1,  // 11: conscious.UpdateMemoryResponse.meta:type_name -> conscious.MemoryMeta
+	12, // [12:12] is the sub-list for method output_type
+	12, // [12:12] is the sub-list for method input_type
+	12, // [12:12] is the sub-list for extension type_name
+	12, // [12:12] is the sub-list for extension extendee
+	0,  // [0:12] is the sub-list for field type_name
 }
 
 func init() { file_v1_conscious_memory_proto_init() }
@@ -792,7 +999,7 @@ func file_v1_conscious_memory_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_v1_conscious_memory_proto_rawDesc), len(file_v1_conscious_memory_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   13,
+			NumMessages:   17,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

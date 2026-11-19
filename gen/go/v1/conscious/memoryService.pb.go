@@ -30,42 +30,52 @@ var File_v1_conscious_memoryService_proto protoreflect.FileDescriptor
 
 const file_v1_conscious_memoryService_proto_rawDesc = "" +
 	"\n" +
-	" v1/conscious/memoryService.proto\x12\tconscious\x1a\x19v1/conscious/common.proto\x1a!v1/conscious/contextMessage.proto\x1a\x19v1/conscious/memory.proto\x1a\x1cgoogle/api/annotations.proto2\xf6\x03\n" +
+	" v1/conscious/memoryService.proto\x12\tconscious\x1a\x19v1/conscious/common.proto\x1a!v1/conscious/contextMessage.proto\x1a\x19v1/conscious/memory.proto\x1a\x1cgoogle/api/annotations.proto2\xd7\x05\n" +
 	"\rMemoryService\x12\\\n" +
-	"\x04List\x12\x1c.conscious.ListMemoryRequest\x1a\x1d.conscious.ListMemoryResponse\"\x17\x82\xd3\xe4\x93\x02\x11\x12\x0f/v1/memory/list\x12X\n" +
+	"\x04List\x12\x1c.conscious.ListMemoryRequest\x1a\x1d.conscious.ListMemoryResponse\"\x17\x82\xd3\xe4\x93\x02\x11\x12\x0f/v1/memory/list\x12t\n" +
+	"\rGetMemoryMeta\x12\x1f.conscious.GetMemoryMetaRequest\x1a .conscious.GetMemoryMetaResponse\" \x82\xd3\xe4\x93\x02\x1a\x12\x18/v1/memory/getMemoryMeta\x12X\n" +
 	"\x03Get\x12\x1b.conscious.GetMemoryRequest\x1a\x1c.conscious.GetMemoryResponse\"\x16\x82\xd3\xe4\x93\x02\x10\x12\x0e/v1/memory/get\x12[\n" +
 	"\x03Add\x12\x1b.conscious.AddMemoryRequest\x1a\x1c.conscious.AddMemoryResponse\"\x19\x82\xd3\xe4\x93\x02\x13:\x01*\"\x0e/v1/memory/add\x12g\n" +
 	"\x06Update\x12\x1e.conscious.UpdateMemoryRequest\x1a\x1f.conscious.UpdateMemoryResponse\"\x1c\x82\xd3\xe4\x93\x02\x16:\x01*\"\x11/v1/memory/update\x12g\n" +
-	"\x06Delete\x12\x1e.conscious.DeleteMemoryRequest\x1a\x1f.conscious.DeleteMemoryResponse\"\x1c\x82\xd3\xe4\x93\x02\x16:\x01*\"\x11/v1/memory/deleteB8Z6github.com/binuud/avatar-conscious/gen/go/v1/consciousb\x06proto3"
+	"\x06Delete\x12\x1e.conscious.DeleteMemoryRequest\x1a\x1f.conscious.DeleteMemoryResponse\"\x1c\x82\xd3\xe4\x93\x02\x16:\x01*\"\x11/v1/memory/delete\x12i\n" +
+	"\vClearMemory\x12\x1d.conscious.ClearMemoryRequest\x1a\x1e.conscious.ClearMemoryResponse\"\x1b\x82\xd3\xe4\x93\x02\x15:\x01*\"\x10/v1/memory/clearB8Z6github.com/binuud/avatar-conscious/gen/go/v1/consciousb\x06proto3"
 
 var file_v1_conscious_memoryService_proto_goTypes = []any{
-	(*ListMemoryRequest)(nil),    // 0: conscious.ListMemoryRequest
-	(*GetMemoryRequest)(nil),     // 1: conscious.GetMemoryRequest
-	(*AddMemoryRequest)(nil),     // 2: conscious.AddMemoryRequest
-	(*UpdateMemoryRequest)(nil),  // 3: conscious.UpdateMemoryRequest
-	(*DeleteMemoryRequest)(nil),  // 4: conscious.DeleteMemoryRequest
-	(*ListMemoryResponse)(nil),   // 5: conscious.ListMemoryResponse
-	(*GetMemoryResponse)(nil),    // 6: conscious.GetMemoryResponse
-	(*AddMemoryResponse)(nil),    // 7: conscious.AddMemoryResponse
-	(*UpdateMemoryResponse)(nil), // 8: conscious.UpdateMemoryResponse
-	(*DeleteMemoryResponse)(nil), // 9: conscious.DeleteMemoryResponse
+	(*ListMemoryRequest)(nil),     // 0: conscious.ListMemoryRequest
+	(*GetMemoryMetaRequest)(nil),  // 1: conscious.GetMemoryMetaRequest
+	(*GetMemoryRequest)(nil),      // 2: conscious.GetMemoryRequest
+	(*AddMemoryRequest)(nil),      // 3: conscious.AddMemoryRequest
+	(*UpdateMemoryRequest)(nil),   // 4: conscious.UpdateMemoryRequest
+	(*DeleteMemoryRequest)(nil),   // 5: conscious.DeleteMemoryRequest
+	(*ClearMemoryRequest)(nil),    // 6: conscious.ClearMemoryRequest
+	(*ListMemoryResponse)(nil),    // 7: conscious.ListMemoryResponse
+	(*GetMemoryMetaResponse)(nil), // 8: conscious.GetMemoryMetaResponse
+	(*GetMemoryResponse)(nil),     // 9: conscious.GetMemoryResponse
+	(*AddMemoryResponse)(nil),     // 10: conscious.AddMemoryResponse
+	(*UpdateMemoryResponse)(nil),  // 11: conscious.UpdateMemoryResponse
+	(*DeleteMemoryResponse)(nil),  // 12: conscious.DeleteMemoryResponse
+	(*ClearMemoryResponse)(nil),   // 13: conscious.ClearMemoryResponse
 }
 var file_v1_conscious_memoryService_proto_depIdxs = []int32{
-	0, // 0: conscious.MemoryService.List:input_type -> conscious.ListMemoryRequest
-	1, // 1: conscious.MemoryService.Get:input_type -> conscious.GetMemoryRequest
-	2, // 2: conscious.MemoryService.Add:input_type -> conscious.AddMemoryRequest
-	3, // 3: conscious.MemoryService.Update:input_type -> conscious.UpdateMemoryRequest
-	4, // 4: conscious.MemoryService.Delete:input_type -> conscious.DeleteMemoryRequest
-	5, // 5: conscious.MemoryService.List:output_type -> conscious.ListMemoryResponse
-	6, // 6: conscious.MemoryService.Get:output_type -> conscious.GetMemoryResponse
-	7, // 7: conscious.MemoryService.Add:output_type -> conscious.AddMemoryResponse
-	8, // 8: conscious.MemoryService.Update:output_type -> conscious.UpdateMemoryResponse
-	9, // 9: conscious.MemoryService.Delete:output_type -> conscious.DeleteMemoryResponse
-	5, // [5:10] is the sub-list for method output_type
-	0, // [0:5] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	0,  // 0: conscious.MemoryService.List:input_type -> conscious.ListMemoryRequest
+	1,  // 1: conscious.MemoryService.GetMemoryMeta:input_type -> conscious.GetMemoryMetaRequest
+	2,  // 2: conscious.MemoryService.Get:input_type -> conscious.GetMemoryRequest
+	3,  // 3: conscious.MemoryService.Add:input_type -> conscious.AddMemoryRequest
+	4,  // 4: conscious.MemoryService.Update:input_type -> conscious.UpdateMemoryRequest
+	5,  // 5: conscious.MemoryService.Delete:input_type -> conscious.DeleteMemoryRequest
+	6,  // 6: conscious.MemoryService.ClearMemory:input_type -> conscious.ClearMemoryRequest
+	7,  // 7: conscious.MemoryService.List:output_type -> conscious.ListMemoryResponse
+	8,  // 8: conscious.MemoryService.GetMemoryMeta:output_type -> conscious.GetMemoryMetaResponse
+	9,  // 9: conscious.MemoryService.Get:output_type -> conscious.GetMemoryResponse
+	10, // 10: conscious.MemoryService.Add:output_type -> conscious.AddMemoryResponse
+	11, // 11: conscious.MemoryService.Update:output_type -> conscious.UpdateMemoryResponse
+	12, // 12: conscious.MemoryService.Delete:output_type -> conscious.DeleteMemoryResponse
+	13, // 13: conscious.MemoryService.ClearMemory:output_type -> conscious.ClearMemoryResponse
+	7,  // [7:14] is the sub-list for method output_type
+	0,  // [0:7] is the sub-list for method input_type
+	0,  // [0:0] is the sub-list for extension type_name
+	0,  // [0:0] is the sub-list for extension extendee
+	0,  // [0:0] is the sub-list for field type_name
 }
 
 func init() { file_v1_conscious_memoryService_proto_init() }

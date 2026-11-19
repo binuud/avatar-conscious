@@ -45,12 +45,6 @@ export type SetModelResponse = {
   model?: string
 }
 
-export type ClearMemoryRequest = {
-}
-
-export type ClearMemoryResponse = {
-}
-
 export type ReloadToolsRequest = {
 }
 
