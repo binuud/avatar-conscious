@@ -139,6 +139,7 @@ func (s *avatarGrpcServer) handleAvatarRun(in *pb.ControlRequest,
 		currentStepObj := in.Control.StepStatuses[currentStep]
 		userResponse := currentStepObj.Response
 		prompt := ""
+		// this is a callback from UI
 		if currentStepObj.Status == pb.AvatarStatus_STATUS_COMPLETED {
 			logrus.Infof("Continue from step %d", currentStep+1)
 			logrus.Infof("Response from UI %s", userResponse[:min(len(userResponse), 100)])
@@ -160,10 +161,9 @@ func (s *avatarGrpcServer) handleAvatarRun(in *pb.ControlRequest,
 					prompt = fmt.Sprintf("Step No: %d, image is stored in filename ```%s```", (currentStep + 1), newFileName)
 
 				} else {
-					prompt = fmt.Sprintf("Step No: %d, %s", (currentStep + 1), currentStepObj.Response)
+					prompt = fmt.Sprintf("Step No: %d, %s", (currentStep + 1), userResponse)
 				}
-				s.avatar.Memory.AppendUserMessage(prompt)
-				s.avatar.Memory.AppendAssistantMessage("Ok.")
+				s.avatar.Memory.AppendAssistantMessage(prompt)
 			}
 			in.Control.CurrentStep++
 		}
@@ -233,7 +233,6 @@ func (s *avatarGrpcServer) handleAvatarRun(in *pb.ControlRequest,
 			lastResponse.Response = outContextMsg.Response
 			outControlStepStatus.Response = outContextMsg.Response
 		}
-
 		if err := stream.Send(out); err != nil {
 			logrus.Errorf("Connect: Failed to send message: %v", err)
 			return err
@@ -253,6 +252,7 @@ func (s *avatarGrpcServer) handleAvatarRun(in *pb.ControlRequest,
 		logrus.Errorf("Connect: Failed to send message: %v", err)
 		return err
 	}
-
+	s.avatar.Memory.DumpMemory(nil)
+	s.avatar.Memory.Save()
 	return nil
 }

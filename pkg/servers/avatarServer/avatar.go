@@ -44,7 +44,7 @@ func NewAvatar(name string) *AvatarWrapper {
 
 	avatar := &AvatarWrapper{
 		FileName:     name,
-		Memory:       memory.NewMemory("memory-" + name),
+		Memory:       nil,
 		SystemPrompt: SYSTEM_PROMPT,
 	}
 
