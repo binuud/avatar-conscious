@@ -125,7 +125,6 @@ func (s *grpcConsciousServer) InStream(in *pb.ContextMesssage, stream grpc.Serve
 // /image create /image edit or /image describe
 func (s *grpcConsciousServer) Generate(in *pb.ContextMesssage, stream grpc.ServerStreamingServer[pb.ContextMesssage]) error {
 
-	in.CreatedAt = utils.GetTimeStamp()
 	logrus.Info("")
 	logrus.Info("")
 	logrus.Infof("Generate Received          -----------> Request: %s", in.Prompt)
