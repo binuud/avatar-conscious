@@ -28,6 +28,25 @@ func Bootstrap() {
 	// initialize the global settings
 	Global = NewSettings("global")
 
+	Global.Add(&pbSettings.Config{
+		Name:        "INITIAL_CONFIGURED",
+		Group:       "_HIDDEN",
+		Default:     "NO",
+		Description: "Is the initial configuration done",
+		Type:        pbSettings.Config_STRING,
+		Weight:      11,
+	})
+
+	Global.Add(&pbSettings.Config{
+		Name:        "LLM_PROVIDER",
+		Group:       "LLM",
+		Default:     "MLX-SERVE",
+		Description: "Select the LLM Provider",
+		Options:     []string{"CLAUDE", "DOCKER-MODEL-RUNNER", "CHATGPT", "MLX-SERVE", "OLLAMA", "OPENROUTER", "OTHERS"},
+		Type:        pbSettings.Config_MULTI_OPTION,
+		Weight:      10,
+	})
+
 	// set global settings
 	Global.Add(&pbSettings.Config{
 		Name:        "LLM_ENDPOINT",
@@ -35,6 +54,7 @@ func Bootstrap() {
 		Default:     "http://" + localhost + ":11234/v1",
 		Description: "LLM Endpoint, can be local or cloud, no trailing slash",
 		Type:        pbSettings.Config_STRING,
+		Weight:      11,
 	})
 
 	Global.Add(&pbSettings.Config{
@@ -43,6 +63,7 @@ func Bootstrap() {
 		Default:     "dummy",
 		Description: "LLM API Key, use use third party llm providers",
 		Type:        pbSettings.Config_STRING,
+		Weight:      12,
 	})
 
 	Global.Add(&pbSettings.Config{
@@ -51,6 +72,8 @@ func Bootstrap() {
 		Default:     SYSTEM_PROMPT,
 		Description: "System Prompt used in chat interface and streaming chat",
 		Type:        pbSettings.Config_MULTI_LINE_STRING,
+		Weight:      20,
+		NumLines:    6,
 	})
 
 	Global.Add(&pbSettings.Config{
@@ -59,6 +82,7 @@ func Bootstrap() {
 		Default:     "tcp://" + localhost + ":1883",
 		Description: "Default mqtt broker used for messaging and events",
 		Type:        pbSettings.Config_STRING,
+		Weight:      11,
 	})
 
 	Global.Add(&pbSettings.Config{
@@ -67,6 +91,7 @@ func Bootstrap() {
 		Default:     "lmstudio-community/Qwen3.5-9B-MLX-4bit",
 		Description: "Default model used for Chat Generation, Avatars, Tools and Agents",
 		Type:        pbSettings.Config_STRING,
+		Weight:      11,
 	})
 
 	Global.Add(&pbSettings.Config{
@@ -75,6 +100,7 @@ func Bootstrap() {
 		Default:     "lmstudio-community/Qwen3.5-9B-MLX-4bit",
 		Description: "Default model used for Image Description Query",
 		Type:        pbSettings.Config_STRING,
+		Weight:      12,
 	})
 
 	Global.Add(&pbSettings.Config{
@@ -83,6 +109,7 @@ func Bootstrap() {
 		Default:     "Runpod/FLUX.2-klein-4B-mflux-4bit",
 		Description: "Default model used for Image Generation",
 		Type:        pbSettings.Config_STRING,
+		Weight:      13,
 	})
 
 	Global.Add(&pbSettings.Config{
@@ -91,22 +118,25 @@ func Bootstrap() {
 		Default:     "mlx-community/Qwen3-TTS-12Hz-0.6B-Base-8bit",
 		Description: "Default Text To Speech model",
 		Type:        pbSettings.Config_STRING,
+		Weight:      14,
 	})
 
 	Global.Add(&pbSettings.Config{
 		Name:        "SERVABLE_DIRECTORY",
 		Group:       "SERVER",
-		Default:     "/dataVolume/static",
+		Default:     "./dataVolume/static",
 		Description: "The folder containing assets, which can be served by the static http server",
 		Type:        pbSettings.Config_STRING,
+		Weight:      11,
 	})
 
 	Global.Add(&pbSettings.Config{
 		Name:        "FILE_STORE_PATH",
 		Group:       "SERVER",
-		Default:     "/dataVolume",
+		Default:     "./dataVolume",
 		Description: "The folder containing assets, which can be served by the static http server",
 		Type:        pbSettings.Config_STRING,
+		Weight:      12,
 	})
 
 	// load from storage, if file exists

@@ -11,6 +11,7 @@ export enum ConfigType {
   NUMBER = "NUMBER",
   FLOAT = "FLOAT",
   BOOLEAN = "BOOLEAN",
+  MULTI_OPTION = "MULTI_OPTION",
 }
 
 export type Config = {
@@ -20,7 +21,12 @@ export type Config = {
   value?: string
   default?: string
   envValue?: string
+  options?: string[]
+  weight?: string
   type?: ConfigType
+  numLines?: string
+  min?: string
+  max?: string
 }
 
 export type ConfigList = {

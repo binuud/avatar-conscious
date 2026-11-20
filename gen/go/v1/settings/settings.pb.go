@@ -30,6 +30,7 @@ const (
 	Config_NUMBER            Config_Type = 3
 	Config_FLOAT             Config_Type = 4
 	Config_BOOLEAN           Config_Type = 5
+	Config_MULTI_OPTION      Config_Type = 6
 )
 
 // Enum value maps for Config_Type.
@@ -41,6 +42,7 @@ var (
 		3: "NUMBER",
 		4: "FLOAT",
 		5: "BOOLEAN",
+		6: "MULTI_OPTION",
 	}
 	Config_Type_value = map[string]int32{
 		"DATA_IGNORE":       0,
@@ -49,6 +51,7 @@ var (
 		"NUMBER":            3,
 		"FLOAT":             4,
 		"BOOLEAN":           5,
+		"MULTI_OPTION":      6,
 	}
 )
 
@@ -89,7 +92,12 @@ type Config struct {
 	Default string `protobuf:"bytes,5,opt,name=default,proto3" json:"default,omitempty"`
 	// env value set from environment, always overrides config value
 	EnvValue      string      `protobuf:"bytes,6,opt,name=envValue,proto3" json:"envValue,omitempty"`
-	Type          Config_Type `protobuf:"varint,7,opt,name=type,proto3,enum=settings.Config_Type" json:"type,omitempty"`
+	Options       []string    `protobuf:"bytes,7,rep,name=options,proto3" json:"options,omitempty"`
+	Weight        int64       `protobuf:"varint,8,opt,name=weight,proto3" json:"weight,omitempty"`
+	Type          Config_Type `protobuf:"varint,9,opt,name=type,proto3,enum=settings.Config_Type" json:"type,omitempty"`
+	NumLines      int64       `protobuf:"varint,10,opt,name=numLines,proto3" json:"numLines,omitempty"`
+	Min           int64       `protobuf:"varint,11,opt,name=min,proto3" json:"min,omitempty"`
+	Max           int64       `protobuf:"varint,12,opt,name=max,proto3" json:"max,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -166,11 +174,46 @@ func (x *Config) GetEnvValue() string {
 	return ""
 }
 
+func (x *Config) GetOptions() []string {
+	if x != nil {
+		return x.Options
+	}
+	return nil
+}
+
+func (x *Config) GetWeight() int64 {
+	if x != nil {
+		return x.Weight
+	}
+	return 0
+}
+
 func (x *Config) GetType() Config_Type {
 	if x != nil {
 		return x.Type
 	}
 	return Config_DATA_IGNORE
+}
+
+func (x *Config) GetNumLines() int64 {
+	if x != nil {
+		return x.NumLines
+	}
+	return 0
+}
+
+func (x *Config) GetMin() int64 {
+	if x != nil {
+		return x.Min
+	}
+	return 0
+}
+
+func (x *Config) GetMax() int64 {
+	if x != nil {
+		return x.Max
+	}
+	return 0
 }
 
 type ConfigList struct {
@@ -273,15 +316,21 @@ var File_v1_settings_settings_proto protoreflect.FileDescriptor
 
 const file_v1_settings_settings_proto_rawDesc = "" +
 	"\n" +
-	"\x1av1/settings/settings.proto\x12\bsettings\"\xab\x02\n" +
+	"\x1av1/settings/settings.proto\x12\bsettings\"\xaf\x03\n" +
 	"\x06Config\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x14\n" +
 	"\x05group\x18\x03 \x01(\tR\x05group\x12\x14\n" +
 	"\x05value\x18\x04 \x01(\tR\x05value\x12\x18\n" +
 	"\adefault\x18\x05 \x01(\tR\adefault\x12\x1a\n" +
-	"\benvValue\x18\x06 \x01(\tR\benvValue\x12)\n" +
-	"\x04type\x18\a \x01(\x0e2\x15.settings.Config.TypeR\x04type\"^\n" +
+	"\benvValue\x18\x06 \x01(\tR\benvValue\x12\x18\n" +
+	"\aoptions\x18\a \x03(\tR\aoptions\x12\x16\n" +
+	"\x06weight\x18\b \x01(\x03R\x06weight\x12)\n" +
+	"\x04type\x18\t \x01(\x0e2\x15.settings.Config.TypeR\x04type\x12\x1a\n" +
+	"\bnumLines\x18\n" +
+	" \x01(\x03R\bnumLines\x12\x10\n" +
+	"\x03min\x18\v \x01(\x03R\x03min\x12\x10\n" +
+	"\x03max\x18\f \x01(\x03R\x03max\"p\n" +
 	"\x04Type\x12\x0f\n" +
 	"\vDATA_IGNORE\x10\x00\x12\n" +
 	"\n" +
@@ -290,7 +339,8 @@ const file_v1_settings_settings_proto_rawDesc = "" +
 	"\n" +
 	"\x06NUMBER\x10\x03\x12\t\n" +
 	"\x05FLOAT\x10\x04\x12\v\n" +
-	"\aBOOLEAN\x10\x05\"8\n" +
+	"\aBOOLEAN\x10\x05\x12\x10\n" +
+	"\fMULTI_OPTION\x10\x06\"8\n" +
 	"\n" +
 	"ConfigList\x12*\n" +
 	"\aconfigs\x18\x01 \x03(\v2\x10.settings.ConfigR\aconfigs\"\x9d\x01\n" +

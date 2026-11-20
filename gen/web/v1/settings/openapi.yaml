@@ -84,8 +84,24 @@ components:
           type: string
         envValue:
           type: string
+        options:
+          type: array
+          items:
+            type: string
+        weight:
+          type: integer
+          format: int64
         type:
           $ref: '#/components/schemas/Config.Type'
+        numLines:
+          type: integer
+          format: int64
+        min:
+          type: integer
+          format: int64
+        max:
+          type: integer
+          format: int64
     Config.Type:
       type: string
       enum:
@@ -95,6 +111,7 @@ components:
         - "NUMBER"
         - "FLOAT"
         - "BOOLEAN"
+        - "MULTI_OPTION"
     ConfigList:
       type: object
       properties:
