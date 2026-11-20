@@ -174,18 +174,36 @@ func (m *Memory) AppendDevelopmentMessage(message string) {
 
 // we need this for debuging avatar thru UI
 func (m *Memory) AppendAssistantMessage(message string) {
-	m.AppendOutMessage(&pb.ContextMesssage{Response: message})
+	m.AppendOutMessage(&pb.ContextMesssage{
+		Response: message,
+	})
 }
 
 // we need this for debuging avatar thru UI
 func (m *Memory) AppendUserMessage(message string) {
-	m.AppendInMessage(&pb.ContextMesssage{Prompt: message})
+	m.AppendInMessage(&pb.ContextMesssage{
+		Prompt: message,
+	})
 }
 
 // AppendInMessage()
 // Append IN Message, take the prompt and add to User Type message
 // append to memory, only append user and assistant message to memory
 func (m *Memory) AppendInMessage(in *pb.ContextMesssage) {
+
+	if in.CreatedAt == nil {
+		in.CreatedAt = utils.GetTimeStamp()
+	}
+	// set some usefule information
+	if in.Model == "" {
+		in.Model = m.Meta.Model
+	}
+	if in.Seed == 0 {
+		in.Seed = m.Meta.Seed
+	}
+	if in.Temperature == 0 {
+		in.Temperature = float32(m.Meta.Temperature)
+	}
 	// reset current context
 	m.CurrentContext = &pb.SingleContext{
 		In: in,
@@ -204,6 +222,26 @@ func (m *Memory) AppendOutMessage(out *pb.ContextMesssage) {
 	if m.Contexts == nil {
 		m.Contexts = make([]*pb.SingleContext, 0)
 	}
+
+	// set some usefule information
+	if out.Model == "" {
+		out.Model = m.Meta.Model
+	}
+	if out.Seed == 0 {
+		out.Seed = m.Meta.Seed
+	}
+	if out.Temperature == 0 {
+		out.Temperature = float32(m.Meta.Temperature)
+	}
+	if out.CompletedAt == nil {
+		out.CompletedAt = utils.GetTimeStamp()
+	}
+
+	if m.CurrentContext.In != nil && out.CreatedAt == nil {
+		// or calculating execution time
+		out.CreatedAt = m.CurrentContext.In.CreatedAt
+	}
+
 	m.CurrentContext.Out = out
 	m.Contexts = append(m.Contexts, m.CurrentContext)
 	m.appendMessage(openai.AssistantMessage(out.Response))

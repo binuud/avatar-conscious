@@ -163,7 +163,7 @@ func (a *AvatarWrapper) RunStep(stepNo int, step *pb.Step) (*pbConcsious.Context
 	} else {
 		// no tool calling happened
 		out.Response = msg.Content
-		a.Memory.AppendAssistantMessage(msg.Content)
+		a.Memory.AppendOutMessage(out)
 		logrus.Infof("No Tools Called !!, Out Msg : %s", msg.Content)
 	}
 	return out, nil
