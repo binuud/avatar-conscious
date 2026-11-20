@@ -135,8 +135,30 @@
           "envValue": {
             "type": "string"
           },
+          "options": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "weight": {
+            "type": "integer",
+            "format": "int64"
+          },
           "type": {
             "$ref": "#/components/schemas/Config.Type"
+          },
+          "numLines": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "min": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "max": {
+            "type": "integer",
+            "format": "int64"
           }
         }
       },
@@ -148,7 +170,8 @@
           "MULTI_LINE_STRING",
           "NUMBER",
           "FLOAT",
-          "BOOLEAN"
+          "BOOLEAN",
+          "MULTI_OPTION"
         ]
       },
       "ConfigList": {

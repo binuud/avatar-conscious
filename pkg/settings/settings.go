@@ -3,6 +3,7 @@ package settings
 import (
 	"fmt"
 	"os"
+	"sort"
 	"strings"
 
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/settings"
@@ -159,6 +160,14 @@ func (s *Settings) GetAllByGroup() map[string]*pb.ConfigList {
 			}
 			groups[entry.Group].Configs = append(groups[entry.Group].Configs, entry)
 		}
+
+		// sort by weight
+		sort.SliceStable(groups[entry.Group].Configs, func(i, j int) bool {
+			if groups[entry.Group].Configs[i].Weight < groups[entry.Group].Configs[j].Weight {
+				return true
+			}
+			return false
+		})
 
 	}
 

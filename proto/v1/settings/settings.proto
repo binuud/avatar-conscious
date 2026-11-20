@@ -12,6 +12,7 @@ message Config {
     NUMBER = 3;
     FLOAT = 4;
     BOOLEAN = 5;
+    MULTI_OPTION = 6;
   }
   string name = 1;
   string description = 2;
@@ -21,7 +22,12 @@ message Config {
   string default = 5;
   // env value set from environment, always overrides config value
   string envValue = 6;
-  Type type = 7;
+  repeated string options = 7;
+  int64 weight = 8;
+  Type type = 9;
+  int64 numLines = 10;
+  int64 min = 11;
+  int64 max = 12;
 }
 
 message ConfigList {
