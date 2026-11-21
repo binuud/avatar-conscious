@@ -19,7 +19,7 @@ func NewGrpcSettingsServer() *grpcSettingsServer {
 func (s *grpcSettingsServer) List(ctx context.Context, in *pb.SettingsListRequest) (*pb.SettingsListResponse, error) {
 
 	logrus.Debug("Settings Server List")
-
+	// time.Sleep(5 * time.Second) // Pauses for 2 seconds
 	return &pb.SettingsListResponse{
 		Groups: settings.Global.GetAllByGroup(),
 	}, nil

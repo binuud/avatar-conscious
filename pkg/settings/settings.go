@@ -122,7 +122,7 @@ func (s *Settings) Get(name string) *pb.Config {
 	return nil
 }
 
-// Get()
+// GetValue()
 // gets the config entry's value by name
 // if env is set, return the env first
 // if value is set, return value first
@@ -137,6 +137,16 @@ func (s *Settings) GetValue(name string) string {
 			return entry.Value
 		}
 		return entry.Default
+	}
+	return ""
+}
+
+// GetOnlyValue()
+// get the actual value of the entry,
+// does not read default or env
+func (s *Settings) GetOnlyValue(name string) string {
+	if entry, ok := s.Configs.Entry[name]; ok {
+		return entry.Value
 	}
 	return ""
 }
@@ -182,6 +192,13 @@ func (s *Settings) Save() error {
 
 	if s.Name == "" || strings.HasPrefix(s.Name, "_") {
 		return fmt.Errorf("Internal settings cannot be saved")
+	}
+
+	// if user has set LLM endpoint, we do not have to show the welcome screen
+	// so set the INITIAL CONFIGURED Setting as true
+	if s.GetOnlyValue("LLM_ENDPOINT") != "" && s.GetOnlyValue("LLM_PROVIDER") != "" {
+		logrus.Info("Setting INITIAL_CONFIGURED to true")
+		s.Update("INITIAL_CONFIGURED", "true")
 	}
 
 	// clone the configs, since all proto messages are by reference
