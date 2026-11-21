@@ -437,6 +437,7 @@ func (x *SetModelResponse) GetModel() string {
 
 type ReloadToolsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	MemoryName    string                 `protobuf:"bytes,1,opt,name=memoryName,proto3" json:"memoryName,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -469,6 +470,13 @@ func (x *ReloadToolsRequest) ProtoReflect() protoreflect.Message {
 // Deprecated: Use ReloadToolsRequest.ProtoReflect.Descriptor instead.
 func (*ReloadToolsRequest) Descriptor() ([]byte, []int) {
 	return file_v1_conscious_common_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *ReloadToolsRequest) GetMemoryName() string {
+	if x != nil {
+		return x.MemoryName
+	}
+	return ""
 }
 
 type ReloadToolsResponse struct {
@@ -545,8 +553,11 @@ const file_v1_conscious_common_proto_rawDesc = "" +
 	"\x0fSetModelRequest\x12\x14\n" +
 	"\x05model\x18\x01 \x01(\tR\x05model\"(\n" +
 	"\x10SetModelResponse\x12\x14\n" +
-	"\x05model\x18\x01 \x01(\tR\x05model\"\x14\n" +
-	"\x12ReloadToolsRequest\"/\n" +
+	"\x05model\x18\x01 \x01(\tR\x05model\"4\n" +
+	"\x12ReloadToolsRequest\x12\x1e\n" +
+	"\n" +
+	"memoryName\x18\x01 \x01(\tR\n" +
+	"memoryName\"/\n" +
 	"\x13ReloadToolsResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccessB8Z6github.com/binuud/avatar-conscious/gen/go/v1/consciousb\x06proto3"
 

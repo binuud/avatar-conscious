@@ -17,6 +17,7 @@ import (
 
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	"github.com/binuud/avatar-conscious/pkg/llm"
+	"github.com/binuud/avatar-conscious/pkg/memory"
 	"github.com/binuud/avatar-conscious/pkg/utils"
 	grpc "google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -191,16 +192,20 @@ func (s *grpcConsciousServer) FileUpload(ctx context.Context, in *pb.UploadReque
 // ReloadTools
 // Deletes the memory from storage and creates new
 // Handle mutex ##TBD Binu
-// func (s *grpcConsciousServer) ReloadTools(ctx context.Context, in *pb.ReloadToolsRequest) (*pb.ReloadToolsResponse, error) {
+func (s *grpcConsciousServer) ReloadTools(ctx context.Context, in *pb.ReloadToolsRequest) (*pb.ReloadToolsResponse, error) {
 
-// 	logrus.Info("Recieved ReloadTools")
-// 	s.memory.InitTools()
-// 	s.memory.Save()
-// 	s.memory.DumpTools()
-// 	return &pb.ReloadToolsResponse{
-// 		Success: true,
-// 	}, nil
-// }
+	logrus.Info("Recieved ReloadTools")
+	if in.MemoryName == "" {
+		return nil, status.Error(codes.InvalidArgument, "emtpy memory name ")
+	}
+	memory := memory.NewMemory(in.MemoryName)
+	memory.InitTools()
+	memory.Save()
+	memory.DumpTools()
+	return &pb.ReloadToolsResponse{
+		Success: true,
+	}, nil
+}
 
 func (s *grpcConsciousServer) Health(ctx context.Context, in *pb.HealthRequest) (*pb.HealthResponse, error) {
 

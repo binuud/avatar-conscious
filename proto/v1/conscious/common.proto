@@ -49,7 +49,9 @@ message SetModelResponse {
   string model = 1;
 }
 
-message ReloadToolsRequest{}
+message ReloadToolsRequest{
+  string memoryName = 1;
+}
 
 message ReloadToolsResponse{
   bool success = 1;
