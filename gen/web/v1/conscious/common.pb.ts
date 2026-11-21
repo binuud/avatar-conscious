@@ -46,6 +46,7 @@ export type SetModelResponse = {
 }
 
 export type ReloadToolsRequest = {
+  memoryName?: string
 }
 
 export type ReloadToolsResponse = {

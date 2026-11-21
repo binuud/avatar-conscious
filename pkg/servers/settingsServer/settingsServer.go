@@ -20,6 +20,7 @@ func (s *grpcSettingsServer) List(ctx context.Context, in *pb.SettingsListReques
 
 	logrus.Debug("Settings Server List")
 	prefillFields(settings.Global)
+	settings.Global.Save()
 	// time.Sleep(5 * time.Second) // Pauses for 2 seconds
 	return &pb.SettingsListResponse{
 		Groups: settings.Global.GetAllByGroup(),

@@ -133,6 +133,15 @@
     "/v1/conscious/reloadTools": {
       "get": {
         "operationId": "reloadTools",
+        "parameters": [
+          {
+            "name": "memoryName",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "conscious.Conscious.ReloadTools response",
