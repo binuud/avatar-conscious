@@ -31,6 +31,7 @@ const (
 	Config_FLOAT             Config_Type = 4
 	Config_BOOLEAN           Config_Type = 5
 	Config_MULTI_OPTION      Config_Type = 6
+	Config_DATALIST          Config_Type = 7 // searchable input box
 )
 
 // Enum value maps for Config_Type.
@@ -43,6 +44,7 @@ var (
 		4: "FLOAT",
 		5: "BOOLEAN",
 		6: "MULTI_OPTION",
+		7: "DATALIST",
 	}
 	Config_Type_value = map[string]int32{
 		"DATA_IGNORE":       0,
@@ -52,6 +54,7 @@ var (
 		"FLOAT":             4,
 		"BOOLEAN":           5,
 		"MULTI_OPTION":      6,
+		"DATALIST":          7,
 	}
 )
 
@@ -316,7 +319,7 @@ var File_v1_settings_settings_proto protoreflect.FileDescriptor
 
 const file_v1_settings_settings_proto_rawDesc = "" +
 	"\n" +
-	"\x1av1/settings/settings.proto\x12\bsettings\"\xaf\x03\n" +
+	"\x1av1/settings/settings.proto\x12\bsettings\"\xbd\x03\n" +
 	"\x06Config\x12\x12\n" +
 	"\x04name\x18\x01 \x01(\tR\x04name\x12 \n" +
 	"\vdescription\x18\x02 \x01(\tR\vdescription\x12\x14\n" +
@@ -330,7 +333,7 @@ const file_v1_settings_settings_proto_rawDesc = "" +
 	"\bnumLines\x18\n" +
 	" \x01(\x03R\bnumLines\x12\x10\n" +
 	"\x03min\x18\v \x01(\x03R\x03min\x12\x10\n" +
-	"\x03max\x18\f \x01(\x03R\x03max\"p\n" +
+	"\x03max\x18\f \x01(\x03R\x03max\"~\n" +
 	"\x04Type\x12\x0f\n" +
 	"\vDATA_IGNORE\x10\x00\x12\n" +
 	"\n" +
@@ -340,7 +343,8 @@ const file_v1_settings_settings_proto_rawDesc = "" +
 	"\x06NUMBER\x10\x03\x12\t\n" +
 	"\x05FLOAT\x10\x04\x12\v\n" +
 	"\aBOOLEAN\x10\x05\x12\x10\n" +
-	"\fMULTI_OPTION\x10\x06\"8\n" +
+	"\fMULTI_OPTION\x10\x06\x12\f\n" +
+	"\bDATALIST\x10\a\"8\n" +
 	"\n" +
 	"ConfigList\x12*\n" +
 	"\aconfigs\x18\x01 \x03(\v2\x10.settings.ConfigR\aconfigs\"\x9d\x01\n" +

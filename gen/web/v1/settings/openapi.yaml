@@ -112,6 +112,7 @@ components:
         - "FLOAT"
         - "BOOLEAN"
         - "MULTI_OPTION"
+        - "DATALIST"
     ConfigList:
       type: object
       properties:
