@@ -90,7 +90,8 @@ func Bootstrap() {
 		Group:       "MODELS",
 		Default:     "lmstudio-community/Qwen3.5-9B-MLX-4bit",
 		Description: "Default model used for Chat Generation, Avatars, Tools and Agents",
-		Type:        pbSettings.Config_STRING,
+		Options:     []string{},
+		Type:        pbSettings.Config_DATALIST,
 		Weight:      11,
 	})
 
@@ -99,7 +100,8 @@ func Bootstrap() {
 		Group:       "MODELS",
 		Default:     "lmstudio-community/Qwen3.5-9B-MLX-4bit",
 		Description: "Default model used for Image Description Query",
-		Type:        pbSettings.Config_STRING,
+		Options:     []string{},
+		Type:        pbSettings.Config_DATALIST,
 		Weight:      12,
 	})
 
@@ -108,7 +110,8 @@ func Bootstrap() {
 		Group:       "MODELS",
 		Default:     "Runpod/FLUX.2-klein-4B-mflux-4bit",
 		Description: "Default model used for Image Generation",
-		Type:        pbSettings.Config_STRING,
+		Options:     []string{},
+		Type:        pbSettings.Config_DATALIST,
 		Weight:      13,
 	})
 
@@ -117,7 +120,8 @@ func Bootstrap() {
 		Group:       "MODELS",
 		Default:     "mlx-community/Qwen3-TTS-12Hz-0.6B-Base-8bit",
 		Description: "Default Text To Speech model",
-		Type:        pbSettings.Config_STRING,
+		Options:     []string{},
+		Type:        pbSettings.Config_DATALIST,
 		Weight:      14,
 	})
 

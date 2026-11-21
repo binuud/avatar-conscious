@@ -12,6 +12,7 @@ export enum ConfigType {
   FLOAT = "FLOAT",
   BOOLEAN = "BOOLEAN",
   MULTI_OPTION = "MULTI_OPTION",
+  DATALIST = "DATALIST",
 }
 
 export type Config = {

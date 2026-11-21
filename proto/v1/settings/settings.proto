@@ -13,6 +13,7 @@ message Config {
     FLOAT = 4;
     BOOLEAN = 5;
     MULTI_OPTION = 6;
+    DATALIST = 7; // searchable input box
   }
   string name = 1;
   string description = 2;

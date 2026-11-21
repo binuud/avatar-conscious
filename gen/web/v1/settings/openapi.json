@@ -171,7 +171,8 @@
           "NUMBER",
           "FLOAT",
           "BOOLEAN",
-          "MULTI_OPTION"
+          "MULTI_OPTION",
+          "DATALIST"
         ]
       },
       "ConfigList": {
