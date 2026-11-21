@@ -70,7 +70,7 @@ func NewMemory(name string) *Memory {
 
 	memory, err := LoadMemory(name)
 	if err != nil {
-		memory := NewEmtpyMemory()
+		memory = NewEmtpyMemory()
 		memory.Meta.Name = name
 		memory.InitTools()
 		memory.Save()
