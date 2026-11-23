@@ -45,6 +45,14 @@ service Conscious {
     };
   }
 
+  // Start the avatar using a bidirectional stream
+  // for interactive sessions
+  rpc SensorEvents(stream ContextMesssage) returns (stream ContextMesssage) {
+    option (google.api.http) = {
+      post : "/v1/conscious/sensorEvents/ws"
+    };
+  }
+
   // rpc SetModel(SetModelRequest) returns (SetModelResponse) {
   //   option (google.api.http) = {
   //     post : "/v1/conscious/setModel"

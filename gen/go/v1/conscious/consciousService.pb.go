@@ -30,12 +30,13 @@ var File_v1_conscious_consciousService_proto protoreflect.FileDescriptor
 
 const file_v1_conscious_consciousService_proto_rawDesc = "" +
 	"\n" +
-	"#v1/conscious/consciousService.proto\x12\tconscious\x1a\x19v1/conscious/common.proto\x1a!v1/conscious/contextMessage.proto\x1a\x1cgoogle/api/annotations.proto2\xc2\x05\n" +
+	"#v1/conscious/consciousService.proto\x12\tconscious\x1a\x19v1/conscious/common.proto\x1a!v1/conscious/contextMessage.proto\x1a\x1cgoogle/api/annotations.proto2\xb5\x06\n" +
 	"\tConscious\x12Y\n" +
 	"\x02In\x12\x1a.conscious.ContextMesssage\x1a\x1a.conscious.ContextMesssage\"\x1b\x82\xd3\xe4\x93\x02\x15:\x01*\"\x10/v1/conscious/in\x12g\n" +
 	"\bGenerate\x12\x1a.conscious.ContextMesssage\x1a\x1a.conscious.ContextMesssage\"!\x82\xd3\xe4\x93\x02\x1b:\x01*\"\x16/v1/conscious/generate0\x01\x12g\n" +
 	"\bInStream\x12\x1a.conscious.ContextMesssage\x1a\x1a.conscious.ContextMesssage\"!\x82\xd3\xe4\x93\x02\x1b:\x01*\"\x16/v1/conscious/inStream0\x01\x12\\\n" +
-	"\tGetModels\x12\x17.conscious.ModelRequest\x1a\x18.conscious.ModelResponse\"\x1c\x82\xd3\xe4\x93\x02\x16\x12\x14/v1/conscious/models\x12f\n" +
+	"\tGetModels\x12\x17.conscious.ModelRequest\x1a\x18.conscious.ModelResponse\"\x1c\x82\xd3\xe4\x93\x02\x16\x12\x14/v1/conscious/models\x12q\n" +
+	"\fSensorEvents\x12\x1a.conscious.ContextMesssage\x1a\x1a.conscious.ContextMesssage\"%\x82\xd3\xe4\x93\x02\x1f\"\x1d/v1/conscious/sensorEvents/ws(\x010\x01\x12f\n" +
 	"\n" +
 	"FileUpload\x12\x18.conscious.UploadRequest\x1a\x19.conscious.UploadResponse\"#\x82\xd3\xe4\x93\x02\x1d:\x01*\"\x18/v1/conscious/fileUpload\x12o\n" +
 	"\vReloadTools\x12\x1d.conscious.ReloadToolsRequest\x1a\x1e.conscious.ReloadToolsResponse\"!\x82\xd3\xe4\x93\x02\x1b\x12\x19/v1/conscious/reloadTools\x12Q\n" +
@@ -58,18 +59,20 @@ var file_v1_conscious_consciousService_proto_depIdxs = []int32{
 	0, // 1: conscious.Conscious.Generate:input_type -> conscious.ContextMesssage
 	0, // 2: conscious.Conscious.InStream:input_type -> conscious.ContextMesssage
 	1, // 3: conscious.Conscious.GetModels:input_type -> conscious.ModelRequest
-	2, // 4: conscious.Conscious.FileUpload:input_type -> conscious.UploadRequest
-	3, // 5: conscious.Conscious.ReloadTools:input_type -> conscious.ReloadToolsRequest
-	4, // 6: conscious.Conscious.Health:input_type -> conscious.HealthRequest
-	0, // 7: conscious.Conscious.In:output_type -> conscious.ContextMesssage
-	0, // 8: conscious.Conscious.Generate:output_type -> conscious.ContextMesssage
-	0, // 9: conscious.Conscious.InStream:output_type -> conscious.ContextMesssage
-	5, // 10: conscious.Conscious.GetModels:output_type -> conscious.ModelResponse
-	6, // 11: conscious.Conscious.FileUpload:output_type -> conscious.UploadResponse
-	7, // 12: conscious.Conscious.ReloadTools:output_type -> conscious.ReloadToolsResponse
-	8, // 13: conscious.Conscious.Health:output_type -> conscious.HealthResponse
-	7, // [7:14] is the sub-list for method output_type
-	0, // [0:7] is the sub-list for method input_type
+	0, // 4: conscious.Conscious.SensorEvents:input_type -> conscious.ContextMesssage
+	2, // 5: conscious.Conscious.FileUpload:input_type -> conscious.UploadRequest
+	3, // 6: conscious.Conscious.ReloadTools:input_type -> conscious.ReloadToolsRequest
+	4, // 7: conscious.Conscious.Health:input_type -> conscious.HealthRequest
+	0, // 8: conscious.Conscious.In:output_type -> conscious.ContextMesssage
+	0, // 9: conscious.Conscious.Generate:output_type -> conscious.ContextMesssage
+	0, // 10: conscious.Conscious.InStream:output_type -> conscious.ContextMesssage
+	5, // 11: conscious.Conscious.GetModels:output_type -> conscious.ModelResponse
+	0, // 12: conscious.Conscious.SensorEvents:output_type -> conscious.ContextMesssage
+	6, // 13: conscious.Conscious.FileUpload:output_type -> conscious.UploadResponse
+	7, // 14: conscious.Conscious.ReloadTools:output_type -> conscious.ReloadToolsResponse
+	8, // 15: conscious.Conscious.Health:output_type -> conscious.HealthResponse
+	8, // [8:16] is the sub-list for method output_type
+	0, // [0:8] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name

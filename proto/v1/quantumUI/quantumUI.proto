@@ -16,7 +16,8 @@ message UiComponent {
     PLAINTEXT = 4;
     BUTTON = 5;
     WEBCAM = 6;
-    IMAGECAROUSEL = 7;
+    AICAM = 7;
+    IMAGECAROUSEL = 8;
   }
   string value = 4;
   string placeHolder = 5;
