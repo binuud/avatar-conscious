@@ -1,0 +1,135 @@
+syntax = "proto3";
+package llm;
+
+option go_package = "github.com/binuud/avatar-conscious/gen/go/v1/llm";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/field_mask.proto";
+
+
+// Supported API protocol compatibility standards.
+enum ApiProtocol {
+  API_PROTOCOL_UNSPECIFIED = 0;
+  API_PROTOCOL_OPENAI_COMPATIBLE = 1;
+  API_PROTOCOL_ANTHROPIC = 2;
+  API_PROTOCOL_GOOGLE_GEMINI = 3;
+  API_PROTOCOL_AWS_BEDROCK = 4;
+  API_PROTOCOL_CUSTOM = 5;
+}
+
+// Current status of an API key or provider configuration.
+enum CredentialStatus {
+  CREDENTIAL_STATUS_UNSPECIFIED = 0;
+  CREDENTIAL_STATUS_ACTIVE = 1;
+  CREDENTIAL_STATUS_EXPIRED = 2;
+  CREDENTIAL_STATUS_REVOKED = 3;
+  CREDENTIAL_STATUS_RATE_LIMITED = 4;
+}
+
+// Represents an LLM provider (e.g., OpenAI, Anthropic, Groq, Ollama).
+message LlmProvider {
+  // Unique identifier (e.g., "openai", "anthropic", "local-ollama").
+  string uuid = 1;
+
+  // Human-readable name (e.g., "OpenAI", "Anthropic").
+  string display_name = 2;
+
+  // Base API endpoint URL (e.g., "https://openai.com").
+  string base_endpoint = 3;
+
+  // Direct URL to the provider's web console where users generate API keys
+  // (e.g., "https://openai.com").
+  string api_key_generation_url = 4;
+
+  // Underlying wire protocol used by this provider.
+  ApiProtocol protocol = 5;
+
+  // Default HTTP header used for authentication (e.g., "Authorization" or "x-api-key").
+  string auth_header_name = 6;
+
+  // Optional prefix for the key value (e.g., "Bearer ").
+  string auth_header_prefix = 7;
+
+  // Whether this provider requires an API key (false for local endpoints like Ollama).
+  bool requires_api_key = 8;
+
+  // List of tracked API credentials associated with this provider.
+  repeated ApiCredential credentials = 9;
+
+  // Optional custom static headers required by the endpoint.
+  map<string, string> custom_headers = 10;
+
+  google.protobuf.Timestamp created_at = 11;
+  google.protobuf.Timestamp updated_at = 12;
+}
+
+// Represents a specific API key entry for a provider.
+message ApiCredential {
+  // Unique identifier for this credential record.
+  string id = 1;
+
+  // Friendly label (e.g., "Production Key", "Dev Sandbox").
+  string label = 2;
+
+  // The API key value or a secret-manager reference URI (e.g., "vault://secrets/openai-prod").
+  // Avoid storing raw plaintext keys in persistent proto files when possible.
+  string api_key_or_secret_ref = 3;
+
+  // Masked preview for UI display (e.g., "sk-proj-...89aB").
+  string masked_key = 4;
+
+  // Optional environment variable name fallback (e.g., "OPENAI_API_KEY").
+  string env_var_name = 5;
+
+  CredentialStatus status = 6;
+
+  google.protobuf.Timestamp created_at = 7;
+  google.protobuf.Timestamp expires_at = 8;
+}
+
+// Container message for serializing a full registry config to disk or object storage.
+message ProviderRegistrySnapshot {
+  repeated LlmProvider providers = 1;
+  google.protobuf.Timestamp exported_at = 2;
+}
+
+// --- Optional gRPC Management Service ---
+
+service ProviderRegistryService {
+  rpc CreateProvider(CreateProviderRequest) returns (LlmProvider);
+  rpc GetProvider(GetProviderRequest) returns (LlmProvider);
+  rpc ListProviders(ListProvidersRequest) returns (ListProvidersResponse);
+  rpc UpdateProvider(UpdateProviderRequest) returns (LlmProvider);
+  rpc DeleteProvider(DeleteProviderRequest) returns (DeleteProviderResponse);
+}
+
+message CreateProviderRequest {
+  LlmProvider provider = 1;
+}
+
+message GetProviderRequest {
+  string id = 1;
+}
+
+message ListProvidersRequest {
+  int32 page_size = 1;
+  string page_token = 2;
+}
+
+message ListProvidersResponse {
+  repeated LlmProvider providers = 1;
+  string next_page_token = 2;
+}
+
+message UpdateProviderRequest {
+  LlmProvider provider = 1;
+  google.protobuf.FieldMask update_mask = 2;
+}
+
+message DeleteProviderRequest {
+  string id = 1;
+}
+
+message DeleteProviderResponse {
+  bool deleted = 1;
+}

@@ -1,8 +1,5 @@
 # Maintainer Binu Udayakumar <binu@dronasys.com>
-
-REPO=dronasys
-
-
+REPO=binuud
 CONSCIOUS_APP_NAME= conscious
 
 DEBUG_IMAGE= debug-golang
@@ -17,12 +14,10 @@ TAGGED_NAME = $(REPO)/$(APP_NAME)
 MULTI_PLATFORM_DOCKER = --platform=linux/amd64,linux/arm64
 
 # Optional environmental variables
-
 BASE_DIR	:=	$(shell git rev-parse --show-toplevel)
 BIN			:=	$(BASE_DIR)/bin
 
 ## Needs protoc to be installed
-
 ifndef PROTOC
 PROTOC = protoc
 endif
@@ -31,14 +26,26 @@ ifndef PROTOWEB
 PROTOWEB = protoc-gen-grpc-web
 endif
 
+## Varaibles required for building proto buffers
+PROTO_FILES:=$(shell find ./proto -type f -name "*.proto")
+
+# Find all .yaml files inside ./gen subdirectories
+YAML_FILES := $(shell find ./gen -type f -name "*.yaml")
+
+# Map every ./gen/folderX/file.yaml to ./gen/folderX/file.json
+JSON_FILES := $(YAML_FILES:.yaml=.json)
+
+# Pattern rule: compiles any .yaml file into a .json file in the same folder
+%.json: %.yaml
+	@echo "Compiling $< -> $@"
+	@yq eval -o=json -P '.' $< > $@
+
 # HELP
 # This will output the help for each task
 # thanks to https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 
 # we have a directory named vendor
-# force make to run target vendor
 .PHONY: help vendor vendor-update
-
 
 help: ## This help.
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
@@ -93,127 +100,39 @@ errcheck:
 
 ### the ordering of sub targets is very important
 ### do not change
-protos: protos-common protos-quantum-ui protos-settings protos-conscious protos-avatar protos-mcp ## run all protos
 
+protos: protos-go-typescript protos-openapi-yaml ## generate go, typescript proto buffers and gateways, create open api json file
+	@$(MAKE) protos-openapi-json
 
-protos-common: ## Build Go and Web Proto for common module
-	mkdir -p gen/go gen/web/v1/common
-# ****** common Settings 
+protos-go-typescript: ## generate go and typescript protobuffers and gateways
+	mkdir -p gen/go gen/web
+	echo $(PROTO_FILES)
 	$(PROTOC) -I=./proto/.  \
-	--go_out=./gen/go/ \
-	--go_opt paths=source_relative \
-	--go-grpc_out=./gen/go/ \
-	--go-grpc_opt paths=source_relative \
-	--grpc-gateway_out=./gen/go/ \
-	--grpc-gateway_opt paths=source_relative \
-	--grpc-gateway_opt generate_unbound_methods=true \
-	--grpc-gateway-ts_out=./gen/web/ \
-	--grpc-gateway-ts_opt paths=source_relative \
-	--grpc-gateway-ts_opt generate_unbound_methods=true \
-	--oas_out ./gen/web/v1/common/ \
-	proto/v1/common/common.proto 
-	yq eval ./gen/web/v1/common/openapi.yaml -o=json -P > ./gen/web/v1/common/openapi.json	
+		--go_out=./gen/go/ \
+		--go_opt paths=source_relative \
+		--go-grpc_out=./gen/go/ \
+		--go-grpc_opt paths=source_relative \
+		--grpc-gateway_out=./gen/go/ \
+		--grpc-gateway_opt paths=source_relative \
+		--grpc-gateway_opt generate_unbound_methods=true \
+		--grpc-gateway-ts_out=./gen/web/ \
+		--grpc-gateway-ts_opt paths=source_relative \
+		--grpc-gateway-ts_opt generate_unbound_methods=true \
+		--oas_out ./gen/web/ \
+		$(PROTO_FILES)
 
-## protos
-protos-conscious: ## Build Go and Web Proto for Conscious module
-	mkdir -p gen/go gen/web/v1/conscious
-# ****** Conscious AiModule 
-	$(PROTOC) -I=./proto/.  \
-	--go_out=./gen/go/ \
-	--go_opt paths=source_relative \
-	--go-grpc_out=./gen/go/ \
-	--go-grpc_opt paths=source_relative \
-	--grpc-gateway_out=./gen/go/ \
-	--grpc-gateway_opt paths=source_relative \
-	--grpc-gateway_opt generate_unbound_methods=true \
-	--grpc-gateway-ts_out=./gen/web/ \
-	--grpc-gateway-ts_opt paths=source_relative \
-	--grpc-gateway-ts_opt generate_unbound_methods=true \
-	--oas_out ./gen/web/v1/conscious/ \
-	proto/v1/conscious/metrics.proto \
-	proto/v1/conscious/common.proto \
-	proto/v1/conscious/contextMessage.proto \
-	proto/v1/conscious/memory.proto \
-	proto/v1/conscious/memoryService.proto \
-	proto/v1/conscious/consciousService.proto 
-	yq eval ./gen/web/v1/conscious/openapi.yaml -o=json -P > ./gen/web/v1/conscious/openapi.json
+# this is required, because oas_out, does not create files in relative path
+# like go_out or grpc_gateway_out
+protos-openapi-yaml: ## create openApi / swagger yaml files from proto
+	@for f in $(PROTO_FILES); do \
+		rel_dir=$$(dirname "$${f#./proto/}"); \
+		mkdir -p "./gen/web/$$rel_dir"; \
+		$(PROTOC) -I=./proto --oas_out="./gen/web/$$rel_dir" "$$f"; \
+		echo "./gen/web/$$rel_dir" "$$f"; \
+	done
 
-protos-avatar: ## Build Go and Web Proto for avatar module
-	mkdir -p gen/go gen/web/v1/avatar
-# ****** Conscious Avatar 
-	$(PROTOC) -I=./proto/.  \
-	--go_out=./gen/go/ \
-	--go_opt paths=source_relative \
-	--go-grpc_out=./gen/go/ \
-	--go-grpc_opt paths=source_relative \
-	--grpc-gateway_out=./gen/go/ \
-	--grpc-gateway_opt paths=source_relative \
-	--grpc-gateway_opt generate_unbound_methods=true \
-	--grpc-gateway-ts_out=./gen/web/ \
-	--grpc-gateway-ts_opt paths=source_relative \
-	--grpc-gateway-ts_opt generate_unbound_methods=true \
-	--oas_out ./gen/web/v1/avatar/ \
-	proto/v1/avatar/avatar.proto \
-	proto/v1/avatar/avatarControl.proto \
-	proto/v1/avatar/avatarService.proto \
-	proto/v1/avatar/avatarStoreService.proto 
-	yq eval ./gen/web/v1/avatar/openapi.yaml -o=json -P > ./gen/web/v1/avatar/openapi.json
-
-protos-settings: ## Build Go and Web Proto for settings module
-	mkdir -p gen/go gen/web/v1/settings
-# ****** Conscious Settings 
-	$(PROTOC) -I=./proto/.  \
-	--go_out=./gen/go/ \
-	--go_opt paths=source_relative \
-	--go-grpc_out=./gen/go/ \
-	--go-grpc_opt paths=source_relative \
-	--grpc-gateway_out=./gen/go/ \
-	--grpc-gateway_opt paths=source_relative \
-	--grpc-gateway_opt generate_unbound_methods=true \
-	--grpc-gateway-ts_out=./gen/web/ \
-	--grpc-gateway-ts_opt paths=source_relative \
-	--grpc-gateway-ts_opt generate_unbound_methods=true \
-	--oas_out ./gen/web/v1/settings/ \
-	proto/v1/settings/settings.proto \
-	proto/v1/settings/settingsService.proto 
-	yq eval ./gen/web/v1/settings/openapi.yaml -o=json -P > ./gen/web/v1/settings/openapi.json
-
-protos-quantum-ui: ## Build Go and Web Proto for quantum-ui module
-	mkdir -p gen/go gen/web/v1/quantumUI
-# ****** quantumUI Settings 
-	$(PROTOC) -I=./proto/.  \
-	--go_out=./gen/go/ \
-	--go_opt paths=source_relative \
-	--go-grpc_out=./gen/go/ \
-	--go-grpc_opt paths=source_relative \
-	--grpc-gateway_out=./gen/go/ \
-	--grpc-gateway_opt paths=source_relative \
-	--grpc-gateway_opt generate_unbound_methods=true \
-	--grpc-gateway-ts_out=./gen/web/ \
-	--grpc-gateway-ts_opt paths=source_relative \
-	--grpc-gateway-ts_opt generate_unbound_methods=true \
-	--oas_out ./gen/web/v1/quantumUI/ \
-	proto/v1/quantumUI/quantumUI.proto 
-	yq eval ./gen/web/v1/quantumUI/openapi.yaml -o=json -P > ./gen/web/v1/quantumUI/openapi.json	
-
-
-protos-mcp: ## Build Go and Web Proto for mcp module
-	mkdir -p gen/go gen/web/v1/mcpManager
-# ****** mcpManager 
-	$(PROTOC) -I=./proto/.  \
-	--go_out=./gen/go/ \
-	--go_opt paths=source_relative \
-	--go-grpc_out=./gen/go/ \
-	--go-grpc_opt paths=source_relative \
-	--grpc-gateway_out=./gen/go/ \
-	--grpc-gateway_opt paths=source_relative \
-	--grpc-gateway_opt generate_unbound_methods=true \
-	--grpc-gateway-ts_out=./gen/web/ \
-	--grpc-gateway-ts_opt paths=source_relative \
-	--grpc-gateway-ts_opt generate_unbound_methods=true \
-	--oas_out ./gen/web/v1/mcpManager/ \
-	proto/v1/mcpManager/mcpManager.proto 
-	yq eval ./gen/web/v1/mcpManager/openapi.yaml -o=json -P > ./gen/web/v1/mcpManager/openapi.json		
+protos-openapi-json: $(JSON_FILES) ## create swagger json from yaml
+	
 ##
 ## Test Code
 ##
@@ -238,6 +157,8 @@ run-scratch: ## run scratch folder, temp staging go files
 
 run-mock-server: ## run the mock server, mocks http get, post requests, without an actual server
 	go run github.com/smeshkov/gomock/cmd/app@latest -mock ./mock/mockServer/mock.json
+
+## Other Useful tools
 
 mcp-inspector: ## start mcp inspector
 	npx @modelcontextprotocol/inspector	
