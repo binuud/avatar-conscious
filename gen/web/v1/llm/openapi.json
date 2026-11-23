@@ -1,0 +1,32 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "",
+    "version": ""
+  },
+  "components": {
+    "schemas": {
+      "ApiProtocol": {
+        "type": "string",
+        "enum": [
+          "API_PROTOCOL_UNSPECIFIED",
+          "API_PROTOCOL_OPENAI_COMPATIBLE",
+          "API_PROTOCOL_ANTHROPIC",
+          "API_PROTOCOL_GOOGLE_GEMINI",
+          "API_PROTOCOL_AWS_BEDROCK",
+          "API_PROTOCOL_CUSTOM"
+        ]
+      },
+      "CredentialStatus": {
+        "type": "string",
+        "enum": [
+          "CREDENTIAL_STATUS_UNSPECIFIED",
+          "CREDENTIAL_STATUS_ACTIVE",
+          "CREDENTIAL_STATUS_EXPIRED",
+          "CREDENTIAL_STATUS_REVOKED",
+          "CREDENTIAL_STATUS_RATE_LIMITED"
+        ]
+      }
+    }
+  }
+}

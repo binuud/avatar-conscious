@@ -30,7 +30,7 @@ var File_v1_conscious_memoryService_proto protoreflect.FileDescriptor
 
 const file_v1_conscious_memoryService_proto_rawDesc = "" +
 	"\n" +
-	" v1/conscious/memoryService.proto\x12\tconscious\x1a\x19v1/conscious/common.proto\x1a!v1/conscious/contextMessage.proto\x1a\x19v1/conscious/memory.proto\x1a\x1cgoogle/api/annotations.proto2\xd7\x05\n" +
+	" v1/conscious/memoryService.proto\x12\tconscious\x1a\x19v1/conscious/memory.proto\x1a\x1cgoogle/api/annotations.proto2\xd7\x05\n" +
 	"\rMemoryService\x12\\\n" +
 	"\x04List\x12\x1c.conscious.ListMemoryRequest\x1a\x1d.conscious.ListMemoryResponse\"\x17\x82\xd3\xe4\x93\x02\x11\x12\x0f/v1/memory/list\x12t\n" +
 	"\rGetMemoryMeta\x12\x1f.conscious.GetMemoryMetaRequest\x1a .conscious.GetMemoryMetaResponse\" \x82\xd3\xe4\x93\x02\x1a\x12\x18/v1/memory/getMemoryMeta\x12X\n" +
@@ -83,8 +83,6 @@ func file_v1_conscious_memoryService_proto_init() {
 	if File_v1_conscious_memoryService_proto != nil {
 		return
 	}
-	file_v1_conscious_common_proto_init()
-	file_v1_conscious_contextMessage_proto_init()
 	file_v1_conscious_memory_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{

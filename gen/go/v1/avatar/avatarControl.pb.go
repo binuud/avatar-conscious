@@ -494,7 +494,7 @@ var File_v1_avatar_avatarControl_proto protoreflect.FileDescriptor
 
 const file_v1_avatar_avatarControl_proto_rawDesc = "" +
 	"\n" +
-	"\x1dv1/avatar/avatarControl.proto\x12\x06avatar\x1a\x19v1/conscious/common.proto\x1a\x16v1/common/common.proto\x1a!v1/conscious/contextMessage.proto\"\x8f\x03\n" +
+	"\x1dv1/avatar/avatarControl.proto\x12\x06avatar\x1a\x16v1/common/common.proto\x1a!v1/conscious/contextMessage.proto\"\x8f\x03\n" +
 	"\n" +
 	"StepStatus\x12,\n" +
 	"\x06status\x18\x01 \x01(\x0e2\x14.avatar.AvatarStatusR\x06status\x12D\n" +
