@@ -129,6 +129,49 @@ func local_request_Conscious_GetModels_0(ctx context.Context, marshaler runtime.
 	return msg, metadata, err
 }
 
+func request_Conscious_SensorEvents_0(ctx context.Context, marshaler runtime.Marshaler, client ConsciousClient, req *http.Request, pathParams map[string]string) (Conscious_SensorEventsClient, runtime.ServerMetadata, error) {
+	var metadata runtime.ServerMetadata
+	stream, err := client.SensorEvents(ctx)
+	if err != nil {
+		grpclog.Errorf("Failed to start streaming: %v", err)
+		return nil, metadata, err
+	}
+	dec := marshaler.NewDecoder(req.Body)
+	handleSend := func() error {
+		var protoReq ContextMesssage
+		err := dec.Decode(&protoReq)
+		if errors.Is(err, io.EOF) {
+			return err
+		}
+		if err != nil {
+			grpclog.Errorf("Failed to decode request: %v", err)
+			return status.Errorf(codes.InvalidArgument, "Failed to decode request: %v", err)
+		}
+		if err := stream.Send(&protoReq); err != nil {
+			grpclog.Errorf("Failed to send request: %v", err)
+			return err
+		}
+		return nil
+	}
+	go func() {
+		for {
+			if err := handleSend(); err != nil {
+				break
+			}
+		}
+		if err := stream.CloseSend(); err != nil {
+			grpclog.Errorf("Failed to terminate client stream: %v", err)
+		}
+	}()
+	header, err := stream.Header()
+	if err != nil {
+		grpclog.Errorf("Failed to get header from client: %v", err)
+		return nil, metadata, err
+	}
+	metadata.HeaderMD = header
+	return stream, metadata, nil
+}
+
 func request_Conscious_FileUpload_0(ctx context.Context, marshaler runtime.Marshaler, client ConsciousClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var (
 		protoReq UploadRequest
@@ -285,6 +328,13 @@ func RegisterConsciousHandlerServer(ctx context.Context, mux *runtime.ServeMux, 
 			return
 		}
 		forward_Conscious_GetModels_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+	})
+
+	mux.Handle(http.MethodPost, pattern_Conscious_SensorEvents_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		err := status.Error(codes.Unimplemented, "streaming calls are not yet supported in the in-process transport")
+		_, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+		return
 	})
 	mux.Handle(http.MethodPost, pattern_Conscious_FileUpload_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
@@ -454,6 +504,23 @@ func RegisterConsciousHandlerClient(ctx context.Context, mux *runtime.ServeMux, 
 		}
 		forward_Conscious_GetModels_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 	})
+	mux.Handle(http.MethodPost, pattern_Conscious_SensorEvents_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		annotatedContext, err := runtime.AnnotateContext(ctx, mux, req, "/conscious.Conscious/SensorEvents", runtime.WithHTTPPathPattern("/v1/conscious/sensorEvents/ws"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_Conscious_SensorEvents_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		forward_Conscious_SensorEvents_0(annotatedContext, mux, outboundMarshaler, w, req, func() (proto.Message, error) { return resp.Recv() }, mux.GetForwardResponseOptions()...)
+	})
 	mux.Handle(http.MethodPost, pattern_Conscious_FileUpload_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
@@ -509,21 +576,23 @@ func RegisterConsciousHandlerClient(ctx context.Context, mux *runtime.ServeMux, 
 }
 
 var (
-	pattern_Conscious_In_0          = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "conscious", "in"}, ""))
-	pattern_Conscious_Generate_0    = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "conscious", "generate"}, ""))
-	pattern_Conscious_InStream_0    = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "conscious", "inStream"}, ""))
-	pattern_Conscious_GetModels_0   = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "conscious", "models"}, ""))
-	pattern_Conscious_FileUpload_0  = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "conscious", "fileUpload"}, ""))
-	pattern_Conscious_ReloadTools_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "conscious", "reloadTools"}, ""))
-	pattern_Conscious_Health_0      = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "health"}, ""))
+	pattern_Conscious_In_0           = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "conscious", "in"}, ""))
+	pattern_Conscious_Generate_0     = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "conscious", "generate"}, ""))
+	pattern_Conscious_InStream_0     = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "conscious", "inStream"}, ""))
+	pattern_Conscious_GetModels_0    = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "conscious", "models"}, ""))
+	pattern_Conscious_SensorEvents_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 2, 3}, []string{"v1", "conscious", "sensorEvents", "ws"}, ""))
+	pattern_Conscious_FileUpload_0   = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "conscious", "fileUpload"}, ""))
+	pattern_Conscious_ReloadTools_0  = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2}, []string{"v1", "conscious", "reloadTools"}, ""))
+	pattern_Conscious_Health_0       = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1}, []string{"v1", "health"}, ""))
 )
 
 var (
-	forward_Conscious_In_0          = runtime.ForwardResponseMessage
-	forward_Conscious_Generate_0    = runtime.ForwardResponseStream
-	forward_Conscious_InStream_0    = runtime.ForwardResponseStream
-	forward_Conscious_GetModels_0   = runtime.ForwardResponseMessage
-	forward_Conscious_FileUpload_0  = runtime.ForwardResponseMessage
-	forward_Conscious_ReloadTools_0 = runtime.ForwardResponseMessage
-	forward_Conscious_Health_0      = runtime.ForwardResponseMessage
+	forward_Conscious_In_0           = runtime.ForwardResponseMessage
+	forward_Conscious_Generate_0     = runtime.ForwardResponseStream
+	forward_Conscious_InStream_0     = runtime.ForwardResponseStream
+	forward_Conscious_GetModels_0    = runtime.ForwardResponseMessage
+	forward_Conscious_SensorEvents_0 = runtime.ForwardResponseStream
+	forward_Conscious_FileUpload_0   = runtime.ForwardResponseMessage
+	forward_Conscious_ReloadTools_0  = runtime.ForwardResponseMessage
+	forward_Conscious_Health_0       = runtime.ForwardResponseMessage
 )

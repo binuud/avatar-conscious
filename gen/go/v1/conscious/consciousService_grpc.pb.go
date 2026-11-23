@@ -24,13 +24,14 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Conscious_In_FullMethodName          = "/conscious.Conscious/In"
-	Conscious_Generate_FullMethodName    = "/conscious.Conscious/Generate"
-	Conscious_InStream_FullMethodName    = "/conscious.Conscious/InStream"
-	Conscious_GetModels_FullMethodName   = "/conscious.Conscious/GetModels"
-	Conscious_FileUpload_FullMethodName  = "/conscious.Conscious/FileUpload"
-	Conscious_ReloadTools_FullMethodName = "/conscious.Conscious/ReloadTools"
-	Conscious_Health_FullMethodName      = "/conscious.Conscious/Health"
+	Conscious_In_FullMethodName           = "/conscious.Conscious/In"
+	Conscious_Generate_FullMethodName     = "/conscious.Conscious/Generate"
+	Conscious_InStream_FullMethodName     = "/conscious.Conscious/InStream"
+	Conscious_GetModels_FullMethodName    = "/conscious.Conscious/GetModels"
+	Conscious_SensorEvents_FullMethodName = "/conscious.Conscious/SensorEvents"
+	Conscious_FileUpload_FullMethodName   = "/conscious.Conscious/FileUpload"
+	Conscious_ReloadTools_FullMethodName  = "/conscious.Conscious/ReloadTools"
+	Conscious_Health_FullMethodName       = "/conscious.Conscious/Health"
 )
 
 // ConsciousClient is the client API for Conscious service.
@@ -43,6 +44,9 @@ type ConsciousClient interface {
 	Generate(ctx context.Context, in *ContextMesssage, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ContextMesssage], error)
 	InStream(ctx context.Context, in *ContextMesssage, opts ...grpc.CallOption) (grpc.ServerStreamingClient[ContextMesssage], error)
 	GetModels(ctx context.Context, in *ModelRequest, opts ...grpc.CallOption) (*ModelResponse, error)
+	// Start the avatar using a bidirectional stream
+	// for interactive sessions
+	SensorEvents(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[ContextMesssage, ContextMesssage], error)
 	FileUpload(ctx context.Context, in *UploadRequest, opts ...grpc.CallOption) (*UploadResponse, error)
 	// Reloads Tools
 	ReloadTools(ctx context.Context, in *ReloadToolsRequest, opts ...grpc.CallOption) (*ReloadToolsResponse, error)
@@ -116,6 +120,19 @@ func (c *consciousClient) GetModels(ctx context.Context, in *ModelRequest, opts 
 	return out, nil
 }
 
+func (c *consciousClient) SensorEvents(ctx context.Context, opts ...grpc.CallOption) (grpc.BidiStreamingClient[ContextMesssage, ContextMesssage], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &Conscious_ServiceDesc.Streams[2], Conscious_SensorEvents_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[ContextMesssage, ContextMesssage]{ClientStream: stream}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type Conscious_SensorEventsClient = grpc.BidiStreamingClient[ContextMesssage, ContextMesssage]
+
 func (c *consciousClient) FileUpload(ctx context.Context, in *UploadRequest, opts ...grpc.CallOption) (*UploadResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(UploadResponse)
@@ -156,6 +173,9 @@ type ConsciousServer interface {
 	Generate(*ContextMesssage, grpc.ServerStreamingServer[ContextMesssage]) error
 	InStream(*ContextMesssage, grpc.ServerStreamingServer[ContextMesssage]) error
 	GetModels(context.Context, *ModelRequest) (*ModelResponse, error)
+	// Start the avatar using a bidirectional stream
+	// for interactive sessions
+	SensorEvents(grpc.BidiStreamingServer[ContextMesssage, ContextMesssage]) error
 	FileUpload(context.Context, *UploadRequest) (*UploadResponse, error)
 	// Reloads Tools
 	ReloadTools(context.Context, *ReloadToolsRequest) (*ReloadToolsResponse, error)
@@ -182,6 +202,9 @@ func (UnimplementedConsciousServer) InStream(*ContextMesssage, grpc.ServerStream
 }
 func (UnimplementedConsciousServer) GetModels(context.Context, *ModelRequest) (*ModelResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method GetModels not implemented")
+}
+func (UnimplementedConsciousServer) SensorEvents(grpc.BidiStreamingServer[ContextMesssage, ContextMesssage]) error {
+	return status.Error(codes.Unimplemented, "method SensorEvents not implemented")
 }
 func (UnimplementedConsciousServer) FileUpload(context.Context, *UploadRequest) (*UploadResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method FileUpload not implemented")
@@ -270,6 +293,13 @@ func _Conscious_GetModels_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	return interceptor(ctx, in, info, handler)
 }
+
+func _Conscious_SensorEvents_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(ConsciousServer).SensorEvents(&grpc.GenericServerStream[ContextMesssage, ContextMesssage]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type Conscious_SensorEventsServer = grpc.BidiStreamingServer[ContextMesssage, ContextMesssage]
 
 func _Conscious_FileUpload_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UploadRequest)
@@ -363,6 +393,12 @@ var Conscious_ServiceDesc = grpc.ServiceDesc{
 			StreamName:    "InStream",
 			Handler:       _Conscious_InStream_Handler,
 			ServerStreams: true,
+		},
+		{
+			StreamName:    "SensorEvents",
+			Handler:       _Conscious_SensorEvents_Handler,
+			ServerStreams: true,
+			ClientStreams: true,
 		},
 	},
 	Metadata: "v1/conscious/consciousService.proto",

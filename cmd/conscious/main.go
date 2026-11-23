@@ -16,6 +16,7 @@ import (
 	"github.com/binuud/avatar-conscious/pkg/bootstrap"
 	"github.com/binuud/avatar-conscious/pkg/servers"
 	"github.com/binuud/avatar-conscious/pkg/servers/avatarServer"
+	"github.com/binuud/avatar-conscious/pkg/servers/consciousServer"
 	llmProxyServer "github.com/binuud/avatar-conscious/pkg/servers/llmProxyServer"
 	"github.com/binuud/avatar-conscious/pkg/servers/staticFileServer"
 	"github.com/binuud/avatar-conscious/pkg/settings"
@@ -126,20 +127,22 @@ func runHtppServer() {
 
 	httpMux := serveStaticPaths()
 
+	// handle websockets
 	// for bidirectional stream on avatar live server
 	httpMux.HandleFunc("/api/avatar/ws", avatarServer.WebsocketHandler)
+
+	// for bidirectional stream on conscious events server
+	httpMux.HandleFunc("/api/conscious/sensorEvents/ws", consciousServer.WebsocketHandler)
 	// mqttServer.InitMQTT()
 
 	// handle llm proxt on path /llmHandler
 	httpMux.Handle("/llmHandler/", http.StripPrefix("/llmHandler", llmProxyServer.GetLlmProxyHandler()))
 	logrus.Debugf("Server directory %s -> %s", "/llmHandler/", "llm proxy")
 
-	// handle websocket
-	// httpMux.HandleFunc("/ws", mqttServer.WebsocketHandler)
-
 	// link the concious gateway server to httpmux
 	httpMux.Handle("/api/", http.StripPrefix("/api", gwMux))
 	logrus.Debugf("Server directory %s -> %s", "/api/avatar/ws", "avatar control websocket")
+	logrus.Debugf("Server directory %s -> %s", "/api/conscious/sensorEvents/ws", "conscious sensorEvents websocket")
 	logrus.Debugf("Server directory %s -> %s", "/api/", "conscious server")
 	logrus.Debugf("Server directory %s -> %s", "/api/", "metrics server")
 	logrus.Debugf("Server directory %s -> %s", "/api/", "avatar store server")

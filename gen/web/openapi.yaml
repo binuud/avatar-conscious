@@ -488,6 +488,151 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ReloadToolsResponse'
+  /v1/conscious/sensorEvents/ws:
+    post:
+      operationId: sensorEvents
+      parameters:
+        - name: action
+          in: query
+          schema:
+            type: string
+        - name: audio
+          in: query
+          schema:
+            type: string
+            format: base64
+        - name: bodyBytes
+          in: query
+          schema:
+            type: string
+            format: base64
+        - name: bodyText
+          in: query
+          schema:
+            type: string
+        - name: completedAt.nanos
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: completedAt.seconds
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: createdAt.nanos
+          in: query
+          schema:
+            type: integer
+            format: int32
+        - name: createdAt.seconds
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: data
+          in: query
+          schema:
+            type: string
+        - name: description
+          in: query
+          schema:
+            type: string
+        - name: errorMessage
+          in: query
+          schema:
+            type: string
+        - name: memoryName
+          in: query
+          schema:
+            type: string
+        - name: model
+          in: query
+          schema:
+            type: string
+        - name: name
+          in: query
+          schema:
+            type: string
+        - name: prompt
+          in: query
+          schema:
+            type: string
+        - name: reasoning
+          in: query
+          schema:
+            type: string
+        - name: response
+          in: query
+          schema:
+            type: string
+        - name: responseImage
+          in: query
+          schema:
+            type: string
+        - name: role
+          in: query
+          schema:
+            $ref: '#/components/schemas/ContextMesssage.ContextRole'
+        - name: schema
+          in: query
+          schema:
+            type: string
+        - name: seed
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: status
+          in: query
+          schema:
+            $ref: '#/components/schemas/ContextMesssage.ContextStatus'
+        - name: statusMessage
+          in: query
+          schema:
+            type: string
+        - name: stream
+          in: query
+          schema:
+            type: boolean
+        - name: systemPrompt
+          in: query
+          schema:
+            type: string
+        - name: temperature
+          in: query
+          schema:
+            type: number
+            format: float
+        - name: text
+          in: query
+          schema:
+            type: string
+            format: base64
+        - name: thinking
+          in: query
+          schema:
+            type: string
+        - name: type
+          in: query
+          schema:
+            $ref: '#/components/schemas/ContextMesssage.ContextType'
+        - name: uuid
+          in: query
+          schema:
+            type: string
+        - name: vision
+          in: query
+          schema:
+            type: string
+            format: base64
+      responses:
+        "200":
+          description: conscious.Conscious.SensorEvents response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContextMesssage'
   /v1/consciousMetrics/getSystemMetrics:
     post:
       operationId: getSystemMetrics
@@ -1665,6 +1810,7 @@ components:
         - "PLAINTEXT"
         - "BUTTON"
         - "WEBCAM"
+        - "AICAM"
         - "IMAGECAROUSEL"
     UpdateMemoryRequest:
       type: object

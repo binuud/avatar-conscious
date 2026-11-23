@@ -21,6 +21,7 @@ func NewGrpcSystemMetricsServer() *grpcMetricsServer {
 // WatchHealth streams periodic health snapshots until the client cancels.
 func (s *grpcMetricsServer) GetSystemMetrics(req *pb.GetSystemMetricsRequest, stream pb.Metrics_GetSystemMetricsServer) error {
 
+	logrus.Debug("GetSystemMetrics called")
 	// check if metrics implemented
 	_, err := utils.NewSystemMetrics()
 	if err != nil {

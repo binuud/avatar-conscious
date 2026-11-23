@@ -12,6 +12,7 @@ export enum UiComponentUiType {
   PLAINTEXT = "PLAINTEXT",
   BUTTON = "BUTTON",
   WEBCAM = "WEBCAM",
+  AICAM = "AICAM",
   IMAGECAROUSEL = "IMAGECAROUSEL",
 }
 
