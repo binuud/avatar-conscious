@@ -1310,6 +1310,10 @@ components:
         - "IMAGE_GENERATION"
         - "IMAGE_EDIT"
         - "TTS"
+        - "VISION"
+        - "FACE_DETECTION"
+        - "FACE_IDENTIFICATION"
+        - "OBJECT_DETECTION"
     ControlResponse:
       type: object
       properties:

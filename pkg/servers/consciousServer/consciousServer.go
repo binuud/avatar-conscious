@@ -180,7 +180,7 @@ func (s *grpcConsciousServer) FileUpload(ctx context.Context, in *pb.UploadReque
 
 func (s *grpcConsciousServer) SensorEvents(stream grpc.BidiStreamingServer[pb.ContextMesssage, pb.ContextMesssage]) error {
 
-	logrus.Debug("Connect: Client connected to Conscious SensorEvents bidirectional stream")
+	// logrus.Debug("Connect: Client connected to Conscious SensorEvents bidirectional stream")
 	return s.handleSensorEvents(stream)
 
 }

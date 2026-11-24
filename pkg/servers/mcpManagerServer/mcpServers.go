@@ -232,6 +232,7 @@ func (s *mcpServers) HandleTool(uuid string, mcpServerName string, toolName stri
 		logrus.Errorf("error - %v", err)
 		return "", err
 	}
+
 	logrus.Debugf("HandleTool MCP Server with name %s found", entry.Name)
 	command := ""
 	switch entry.McpType {
