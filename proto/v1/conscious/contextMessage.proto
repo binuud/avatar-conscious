@@ -56,6 +56,19 @@ message ContextMesssage {
 
     // text to speech
     TTS = 6;
+
+    // stream of image from a camera
+    // to be processed by yolo
+    VISION = 7;
+
+    // stream of image from a camera
+    FACE_DETECTION = 8;
+
+    // stream of image from a camera
+    FACE_IDENTIFICATION = 9;
+
+    OBJECT_DETECTION = 10;
+
   }
 
   ContextType type = 6;

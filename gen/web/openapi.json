@@ -2126,7 +2126,11 @@
           "LLM_IMAGE_DESCRIBE",
           "IMAGE_GENERATION",
           "IMAGE_EDIT",
-          "TTS"
+          "TTS",
+          "VISION",
+          "FACE_DETECTION",
+          "FACE_IDENTIFICATION",
+          "OBJECT_DETECTION"
         ]
       },
       "ControlResponse": {

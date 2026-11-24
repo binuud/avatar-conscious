@@ -46,18 +46,30 @@ const (
 	ContextMesssage_IMAGE_EDIT ContextMesssage_ContextType = 5
 	// text to speech
 	ContextMesssage_TTS ContextMesssage_ContextType = 6
+	// stream of image from a camera
+	// to be processed by yolo
+	ContextMesssage_VISION ContextMesssage_ContextType = 7
+	// stream of image from a camera
+	ContextMesssage_FACE_DETECTION ContextMesssage_ContextType = 8
+	// stream of image from a camera
+	ContextMesssage_FACE_IDENTIFICATION ContextMesssage_ContextType = 9
+	ContextMesssage_OBJECT_DETECTION    ContextMesssage_ContextType = 10
 )
 
 // Enum value maps for ContextMesssage_ContextType.
 var (
 	ContextMesssage_ContextType_name = map[int32]string{
-		0: "CONTEXT_TYPE_IGNORE",
-		1: "LLM_STREAM_QUERY",
-		2: "LLM_QUERY",
-		3: "LLM_IMAGE_DESCRIBE",
-		4: "IMAGE_GENERATION",
-		5: "IMAGE_EDIT",
-		6: "TTS",
+		0:  "CONTEXT_TYPE_IGNORE",
+		1:  "LLM_STREAM_QUERY",
+		2:  "LLM_QUERY",
+		3:  "LLM_IMAGE_DESCRIBE",
+		4:  "IMAGE_GENERATION",
+		5:  "IMAGE_EDIT",
+		6:  "TTS",
+		7:  "VISION",
+		8:  "FACE_DETECTION",
+		9:  "FACE_IDENTIFICATION",
+		10: "OBJECT_DETECTION",
 	}
 	ContextMesssage_ContextType_value = map[string]int32{
 		"CONTEXT_TYPE_IGNORE": 0,
@@ -67,6 +79,10 @@ var (
 		"IMAGE_GENERATION":    4,
 		"IMAGE_EDIT":          5,
 		"TTS":                 6,
+		"VISION":              7,
+		"FACE_DETECTION":      8,
+		"FACE_IDENTIFICATION": 9,
+		"OBJECT_DETECTION":    10,
 	}
 )
 
@@ -624,7 +640,8 @@ const file_v1_conscious_contextMessage_proto_rawDesc = "" +
 	"\x0eUploadResponse\x12\x1b\n" +
 	"\tupload_id\x18\x01 \x01(\tR\buploadId\x12\x16\n" +
 	"\x06status\x18\x02 \x01(\tR\x06status\x12#\n" +
-	"\rerror_message\x18\x03 \x01(\tR\ferrorMessage\"\xf9\t\n" +
+	"\rerror_message\x18\x03 \x01(\tR\ferrorMessage\"\xc8\n" +
+	"\n" +
 	"\x0fContextMesssage\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12 \n" +
@@ -656,7 +673,7 @@ const file_v1_conscious_contextMessage_proto_rawDesc = "" +
 	"\treasoning\x18+ \x01(\tR\treasoning\x12\x1a\n" +
 	"\bthinking\x18, \x01(\tR\bthinking\x12/\n" +
 	"\tcreatedAt\x183 \x01(\v2\x11.common.TimestampR\tcreatedAt\x123\n" +
-	"\vcompletedAt\x184 \x01(\v2\x11.common.TimestampR\vcompletedAt\"\x92\x01\n" +
+	"\vcompletedAt\x184 \x01(\v2\x11.common.TimestampR\vcompletedAt\"\xe1\x01\n" +
 	"\vContextType\x12\x17\n" +
 	"\x13CONTEXT_TYPE_IGNORE\x10\x00\x12\x14\n" +
 	"\x10LLM_STREAM_QUERY\x10\x01\x12\r\n" +
@@ -665,7 +682,13 @@ const file_v1_conscious_contextMessage_proto_rawDesc = "" +
 	"\x10IMAGE_GENERATION\x10\x04\x12\x0e\n" +
 	"\n" +
 	"IMAGE_EDIT\x10\x05\x12\a\n" +
-	"\x03TTS\x10\x06\"N\n" +
+	"\x03TTS\x10\x06\x12\n" +
+	"\n" +
+	"\x06VISION\x10\a\x12\x12\n" +
+	"\x0eFACE_DETECTION\x10\b\x12\x17\n" +
+	"\x13FACE_IDENTIFICATION\x10\t\x12\x14\n" +
+	"\x10OBJECT_DETECTION\x10\n" +
+	"\"N\n" +
 	"\vContextRole\x12\x0f\n" +
 	"\vROLE_IGNORE\x10\x00\x12\b\n" +
 	"\x04USER\x10\x01\x12\r\n" +
