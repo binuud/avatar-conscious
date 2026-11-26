@@ -12,9 +12,7 @@ import (
 )
 
 const (
-	AVATAR_DIRECTORY       = "avatars"
-	AVATAR_STORE_DIRECTORY = "avatarStore"
-	SYSTEM_PROMPT          = `<role>
+	SYSTEM_PROMPT = `<role>
 You are Avatar, an intelligent and careful generic assistant. 
 You have access to external tools and resources provided via the Model Context Protocol (MCP). 
 Your objective is to help the user accurately, safely, and efficiently by reasoning through their requests and executing the right tool sequence.
@@ -91,7 +89,11 @@ func NewAvatarFromStore(name string) *AvatarWrapper {
 }
 
 func (a *AvatarWrapper) GetAvatarDir() string {
-	return dataLayer.GetFileAbsolutePath(AVATAR_STORE_DIRECTORY, a.Meta.Name)
+	return dataLayer.GetFileAbsolutePath(avatarStoreServer.GetAvatarCollectionDir(), a.Meta.Name)
+}
+
+func (a *AvatarWrapper) GetAvatarFileCacheFile() string {
+	return dataLayer.GetFileAbsolutePath(avatarStoreServer.GetAvatarBuildDir(), a.Avatar.Meta.Name+".avatar")
 }
 
 // Get
@@ -113,7 +115,7 @@ func (a *AvatarWrapper) Get(name string) error {
 // load avatar details from cached binary file
 func (a *AvatarWrapper) Load(name string) error {
 
-	filePath := dataLayer.GetFileAbsolutePath(AVATAR_DIRECTORY, name+".avatar")
+	filePath := a.GetAvatarFileCacheFile()
 
 	// Read AvatarWrapper back (Go automatically infers type T from your variable assignment)
 	localAvatar, err := dataLayer.ReadBinary[pb.Avatar](filePath)
@@ -131,7 +133,7 @@ func (a *AvatarWrapper) Save() error {
 		return fmt.Errorf("avatar name missing, cannot save")
 	}
 
-	filePath := dataLayer.GetFileAbsolutePath(AVATAR_DIRECTORY, a.Avatar.Meta.Name+".avatar")
+	filePath := a.GetAvatarFileCacheFile()
 	// Save list of configs
 	if err := dataLayer.SaveBinary(filePath, a.Avatar); err != nil {
 		logrus.Errorf("Cannot save avatar file %s %v", filePath, err)

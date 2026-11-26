@@ -10,6 +10,7 @@ import (
 
 	protoV1 "github.com/binuud/avatar-conscious/gen/go/v1/conscious"
 	"github.com/binuud/avatar-conscious/pkg/settings"
+	"github.com/binuud/avatar-conscious/pkg/utils"
 
 	"github.com/openai/openai-go/v3"
 	"github.com/openai/openai-go/v3/option"
@@ -24,11 +25,16 @@ func GetLLMEndpoint() string {
 	if llmHost == "" {
 		logrus.Fatalf("llm endpoint is not set, please check env LLM_HOST variable")
 	}
+	llmHost, err := utils.ResolveLocalHostURL(llmHost)
+	if err != nil {
+		logrus.Fatalf("error cannot result llmhost for docker/localhost")
+	}
 	return llmHost
 }
 
 func GetLLMClient() openai.Client {
-	logrus.Debugf("Open ai client %s: %s", GetLLMEndpoint(), settings.Global.GetValue("LLM_API_KEY"))
+	logrus.Debugf("Open ai client %s", GetLLMEndpoint())
+	// logrus.Debugf("Open ai client %s: %s", GetLLMEndpoint(), settings.Global.GetValue("LLM_API_KEY"))
 	return openai.NewClient(
 		option.WithBaseURL(GetLLMEndpoint()),
 		option.WithAPIKey(settings.Global.GetValue("LLM_API_KEY")), // No API key needed for Model Runner
