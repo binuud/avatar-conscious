@@ -49,25 +49,16 @@ func (r *router) RouteStreamingPromptIntent(in *pb.ContextMesssage, stream grpc.
 	// 	out, err = r.RouteLLMImageDescribeRequest(in)
 	case utils.IntentCreate:
 		in.Model = settings.Global.GetValue("IMAGE_MODEL")
+		out = r.CreateOutStreamMessage(in, fmt.Sprintf("Creating Image with model: %s\n", in.Model))
+		if err := stream.Send(out); err != nil {
+			return err
+		}
 		out, err = r.RouteOpenAiImageGenerationRequest(in)
 	// case utils.IntentEdit:
 	// 	in.Model = settings.Global.GetValue("IMAGE_MODEL")
 	// 	out, err = r.RouteOpenAiImageEditRequest(in)
 	default:
-		// for tool calling, do not send the history
-		_, out, err = r.handleTool(in, stream)
-		if err != nil {
-			return err
-		}
-		// special case, when there is an image generation,
-		// we do not want llm to handle it
-		if out != nil && out.ResponseImage != "" {
-			r.memory.AppendOutMessage(out)
-			return nil
-		}
-		// this is a normal chat streaming call
-		// user has not asked for any tools
-		return r.RouteStreamRequest(in, stream)
+		return r.RouteStreamWithToolsRequest(in, stream)
 	}
 	if err = stream.Send(out); err != nil {
 		return err
@@ -132,14 +123,6 @@ func (r *router) RouteLLMChatRequest(in *protoV1.ContextMesssage) (*protoV1.Cont
 	logrus.Println("Model direct response:", assistantMsgContent)
 	out := r.CreateAndAppendOutMessage(in, assistantMsgContent)
 	return out, nil
-	// return &protoV1.ContextMesssage{
-	// 	Uuid:        in.Uuid,
-	// 	Model:       in.Model,
-	// 	Prompt:      in.Prompt,
-	// 	CreatedAt:   in.CreatedAt,
-	// 	CompletedAt: utils.GetTimeStamp(),
-	// 	Data:        completions.Choices[0].Message.Content,
-	// }, nil
 
 }
 
@@ -217,7 +200,7 @@ func (r *router) RouteStreamRequest(in *protoV1.ContextMesssage, stream grpc.Ser
 
 	r.memory.AppendInMessage(in)
 
-	llmStream := llm.MakeLLMChatStreamingChatRequest(r.memory.Messages, r.memory.Tools, r.memory.Meta.Model, r.memory.Meta.Temperature)
+	llmStream := llm.MakeLLMChatStreamingChatRequest(r.memory.Messages, r.memory.Tools, r.memory.Meta.Model, r.memory.Meta.Temperature, r.memory.Meta.Seed)
 
 	defer func() {
 		_ = llmStream.Close()
@@ -256,55 +239,100 @@ func (r *router) RouteStreamRequest(in *protoV1.ContextMesssage, stream grpc.Ser
 	return nil
 }
 
-// handleTool
-// returns a bool, and error. The boolean is to indicate whether the tool was handled
-func (r *router) handleTool(in *pb.ContextMesssage, stream grpc.ServerStreamingServer[pb.ContextMesssage]) (bool, *pb.ContextMesssage, error) {
+func (r *router) RouteStreamWithToolsRequest(in *protoV1.ContextMesssage, stream grpc.ServerStreamingServer[pb.ContextMesssage]) error {
 
-	// adding user prompt, so that the tooling call can decide what tool to use
+	// thinking := ""
+	completeResponse := ""
+
 	r.memory.AppendInMessage(in)
-	completions, err := llm.MakeLLMSingleToolRequest(r.memory.Messages,
-		r.memory.Meta.Model,
-		r.memory.Tools,
-		r.memory.Meta.Temperature)
-	if err != nil {
-		logrus.Errorf("client: error llm chat request: %v \n", err)
-		return false, nil, err
+
+	for {
+		llmStream := llm.MakeLLMChatStreamingChatRequest(r.memory.Messages, r.memory.Tools, r.memory.Meta.Model, r.memory.Meta.Temperature, r.memory.Meta.Seed)
+
+		defer func() {
+			_ = llmStream.Close()
+		}()
+
+		logrus.Infof("InStream Received -> Request: %s, %s", in.Type, in.Prompt)
+		acc := openai.ChatCompletionAccumulator{}
+		// Iterate through the stream chunks as they arrive
+		for llmStream.Next() {
+
+			chunk := llmStream.Current()
+			acc.AddChunk(chunk)
+			if len(chunk.Choices) > 0 {
+				// Print each chunk to stdout in real-time
+				fmt.Print(chunk.Choices[0].Delta.Content)
+				out := &pb.ContextMesssage{
+					Uuid:     in.Uuid,
+					Response: chunk.Choices[0].Delta.Content,
+				}
+				completeResponse = completeResponse + chunk.Choices[0].Delta.Content
+				// 	// send the out message
+				if err := stream.Send(out); err != nil {
+					return err
+				}
+			}
+			// Optional: trigger execution as soon as an individual tool finishes streaming
+			if tool, ok := acc.JustFinishedToolCall(); ok {
+				fmt.Printf("\n[Tool ready: %s(%s)]\n", tool.Name, tool.Arguments)
+			}
+
+		}
+		if err := llmStream.Err(); err != nil {
+			logrus.Errorf("stream error %v", err)
+			return err
+		}
+
+		// Check accumulated message for tool calls
+		msg := acc.Choices[0].Message
+		if len(msg.ToolCalls) == 0 {
+			logrus.Info("Stream closed")
+			break
+		}
+
+		// Append the assistant's tool-call message to history
+		r.memory.AppendDirectMessage(msg.ToParam())
+		// params.Messages = append(params.Messages, msg.ToParam())
+
+		// Execute each tool and append its result
+		for _, tc := range msg.ToolCalls {
+			out := r.CreateOutMessage(in, fmt.Sprintf("Calling tool %s (%s)\n", tc.Function.Name, tc.Function.Arguments))
+			if err := stream.Send(out); err != nil {
+				return err
+			}
+			out, err := r.memory.ToolRegistry.HandleToolCalls(tc, in.Prompt)
+			if err != nil {
+				logrus.Errorf("HandleToolCalls: %v \n", err)
+				// return err
+			}
+			toolMessage := out.Response
+			if out.ResponseImage != "" {
+				toolMessage = "Image generated and saved to file: " + out.ResponseImage
+				out.Response = toolMessage
+
+				r.memory.AppendOutMessage(out)
+				return nil
+			} else {
+				r.memory.AppendToolMessage(toolMessage, tc.ID)
+			}
+			if err := stream.Send(out); err != nil {
+				return err
+			}
+		}
+
 	}
 
-	msg := completions.Choices[0].Message
-	if len(msg.ToolCalls) > 0 {
+	// if streaming is done
+	// send last out message with completeAt timestamp
+	out := r.CreateAndAppendOutMessage(in, completeResponse)
 
-		out, err := r.memory.ToolRegistry.HandleToolCalls(msg.ToolCalls, in.Prompt)
-		if err != nil {
-			logrus.Errorf("HandleToolCalls: %v \n", err)
-			return false, nil, err
-		}
-		toolMessage := out.Response
-		if out.ResponseImage != "" {
-			toolMessage = out.ResponseImage
-		}
-		r.memory.AppendToolMessage(toolMessage, msg.ToolCalls[0].ID)
-		// for metrics, populate the time stamps
-		out.CreatedAt = in.CreatedAt
-		out.CompletedAt = utils.GetTimeStamp()
-
-		logrus.Debugf("Generate Out Msg : %s", out)
-		// s.memory.AppendOutMessage(out)
-		if err := stream.Send(out); err != nil {
-			return true, out, err
-		}
-		return true, out, nil
-	} else {
-
-		// logrus.Debugf("Generate Tool function NOT selected\n")
-		// logrus.Debugf("Generate Out Msg : %s", msg.Content)
-		// if in.Data != "" {
-		// 	// if an image is in the attachment, do a describe image
-		// 	in.Type = pb.ContextMesssage_LLM_IMAGE_DESCRIBE
-		// 	in.Model = settings.Global.GetValue("VISION_MODEL")
-		// }
+	// send the out message
+	if err := stream.Send(out); err != nil {
+		return err
 	}
-	return false, nil, nil
+
+	return nil
 }
 
 func (r *router) MakeLLMChatRequest(prompt string) (*openai.ChatCompletion, error) {
@@ -336,6 +364,17 @@ func (r *router) CreateOutMessage(in *pb.ContextMesssage, assistantMessage strin
 		CreatedAt:   in.CreatedAt,
 		CompletedAt: utils.GetTimeStamp(),
 		Response:    assistantMessage,
+	}
+	return out
+}
+
+func (r *router) CreateOutStreamMessage(in *pb.ContextMesssage, assistantMessage string) *pb.ContextMesssage {
+	out := &protoV1.ContextMesssage{
+		Uuid:      in.Uuid,
+		Model:     in.Model,
+		Prompt:    in.Prompt,
+		CreatedAt: in.CreatedAt,
+		Response:  assistantMessage,
 	}
 	return out
 }

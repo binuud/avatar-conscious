@@ -106,7 +106,7 @@ func MakeImageDescribeRequest(prompt string, systemPrompt string, model string, 
 // MakeLLMChatStreamingChatRequest
 // Create a streaming request, this returns a stream
 // this requests also maintians history
-func MakeLLMChatStreamingChatRequest(messages []openai.ChatCompletionMessageParamUnion, tools []openai.ChatCompletionToolUnionParam, model string, temperature float64) *ssestream.Stream[openai.ChatCompletionChunk] {
+func MakeLLMChatStreamingChatRequest(messages []openai.ChatCompletionMessageParamUnion, tools []openai.ChatCompletionToolUnionParam, model string, temperature float64, seed int64) *ssestream.Stream[openai.ChatCompletionChunk] {
 
 	client := GetLLMClient()
 
@@ -117,6 +117,7 @@ func MakeLLMChatStreamingChatRequest(messages []openai.ChatCompletionMessagePara
 		Messages:        messages,
 		Model:           model,
 		Temperature:     openai.Opt(temperature),
+		Seed:            openai.Opt(seed),
 		Tools:           tools,
 		ReasoningEffort: "none",
 	}

@@ -108,15 +108,14 @@ func (t *ToolRegistry) DumpTools(tools []openai.ChatCompletionToolUnionParam) {
 // HandleToolCalls()
 // When LLM returns a set of tools to be handled,
 // the handler runs each of the tool calls, with the arguments given by LLM
-func (t *ToolRegistry) HandleToolCalls(toolCalls []openai.ChatCompletionMessageToolCallUnion, originalPrompt string) (*pb.ContextMesssage, error) {
-	if len(toolCalls) < 1 {
-		return nil, fmt.Errorf("No tools to be handled")
-	}
+func (t *ToolRegistry) HandleToolCalls(toolCall openai.ChatCompletionMessageToolCallUnion, originalPrompt string) (*pb.ContextMesssage, error) {
 
 	logrus.Infof("LLM has returned tool calls. Handling them...")
-
+	// if toolCall == nil {
+	// 	return nil, fmt.Errorf("error no tools specified")
+	// }
 	// handle first tool call for now
-	toolCall := toolCalls[0]
+
 	logrus.Infof("Function %+v", toolCall.Function.Name)
 	logrus.Infof("Args %+v", toolCall.Function.Arguments)
 	myTool, err := t.GetTool(toolCall.Function.Name)

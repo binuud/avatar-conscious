@@ -46,7 +46,8 @@ func (a *AvatarWrapper) InitTools() error {
 		if mcpServer.Enabled == false {
 			return fmt.Errorf("error the requested mcp server is not enabled %s")
 		}
-		mcpManagerServer.AddMcpServerToTool(mcpServer, avatarTools)
+		err = mcpManagerServer.AddMcpServerToTool(mcpServer, avatarTools)
+		logrus.Errorf("Cannot add mcp tool %v", err)
 	}
 
 	// now add common tools
@@ -117,7 +118,7 @@ func (a *AvatarWrapper) RunStep(stepNo int, step *pb.Step) (*pbConcsious.Context
 	if len(msg.ToolCalls) > 0 {
 		logrus.Infof("ToolCalling in RunStep %d:  %s called, Out Msg : %s", stepNo, msg.ToolCalls[0].Function.Name, msg.ToolCalls[0].Type)
 		// a.Memory.AppendMessage(openai.ToolMessage(msg.ToolCalls[0].RawJSON(), msg.ToolCalls[0].ID))
-		out, err = a.Memory.ToolRegistry.HandleToolCalls(msg.ToolCalls, step.Prompt)
+		out, err = a.Memory.ToolRegistry.HandleToolCalls(msg.ToolCalls[0], step.Prompt)
 		if err != nil {
 			logrus.Errorf("HandleToolCalls: %v \n", err)
 			return nil, err
