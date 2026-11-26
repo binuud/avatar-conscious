@@ -28,7 +28,7 @@ func GetLLMEndpoint() string {
 }
 
 func GetLLMClient() openai.Client {
-	// logrus.Debugf("Open ai client %s: %s", GetLLMEndpoint(), settings.Global.GetValue("LLM_API_KEY"))
+	logrus.Debugf("Open ai client %s: %s", GetLLMEndpoint(), settings.Global.GetValue("LLM_API_KEY"))
 	return openai.NewClient(
 		option.WithBaseURL(GetLLMEndpoint()),
 		option.WithAPIKey(settings.Global.GetValue("LLM_API_KEY")), // No API key needed for Model Runner
