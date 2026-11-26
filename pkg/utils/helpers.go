@@ -2,6 +2,8 @@ package utils
 
 import (
 	"fmt"
+	"net/url"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -111,4 +113,30 @@ func GetGeneratedTTSFolder() string {
 
 func GetSamplesFolder() string {
 	return settings.Global.GetValue("FILE_STORE_PATH") + "/sampleImages/"
+}
+
+// ResolveLocalHostURL
+// if environemnt is docker, and if url contains localhost,
+// change the host part to host.docker.internal
+func ResolveLocalHostURL(rawURL string) (string, error) {
+	// Check if BUILDENV is "docker" (case-insensitive)
+	if strings.EqualFold(os.Getenv("BUILD_ENV"), "docker") {
+		parsedURL, err := url.Parse(rawURL)
+		if err != nil {
+			return "", err
+		}
+
+		// Replace only if the hostname is localhost (preserves ports like :8080)
+		if parsedURL.Hostname() == "localhost" {
+			port := parsedURL.Port()
+			if port != "" {
+				parsedURL.Host = "host.docker.internal:" + port
+			} else {
+				parsedURL.Host = "host.docker.internal"
+			}
+			return parsedURL.String(), nil
+		}
+	}
+
+	return rawURL, nil
 }

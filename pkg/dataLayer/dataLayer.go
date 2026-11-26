@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 
 	"buf.build/go/protoyaml"
 	"github.com/sirupsen/logrus"
@@ -35,9 +36,7 @@ func GetStoreDirectory() string {
 // returns a concated string of FILE_STORE_PATH from env
 // subDir directory, and the fileName
 func GetFileAbsolutePath(subDir string, fileName string) string {
-
-	return fmt.Sprintf("%s/%s/%s", GetStoreDirectory(), subDir, fileName)
-
+	return filepath.Join(GetStoreDirectory(), subDir, fileName)
 }
 
 // SaveJSON saves any type 'T' to the specified file path.

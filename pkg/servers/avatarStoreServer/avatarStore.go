@@ -13,11 +13,6 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-const (
-	AVATAR_DIRECTORY       = "avatars"
-	AVATAR_STORE_DIRECTORY = "avatarStore"
-)
-
 type avatarStore struct {
 	sync.RWMutex
 	avatars map[string]*pb.Avatar
