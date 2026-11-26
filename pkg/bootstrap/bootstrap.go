@@ -8,6 +8,7 @@ import (
 	"github.com/binuud/avatar-conscious/pkg/settings"
 	"github.com/binuud/avatar-conscious/pkg/slashCommands"
 	"github.com/binuud/avatar-conscious/pkg/tools"
+	"github.com/binuud/avatar-conscious/pkg/utils"
 	"github.com/sirupsen/logrus"
 )
 
@@ -18,6 +19,8 @@ import (
 func Bootstrap(buildEnv ...string) {
 
 	if len(buildEnv) > 0 && buildEnv[0] == "docker" {
+		global.IsDocker = true
+	} else if utils.GetEnv("BUILD_ENV", "") == "docker" {
 		global.IsDocker = true
 	}
 
