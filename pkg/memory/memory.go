@@ -87,6 +87,13 @@ func (m *Memory) SetModel(model string) {
 	}
 }
 
+func (m *Memory) ReloadTools() {
+	tools.Bootstrap()
+	m.ToolRegistry = tools.GlobalCommonToolsRegistry
+	m.Tools = tools.GlobalCommonTools
+	logrus.Debugf("Tools Reloaded to conscious memory %s", m.Meta.Name)
+}
+
 func (m *Memory) InitTools() {
 
 	// myTools := toolRegistry.NewToolRegistry()
@@ -107,6 +114,7 @@ func (m *Memory) InitTools() {
 	// m.Tools = myTools.GetCommonTools()
 
 	// using global tools to prevent tool init at each call
+
 	m.ToolRegistry = tools.GlobalCommonToolsRegistry
 	m.Tools = tools.GlobalCommonTools
 	logrus.Debugf("Tools Added to conscious memory %s", m.Meta.Name)
@@ -155,12 +163,12 @@ func (m *Memory) DumpMemory(w io.Writer) {
 		}
 		logrus.Debugf("Name: %s, content: %s", role, content)
 	}
-	logrus.Debug("--------------------------  Contexts  ----------------------------------")
-	for _, cntx := range m.Contexts {
-		logrus.Debugf("In Prompt: %s", cntx.In.Prompt)
-		logrus.Debugf("Out Response: %s", cntx.Out.Response)
-	}
-	logrus.Debug("--------------------------  END  ----------------------------------")
+	// logrus.Debug("--------------------------  Contexts  ----------------------------------")
+	// for _, cntx := range m.Contexts {
+	// 	logrus.Debugf("In Prompt: %s", cntx.In.Prompt)
+	// 	logrus.Debugf("Out Response: %s", cntx.Out.Response)
+	// }
+	// logrus.Debug("--------------------------  END  ----------------------------------")
 
 }
 
@@ -245,6 +253,36 @@ func (m *Memory) AppendOutMessage(out *pb.ContextMesssage) {
 	m.CurrentContext.Out = out
 	m.Contexts = append(m.Contexts, m.CurrentContext)
 	m.appendMessage(openai.AssistantMessage(out.Response))
+}
+
+func (m *Memory) AppendDirectMessage(message openai.ChatCompletionMessageParamUnion) {
+
+	role := ""
+	content := ""
+	switch {
+	case message.OfUser != nil:
+		role = "User"
+		content = message.OfUser.Content.OfString.Value
+	case message.OfAssistant != nil:
+		role = "Assistant"
+		content = message.OfAssistant.Content.OfString.Value
+	case message.OfSystem != nil:
+		role = "System"
+		content = message.OfSystem.Content.OfString.Value
+	case message.OfDeveloper != nil:
+		role = "Developer"
+		content = message.OfDeveloper.Content.OfString.Value
+	case message.OfFunction != nil:
+		role = "Function"
+		content = message.OfFunction.Content.Value
+	case message.OfTool != nil:
+		role = "Tool"
+		content = message.OfTool.Content.OfString.Value
+	default:
+		logrus.Debug("Non standard message found in memory *****")
+	}
+	logrus.Debugf("AppendDirectMessage ****  Role: %s, content: %s", role, content)
+	m.appendMessage(message)
 }
 
 // AppendMemory

@@ -18,10 +18,12 @@ func Bootstrap() {
 
 	GlobalCommonToolsRegistry = nil
 	GlobalCommonToolsRegistry = toolRegistry.NewToolRegistry()
-	GlobalCommonToolsRegistry.AddTool(commonTools.NewToolFileContents())
-	GlobalCommonToolsRegistry.AddTool(apiTools.NewApiGetTool())
 
-	// GlobalCommonToolsRegistry.AddTool(aiGenTools.NewAiGenerateImageTool())
+	mcpManagerServer.AddEnabledMCPServers(GlobalCommonToolsRegistry)
+
+	GlobalCommonToolsRegistry.AddTool(commonTools.NewToolFileContents())
+	// GlobalCommonToolsRegistry.AddTool(apiTools.NewApiGetTool())
+
 	GlobalCommonToolsRegistry.AddTool(aiGenTools.NewAiGenerateImageEditTool())
 	GlobalCommonToolsRegistry.AddTool(aiGenTools.NewAiImageDescriptionTool())
 	// GlobalCommonToolsRegistry.AddTool(aiGenTools.NewUiLaunchTool())

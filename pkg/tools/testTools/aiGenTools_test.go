@@ -46,7 +46,7 @@ func _test_tool_calling(t *testing.T, memory *memory.Memory) {
 	if len(msg.ToolCalls) > 0 {
 		logrus.Infof("Toolcall %v", msg.ToolCalls)
 		// memory.AppendMessage(openai.ToolMessage(msg.ToolCalls[0].RawJSON(), msg.ToolCalls[0].ID))
-		out, err := memory.ToolRegistry.HandleToolCalls(msg.ToolCalls, "Step No: 2, Launch an Avatar UI interface, the ui interface id is : get-prompt")
+		out, err := memory.ToolRegistry.HandleToolCalls(msg.ToolCalls[0], "Step No: 2, Launch an Avatar UI interface, the ui interface id is : get-prompt")
 		if err != nil {
 			t.Errorf("HandleToolCalls: %v \n", err)
 		} else {

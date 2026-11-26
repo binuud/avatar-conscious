@@ -206,7 +206,7 @@ func (s *grpcConsciousServer) ReloadTools(ctx context.Context, in *pb.ReloadTool
 		return nil, status.Error(codes.InvalidArgument, "emtpy memory name ")
 	}
 	memory := memory.NewMemory(in.MemoryName)
-	memory.InitTools()
+	memory.ReloadTools()
 	memory.Save()
 	memory.DumpTools()
 	return &pb.ReloadToolsResponse{
