@@ -3,12 +3,15 @@ package avatarStoreServer
 import (
 	"cmp"
 	"fmt"
+	"path/filepath"
 	"slices"
 	"sync"
 	"time"
 
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/avatar"
+	"github.com/binuud/avatar-conscious/pkg/settings"
 	"github.com/binuud/avatar-conscious/pkg/utils"
+	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -22,6 +25,7 @@ func NewAvatarStore() *avatarStore {
 
 	entries, err := ListAvatarsFromStore()
 	if err != nil {
+		logrus.Errorf("error: NewAvatarStore cannot list avatars %v", err)
 		return nil
 	}
 
@@ -29,6 +33,7 @@ func NewAvatarStore() *avatarStore {
 
 	for _, entry := range entries {
 		avatars[entry.Meta.Uuid] = entry
+		logrus.Infof("avatar store %s", entry.Meta.Name)
 	}
 
 	return &avatarStore{
@@ -152,6 +157,34 @@ func (s *avatarStore) Delete(uuid string) error {
 
 	delete(s.avatars, uuid)
 	s.Save(uuid)
+
+	return nil
+}
+
+// Sync
+// copies thumbnails and other static files from avatar-store
+func (s *avatarStore) Sync() error {
+	logrus.Infof("Sync %d", len(s.avatars))
+	FILE_STORE_PATH := settings.Global.GetValue("FILE_STORE_PATH")
+	// Simple iteration (implement proper sorting/filtering as needed)
+	for _, avatar := range s.avatars {
+		// copy thumb nail to static folder
+		avatarThumbNail := filepath.Base(avatar.Meta.Image)
+		avatarDir := GetAvatarDir(avatar.Meta.Name)
+		srcThumbnailFile := filepath.Join(avatarDir, avatarThumbNail)
+		destThumbnailFile := filepath.Join(FILE_STORE_PATH, "static", "avatarStore", avatar.Meta.Name, avatar.Meta.Image)
+		logrus.Infof("Copying thumbnail %s -> %s", srcThumbnailFile, destThumbnailFile)
+		utils.CopyFile(srcThumbnailFile, destThumbnailFile)
+
+		// now check if asset folder is present
+		assetsFolder := filepath.Join(avatarDir, "assets")
+
+		if utils.DirExists(assetsFolder) {
+			destAssetsDir := filepath.Join(FILE_STORE_PATH, "static", "avatarStore", avatar.Meta.Name, "assets")
+			logrus.Debugf("Copying assets from %s->%s", assetsFolder, destAssetsDir)
+			utils.CopyDir(assetsFolder, destAssetsDir)
+		}
+	}
 
 	return nil
 }

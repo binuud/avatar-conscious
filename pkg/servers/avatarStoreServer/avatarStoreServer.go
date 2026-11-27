@@ -92,3 +92,16 @@ func (s *grpcAvatarStoreServer) Delete(ctx context.Context, in *pb.AvatarStoreDe
 		Message: "Avatar deleted successfully",
 	}, nil
 }
+
+func (s *grpcAvatarStoreServer) Sync(ctx context.Context, in *pb.AvatarStoreSyncRequest) (*pb.AvatarStoreSyncResponse, error) {
+	logrus.Infof("AvatarStore Sync Called, syncing all avatar static files")
+
+	err := s.store.Sync()
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.AvatarStoreSyncResponse{
+		Success: true,
+	}, nil
+}

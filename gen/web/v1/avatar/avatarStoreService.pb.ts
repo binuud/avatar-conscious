@@ -55,6 +55,14 @@ export type AvatarStoreDeleteResponse = {
   message?: string
 }
 
+export type AvatarStoreSyncRequest = {
+}
+
+export type AvatarStoreSyncResponse = {
+  success?: boolean
+  message?: string
+}
+
 export class AvatarStoreService {
   static List(req: AvatarStoreListRequest, initReq?: fm.InitReq): Promise<AvatarStoreListResponse> {
     return fm.fetchReq<AvatarStoreListRequest, AvatarStoreListResponse>(`/v1/avatarStore/list?${fm.renderURLSearchParams(req, [])}`, {...initReq, method: "GET"})
@@ -70,5 +78,8 @@ export class AvatarStoreService {
   }
   static Delete(req: AvatarStoreDeleteRequest, initReq?: fm.InitReq): Promise<AvatarStoreDeleteResponse> {
     return fm.fetchReq<AvatarStoreDeleteRequest, AvatarStoreDeleteResponse>(`/v1/avatarStore/delete`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
+  }
+  static Sync(req: AvatarStoreSyncRequest, initReq?: fm.InitReq): Promise<AvatarStoreSyncResponse> {
+    return fm.fetchReq<AvatarStoreSyncRequest, AvatarStoreSyncResponse>(`/v1/avatarStore/sync`, {...initReq, method: "POST", body: JSON.stringify(req, fm.replacer)})
   }
 }
