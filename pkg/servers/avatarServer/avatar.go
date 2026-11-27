@@ -3,6 +3,7 @@ package avatarServer
 import (
 	"fmt"
 	"io"
+	"path/filepath"
 
 	pb "github.com/binuud/avatar-conscious/gen/go/v1/avatar"
 	"github.com/binuud/avatar-conscious/pkg/dataLayer"
@@ -89,11 +90,12 @@ func NewAvatarFromStore(name string) *AvatarWrapper {
 }
 
 func (a *AvatarWrapper) GetAvatarDir() string {
-	return dataLayer.GetFileAbsolutePath(avatarStoreServer.GetAvatarCollectionDir(), a.Meta.Name)
+	return filepath.Join(avatarStoreServer.GetAvatarCollectionDir(), a.Meta.Name)
+
 }
 
 func (a *AvatarWrapper) GetAvatarFileCacheFile() string {
-	return dataLayer.GetFileAbsolutePath(avatarStoreServer.GetAvatarBuildDir(), a.Avatar.Meta.Name+".avatar")
+	return filepath.Join(avatarStoreServer.GetAvatarBuildDir(), a.Avatar.Meta.Name+".avatar")
 }
 
 // Get

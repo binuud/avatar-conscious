@@ -18,12 +18,8 @@ func CreateStorageDirStructure() {
 	}
 	// Define the directory structure you need on startup
 	dirsToCreate := []string{
-		filepath.Join(FILE_STORE_PATH, "avatar-store", "cache"),
-		filepath.Join(FILE_STORE_PATH, "avatar-store", "avatarStore"),
 		filepath.Join(FILE_STORE_PATH, "configs"),
 		filepath.Join(FILE_STORE_PATH, "memories"),
-		filepath.Join(FILE_STORE_PATH, "mockServer"),
-		filepath.Join(FILE_STORE_PATH, "sampleImages"),
 		filepath.Join(FILE_STORE_PATH, "static", "avatarStore"),
 		filepath.Join(FILE_STORE_PATH, "static", "gen", "images"),
 		filepath.Join(FILE_STORE_PATH, "static", "gen", "tts"),
