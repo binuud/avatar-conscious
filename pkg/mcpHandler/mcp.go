@@ -206,8 +206,13 @@ func HandleMcpCommandTool(command string, mcpFunction string, inputData string, 
 		return "", fmt.Errorf("CallTool failed: %v", err)
 	}
 	if res.IsError {
-		logrus.Errorf("error HandleMcp %v", res)
-		return "", fmt.Errorf("tool failed %v", res)
+		out := ""
+		for _, c := range res.Content {
+			out = out + c.(*mcp.TextContent).Text
+			log.Print(c.(*mcp.TextContent).Text)
+		}
+		logrus.Errorf("error HandleMcp command : %v, %v, %s", res.Meta, res.GetError(), out)
+		return "", fmt.Errorf("tool failed %v, %s", res.GetError(), out)
 	}
 	out := ""
 	for _, c := range res.Content {
