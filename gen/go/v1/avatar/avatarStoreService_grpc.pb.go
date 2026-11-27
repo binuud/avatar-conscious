@@ -24,6 +24,7 @@ const (
 	AvatarStoreService_Create_FullMethodName = "/avatar.AvatarStoreService/Create"
 	AvatarStoreService_Update_FullMethodName = "/avatar.AvatarStoreService/Update"
 	AvatarStoreService_Delete_FullMethodName = "/avatar.AvatarStoreService/Delete"
+	AvatarStoreService_Sync_FullMethodName   = "/avatar.AvatarStoreService/Sync"
 )
 
 // AvatarStoreServiceClient is the client API for AvatarStoreService service.
@@ -42,6 +43,8 @@ type AvatarStoreServiceClient interface {
 	Update(ctx context.Context, in *AvatarStoreUpdateRequest, opts ...grpc.CallOption) (*AvatarStoreUpdateResponse, error)
 	// Delete an avatar
 	Delete(ctx context.Context, in *AvatarStoreDeleteRequest, opts ...grpc.CallOption) (*AvatarStoreDeleteResponse, error)
+	// Sync Avatar Store
+	Sync(ctx context.Context, in *AvatarStoreSyncRequest, opts ...grpc.CallOption) (*AvatarStoreSyncResponse, error)
 }
 
 type avatarStoreServiceClient struct {
@@ -102,6 +105,16 @@ func (c *avatarStoreServiceClient) Delete(ctx context.Context, in *AvatarStoreDe
 	return out, nil
 }
 
+func (c *avatarStoreServiceClient) Sync(ctx context.Context, in *AvatarStoreSyncRequest, opts ...grpc.CallOption) (*AvatarStoreSyncResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AvatarStoreSyncResponse)
+	err := c.cc.Invoke(ctx, AvatarStoreService_Sync_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AvatarStoreServiceServer is the server API for AvatarStoreService service.
 // All implementations must embed UnimplementedAvatarStoreServiceServer
 // for forward compatibility.
@@ -118,6 +131,8 @@ type AvatarStoreServiceServer interface {
 	Update(context.Context, *AvatarStoreUpdateRequest) (*AvatarStoreUpdateResponse, error)
 	// Delete an avatar
 	Delete(context.Context, *AvatarStoreDeleteRequest) (*AvatarStoreDeleteResponse, error)
+	// Sync Avatar Store
+	Sync(context.Context, *AvatarStoreSyncRequest) (*AvatarStoreSyncResponse, error)
 	mustEmbedUnimplementedAvatarStoreServiceServer()
 }
 
@@ -142,6 +157,9 @@ func (UnimplementedAvatarStoreServiceServer) Update(context.Context, *AvatarStor
 }
 func (UnimplementedAvatarStoreServiceServer) Delete(context.Context, *AvatarStoreDeleteRequest) (*AvatarStoreDeleteResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method Delete not implemented")
+}
+func (UnimplementedAvatarStoreServiceServer) Sync(context.Context, *AvatarStoreSyncRequest) (*AvatarStoreSyncResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method Sync not implemented")
 }
 func (UnimplementedAvatarStoreServiceServer) mustEmbedUnimplementedAvatarStoreServiceServer() {}
 func (UnimplementedAvatarStoreServiceServer) testEmbeddedByValue()                            {}
@@ -254,6 +272,24 @@ func _AvatarStoreService_Delete_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AvatarStoreService_Sync_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AvatarStoreSyncRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AvatarStoreServiceServer).Sync(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AvatarStoreService_Sync_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AvatarStoreServiceServer).Sync(ctx, req.(*AvatarStoreSyncRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AvatarStoreService_ServiceDesc is the grpc.ServiceDesc for AvatarStoreService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -280,6 +316,10 @@ var AvatarStoreService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "Delete",
 			Handler:    _AvatarStoreService_Delete_Handler,
+		},
+		{
+			MethodName: "Sync",
+			Handler:    _AvatarStoreService_Sync_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

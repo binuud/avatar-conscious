@@ -33,6 +33,10 @@ func GetAvatarBuildDir() string {
 	return filepath.Join(GetAvatarStoreDir(), AVATAR_BUILD_DIRECTORY)
 }
 
+func GetAvatarDir(avatarName string) string {
+	return filepath.Join(GetAvatarCollectionDir(), avatarName)
+}
+
 // ListAvatarsFromStore()
 // Folder structire
 // avatar-name (folder)
@@ -41,6 +45,7 @@ func GetAvatarBuildDir() string {
 // -- avatar-name.png (the store image)
 func ListAvatarsFromStore() ([]*pb.Avatar, error) {
 	// Read the current directory
+	logrus.Infof("Loading Avatars from %s", filepath.Join(GetAvatarCollectionDir(), "."))
 	entries, err := os.ReadDir(filepath.Join(GetAvatarCollectionDir(), "."))
 	if err != nil {
 		return nil, err

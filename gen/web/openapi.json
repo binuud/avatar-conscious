@@ -252,6 +252,33 @@
         }
       }
     },
+    "/v1/avatarStore/sync": {
+      "post": {
+        "operationId": "sync",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AvatarStoreSyncRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "avatar.AvatarStoreService.Sync response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AvatarStoreSyncResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/avatarStore/update": {
       "post": {
         "operationId": "update",
@@ -1853,6 +1880,20 @@
           "totalCount": {
             "type": "integer",
             "format": "int32"
+          }
+        }
+      },
+      "AvatarStoreSyncRequest": {
+        "type": "object"
+      },
+      "AvatarStoreSyncResponse": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "message": {
+            "type": "string"
           }
         }
       },

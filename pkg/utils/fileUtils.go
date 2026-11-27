@@ -3,7 +3,10 @@ package utils
 import (
 	"encoding/base64"
 	"errors"
+	"fmt"
+	"io"
 	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/sirupsen/logrus"
@@ -52,4 +55,58 @@ func FileExists(filename string) bool {
 	// Any other error means the file might exist, but we couldn't stat it
 	// (e.g., permission denied)
 	return false
+}
+
+func DirExists(path string) bool {
+	info, err := os.Stat(path)
+	if err == nil {
+		return info.IsDir()
+	}
+	if errors.Is(err, os.ErrNotExist) {
+		return false
+	}
+	return false
+}
+
+func CopyFile(srcPath, dstPath string) error {
+	// Open the source file for reading
+	srcFile, err := os.Open(srcPath)
+	if err != nil {
+		return fmt.Errorf("failed to open source file: %w", err)
+	}
+	defer srcFile.Close()
+
+	// Ensure the destination folder exists
+	if err := os.MkdirAll(filepath.Dir(dstPath), 0755); err != nil {
+		return fmt.Errorf("failed to create destination directory: %w", err)
+	}
+
+	// Create (or overwrite) the destination file
+	dstFile, err := os.Create(dstPath)
+	if err != nil {
+		return fmt.Errorf("failed to create destination file: %w", err)
+	}
+	defer dstFile.Close()
+
+	// Stream the file contents from source to destination
+	if _, err := io.Copy(dstFile, srcFile); err != nil {
+		return fmt.Errorf("failed to copy contents: %w", err)
+	}
+
+	// Flush writes to stable storage
+	return dstFile.Sync()
+}
+
+func CopyDir(srcDir, dstDir string) error {
+	// Ensure destination directory exists
+	if err := os.MkdirAll(dstDir, 0755); err != nil {
+		return fmt.Errorf("Error creating destination:", err)
+	}
+
+	// Copy the contents of srcDir into dstDir
+	err := os.CopyFS(dstDir, os.DirFS(srcDir))
+	if err != nil {
+		return fmt.Errorf("Error copying directory:", err)
+	}
+	return nil
 }

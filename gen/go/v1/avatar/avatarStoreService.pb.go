@@ -563,6 +563,98 @@ func (x *AvatarStoreDeleteResponse) GetMessage() string {
 	return ""
 }
 
+// AvatarStoreSyncRequest
+// for syncing static files like images and rebuilding avatar store
+type AvatarStoreSyncRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AvatarStoreSyncRequest) Reset() {
+	*x = AvatarStoreSyncRequest{}
+	mi := &file_v1_avatar_avatarStoreService_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AvatarStoreSyncRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AvatarStoreSyncRequest) ProtoMessage() {}
+
+func (x *AvatarStoreSyncRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_avatar_avatarStoreService_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AvatarStoreSyncRequest.ProtoReflect.Descriptor instead.
+func (*AvatarStoreSyncRequest) Descriptor() ([]byte, []int) {
+	return file_v1_avatar_avatarStoreService_proto_rawDescGZIP(), []int{10}
+}
+
+// AvatarStoreSyncResponse indicating success or failure
+type AvatarStoreSyncResponse struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Success message
+	Success       bool   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Message       string `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *AvatarStoreSyncResponse) Reset() {
+	*x = AvatarStoreSyncResponse{}
+	mi := &file_v1_avatar_avatarStoreService_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *AvatarStoreSyncResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*AvatarStoreSyncResponse) ProtoMessage() {}
+
+func (x *AvatarStoreSyncResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_v1_avatar_avatarStoreService_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use AvatarStoreSyncResponse.ProtoReflect.Descriptor instead.
+func (*AvatarStoreSyncResponse) Descriptor() ([]byte, []int) {
+	return file_v1_avatar_avatarStoreService_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *AvatarStoreSyncResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *AvatarStoreSyncResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
 var File_v1_avatar_avatarStoreService_proto protoreflect.FileDescriptor
 
 const file_v1_avatar_avatarStoreService_proto_rawDesc = "" +
@@ -598,13 +690,18 @@ const file_v1_avatar_avatarStoreService_proto_rawDesc = "" +
 	"\x18AvatarStoreDeleteRequest\x12\x12\n" +
 	"\x04uuid\x18\x01 \x01(\tR\x04uuid\"5\n" +
 	"\x19AvatarStoreDeleteResponse\x12\x18\n" +
-	"\amessage\x18\x01 \x01(\tR\amessage2\xb4\x04\n" +
+	"\amessage\x18\x01 \x01(\tR\amessage\"\x18\n" +
+	"\x16AvatarStoreSyncRequest\"M\n" +
+	"\x17AvatarStoreSyncResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage2\x9e\x05\n" +
 	"\x12AvatarStoreService\x12e\n" +
 	"\x04List\x12\x1e.avatar.AvatarStoreListRequest\x1a\x1f.avatar.AvatarStoreListResponse\"\x1c\x82\xd3\xe4\x93\x02\x16\x12\x14/v1/avatarStore/list\x12a\n" +
 	"\x03Get\x12\x1d.avatar.AvatarStoreGetRequest\x1a\x1e.avatar.AvatarStoreGetResponse\"\x1b\x82\xd3\xe4\x93\x02\x15\x12\x13/v1/avatarStore/get\x12p\n" +
 	"\x06Create\x12 .avatar.AvatarStoreCreateRequest\x1a!.avatar.AvatarStoreCreateResponse\"!\x82\xd3\xe4\x93\x02\x1b:\x01*\"\x16/v1/avatarStore/create\x12p\n" +
 	"\x06Update\x12 .avatar.AvatarStoreUpdateRequest\x1a!.avatar.AvatarStoreUpdateResponse\"!\x82\xd3\xe4\x93\x02\x1b:\x01*\"\x16/v1/avatarStore/update\x12p\n" +
-	"\x06Delete\x12 .avatar.AvatarStoreDeleteRequest\x1a!.avatar.AvatarStoreDeleteResponse\"!\x82\xd3\xe4\x93\x02\x1b:\x01*\"\x16/v1/avatarStore/deleteB5Z3github.com/binuud/avatar-conscious/gen/go/v1/avatarb\x06proto3"
+	"\x06Delete\x12 .avatar.AvatarStoreDeleteRequest\x1a!.avatar.AvatarStoreDeleteResponse\"!\x82\xd3\xe4\x93\x02\x1b:\x01*\"\x16/v1/avatarStore/delete\x12h\n" +
+	"\x04Sync\x12\x1e.avatar.AvatarStoreSyncRequest\x1a\x1f.avatar.AvatarStoreSyncResponse\"\x1f\x82\xd3\xe4\x93\x02\x19:\x01*\"\x14/v1/avatarStore/syncB5Z3github.com/binuud/avatar-conscious/gen/go/v1/avatarb\x06proto3"
 
 var (
 	file_v1_avatar_avatarStoreService_proto_rawDescOnce sync.Once
@@ -618,7 +715,7 @@ func file_v1_avatar_avatarStoreService_proto_rawDescGZIP() []byte {
 	return file_v1_avatar_avatarStoreService_proto_rawDescData
 }
 
-var file_v1_avatar_avatarStoreService_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_v1_avatar_avatarStoreService_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_v1_avatar_avatarStoreService_proto_goTypes = []any{
 	(*AvatarStoreListRequest)(nil),    // 0: avatar.AvatarStoreListRequest
 	(*AvatarStoreListResponse)(nil),   // 1: avatar.AvatarStoreListResponse
@@ -630,28 +727,32 @@ var file_v1_avatar_avatarStoreService_proto_goTypes = []any{
 	(*AvatarStoreUpdateResponse)(nil), // 7: avatar.AvatarStoreUpdateResponse
 	(*AvatarStoreDeleteRequest)(nil),  // 8: avatar.AvatarStoreDeleteRequest
 	(*AvatarStoreDeleteResponse)(nil), // 9: avatar.AvatarStoreDeleteResponse
-	(*Avatar)(nil),                    // 10: avatar.Avatar
-	(Permission)(0),                   // 11: avatar.Permission
+	(*AvatarStoreSyncRequest)(nil),    // 10: avatar.AvatarStoreSyncRequest
+	(*AvatarStoreSyncResponse)(nil),   // 11: avatar.AvatarStoreSyncResponse
+	(*Avatar)(nil),                    // 12: avatar.Avatar
+	(Permission)(0),                   // 13: avatar.Permission
 }
 var file_v1_avatar_avatarStoreService_proto_depIdxs = []int32{
-	10, // 0: avatar.AvatarStoreListResponse.avatars:type_name -> avatar.Avatar
-	10, // 1: avatar.AvatarStoreGetResponse.avatar:type_name -> avatar.Avatar
-	11, // 2: avatar.AvatarStoreCreateRequest.permissions:type_name -> avatar.Permission
-	10, // 3: avatar.AvatarStoreCreateResponse.avatar:type_name -> avatar.Avatar
-	11, // 4: avatar.AvatarStoreUpdateRequest.permissions:type_name -> avatar.Permission
-	10, // 5: avatar.AvatarStoreUpdateResponse.avatar:type_name -> avatar.Avatar
+	12, // 0: avatar.AvatarStoreListResponse.avatars:type_name -> avatar.Avatar
+	12, // 1: avatar.AvatarStoreGetResponse.avatar:type_name -> avatar.Avatar
+	13, // 2: avatar.AvatarStoreCreateRequest.permissions:type_name -> avatar.Permission
+	12, // 3: avatar.AvatarStoreCreateResponse.avatar:type_name -> avatar.Avatar
+	13, // 4: avatar.AvatarStoreUpdateRequest.permissions:type_name -> avatar.Permission
+	12, // 5: avatar.AvatarStoreUpdateResponse.avatar:type_name -> avatar.Avatar
 	0,  // 6: avatar.AvatarStoreService.List:input_type -> avatar.AvatarStoreListRequest
 	2,  // 7: avatar.AvatarStoreService.Get:input_type -> avatar.AvatarStoreGetRequest
 	4,  // 8: avatar.AvatarStoreService.Create:input_type -> avatar.AvatarStoreCreateRequest
 	6,  // 9: avatar.AvatarStoreService.Update:input_type -> avatar.AvatarStoreUpdateRequest
 	8,  // 10: avatar.AvatarStoreService.Delete:input_type -> avatar.AvatarStoreDeleteRequest
-	1,  // 11: avatar.AvatarStoreService.List:output_type -> avatar.AvatarStoreListResponse
-	3,  // 12: avatar.AvatarStoreService.Get:output_type -> avatar.AvatarStoreGetResponse
-	5,  // 13: avatar.AvatarStoreService.Create:output_type -> avatar.AvatarStoreCreateResponse
-	7,  // 14: avatar.AvatarStoreService.Update:output_type -> avatar.AvatarStoreUpdateResponse
-	9,  // 15: avatar.AvatarStoreService.Delete:output_type -> avatar.AvatarStoreDeleteResponse
-	11, // [11:16] is the sub-list for method output_type
-	6,  // [6:11] is the sub-list for method input_type
+	10, // 11: avatar.AvatarStoreService.Sync:input_type -> avatar.AvatarStoreSyncRequest
+	1,  // 12: avatar.AvatarStoreService.List:output_type -> avatar.AvatarStoreListResponse
+	3,  // 13: avatar.AvatarStoreService.Get:output_type -> avatar.AvatarStoreGetResponse
+	5,  // 14: avatar.AvatarStoreService.Create:output_type -> avatar.AvatarStoreCreateResponse
+	7,  // 15: avatar.AvatarStoreService.Update:output_type -> avatar.AvatarStoreUpdateResponse
+	9,  // 16: avatar.AvatarStoreService.Delete:output_type -> avatar.AvatarStoreDeleteResponse
+	11, // 17: avatar.AvatarStoreService.Sync:output_type -> avatar.AvatarStoreSyncResponse
+	12, // [12:18] is the sub-list for method output_type
+	6,  // [6:12] is the sub-list for method input_type
 	6,  // [6:6] is the sub-list for extension type_name
 	6,  // [6:6] is the sub-list for extension extendee
 	0,  // [0:6] is the sub-list for field type_name
@@ -669,7 +770,7 @@ func file_v1_avatar_avatarStoreService_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_v1_avatar_avatarStoreService_proto_rawDesc), len(file_v1_avatar_avatarStoreService_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   10,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

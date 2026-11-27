@@ -47,6 +47,14 @@ service AvatarStoreService {
         body : "*"
       };
     }
+
+    // Sync Avatar Store
+    rpc Sync (AvatarStoreSyncRequest) returns (AvatarStoreSyncResponse){
+      option (google.api.http) = {
+        post : "/v1/avatarStore/sync"
+        body : "*"
+      };
+    }
 }
 
 // ListAvatarRequest for listing avatars
@@ -125,4 +133,16 @@ message AvatarStoreDeleteRequest {
 message AvatarStoreDeleteResponse {
     // Success message
     string message = 1;
+}
+
+// AvatarStoreSyncRequest 
+// for syncing static files like images and rebuilding avatar store
+message AvatarStoreSyncRequest {
+}
+
+// AvatarStoreSyncResponse indicating success or failure
+message AvatarStoreSyncResponse {
+    // Success message
+    bool success = 1;
+    string message = 2;
 }

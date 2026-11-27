@@ -27,7 +27,7 @@ export FILE_STORE_PATH=$PWD/dataVolume
 export SERVABLE_DIRECTORY=$PWD/dataVolume/static
 
 # for astro mcp server
-export DATA_PATH=$HOME/Code/astro/astro/data/
+export ASTRO_DATA_PATH=$HOME/Code/astro/astro/data/
 
 ## get the LLM API KEY
 source .env
