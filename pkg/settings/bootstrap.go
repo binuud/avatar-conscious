@@ -143,6 +143,15 @@ func Bootstrap() {
 		Weight:      12,
 	})
 
+	Global.Add(&pbSettings.Config{
+		Name:        "AVATAR_STORE_DIRECTORY",
+		Group:       "SERVER",
+		Default:     "./avatar-store",
+		Description: "The folder containing avatar-store md files, cache and static resources",
+		Type:        pbSettings.Config_STRING,
+		Weight:      21,
+	})
+
 	// load from storage, if file exists
 	Global.Load()
 
