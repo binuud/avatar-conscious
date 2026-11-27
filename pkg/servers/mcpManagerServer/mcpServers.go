@@ -229,21 +229,17 @@ func (s *mcpServers) GetInstanceDetails(config *pbMcp.MCPServerConfig) (*pbMcp.M
 func (s *mcpServers) HandleTool(uuid string, mcpServerName string, toolName string, params string) (string, error) {
 	entry, err := s.FindByUUIDName(uuid, mcpServerName)
 	if err != nil {
-		logrus.Errorf("error - %v", err)
+		logrus.Errorf("error cannot find server - %v", err)
 		return "", err
 	}
 
 	logrus.Debugf("HandleTool MCP Server with name %s found", entry.Name)
-	command := ""
+
 	switch entry.McpType {
 	case pbMcp.MCPTransportType_MCP_TYPE_STDIO:
-		command = entry.Command
+		return mcpHandler.HandleMcpCommandTool(entry.Command, toolName, params, entry.Token)
 	case pbMcp.MCPTransportType_MCP_TYPE_HTTP, pbMcp.MCPTransportType_MCP_TYPE_SSE:
-		command = entry.Url
+		return mcpHandler.HandleMcpRemoteTool(entry.Url, toolName, params, entry.Token)
 	}
-	outMsg, err := mcpHandler.HandleMcpTool(command, toolName, params, entry.Token)
-	if err != nil {
-		return "", err
-	}
-	return outMsg, err
+	return "", fmt.Errorf("error invalid mcp type %s", entry.McpType)
 }
